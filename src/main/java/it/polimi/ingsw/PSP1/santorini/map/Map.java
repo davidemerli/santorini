@@ -36,22 +36,69 @@ public class Map {
         this.workersList = oldMap.getWorkersCopy();
     }
 
+    /**
+     * Used to add a worker on the map.
+     * If there is already a worker or the worker's position is out of matrix, an exception is thrown.
+     *
+     * @param worker Contains worker's player and worker's position
+     * @return new map with a new worker on it
+     */
     public Map addWorker(Worker worker) {
-        //TODO
 
-        return null;
+        if(workersList.contains(worker)) {
+            throw new IllegalArgumentException("worker already in");
+        }
+        if(worker.getPosition().x < 0 || worker.getPosition().x > 6
+                || worker.getPosition().y < 0  || worker.getPosition().y > 6) {
+            throw new IndexOutOfBoundsException("illegal position");
+        }
+
+        Map newMap = new Map(this);
+
+        newMap.workersList.add(worker);
+        return newMap;
     }
 
+    /**
+     * Used to remove a worker from map.
+     * If there is not worker in the list, an exception is thrown.
+     *
+     * @param worker Contains worker's player and worker's position
+     * @return new map without a worker on it
+     */
     public Map removeWorker(Worker worker) {
-        //TODO
 
-        return null;
+        if(!workersList.contains(worker)) {
+            throw new IllegalArgumentException("worker not found");
+        }
+
+        Map newMap = new Map(this);
+
+        newMap.workersList.remove(worker);
+        return newMap;
     }
 
+    /**
+     * Used to move a worker on the map
+     *
+     * @param worker Contains worker's player and worker's position
+     * @param newPosition Contains the new worker's position
+     * @return new map with a worker in a different position
+     */
     public Map moveWorker(Worker worker, Point newPosition) {
-        //TODO
 
-        return null;
+        if(newPosition.x < 0 || newPosition.x > 6 || newPosition.y < 0 || newPosition.y > 6) {
+            throw new IndexOutOfBoundsException("illegal position");
+        }
+        if(!workersList.contains(worker)) {
+            throw new IllegalArgumentException("worker not found");
+        }
+        Map newMap = new Map(this);
+
+        int index = newMap.workersList.indexOf(worker);
+        Worker newWorker = new Worker(worker.getPlayer(), newPosition);
+        newMap.workersList.set(index, newWorker);
+        return newMap;
     }
 
     public Map buildBlock(Point position, boolean buildDome) {
