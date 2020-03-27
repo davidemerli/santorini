@@ -28,7 +28,6 @@ public class Map {
      * Used to instantiate a new 'step' of the map, based on the previous one, since Map is immutable
      * Both workers and square data are copied.
      *
-     *
      * @param oldMap where the current state is copied from.
      */
     private Map(Map oldMap) {
@@ -41,15 +40,14 @@ public class Map {
      * If there is already a worker or the worker's position is out of matrix, an exception is thrown.
      *
      * @param worker Contains worker's player and worker's position
-     * @return new map with a new worker on it
+     * @return new map with a new worker on it.
      */
     public Map addWorker(Worker worker) {
 
         if(workersList.contains(worker)) {
             throw new IllegalArgumentException("worker already in");
         }
-        if(worker.getPosition().x < 0 || worker.getPosition().x > 6
-                || worker.getPosition().y < 0  || worker.getPosition().y > 6) {
+        if(!isPositionInMap(worker.getPosition())) {
             throw new IndexOutOfBoundsException("illegal position");
         }
 
@@ -79,7 +77,9 @@ public class Map {
     }
 
     /**
-     * Used to move a worker on the map
+     * Used to move a worker on the map.
+     * If there is already a worker or the worker's position is out of matrix or occuped by another worker,
+     * an exception is thrown
      *
      * @param worker Contains worker's player and worker's position
      * @param newPosition Contains the new worker's position
@@ -87,12 +87,18 @@ public class Map {
      */
     public Map moveWorker(Worker worker, Point newPosition) {
 
-        if(newPosition.x < 0 || newPosition.x > 6 || newPosition.y < 0 || newPosition.y > 6) {
+        if(!isPositionInMap(newPosition)) {
             throw new IndexOutOfBoundsException("illegal position");
         }
         if(!workersList.contains(worker)) {
             throw new IllegalArgumentException("worker not found");
         }
+        for (Worker worker1 : workersList) {
+            if(worker.getPosition().equals(newPosition)) {
+                throw new IllegalArgumentException("illegal position");
+            }
+        }
+
         Map newMap = new Map(this);
 
         int index = newMap.workersList.indexOf(worker);
@@ -101,16 +107,58 @@ public class Map {
         return newMap;
     }
 
+    /**
+     * Used to raise the level of a given square by 1, building a block and eventually adding a dome
+     * Exceptions made if the position given is out of the map or the player is building on square where the dome
+     * is present
+     *
+     * @param position coordinates of the square where the player is building
+     * @param buildDome is true if the block built is a dome
+     * @return the updated map
+     */
     public Map buildBlock(Point position, boolean buildDome) {
-        //TODO
-
-        return null;
+        if (!isPositionInMap(position)) {
+            throw new ArrayIndexOutOfBoundsException("Given position is out of map");
+        }
+        Map newMap = new Map(this);
+        SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];
+        if (oldSquareData.isDome()) {
+            throw new IllegalArgumentException("Dome present in the square selected");
+        }
+        SquareData newSquareData = new SquareData(oldSquareData.getLevel() + 1, buildDome);
+        newMap.blockMatrix[position.x][position.y] = newSquareData;
+        return newMap;
     }
 
+    /**
+     * Used to lower the level of a given square by 1, removing a block
+     * Exceptions made if the position given is out of map or the player is lowering the level below 0
+     *
+     * @param position coordinates of the square where the player is removing
+     * @return the updated map
+     */
     public Map removeBlock(Point position) {
-        //TODO
+        if (!isPositionInMap(position)) {
+            throw new ArrayIndexOutOfBoundsException("Given position is out of map");
+        }
+        Map newMap = new Map(this);
+        SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];
+        if (oldSquareData.getLevel() == 0) {
+            throw new IllegalArgumentException("No blocks present in the square selected");
+        }
+        SquareData newSquareData = new SquareData(oldSquareData.getLevel() - 1, false);
+        newMap.blockMatrix[position.x][position.y] = newSquareData;
+        return newMap;
+    }
 
-        return null;
+    /**
+     * Checks if the position given is inside the map matrix
+     *
+     * @param position coordinates of the square
+     * @return true if the square is inside the matrix
+     */
+    private boolean isPositionInMap(Point position) {
+        return position.x < SIDE_LENGTH && position.y < SIDE_LENGTH && position.x >= 0 && position.y >= 0;
     }
 
     /**
