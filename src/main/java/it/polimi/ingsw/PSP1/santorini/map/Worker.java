@@ -3,6 +3,7 @@ package it.polimi.ingsw.PSP1.santorini.map;
 import it.polimi.ingsw.PSP1.santorini.player.Player;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Worker {
 
@@ -21,4 +22,18 @@ public class Worker {
     public Point getPosition() {
         return position;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Worker worker = (Worker) o;
+
+        if (!Objects.equals(player, worker.player)) return false;
+
+        return position.equals(worker.position);
+    }
+
+
 }

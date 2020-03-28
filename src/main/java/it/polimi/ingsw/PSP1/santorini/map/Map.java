@@ -66,7 +66,7 @@ public class Map {
      */
     public Map removeWorker(Worker worker) {
         if (!workersList.contains(worker)) {
-            throw new IllegalArgumentException("worker not found");
+            throw new IllegalArgumentException("Worker not found");
         }
 
         Map newMap = new Map(this);

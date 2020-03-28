@@ -7,8 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
+import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MapTest {
 
@@ -41,5 +42,80 @@ public class MapTest {
         Map newMap = map.addWorker(worker);
 
         assertTrue(newMap.getWorkersList().contains(worker));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void removeWorker_workerNotFound_shouldThrowIllegalArgument() {
+        Worker worker = new Worker(player, new Point(1,1));
+        map.removeWorker(worker);
+    }
+
+    @Test
+    public void removeWorker_normalRemoval_shouldHaveRemovedWorker() {
+        Worker worker = new Worker(player, new Point(1,1));
+        Map newMap = map.addWorker(worker);
+        newMap = newMap.removeWorker(worker);
+
+        assertFalse(newMap.getWorkersList().contains(worker));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void moveWorker_workerMovedOutOfMap_shouldThrowIndexOutOfBounds() {
+        Worker worker = new Worker(player, new Point(4,4));
+        Map newMap = map.addWorker(worker);
+
+        newMap.moveWorker(worker, new Point(5,5));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void moveWorker_workerNotFound_shouldThrownNoSuchElement() {
+        Worker worker = new Worker(player, new Point(1,1));
+        map.moveWorker(worker, new Point(1,2));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void moveWorker_workerMovedIntoAnotherWorker_shouldThrownIllegalArgument() {
+        Worker worker1 = new Worker(player, new Point(1,1));
+        Worker worker2 = new Worker(player, new Point(1,2));
+        Map newMap = map.addWorker(worker1);
+        newMap = newMap.addWorker(worker2);
+        newMap.moveWorker(worker1, worker2.getPosition());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void moveWorker_workerMovedTooFar_shouldThrownIllegalArgument() {
+        Worker worker = new Worker(player, new Point(1,1));
+        Map newMap = map.addWorker(worker);
+        newMap.moveWorker(worker, new Point(2,3));
+    }
+
+    @Test
+    public void moveWorker_normalMoved_shouldHaveMovedWorker() {
+        Point point1 = new Point(2,2);
+        Point point2 = new Point(2,3);
+        Point point3 = new Point(3,3);
+        Point point4 = new Point(3,2);
+
+        Worker worker = new Worker(player, point1);
+        Map newMap = map.addWorker(worker);
+        newMap = newMap.moveWorker(worker, point2);
+        worker = newMap.getWorkersList().get(0);
+
+        assertEquals(point2, worker.getPosition());
+
+        newMap = newMap.moveWorker(worker, point3);
+        worker = newMap.getWorkersList().get(0);
+
+        assertEquals(point3, worker.getPosition());
+
+        newMap = newMap.moveWorker(worker, point4);
+        worker = newMap.getWorkersList().get(0);
+
+        assertEquals(point4, worker.getPosition());
+
+        newMap = newMap.moveWorker(worker, point1);
+        worker = newMap.getWorkersList().get(0);
+
+        assertEquals(point1, worker.getPosition());
     }
 }
