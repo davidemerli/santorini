@@ -132,6 +132,10 @@ public class Map {
             throw new IllegalArgumentException("Dome present in the square selected");
         }
 
+        if (oldSquareData.getLevel() == 4) {
+            throw new IllegalArgumentException("Square already has a complete tower");
+        }
+
         if (isWorkerOn(position)) {
             throw new IllegalArgumentException("Given position occupied by a worker");
         }
