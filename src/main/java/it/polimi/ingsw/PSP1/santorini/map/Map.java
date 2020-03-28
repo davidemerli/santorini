@@ -131,6 +131,9 @@ public class Map {
         if (oldSquareData.isDome()) {
             throw new IllegalArgumentException("Dome present in the square selected");
         }
+        if (oldSquareData.getLevel() == 4) {
+            throw new IllegalArgumentException("Square already has a complete tower");
+        }
 
         SquareData newSquareData = new SquareData(oldSquareData.getLevel() + 1, buildDome);
         newMap.blockMatrix[position.x][position.y] = newSquareData;
