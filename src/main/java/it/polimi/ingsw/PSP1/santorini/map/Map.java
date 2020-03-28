@@ -132,6 +132,10 @@ public class Map {
             throw new IllegalArgumentException("Dome present in the square selected");
         }
 
+        if (isWorkerOn(position)) {
+            throw new IllegalArgumentException("Given position occupied by a worker");
+        }
+
         SquareData newSquareData = new SquareData(oldSquareData.getLevel() + 1, buildDome);
         newMap.blockMatrix[position.x][position.y] = newSquareData;
         return newMap;
@@ -147,6 +151,10 @@ public class Map {
     public Map removeBlock(Point position) {
         if (isPositionOutOfMap(position)) {
             throw new ArrayIndexOutOfBoundsException("Given position is out of map");
+        }
+
+        if (isWorkerOn(position)) {
+            throw new IllegalArgumentException("Given position occupied by a worker");
         }
 
         Map newMap = new Map(this);
@@ -218,5 +226,9 @@ public class Map {
 
     public List<Worker> getWorkersList() {
         return workersList;
+    }
+
+    private boolean isWorkerOn(Point position) {
+        return workersList.stream().anyMatch(w -> w.getPosition().equals(position));
     }
 }

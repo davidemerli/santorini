@@ -83,7 +83,7 @@ public class MapTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void moveWorker_workerMovedTooFar_shouldThrownIllegalArgument() {
+    public void moveWorker_workerMovedTooFar_shouldThrowIllegalArgument() {
         Worker worker = new Worker(player, new Point(1,1));
         Map newMap = map.addWorker(worker);
         newMap.moveWorker(worker, new Point(2,3));
@@ -117,5 +117,21 @@ public class MapTest {
         worker = newMap.getWorkersList().get(0);
 
         assertEquals(point1, worker.getPosition());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void removeBlock_workerOn_shouldThrownIllegalArgument() {
+        Point position = new Point(1,1);
+        Worker worker = new Worker(player, position);
+        Map newMap = map.addWorker(worker);
+        newMap.removeBlock(position);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void buildBlock_workerOn_shouldThrowIllegalArgument() {
+        Point position = new Point(1,1);
+        Worker worker = new Worker(player, position);
+        Map newMap = map.addWorker(worker);
+        newMap.buildBlock(position, false);
     }
 }
