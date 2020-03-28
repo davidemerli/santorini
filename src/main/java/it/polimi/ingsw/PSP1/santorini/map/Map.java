@@ -2,8 +2,8 @@ package it.polimi.ingsw.PSP1.santorini.map;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Map {
@@ -43,17 +43,17 @@ public class Map {
      * @return new map with a new worker on it.
      */
     public Map addWorker(Worker worker) {
-
-        if(workersList.contains(worker)) {
-            throw new IllegalArgumentException("worker already in");
+        if (workersList.contains(worker)) {
+            throw new UnsupportedOperationException("Given worker is already on the map");
         }
-        if(!isPositionInMap(worker.getPosition())) {
-            throw new IndexOutOfBoundsException("illegal position");
+
+        if (isPositionOutOfMap(worker.getPosition())) {
+            throw new IndexOutOfBoundsException("Given worker has a position that is out of the ma[");
         }
 
         Map newMap = new Map(this);
-
         newMap.workersList.add(worker);
+
         return newMap;
     }
 
@@ -65,8 +65,7 @@ public class Map {
      * @return new map without a worker on it
      */
     public Map removeWorker(Worker worker) {
-
-        if(!workersList.contains(worker)) {
+        if (!workersList.contains(worker)) {
             throw new IllegalArgumentException("worker not found");
         }
 
@@ -81,29 +80,34 @@ public class Map {
      * If there is already a worker or the worker's position is out of matrix or occuped by another worker,
      * an exception is thrown
      *
-     * @param worker Contains worker's player and worker's position
+     * @param worker      Contains worker's player and worker's position
      * @param newPosition Contains the new worker's position
      * @return new map with a worker in a different position
      */
     public Map moveWorker(Worker worker, Point newPosition) {
+        if (isPositionOutOfMap(newPosition)) {
+            throw new IndexOutOfBoundsException("Given position is out of map");
+        }
 
-        if(!isPositionInMap(newPosition)) {
-            throw new IndexOutOfBoundsException("illegal position");
+        if (!workersList.contains(worker)) {
+            throw new NoSuchElementException("Given worker is not present on the map");
         }
-        if(!workersList.contains(worker)) {
-            throw new IllegalArgumentException("worker not found");
+
+        if (workersList.stream().anyMatch(w -> w.getPosition().equals(newPosition))) {
+            throw new IllegalArgumentException("Given position is already occupied");
         }
-        for (Worker worker1 : workersList) {
-            if(worker.getPosition().equals(newPosition)) {
-                throw new IllegalArgumentException("illegal position");
-            }
+
+        if (worker.getPosition().distance(newPosition) > Math.sqrt(2)) {
+            throw new IllegalArgumentException("Given position is too far from current position");
         }
 
         Map newMap = new Map(this);
 
         int index = newMap.workersList.indexOf(worker);
         Worker newWorker = new Worker(worker.getPlayer(), newPosition);
+
         newMap.workersList.set(index, newWorker);
+
         return newMap;
     }
 
@@ -112,19 +116,22 @@ public class Map {
      * Exceptions made if the position given is out of the map or the player is building on square where the dome
      * is present
      *
-     * @param position coordinates of the square where the player is building
+     * @param position  coordinates of the square where the player is building
      * @param buildDome is true if the block built is a dome
      * @return the updated map
      */
     public Map buildBlock(Point position, boolean buildDome) {
-        if (!isPositionInMap(position)) {
+        if (isPositionOutOfMap(position)) {
             throw new ArrayIndexOutOfBoundsException("Given position is out of map");
         }
+
         Map newMap = new Map(this);
         SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];
+
         if (oldSquareData.isDome()) {
             throw new IllegalArgumentException("Dome present in the square selected");
         }
+
         SquareData newSquareData = new SquareData(oldSquareData.getLevel() + 1, buildDome);
         newMap.blockMatrix[position.x][position.y] = newSquareData;
         return newMap;
@@ -138,27 +145,30 @@ public class Map {
      * @return the updated map
      */
     public Map removeBlock(Point position) {
-        if (!isPositionInMap(position)) {
+        if (isPositionOutOfMap(position)) {
             throw new ArrayIndexOutOfBoundsException("Given position is out of map");
         }
+
         Map newMap = new Map(this);
         SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];
+
         if (oldSquareData.getLevel() == 0) {
             throw new IllegalArgumentException("No blocks present in the square selected");
         }
+
         SquareData newSquareData = new SquareData(oldSquareData.getLevel() - 1, false);
         newMap.blockMatrix[position.x][position.y] = newSquareData;
         return newMap;
     }
 
     /**
-     * Checks if the position given is inside the map matrix
+     * Checks if the position given is outside of the map matrix
      *
-     * @param position coordinates of the square
-     * @return true if the square is inside the matrix
+     * @param position the coordinates of the square
+     * @return true if the square is outside the matrix
      */
-    private boolean isPositionInMap(Point position) {
-        return position.x < SIDE_LENGTH && position.y < SIDE_LENGTH && position.x >= 0 && position.y >= 0;
+    private boolean isPositionOutOfMap(Point position) {
+        return position.x >= SIDE_LENGTH || position.y >= SIDE_LENGTH || position.x < 0 || position.y < 0;
     }
 
     /**
@@ -200,5 +210,13 @@ public class Map {
                 blockMatrix[i][j] = new SquareData(0, false);
             }
         }
+    }
+
+    public SquareData[][] getBlockMatrix() {
+        return blockMatrix;
+    }
+
+    public List<Worker> getWorkersList() {
+        return workersList;
     }
 }
