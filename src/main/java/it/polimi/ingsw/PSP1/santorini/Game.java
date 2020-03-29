@@ -1,12 +1,12 @@
 package it.polimi.ingsw.PSP1.santorini;
 
-import it.polimi.ingsw.PSP1.santorini.godpowers.God;
+import it.polimi.ingsw.PSP1.santorini.map.Worker;
+import it.polimi.ingsw.PSP1.santorini.powers.Power;
 import it.polimi.ingsw.PSP1.santorini.map.Map;
 import it.polimi.ingsw.PSP1.santorini.player.Player;
 
-import java.lang.reflect.Array;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Game {
@@ -15,7 +15,7 @@ public class Game {
 
     }
 
-    private final List<God> availableGodList;
+    private final List<Power> availableGodList;
     private final List<Player> playerList;
     private Map gameMap;
 
@@ -33,8 +33,25 @@ public class Game {
         return gameMap;
     }
 
+    public void setGameMap(Map map) {
+        this.gameMap = map;
+    }
+
     public List<Player> getPlayerList() {
         return new ArrayList<>(playerList);
     }
 
+    public void moveWorker(Worker worker, Point position) {
+        gameMap = gameMap.moveWorker(worker, position);
+
+        //TODO: send event
+
+    }
+
+    public void buildBlock(Point position, boolean isDome) {
+        gameMap = gameMap.buildBlock(position, isDome);
+
+        //TODO: send event
+
+    }
 }

@@ -97,10 +97,6 @@ public class Map {
             throw new IllegalArgumentException("Given position is already occupied");
         }
 
-        if (worker.getPosition().distance(newPosition) > Math.sqrt(2)) {
-            throw new IllegalArgumentException("Given position is too far from current position");
-        }
-
         Map newMap = new Map(this);
 
         int index = newMap.workersList.indexOf(worker);
@@ -232,7 +228,34 @@ public class Map {
         return workersList;
     }
 
-    private boolean isWorkerOn(Point position) {
+    public boolean isWorkerOn(Point position) {
         return workersList.stream().anyMatch(w -> w.getPosition().equals(position));
+    }
+
+    public SquareData getSquareDataAt(Point position) {
+        return blockMatrix[position.x][position.y];
+    }
+
+    /**
+     * Gets the valid squares surrounding a given position
+     *
+     * @param point the position you need to get the neighbour blocks of
+     * @throws ArrayIndexOutOfBoundsException if point is out of map
+     * @return list of positions of valid surrounding squares
+     */
+    public List<Point> getNeighbors(Point point) {
+        if(isPositionOutOfMap(point)) {
+            throw new ArrayIndexOutOfBoundsException("Given point is not on map");
+        }
+
+        List<Point> list = new ArrayList<>();
+
+        for (int i = Math.max(0, point.x - 1); i < Math.min(SIDE_LENGTH, point.x + 1); i++) {
+            for (int j = Math.max(0, point.y - 1); i < Math.min(SIDE_LENGTH, point.y + 1); j++) {
+                list.add(new Point(i, j));
+            }
+        }
+
+        return list;
     }
 }
