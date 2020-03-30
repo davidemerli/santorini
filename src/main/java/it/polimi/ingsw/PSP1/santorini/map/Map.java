@@ -40,6 +40,8 @@ public class Map {
      * If there is already a worker or the worker's position is out of matrix, an exception is thrown.
      *
      * @param worker Contains worker's player and worker's position
+     * @throws UnsupportedOperationException if there is already the same worker
+     * @throws IndexOutOfBoundsException if worker is out of the map
      * @return new map with a new worker on it.
      */
     public Map addWorker(Worker worker) {
@@ -62,6 +64,7 @@ public class Map {
      * If there is not worker in the list, an exception is thrown.
      *
      * @param worker Contains worker's player and worker's position
+     * @throws IllegalArgumentException if there is not worker on the map
      * @return new map without a worker on it
      */
     public Map removeWorker(Worker worker) {
@@ -77,11 +80,14 @@ public class Map {
 
     /**
      * Used to move a worker on the map.
-     * If there is already a worker or the worker's position is out of matrix or occuped by another worker,
+     * If there is already a worker or the worker's position is out of matrix or occupied by another worker,
      * an exception is thrown
      *
      * @param worker      Contains worker's player and worker's position
      * @param newPosition Contains the new worker's position
+     * @throws IndexOutOfBoundsException if you try to move a worker off the map
+     * @throws NoSuchElementException if there is not worker on the map
+     * @throws IllegalArgumentException if you try to move a worker to a position occupied by another worker
      * @return new map with a worker in a different position
      */
     public Map moveWorker(Worker worker, Point newPosition) {
@@ -114,6 +120,9 @@ public class Map {
      *
      * @param position  coordinates of the square where the player is building
      * @param buildDome is true if the block built is a dome
+     * @throws ArrayIndexOutOfBoundsException if ypu try to build off the map
+     * @throws IllegalArgumentException if you try to build in a position occupied by a dome
+     * @throws IllegalArgumentException if you try to build in a position occupied by another worker
      * @return the updated map
      */
     public Map buildBlock(Point position, boolean buildDome) {
@@ -126,10 +135,6 @@ public class Map {
 
         if (oldSquareData.isDome()) {
             throw new IllegalArgumentException("Dome present in the square selected");
-        }
-
-        if (oldSquareData.getLevel() == 4) {
-            throw new IllegalArgumentException("Square already has a complete tower");
         }
 
         if (isWorkerOn(position)) {
@@ -146,6 +151,9 @@ public class Map {
      * Exceptions made if the position given is out of map or the player is lowering the level below 0
      *
      * @param position coordinates of the square where the player is removing
+     * @throws ArrayIndexOutOfBoundsException if you try to remove a block off the map
+     * @throws IllegalArgumentException if you try to remove a block occupied by another worker
+     * @throws IllegalArgumentException if you try to remove a block that doesn't exist
      * @return the updated map
      */
     public Map removeBlock(Point position) {

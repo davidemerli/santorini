@@ -13,6 +13,7 @@ public class Player {
 
     private Worker selectedWorker;
     private boolean isWorkerLocked;
+    private boolean hasWon;
 
     public GameState getGameState() {
         return gameState;
@@ -56,5 +57,13 @@ public class Player {
 
     public void lockWorker() {
         isWorkerLocked = true;
+    }
+
+    public boolean hasWon() {
+        return hasWon;
+    }
+
+    public void setWinner() {
+        this.hasWon = true;
     }
 }

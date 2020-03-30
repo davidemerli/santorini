@@ -35,9 +35,13 @@ public class Mortal implements Power {
 
     @Override
     public TurnState onYourMove(Worker worker, Point where, Game game) {
+        int oldLevel = game.getGameMap().getSquareDataAt(worker.getPosition()).getLevel();
+        int newLevel = game.getGameMap().getSquareDataAt(where).getLevel();
         game.moveWorker(worker, where);
+        if (newLevel == 3 && oldLevel == 2) {
+            player.setWinner();
+        }
 
-        player.setSelectedWorker(worker);
         player.lockWorker();
 
         return new Build(player, game);
@@ -88,6 +92,7 @@ public class Mortal implements Power {
 
     @Override
     public void onBeginTurn(Game game) {
+        player.setTurnState(new Move(player, game));
     }
 
     @Override
