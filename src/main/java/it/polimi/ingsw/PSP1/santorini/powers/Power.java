@@ -20,7 +20,7 @@ public interface Power {
 
     void onOpponentsBuild(Player player, Worker worker, Point where, Game game);
 
-    void onOpponentsMove(Player player, Worker worker, Point where, Game game);
+    void onOpponentsMove(Player player, Worker worker, Point oldPosition, Point where, Game game);
 
     void onToggleInteraction(Game game);
 

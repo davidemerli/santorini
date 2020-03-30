@@ -15,6 +15,11 @@ public class Worker {
         this.position = position;
     }
 
+    public Worker(Worker toCopy) {
+        this.player = toCopy.player;
+        this.position = toCopy.position;
+    }
+
     public Player getPlayer() {
         return player;
     }

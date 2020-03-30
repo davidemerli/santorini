@@ -28,11 +28,13 @@ public class Move extends TurnState {
             throw new IllegalArgumentException("Invalid move");
         }
 
-        game.getPlayerList().stream()
-                .filter(p -> p != player)
-                .forEach(p -> p.getPower().onOpponentsMove(player, player.getSelectedWorker(), position, game));
+        Point oldPosition = player.getSelectedWorker().getPosition();
 
         TurnState nextState = player.getPower().onYourMove(player.getSelectedWorker(), position, game);
+
+        game.getPlayerList().stream()
+                .filter(p -> p != player)
+                .forEach(p -> p.getPower().onOpponentsMove(player, player.getSelectedWorker(), oldPosition, position, game));
 
         player.setTurnState(nextState);
     }

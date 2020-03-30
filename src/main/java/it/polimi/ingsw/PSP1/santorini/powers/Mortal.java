@@ -99,7 +99,7 @@ public class Mortal implements Power {
     }
 
     @Override
-    public void onOpponentsMove(Player player, Worker worker, Point where, Game game) {
+    public void onOpponentsMove(Player player, Worker worker, Point oldPosition, Point where, Game game) {
     }
 
     @Override
