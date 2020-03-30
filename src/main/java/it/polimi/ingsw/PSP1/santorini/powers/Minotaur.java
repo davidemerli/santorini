@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class Apollo extends Mortal {
+public class Minotaur extends Mortal {
 
-    public Apollo(Player player) {
+    public Minotaur(Player player) {
         super(player);
     }
 
@@ -29,6 +29,8 @@ public class Apollo extends Mortal {
 
         List<Point> neighbors = game.getGameMap().getNeighbors(workerPosition);
 
+        //TODO: try to simplify predicates
+
         Predicate<Point> domeCheck = p -> !game.getGameMap().getSquareDataAt(p).isDome();
 
         Predicate<Point> canMoveTo = p -> getLevelAtPosition(game, p) <= currentLevel ||
@@ -39,8 +41,15 @@ public class Apollo extends Mortal {
         Predicate<Point> isEnemyWorker = p -> getWorkerOn(p, game).isPresent() &&
                 getWorkerOn(p, game).get().getPlayer() != player;
 
+        Predicate<Point> isValidPosition = p -> {
+            Point pushPos = getPushLocation(workerPosition, p);
+
+            return !game.getGameMap().isPositionOutOfMap(p) &&
+                    !game.getGameMap().getSquareDataAt(pushPos).isDome();
+        };
+
         return neighbors.stream()
-                .filter(domeCheck.and(canMoveTo).and(workerCheck.or(isEnemyWorker)))
+                .filter(domeCheck.and(canMoveTo).and(workerCheck.or(isEnemyWorker.and(isValidPosition))))
                 .collect(Collectors.toList());
     }
 
@@ -49,16 +58,18 @@ public class Apollo extends Mortal {
         Optional<Worker> optWorker = getWorkerOn(where, game);
 
         if (optWorker.isPresent()) {
-            Point oldPosition = worker.getPosition();
-            game.getGameMap().removeWorker(optWorker.get());
+            Point pushPos = getPushLocation(worker.getPosition(), where);
 
-            TurnState next = super.onYourMove(worker, where, game);
-            game.getGameMap().addWorker(new Worker(optWorker.get().getPlayer(), oldPosition));
-
-            return next;
+            game.getGameMap().moveWorker(optWorker.get(), pushPos);
         }
 
         return super.onYourMove(worker, where, game);
+    }
+
+    private Point getPushLocation(Point position, Point opponent) {
+        int[] diff = new int[]{position.x - opponent.x, position.y - opponent.y};
+
+        return new Point(opponent.x + diff[0], opponent.y + diff[1]);
     }
 
     private Optional<Worker> getWorkerOn(Point position, Game game) {

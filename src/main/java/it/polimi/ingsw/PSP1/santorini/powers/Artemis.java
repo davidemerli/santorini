@@ -10,9 +10,10 @@ import java.awt.*;
 import java.util.List;
 
 public class Artemis extends Mortal {
-    boolean abilityToggled;
-    boolean firstMove;
-    Point oldPosition;
+    
+    private boolean abilityToggled;
+    private boolean firstMove;
+    private Point oldPosition;
 
     public Artemis(Player player) {
         super(player);
@@ -37,9 +38,11 @@ public class Artemis extends Mortal {
     @Override
     public List<Point> getValidMoves(Game game) {
         List<Point> list = super.getValidMoves(game);
+
         if (player.getTurnState() instanceof Move && !firstMove) {
             list.remove(oldPosition);
         }
+
         return list;
     }
 
@@ -47,16 +50,13 @@ public class Artemis extends Mortal {
     public TurnState onYourMove(Worker worker, Point where, Game game) {
         TurnState next = super.onYourMove(worker, where, game);
 
-        if (abilityToggled) {
-            if (firstMove) {
-                oldPosition = new Point(where);
-                firstMove = false;
-                return new Move(player, game);
-            } else {
-                return next;
-            }
-        } else {
-            return next;
+        if (abilityToggled && firstMove) {
+            oldPosition = new Point(where);
+            firstMove = false;
+
+            return new Move(player, game);
         }
+
+        return next;
     }
 }

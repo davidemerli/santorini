@@ -12,8 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Hephaestus extends Mortal {
-    boolean hasBuilt;
-    Point oldBuild;
+
+    private boolean hasBuilt;
+    private Point oldBuild;
 
     public Hephaestus(Player player) {
         super(player);
@@ -38,12 +39,13 @@ public class Hephaestus extends Mortal {
     @Override
     public TurnState onYourBuild(Worker worker, Point where, Game game) {
         TurnState next = super.onYourBuild(worker, where, game);
-        if (!hasBuilt) {
-            if (game.getGameMap().getSquareDataAt(where).getLevel() < 3) {
-                oldBuild = new Point(where);
-                return new Build(player, game);
-            }
+
+        if (!hasBuilt && game.getGameMap().getSquareDataAt(where).getLevel() < 3) {
+            oldBuild = new Point(where);
+
+            return new Build(player, game);
         }
+
         return next;
     }
 
@@ -52,6 +54,7 @@ public class Hephaestus extends Mortal {
         if (player.getTurnState() instanceof Build && hasBuilt) {
             return Collections.singletonList(oldBuild);
         }
+
         return super.getValidMoves(game);
     }
 }

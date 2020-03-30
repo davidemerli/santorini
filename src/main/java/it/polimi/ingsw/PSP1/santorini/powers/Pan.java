@@ -9,7 +9,6 @@ import java.awt.*;
 
 public class Pan extends Mortal {
 
-
     public Pan(Player player) {
         super(player);
     }
@@ -17,12 +16,14 @@ public class Pan extends Mortal {
     @Override
     public TurnState onYourMove(Worker worker, Point where, Game game) {
         TurnState next = super.onYourMove(worker, where, game);
+
         int oldLevel = game.getGameMap().getSquareDataAt(worker.getPosition()).getLevel();
         int newLevel = game.getGameMap().getSquareDataAt(where).getLevel();
 
         if (oldLevel - newLevel >= 2) {
             player.setWinner();
         }
+
         return next;
     }
 }

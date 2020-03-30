@@ -183,7 +183,7 @@ public class Map {
      * @param position the coordinates of the square
      * @return true if the square is outside the matrix
      */
-    private boolean isPositionOutOfMap(Point position) {
+    public boolean isPositionOutOfMap(Point position) {
         return position.x >= SIDE_LENGTH || position.y >= SIDE_LENGTH || position.x < 0 || position.y < 0;
     }
 

@@ -5,8 +5,6 @@ import it.polimi.ingsw.PSP1.santorini.map.Worker;
 import it.polimi.ingsw.PSP1.santorini.player.Player;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Build extends TurnState {
 
@@ -54,25 +52,5 @@ public class Build extends TurnState {
     @Override
     public boolean shouldShowInteraction() {
         return player.getPower().shouldShowInteraction();
-    }
-
-    //TODO: check where these should be called from
-
-    @Override
-    public List<Point> getBlockedMoves() {
-        if(!player.isWorkerSelected()) {
-            return new ArrayList<>();
-        }
-
-        return player.getPower().getBlockedMoves(game);
-    }
-
-    @Override
-    public List<Point> getValidMoves() {
-        if(!player.isWorkerSelected()) {
-            return new ArrayList<>();
-        }
-
-        return player.getPower().getValidMoves(game);
     }
 }

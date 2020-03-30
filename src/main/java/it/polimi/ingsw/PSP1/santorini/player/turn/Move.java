@@ -5,8 +5,6 @@ import it.polimi.ingsw.PSP1.santorini.map.Worker;
 import it.polimi.ingsw.PSP1.santorini.player.Player;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Move extends TurnState {
 
@@ -20,11 +18,11 @@ public class Move extends TurnState {
             throw new UnsupportedOperationException("Tried to move with no selected worker");
         }
 
-        if(getBlockedMoves().contains(position)) {
+        if (getBlockedMoves().contains(position)) {
             throw new IllegalArgumentException("Given position is a forbidden move position by some power");
         }
 
-        if(!getValidMoves().contains(position)) {
+        if (!getValidMoves().contains(position)) {
             throw new IllegalArgumentException("Invalid move");
         }
 
@@ -41,8 +39,8 @@ public class Move extends TurnState {
 
     @Override
     public void selectWorker(Worker worker) {
-        if(player.isWorkerLocked()) {
-           throw new UnsupportedOperationException("Worker is locked from previous turn");
+        if (player.isWorkerLocked()) {
+            throw new UnsupportedOperationException("Worker is locked from previous turn");
         }
 
         //TODO: check if he got moves to do
@@ -58,25 +56,5 @@ public class Move extends TurnState {
     @Override
     public boolean shouldShowInteraction() {
         return player.getPower().shouldShowInteraction();
-    }
-
-    //TODO: check where these should be called from
-
-    @Override
-    public List<Point> getBlockedMoves() {
-        if(!player.isWorkerSelected()) {
-            return new ArrayList<>();
-        }
-
-        return player.getPower().getBlockedMoves(game);
-    }
-
-    @Override
-    public List<Point> getValidMoves() {
-        if(!player.isWorkerSelected()) {
-            return new ArrayList<>();
-        }
-
-        return player.getPower().getValidMoves(game);
     }
 }

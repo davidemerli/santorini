@@ -26,7 +26,7 @@ public interface Power {
 
     boolean shouldShowInteraction();
 
-    List<Point> getBlockedMoves(Game game);
+    public List<Point> getBlockedMoves(Worker worker, List<Point> validMoves, TurnState playerState, Game game);
 
     List<Point> getValidMoves(Game game);
 }

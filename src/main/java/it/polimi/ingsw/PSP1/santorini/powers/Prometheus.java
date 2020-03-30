@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Prometheus extends Mortal {
-    boolean firstBuild;
-    boolean hasBuiltBeforeMoving;
+
+    private boolean firstBuild;
+    private boolean hasBuiltBeforeMoving;
 
     public Prometheus(Player player) {
         super(player);
@@ -39,26 +40,29 @@ public class Prometheus extends Mortal {
     @Override
     public TurnState onYourBuild(Worker worker, Point where, Game game) {
         TurnState next = super.onYourBuild(worker, where, game);
+
         if (firstBuild) {
             player.lockWorker();
             firstBuild = false;
             hasBuiltBeforeMoving = true;
             return new Move(player, game);
-        } else {
-            return next;
         }
+
+        return next;
     }
 
     @Override
     public List<Point> getValidMoves(Game game) {
         List<Point> list = super.getValidMoves(game);
+
         if (player.getTurnState() instanceof Move && hasBuiltBeforeMoving) {
             int level = game.getGameMap().getSquareDataAt(player.getSelectedWorker().getPosition()).getLevel();
+
             return list.stream()
                     .filter(p -> game.getGameMap().getSquareDataAt(p).getLevel() <= level)
                     .collect(Collectors.toList());
-        } else {
-            return list;
         }
+
+        return list;
     }
 }

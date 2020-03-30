@@ -53,7 +53,7 @@ public class Mortal implements Power {
     }
 
     @Override
-    public List<Point> getBlockedMoves(Game game) {
+    public List<Point> getBlockedMoves(Worker worker, List<Point> validMoves, TurnState playerState, Game game) {
         return Collections.emptyList();
     }
 
@@ -86,7 +86,7 @@ public class Mortal implements Power {
         }
     }
 
-    protected int getLevelAtPosition(Game game, Point point) {
+    int getLevelAtPosition(Game game, Point point) {
         return game.getGameMap().getSquareDataAt(point).getLevel();
     }
 

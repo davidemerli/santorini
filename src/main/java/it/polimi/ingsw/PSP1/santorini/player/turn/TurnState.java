@@ -6,6 +6,7 @@ import it.polimi.ingsw.PSP1.santorini.map.Worker;
 import it.polimi.ingsw.PSP1.santorini.player.Player;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TurnState {
@@ -30,9 +31,33 @@ public abstract class TurnState {
 
     public abstract boolean shouldShowInteraction();
 
-    public abstract List<Point> getBlockedMoves();
+    //TODO: check where these should be called from
+    public List<Point> getBlockedMoves() {
+        if (!player.isWorkerSelected()) {
+            return new ArrayList<>();
+        }
 
-    public abstract List<Point> getValidMoves();
+        List<Point> blockedMoves = new ArrayList<>();
+
+        game.getPlayerList().stream()
+                .filter(p -> p != player)
+                .forEach(p -> blockedMoves.addAll(
+                        p.getPower().getBlockedMoves(
+                                p.getSelectedWorker(),
+                                getValidMoves(),
+                                this,
+                                game)));
+
+        return blockedMoves;
+    }
+
+    public List<Point> getValidMoves() {
+        if (!player.isWorkerSelected()) {
+            return new ArrayList<>();
+        }
+
+        return player.getPower().getValidMoves(game);
+    }
 
     public void undo() {
         if (previousTurn == null) {

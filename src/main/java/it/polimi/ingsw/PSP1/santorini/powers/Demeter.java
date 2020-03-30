@@ -11,8 +11,9 @@ import java.awt.*;
 import java.util.List;
 
 public class Demeter extends Mortal {
-    boolean hasBuilt;
-    Point oldBuild;
+
+    private boolean hasBuilt;
+    private Point oldBuild;
 
     public Demeter(Player player) {
         super(player);
@@ -37,20 +38,23 @@ public class Demeter extends Mortal {
     @Override
     public TurnState onYourBuild(Worker worker, Point where, Game game) {
         TurnState next = super.onYourBuild(worker, where, game);
+
         if (!hasBuilt) {
             oldBuild = new Point(where);
             return new Build(player, game);
-        } else {
-            return next;
         }
+
+        return next;
     }
 
     @Override
     public List<Point> getValidMoves(Game game) {
         List<Point> list = super.getValidMoves(game);
+
         if (player.getTurnState() instanceof Build && hasBuilt) {
             list.remove(oldBuild);
         }
+
         return list;
     }
 }
