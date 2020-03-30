@@ -19,6 +19,7 @@ public class Atlas extends Mortal {
 
     @Override
     public void onBeginTurn(Game game) {
+        super.onBeginTurn(game);
         abilityToggled = false;
     }
 
