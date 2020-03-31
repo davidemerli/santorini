@@ -1,0 +1,354 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Map</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.map</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Map (it.polimi.ingsw.psp1.santorini.map)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Map</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.1%
+  </span>
+  <span class="absValue">
+    (73/ 81)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.map;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.*;
+<i>4</i>&nbsp;import java.util.ArrayList;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.NoSuchElementException;
+<i>7</i>&nbsp;import java.util.stream.Collectors;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class Map {
+<i>10</i>&nbsp;
+<b class="fc"><i>11</i>&nbsp;    private final int SIDE_LENGTH = 5;</b>
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    private final SquareData[][] blockMatrix;
+<i>14</i>&nbsp;    private final List&lt;Worker&gt; workersList;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * Main constructor for the Map class
+<i>18</i>&nbsp;     * Used to instantiate an empty map with no workers and every square set to level 0
+<i>19</i>&nbsp;     */
+<b class="fc"><i>20</i>&nbsp;    public Map() {</b>
+<b class="fc"><i>21</i>&nbsp;        this.blockMatrix = new SquareData[SIDE_LENGTH][SIDE_LENGTH];</b>
+<b class="fc"><i>22</i>&nbsp;        this.workersList = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>23</i>&nbsp;        initMatrix();</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Copy constructor
+<i>28</i>&nbsp;     * Used to instantiate a new &#39;step&#39; of the map, based on the previous one, since Map is immutable
+<i>29</i>&nbsp;     * Both workers and square data are copied.
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param oldMap where the current state is copied from.
+<i>32</i>&nbsp;     */
+<b class="fc"><i>33</i>&nbsp;    private Map(Map oldMap) {</b>
+<b class="fc"><i>34</i>&nbsp;        this.blockMatrix = oldMap.getMatrixCopy();</b>
+<b class="fc"><i>35</i>&nbsp;        this.workersList = oldMap.getWorkersCopy();</b>
+<b class="fc"><i>36</i>&nbsp;    }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * Used to add a worker on the map.
+<i>40</i>&nbsp;     * If there is already a worker or the worker&#39;s position is out of matrix, an exception is thrown.
+<i>41</i>&nbsp;     *
+<i>42</i>&nbsp;     * @param worker Contains worker&#39;s player and worker&#39;s position
+<i>43</i>&nbsp;     * @throws UnsupportedOperationException if there is already the same worker
+<i>44</i>&nbsp;     * @throws IndexOutOfBoundsException if worker is out of the map
+<i>45</i>&nbsp;     * @return new map with a new worker on it.
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    public Map addWorker(Worker worker) {
+<b class="fc"><i>48</i>&nbsp;        if (workersList.contains(worker)) {</b>
+<b class="fc"><i>49</i>&nbsp;            throw new UnsupportedOperationException(&quot;Given worker is already on the map&quot;);</b>
+<i>50</i>&nbsp;        }
+<i>51</i>&nbsp;
+<b class="fc"><i>52</i>&nbsp;        if (isPositionOutOfMap(worker.getPosition())) {</b>
+<b class="fc"><i>53</i>&nbsp;            throw new IndexOutOfBoundsException(&quot;Given worker has a position that is out of the ma[&quot;);</b>
+<i>54</i>&nbsp;        }
+<i>55</i>&nbsp;
+<b class="fc"><i>56</i>&nbsp;        Map newMap = new Map(this);</b>
+<b class="fc"><i>57</i>&nbsp;        newMap.workersList.add(worker);</b>
+<i>58</i>&nbsp;
+<b class="fc"><i>59</i>&nbsp;        return newMap;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * Used to remove a worker from map.
+<i>64</i>&nbsp;     * If there is not worker in the list, an exception is thrown.
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @param worker Contains worker&#39;s player and worker&#39;s position
+<i>67</i>&nbsp;     * @throws IllegalArgumentException if there is not worker on the map
+<i>68</i>&nbsp;     * @return new map without a worker on it
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    public Map removeWorker(Worker worker) {
+<b class="fc"><i>71</i>&nbsp;        if (!workersList.contains(worker)) {</b>
+<b class="fc"><i>72</i>&nbsp;            throw new IllegalArgumentException(&quot;Worker not found&quot;);</b>
+<i>73</i>&nbsp;        }
+<i>74</i>&nbsp;
+<b class="fc"><i>75</i>&nbsp;        Map newMap = new Map(this);</b>
+<i>76</i>&nbsp;
+<b class="fc"><i>77</i>&nbsp;        newMap.workersList.remove(worker);</b>
+<b class="fc"><i>78</i>&nbsp;        return newMap;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Used to move a worker on the map.
+<i>83</i>&nbsp;     * If there is already a worker or the worker&#39;s position is out of matrix or occupied by another worker,
+<i>84</i>&nbsp;     * an exception is thrown
+<i>85</i>&nbsp;     *
+<i>86</i>&nbsp;     * @param worker      Contains worker&#39;s player and worker&#39;s position
+<i>87</i>&nbsp;     * @param newPosition Contains the new worker&#39;s position
+<i>88</i>&nbsp;     * @throws IndexOutOfBoundsException if you try to move a worker off the map
+<i>89</i>&nbsp;     * @throws NoSuchElementException if there is not worker on the map
+<i>90</i>&nbsp;     * @throws IllegalArgumentException if you try to move a worker to a position occupied by another worker
+<i>91</i>&nbsp;     * @return new map with a worker in a different position
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public Map moveWorker(Worker worker, Point newPosition) {
+<b class="fc"><i>94</i>&nbsp;        if (isPositionOutOfMap(newPosition)) {</b>
+<b class="fc"><i>95</i>&nbsp;            throw new IndexOutOfBoundsException(&quot;Given position is out of map&quot;);</b>
+<i>96</i>&nbsp;        }
+<i>97</i>&nbsp;
+<b class="fc"><i>98</i>&nbsp;        if (!workersList.contains(worker)) {</b>
+<b class="fc"><i>99</i>&nbsp;            throw new NoSuchElementException(&quot;Given worker is not present on the map&quot;);</b>
+<i>100</i>&nbsp;        }
+<i>101</i>&nbsp;
+<b class="fc"><i>102</i>&nbsp;        if (workersList.stream().anyMatch(w -&gt; w.getPosition().equals(newPosition))) {</b>
+<b class="fc"><i>103</i>&nbsp;            throw new IllegalArgumentException(&quot;Given position is already occupied&quot;);</b>
+<i>104</i>&nbsp;        }
+<i>105</i>&nbsp;
+<b class="fc"><i>106</i>&nbsp;        Map newMap = new Map(this);</b>
+<i>107</i>&nbsp;
+<b class="fc"><i>108</i>&nbsp;        int index = newMap.workersList.indexOf(worker);</b>
+<b class="fc"><i>109</i>&nbsp;        Worker newWorker = new Worker(worker.getPlayer(), newPosition);</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;        newMap.workersList.set(index, newWorker);</b>
+<i>112</i>&nbsp;
+<b class="fc"><i>113</i>&nbsp;        return newMap;</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     * Used to raise the level of a given square by 1, building a block and eventually adding a dome
+<i>118</i>&nbsp;     * Exceptions made if the position given is out of the map or the player is building on square where the dome
+<i>119</i>&nbsp;     * is present
+<i>120</i>&nbsp;     *
+<i>121</i>&nbsp;     * @param position  coordinates of the square where the player is building
+<i>122</i>&nbsp;     * @param buildDome is true if the block built is a dome
+<i>123</i>&nbsp;     * @throws ArrayIndexOutOfBoundsException if ypu try to build off the map
+<i>124</i>&nbsp;     * @throws IllegalArgumentException if you try to build in a position occupied by a dome
+<i>125</i>&nbsp;     * @throws IllegalArgumentException if you try to build in a position occupied by another worker
+<i>126</i>&nbsp;     * @return the updated map
+<i>127</i>&nbsp;     */
+<i>128</i>&nbsp;    public Map buildBlock(Point position, boolean buildDome) {
+<b class="fc"><i>129</i>&nbsp;        if (isPositionOutOfMap(position)) {</b>
+<b class="fc"><i>130</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(&quot;Given position is out of map&quot;);</b>
+<i>131</i>&nbsp;        }
+<i>132</i>&nbsp;
+<b class="fc"><i>133</i>&nbsp;        Map newMap = new Map(this);</b>
+<b class="fc"><i>134</i>&nbsp;        SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];</b>
+<i>135</i>&nbsp;
+<b class="fc"><i>136</i>&nbsp;        if (oldSquareData.isDome()) {</b>
+<b class="fc"><i>137</i>&nbsp;            throw new IllegalArgumentException(&quot;Dome present in the square selected&quot;);</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;
+<b class="fc"><i>140</i>&nbsp;        if (isWorkerOn(position)) {</b>
+<b class="fc"><i>141</i>&nbsp;            throw new IllegalArgumentException(&quot;Given position occupied by a worker&quot;);</b>
+<i>142</i>&nbsp;        }
+<i>143</i>&nbsp;
+<b class="fc"><i>144</i>&nbsp;        boolean shouldBuildDome = buildDome || oldSquareData.getLevel() == 3;</b>
+<i>145</i>&nbsp;
+<b class="fc"><i>146</i>&nbsp;        SquareData newSquareData = new SquareData(oldSquareData.getLevel() + 1, shouldBuildDome);</b>
+<b class="fc"><i>147</i>&nbsp;        newMap.blockMatrix[position.x][position.y] = newSquareData;</b>
+<b class="fc"><i>148</i>&nbsp;        return newMap;</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    /**
+<i>152</i>&nbsp;     * Used to lower the level of a given square by 1, removing a block
+<i>153</i>&nbsp;     * Exceptions made if the position given is out of map or the player is lowering the level below 0
+<i>154</i>&nbsp;     *
+<i>155</i>&nbsp;     * @param position coordinates of the square where the player is removing
+<i>156</i>&nbsp;     * @throws ArrayIndexOutOfBoundsException if you try to remove a block off the map
+<i>157</i>&nbsp;     * @throws IllegalArgumentException if you try to remove a block occupied by another worker
+<i>158</i>&nbsp;     * @throws IllegalArgumentException if you try to remove a block that doesn&#39;t exist
+<i>159</i>&nbsp;     * @return the updated map
+<i>160</i>&nbsp;     */
+<i>161</i>&nbsp;    public Map removeBlock(Point position) {
+<b class="fc"><i>162</i>&nbsp;        if (isPositionOutOfMap(position)) {</b>
+<b class="fc"><i>163</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(&quot;Given position is out of map&quot;);</b>
+<i>164</i>&nbsp;        }
+<i>165</i>&nbsp;
+<b class="fc"><i>166</i>&nbsp;        if (isWorkerOn(position)) {</b>
+<b class="fc"><i>167</i>&nbsp;            throw new IllegalArgumentException(&quot;Given position occupied by a worker&quot;);</b>
+<i>168</i>&nbsp;        }
+<i>169</i>&nbsp;
+<b class="fc"><i>170</i>&nbsp;        Map newMap = new Map(this);</b>
+<b class="fc"><i>171</i>&nbsp;        SquareData oldSquareData = newMap.blockMatrix[position.x][position.y];</b>
+<i>172</i>&nbsp;
+<b class="fc"><i>173</i>&nbsp;        if (oldSquareData.getLevel() == 0) {</b>
+<b class="fc"><i>174</i>&nbsp;            throw new IllegalArgumentException(&quot;No blocks present in the square selected&quot;);</b>
+<i>175</i>&nbsp;        }
+<i>176</i>&nbsp;
+<b class="fc"><i>177</i>&nbsp;        SquareData newSquareData = new SquareData(oldSquareData.getLevel() - 1, false);</b>
+<b class="fc"><i>178</i>&nbsp;        newMap.blockMatrix[position.x][position.y] = newSquareData;</b>
+<b class="fc"><i>179</i>&nbsp;        return newMap;</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    /**
+<i>183</i>&nbsp;     * Checks if the position given is outside of the map matrix
+<i>184</i>&nbsp;     *
+<i>185</i>&nbsp;     * @param position the coordinates of the square
+<i>186</i>&nbsp;     * @return true if the square is outside the matrix
+<i>187</i>&nbsp;     */
+<i>188</i>&nbsp;    public boolean isPositionOutOfMap(Point position) {
+<b class="fc"><i>189</i>&nbsp;        return position.x &gt;= SIDE_LENGTH || position.y &gt;= SIDE_LENGTH || position.x &lt; 0 || position.y &lt; 0;</b>
+<i>190</i>&nbsp;    }
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;    /**
+<i>193</i>&nbsp;     * Instantiate a new ArrayList of cloned Workers, to keep everything immutable
+<i>194</i>&nbsp;     *
+<i>195</i>&nbsp;     * @return a perfect clone of the current array of Workers
+<i>196</i>&nbsp;     */
+<i>197</i>&nbsp;    private List&lt;Worker&gt; getWorkersCopy() {
+<b class="fc"><i>198</i>&nbsp;        return workersList.stream()</b>
+<b class="fc"><i>199</i>&nbsp;                .map(w -&gt; new Worker(w.getPlayer(), w.getPosition()))</b>
+<b class="fc"><i>200</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>201</i>&nbsp;    }
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    /**
+<i>204</i>&nbsp;     * Instantiate a new matrix of cloned Squares, to keep everything immutable
+<i>205</i>&nbsp;     *
+<i>206</i>&nbsp;     * @return a perfect clone of the current SquareData matrix
+<i>207</i>&nbsp;     */
+<i>208</i>&nbsp;    private SquareData[][] getMatrixCopy() {
+<b class="fc"><i>209</i>&nbsp;        SquareData[][] newMatrix = new SquareData[SIDE_LENGTH][SIDE_LENGTH];</b>
+<i>210</i>&nbsp;
+<b class="fc"><i>211</i>&nbsp;        for (int i = 0; i &lt; SIDE_LENGTH; i++) {</b>
+<b class="fc"><i>212</i>&nbsp;            for (int j = 0; j &lt; SIDE_LENGTH; j++) {</b>
+<b class="fc"><i>213</i>&nbsp;                SquareData squareToCopy = blockMatrix[i][j];</b>
+<i>214</i>&nbsp;
+<b class="fc"><i>215</i>&nbsp;                newMatrix[i][j] = new SquareData(squareToCopy.getLevel(), squareToCopy.isDome());</b>
+<i>216</i>&nbsp;            }
+<i>217</i>&nbsp;        }
+<i>218</i>&nbsp;
+<b class="fc"><i>219</i>&nbsp;        return newMatrix;</b>
+<i>220</i>&nbsp;    }
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;    /**
+<i>223</i>&nbsp;     * Initializes the square data matrix with all level 0 values
+<i>224</i>&nbsp;     */
+<i>225</i>&nbsp;    private void initMatrix() {
+<b class="fc"><i>226</i>&nbsp;        for (int i = 0; i &lt; SIDE_LENGTH; i++) {</b>
+<b class="fc"><i>227</i>&nbsp;            for (int j = 0; j &lt; SIDE_LENGTH; j++) {</b>
+<b class="fc"><i>228</i>&nbsp;                blockMatrix[i][j] = new SquareData(0, false);</b>
+<i>229</i>&nbsp;            }
+<i>230</i>&nbsp;        }
+<b class="fc"><i>231</i>&nbsp;    }</b>
+<i>232</i>&nbsp;
+<i>233</i>&nbsp;    public SquareData[][] getBlockMatrix() {
+<b class="fc"><i>234</i>&nbsp;        return blockMatrix;</b>
+<i>235</i>&nbsp;    }
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;    public List&lt;Worker&gt; getWorkersList() {
+<b class="fc"><i>238</i>&nbsp;        return workersList;</b>
+<i>239</i>&nbsp;    }
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    public boolean isWorkerOn(Point position) {
+<b class="fc"><i>242</i>&nbsp;        return workersList.stream().anyMatch(w -&gt; w.getPosition().equals(position));</b>
+<i>243</i>&nbsp;    }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    public SquareData getSquareDataAt(Point position) {
+<b class="nc"><i>246</i>&nbsp;        return blockMatrix[position.x][position.y];</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    /**
+<i>250</i>&nbsp;     * Gets the valid squares surrounding a given position
+<i>251</i>&nbsp;     *
+<i>252</i>&nbsp;     * @param point the position you need to get the neighbour blocks of
+<i>253</i>&nbsp;     * @throws ArrayIndexOutOfBoundsException if point is out of map
+<i>254</i>&nbsp;     * @return list of positions of valid surrounding squares
+<i>255</i>&nbsp;     */
+<i>256</i>&nbsp;    public List&lt;Point&gt; getNeighbors(Point point) {
+<b class="nc"><i>257</i>&nbsp;        if(isPositionOutOfMap(point)) {</b>
+<b class="nc"><i>258</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(&quot;Given point is not on map&quot;);</b>
+<i>259</i>&nbsp;        }
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;        List&lt;Point&gt; list = new ArrayList&lt;&gt;();</b>
+<i>262</i>&nbsp;
+<b class="nc"><i>263</i>&nbsp;        for (int i = Math.max(0, point.x - 1); i &lt; Math.min(SIDE_LENGTH, point.x + 1); i++) {</b>
+<b class="nc"><i>264</i>&nbsp;            for (int j = Math.max(0, point.y - 1); i &lt; Math.min(SIDE_LENGTH, point.y + 1); j++) {</b>
+<b class="nc"><i>265</i>&nbsp;                list.add(new Point(i, j));</b>
+<i>266</i>&nbsp;            }
+<i>267</i>&nbsp;        }
+<i>268</i>&nbsp;
+<b class="nc"><i>269</i>&nbsp;        return list;</b>
+<i>270</i>&nbsp;    }
+<i>271</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-31 13:36</div>
+</div>
+</body>
+</html>
