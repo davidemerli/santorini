@@ -18,6 +18,10 @@ public class Apollo extends Mortal {
         super(player);
     }
 
+    /**
+     * {@inheritDoc}
+     * Blocks occupied by enemy worker are included in valid moves
+     */
     @Override
     public List<Point> getValidMoves(Game game) {
         if (player.getTurnState() instanceof Build) {
@@ -44,6 +48,9 @@ public class Apollo extends Mortal {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * If worker moves on enemy worker, they are swapped.
+     */
     @Override
     public TurnState onYourMove(Worker worker, Point where, Game game) {
         Optional<Worker> optWorker = getWorkerOn(where, game);
@@ -61,6 +68,10 @@ public class Apollo extends Mortal {
         return super.onYourMove(worker, where, game);
     }
 
+    /**
+     * Check if there is a worker in the selected position
+     * @return optional containing the worker if he's present
+     */
     private Optional<Worker> getWorkerOn(Point position, Game game) {
         return game.getGameMap().getWorkersList().stream()
                 .filter(w -> w.getPosition().equals(position))
