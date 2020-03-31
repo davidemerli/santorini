@@ -7,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.player.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class TurnState {
@@ -23,15 +24,36 @@ public abstract class TurnState {
         this.previousMap = game.getGameMap();
     }
 
+    /**
+     * Prompted when a square is selected by the player
+     * @param position is the square the player is giving as a input
+     */
     public abstract void selectSquare(Point position);
 
+    /**
+     * Prompted when a worker is selected by the player
+     * @param worker is the worker the player is giving as a input
+     */
     public abstract void selectWorker(Worker worker);
 
+    /**
+     * Prompted when the player is using the power pressing the interaction button
+     */
     public abstract void toggleInteraction();
 
+    /**
+     * Checks if the button to press in order to activate/deactivate powers
+     * should be shown in the current state of the turn
+     * @return true if the player can activate/deactivate powers
+     */
     public abstract boolean shouldShowInteraction();
 
     //TODO: check where these should be called from
+
+    /**
+     * Checks what squares near the selected worker are unavailable for the current action
+     * @return the list of unavailable squares
+     */
     public List<Point> getBlockedMoves() {
         if (!player.isWorkerSelected()) {
             return new ArrayList<>();
@@ -51,14 +73,21 @@ public abstract class TurnState {
         return blockedMoves;
     }
 
+    /**
+     * Checks what squares near the selected worker are available for the current action
+     * @return the list of available squares
+     */
     public List<Point> getValidMoves() {
         if (!player.isWorkerSelected()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         return player.getPower().getValidMoves(game);
     }
 
+    /**
+     * Returns to the previous state of the map, deleting the last action made
+     */
     public void undo() {
         if (previousTurn == null) {
             throw new IllegalStateException("There is no previous move to return to");

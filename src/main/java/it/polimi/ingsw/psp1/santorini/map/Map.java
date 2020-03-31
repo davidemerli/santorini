@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Map {
 
-    private final int SIDE_LENGTH = 5;
+    public final int SIDE_LENGTH = 5;
 
     private final SquareData[][] blockMatrix;
     private final List<Worker> workersList;
@@ -267,5 +267,9 @@ public class Map {
         }
 
         return list;
+    }
+
+    public boolean isPerimeter (Point position) {
+        return position.x == 0 || position.y == 0 || position.x == SIDE_LENGTH || position.y == SIDE_LENGTH;
     }
 }
