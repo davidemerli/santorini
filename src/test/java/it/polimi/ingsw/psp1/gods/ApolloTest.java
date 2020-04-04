@@ -79,7 +79,7 @@ public class ApolloTest {
         player1.getPower().onYourMove(w1, w2.getPosition(), game);
 
         assertEquals(new Point(2, 2), w1.getPosition());
-        assertEquals(new Point(1,1), w2.getPosition());
+        assertEquals(new Point(1, 1), w2.getPosition());
     }
 
     @Test
