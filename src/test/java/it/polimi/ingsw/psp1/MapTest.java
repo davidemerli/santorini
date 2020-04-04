@@ -1,16 +1,8 @@
 package it.polimi.ingsw.psp1;
 
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
-import it.polimi.ingsw.psp1.santorini.model.map.SquareData;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Map;
 import org.junit.Before;
-import org.junit.Test;
-
-import java.awt.*;
-import java.util.NoSuchElementException;
-
-import static org.junit.Assert.*;
 
 public class MapTest {
 

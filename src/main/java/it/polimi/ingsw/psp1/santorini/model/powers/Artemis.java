@@ -68,6 +68,7 @@ public class Artemis extends Mortal {
 
     /**
      * {@inheritDoc}
+     * <p>
      * If the worker must make the first move and the ability toggled is activated you can move one more time
      * otherwise next state is build
      */
