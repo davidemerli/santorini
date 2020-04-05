@@ -12,6 +12,7 @@ public class EndTurn extends TurnState {
         game.getPlayerOpponents(player).forEach(p -> p.getPower().onEnemyEndTurn(game, player));
 
         player.setSelectedWorker(null);
+        player.unlockWorker();
     }
 
     @Override

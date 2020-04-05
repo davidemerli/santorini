@@ -20,38 +20,30 @@ public class Minotaur extends Mortal {
 
     @Override
     public List<Point> getValidMoves(Game game) {
-//        if (player.getTurnState() instanceof Build) {
+        if (player.getTurnState() instanceof Build) {
             return super.getValidMoves(game);
-//        }
+        }
 
-//        Point workerPosition = player.getSelectedWorker().getPosition();
-//        int currentLevel = getLevelAtPosition(game, workerPosition);
-//
-//        List<Point> neighbors = game.getMap().getNeighbors(workerPosition);
-//
-//        //TODO: try to simplify predicates
-//
-//        Predicate<Point> domeCheck = p -> !game.getMap().getSquareData(p).isDome();
-//
-//        Predicate<Point> canMoveTo = p -> getLevelAtPosition(game, p) <= currentLevel ||
-//                getLevelAtPosition(game, p) == currentLevel + 1;
-//
-//        Predicate<Point> workerCheck = p -> !game.getMap().isWorkerOn(p);
-//
-//        Predicate<Point> isEnemyWorker = p -> getWorkerOn(p, game).isPresent() &&
-//                getWorkerOn(p, game).get().getPlayer() != player;
-//
-//        Predicate<Point> isValidPosition = p -> {
-//            Point pushPos = getPushLocation(workerPosition, p);
-//
-//            return !game.getMap().isPositionOutOfMap(p) &&
-//                    !game.getMap().getSquareData(pushPos).isDome() &&
-//                    !game.getMap().isWorkerOn(pushPos);
-//        };
-//
-//        return neighbors.stream()
-//                .filter(domeCheck.and(canMoveTo).and(workerCheck.or(isEnemyWorker.and(isValidPosition))))
-//                .collect(Collectors.toList());
+        Point wPos = player.getSelectedWorker().getPosition();
+        List<Point> neighbors = game.getMap().getNeighbors(wPos);
+
+        Predicate<Point> enemyWorkerCheck = p -> {
+            Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
+            return optionalPlayer.isPresent() && optionalPlayer.get() != player;
+        };
+
+        Predicate<Point> isValidPosition = p -> {
+            Point pushPos = getPushLocation(wPos, p);
+
+            return !game.getMap().isPositionOutOfMap(p) && !game.getMap().hasDome(pushPos) &&
+                    game.getWorkerOn(pushPos).isEmpty();
+        };
+
+        return neighbors.stream()
+                .filter(getStandardDomeCheck(game))
+                .filter(getStandardMoveCheck(game))
+                .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck.and(isValidPosition)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -61,7 +53,7 @@ public class Minotaur extends Mortal {
         if (optWorker.isPresent()) {
             Point pushPos = getPushLocation(worker.getPosition(), where);
 
-            game.moveWorker(player, optWorker.get(), pushPos);
+            optWorker.get().setPosition(pushPos);
         }
 
         super.onYourMove(worker, where, game);
@@ -70,6 +62,6 @@ public class Minotaur extends Mortal {
     private Point getPushLocation(Point position, Point opponent) {
         int[] diff = new int[]{position.x - opponent.x, position.y - opponent.y};
 
-        return new Point(opponent.x + diff[0], opponent.y + diff[1]);
+        return new Point(opponent.x - diff[0], opponent.y - diff[1]);
     }
 }

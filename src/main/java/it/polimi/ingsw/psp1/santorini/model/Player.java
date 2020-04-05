@@ -102,6 +102,10 @@ public class Player {
         isWorkerLocked = true;
     }
 
+    public void unlockWorker() {
+        isWorkerLocked = false;
+    }
+
     public boolean hasWon() {
         return hasWon;
     }

@@ -18,6 +18,11 @@ public class Athena extends Mortal {
 
     private boolean hasMovedUpwards;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Resets the moving upwards status
+     */
     @Override
     public void onBeginTurn(Game game) {
         super.onBeginTurn(game);
@@ -25,6 +30,11 @@ public class Athena extends Mortal {
         hasMovedUpwards = false;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Checks if the new level is higher than previous level, if so blocks other players moves
+     */
     @Override
     public void onYourMove(Worker worker, Point where, Game game) {
         int oldLevel = game.getMap().getLevel(worker.getPosition());
@@ -37,6 +47,12 @@ public class Athena extends Mortal {
         super.onYourMove(worker, where, game);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the condition of moving upwards is true, blocks the moves for other players that would
+     * have made them go up
+     */
     @Override
     public List<Point> getBlockedMoves(Worker worker, TurnState playerState, Game game) {
         if(playerState instanceof Move && hasMovedUpwards) {

@@ -163,7 +163,11 @@ public class Map {
 
         for (int i = Math.max(0, point.x - 1); i <= Math.min(SIDE_LENGTH - 1, point.x + 1); i++) {
             for (int j = Math.max(0, point.y - 1); j <= Math.min(SIDE_LENGTH - 1, point.y + 1); j++) {
-                list.add(new Point(i, j));
+                Point p = new Point(i, j);
+                if (!p.equals(point)) {
+
+                    list.add(p);
+                }
             }
         }
 
