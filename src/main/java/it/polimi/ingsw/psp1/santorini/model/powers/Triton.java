@@ -23,7 +23,7 @@ public class Triton extends Mortal {
 
     @Override
     public boolean shouldShowInteraction() {
-        return firstMove;
+        return player.getTurnState() instanceof Move && firstMove;
     }
 
     @Override

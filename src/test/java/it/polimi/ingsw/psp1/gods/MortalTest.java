@@ -165,6 +165,7 @@ public class MortalTest {
 
         player1.addWorker(w1);
         player1.setSelectedWorker(w1);
+        player1.getPower().onYourMove(w1, new Point(1, 2), game);
 
         assertTrue(player1.getTurnState() instanceof Build);
         assertFalse(player1.getPower().getValidMoves(game).contains(position));
@@ -181,6 +182,7 @@ public class MortalTest {
         player1.addWorker(w3);
 
         player1.setSelectedWorker(w1);
+        player1.getPower().onYourMove(w1, new Point(2,1), game);
 
         assertTrue(player1.getTurnState() instanceof Build);
         assertFalse(player1.getPower().getValidMoves(game).contains(w2.getPosition()));

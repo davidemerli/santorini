@@ -3,6 +3,7 @@ package it.polimi.ingsw.psp1.gods;
 import it.polimi.ingsw.psp1.santorini.controller.game.Play;
 import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.controller.turn.Build;
+import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -15,8 +16,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class HephaestusTest {
 
@@ -51,23 +51,54 @@ public class HephaestusTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
+        player.getPower().onYourMove(w, new Point(1,2), game);
+
+        assertFalse(player.getTurnState().shouldShowInteraction());
+
         player.getPower().onYourBuild(w, firstBuild, game);
 
-        if(game.getMap().getLevel(firstBuild) < 3) {
-            assertTrue(player.getTurnState().getValidMoves().contains(firstBuild));
-        }
-
+        assertTrue(player.getTurnState().shouldShowInteraction());
+        assertTrue(player.getTurnState() instanceof Build);
+        assertEquals(1, player.getTurnState().getValidMoves().size());
+        assertTrue(player.getTurnState().getValidMoves().contains(firstBuild));
     }
 
     @Test
-    public void getValidMoves_normalBehaviour_shouldBuildOnPreviousPosition() {
+    public void onYourBuild_normalBehaviour_shouldNotRebuildIfDome() {
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(new Point(1, 1));
 
         player.addWorker(w);
         player.setSelectedWorker(w);
-        if (player.getTurnState() instanceof Build) {
-            assertEquals(player.getTurnState().getValidMoves().get(0), firstBuild);
+
+        for (int i = 0; i < 2; i++) {
+            game.getMap().buildBlock(firstBuild, false);
         }
+
+        player.getPower().onYourMove(w, new Point(1,2), game);
+        player.getPower().onYourBuild(w, firstBuild, game);
+
+        assertTrue(player.getTurnState() instanceof EndTurn);
+    }
+
+    @Test
+    public void onYourBuild_normalBehaviour_shouldEndAfterBuild() {
+        Point startPosition = new Point(1, 1);
+        Point firstBuild = new Point(2, 2);
+        Worker w = new Worker(startPosition);
+
+        player.addWorker(w);
+        player.setSelectedWorker(w);
+
+        player.getPower().onYourMove(w, new Point(2,1), game);
+        player.getPower().onYourBuild(w, firstBuild, game);
+
+        assertTrue(player.getTurnState().shouldShowInteraction());
+        assertTrue(player.getTurnState() instanceof Build);
+        assertTrue(player.getTurnState().getValidMoves().contains(firstBuild));
+
+        player.getTurnState().toggleInteraction();
+
+        assertTrue(player.getTurnState() instanceof EndTurn);
     }
 }

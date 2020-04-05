@@ -50,8 +50,9 @@ public class ZeusTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        if (player.getTurnState() instanceof Build) {
-            assertTrue(player.getTurnState().getValidMoves().contains(position));
-        }
+        player.getPower().onYourMove(w, new Point(2,2), game);
+
+        assertTrue(player.getTurnState() instanceof Build);
+        assertTrue(player.getTurnState().getValidMoves().contains(position));
     }
 }

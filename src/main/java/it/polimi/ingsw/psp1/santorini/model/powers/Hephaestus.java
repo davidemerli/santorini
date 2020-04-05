@@ -41,7 +41,7 @@ public class Hephaestus extends Mortal {
 
         if (!hasBuilt && game.getMap().getLevel(where) < 3) {
             oldBuild = new Point(where);
-
+            hasBuilt = true;
             player.setTurnState(new Build(player, game));
         }
     }

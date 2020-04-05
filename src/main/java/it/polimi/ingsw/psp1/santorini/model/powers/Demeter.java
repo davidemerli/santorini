@@ -41,7 +41,7 @@ public class Demeter extends Mortal {
 
     /**
      * {@inheritDoc}
-     * If the player press the interaction bottom, he ends the turn
+     * If the player press the interaction button, he ends the turn
      */
     @Override
     public void onToggleInteraction(Game game) {

@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.awt.*;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AtlasTest {
@@ -47,8 +48,14 @@ public class AtlasTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
+        assertFalse(player.getTurnState().shouldShowInteraction());
+
+        player.getPower().onYourMove(w, new Point(1, 2), game);
+
+        assertTrue(player.getTurnState().shouldShowInteraction());
+
+        player.getTurnState().toggleInteraction();
         player.getPower().onYourBuild(w, position, game);
-        game.getMap().buildBlock(position, true);
 
         assertTrue(game.getMap().hasDome(position));
     }
