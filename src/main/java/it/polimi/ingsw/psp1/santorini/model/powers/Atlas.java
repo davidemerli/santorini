@@ -34,7 +34,7 @@ public class Atlas extends Mortal {
      */
     @Override
     public boolean shouldShowInteraction() {
-        return player.getGameState() instanceof Build;
+        return player.getTurnState() instanceof Build;
     }
 
     /**

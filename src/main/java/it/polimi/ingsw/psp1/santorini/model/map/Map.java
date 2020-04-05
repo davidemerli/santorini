@@ -38,11 +38,11 @@ public class Map {
      * Used to raise the level of a given square by 1, building a block and eventually adding a dome
      *
      * @param position  coordinates of the square where the player is building
-     * @param buildDome whether the player is trying to build a dome
+     * @param forceDome whether the player is trying to build a dome on unnatural conditions
      * @throws ArrayIndexOutOfBoundsException if you try to build out of the map
      * @throws IllegalArgumentException       if you try to build in a position occupied by a dome
      */
-    public void buildBlock(Point position, boolean buildDome) {
+    public void buildBlock(Point position, boolean forceDome) {
         if (isPositionOutOfMap(position)) {
             throw new ArrayIndexOutOfBoundsException("Given position is out of map");
         }
@@ -51,7 +51,7 @@ public class Map {
             throw new IllegalArgumentException("Dome present in the square selected");
         }
 
-        boolean shouldBuildDome = buildDome || getLevel(position) == 3;
+        boolean shouldBuildDome = forceDome || getLevel(position) == 3;
 
         SquareData newSquareData = new SquareData(getLevel(position) + 1, shouldBuildDome);
         blockMatrix[position.x][position.y] = newSquareData;
