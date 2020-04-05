@@ -1,5 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
+import it.polimi.ingsw.psp1.santorini.controller.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 
@@ -13,6 +14,7 @@ public class Chronus extends Mortal {
     public void onBeginTurn(Game game) {
         if (customWinCondition(game)) {
             player.setWinner(true);
+            player.setTurnState(new Move(player, game));
         } else {
             super.onBeginTurn(game);
         }

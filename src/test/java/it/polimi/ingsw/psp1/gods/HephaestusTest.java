@@ -33,7 +33,7 @@ public class HephaestusTest {
         player.setPower(new Hephaestus(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After
@@ -51,7 +51,7 @@ public class HephaestusTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        player.getPower().onYourMove(w, new Point(1,2), game);
+        player.getPower().onYourMove(w, new Point(1, 2), game);
 
         assertFalse(player.getTurnState().shouldShowInteraction());
 
@@ -59,6 +59,7 @@ public class HephaestusTest {
 
         assertTrue(player.getTurnState().shouldShowInteraction());
         assertTrue(player.getTurnState() instanceof Build);
+
         assertEquals(1, player.getTurnState().getValidMoves().size());
         assertTrue(player.getTurnState().getValidMoves().contains(firstBuild));
     }
@@ -75,7 +76,7 @@ public class HephaestusTest {
             game.getMap().buildBlock(firstBuild, false);
         }
 
-        player.getPower().onYourMove(w, new Point(1,2), game);
+        player.getPower().onYourMove(w, new Point(1, 2), game);
         player.getPower().onYourBuild(w, firstBuild, game);
 
         assertTrue(player.getTurnState() instanceof EndTurn);
@@ -90,7 +91,7 @@ public class HephaestusTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        player.getPower().onYourMove(w, new Point(2,1), game);
+        player.getPower().onYourMove(w, new Point(2, 1), game);
         player.getPower().onYourBuild(w, firstBuild, game);
 
         assertTrue(player.getTurnState().shouldShowInteraction());

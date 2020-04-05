@@ -36,7 +36,7 @@ public class AthenaTest {
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
-        player1.setTurnState(new BeginTurn(player1, game));
+        player1.newTurn(game);
         player2.setGameState(new Play());
         player2.setTurnState(new EndTurn(player2, game));
     }

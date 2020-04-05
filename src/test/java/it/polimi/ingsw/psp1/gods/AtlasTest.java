@@ -30,7 +30,7 @@ public class AtlasTest {
         player.setPower(new Atlas(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After

@@ -2,11 +2,15 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.controller.game.Play;
 import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.controller.turn.Build;
+import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
+import it.polimi.ingsw.psp1.santorini.controller.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
+import it.polimi.ingsw.psp1.santorini.model.powers.Prometheus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,13 +33,13 @@ public class PrometheusTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
 
-        player1.setPower(new Apollo(player1));
+        player1.setPower(new Prometheus(player1));
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
-        player1.setTurnState(new BeginTurn(player1, game));
+        player1.newTurn(game);
         player2.setGameState(new Play());
-        player2.setTurnState(new BeginTurn(player1, game));
+        player2.setTurnState(new EndTurn(player2, game));
     }
 
     @After
@@ -49,48 +53,38 @@ public class PrometheusTest {
     }
 
     @Test
-    public void getValidMoves_normalBehaviour_shouldContainOtherWorkerPosition() {
-        Worker w1 = new Worker(new Point(1, 1));
-        Worker w2 = new Worker(new Point(2, 2));
-        Worker w3 = new Worker(new Point(1, 2));
+    public void onYourBuild_normalBehaviour_shouldEndBuild() {
+        Point position = new Point(1, 1);
+        Worker w1 = new Worker(position);
 
         player1.addWorker(w1);
-        player2.addWorker(w2);
-        player1.addWorker(w3);
-
         player1.setSelectedWorker(w1);
 
-        assertTrue(player1.getPower().getValidMoves(game).contains(w2.getPosition()));
+        assertTrue(player1.getTurnState().shouldShowInteraction());
 
-        assertFalse(player1.getPower().getValidMoves(game).contains(w3.getPosition()));
+        player1.getTurnState().toggleInteraction();
+
+        assertTrue(player1.getTurnState() instanceof Move);
     }
 
     @Test
-    public void onYourMove_normalBehaviour_shouldSwapWorkers() {
-        Worker w1 = new Worker(new Point(1, 1));
-        Worker w2 = new Worker(new Point(2, 2));
+    public void onYourBuild_normalBehaviour_shouldStopPlayerFromGoingUpIfBuilt() {
+        Point oldPosition = new Point(1, 1);
+        Point newPosition = new Point(2, 2);
+        Point blockedPosition = new Point(2, 1);
+        Worker w1 = new Worker(oldPosition);
 
         player1.addWorker(w1);
-        player2.addWorker(w2);
-
         player1.setSelectedWorker(w1);
 
-        player1.getPower().onYourMove(w1, w2.getPosition(), game);
+        assertTrue(player1.getTurnState().shouldShowInteraction());
 
-        assertEquals(new Point(2, 2), w1.getPosition());
-        assertEquals(new Point(1, 1), w2.getPosition());
-    }
+        game.getMap().buildBlock(blockedPosition, false);
 
-    @Test
-    public void getValidMoves_normalBehaviour_shouldNotContainOtherWorkerPosition() {
-        Worker w1 = new Worker(new Point(1, 1));
-        Worker w2 = new Worker(new Point(3, 3));
+        assertTrue(player1.getTurnState() instanceof Build);
+        player1.getPower().onYourBuild(w1, newPosition, game);
+        assertTrue(player1.getTurnState() instanceof Move);
 
-        player1.addWorker(w1);
-        player2.addWorker(w2);
-
-        player1.setSelectedWorker(w1);
-
-        assertFalse(player1.getPower().getValidMoves(game).contains(w2.getPosition()));
+        assertFalse(player1.getTurnState().getValidMoves().contains(blockedPosition));
     }
 }

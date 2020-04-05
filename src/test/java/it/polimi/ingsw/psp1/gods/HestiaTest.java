@@ -1,10 +1,7 @@
 package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.controller.game.Play;
-import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
-import it.polimi.ingsw.psp1.santorini.controller.turn.Build;
-import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
-import it.polimi.ingsw.psp1.santorini.controller.turn.TurnState;
+import it.polimi.ingsw.psp1.santorini.controller.turn.*;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -37,7 +34,7 @@ public class HestiaTest {
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
-        player1.setTurnState(new BeginTurn(player1, game));
+        player1.newTurn(game);
         player2.setGameState(new Play());
         player2.setTurnState(new EndTurn(player2, game));
     }
@@ -63,12 +60,32 @@ public class HestiaTest {
 
         player1.setSelectedWorker(w1);
 
-        player1.getPower().onYourMove( w1, newPosition, game);
+        player1.getPower().onYourMove(w1, newPosition, game);
         player1.getPower().onYourBuild(w1, oldPosition, game);
 
+        assertTrue(player1.getTurnState().shouldShowInteraction());
         assertTrue(player1.getTurnState() instanceof Build);
         assertTrue(player1.getPower().getValidMoves(game).stream()
                 .noneMatch(point -> game.getMap().isPerimeter(point)));
+    }
+
+    @Test
+    public void onYourBuild_normalBehaviour_shouldEndBuild() {
+        Point oldPosition = new Point(1, 1);
+        Point newPosition = new Point(2, 2);
+        Worker w1 = new Worker(oldPosition);
+
+        player1.addWorker(w1);
+        player1.setSelectedWorker(w1);
+
+        player1.getPower().onYourMove(w1, newPosition, game);
+        player1.getPower().onYourBuild(w1, oldPosition, game);
+
+        assertTrue(player1.getTurnState().shouldShowInteraction());
+
+        player1.getTurnState().toggleInteraction();
+
+        assertTrue(player1.getTurnState() instanceof EndTurn);
     }
 
 }

@@ -32,7 +32,7 @@ public class DemeterTest {
         player.setPower(new Demeter(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After
@@ -51,7 +51,7 @@ public class DemeterTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        player.getPower().onYourMove(w, new Point(2,1), game);
+        player.getPower().onYourMove(w, new Point(2, 1), game);
 
         assertFalse(player.getTurnState().shouldShowInteraction());
 
@@ -71,7 +71,7 @@ public class DemeterTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        player.getPower().onYourMove(w, new Point(2,1), game);
+        player.getPower().onYourMove(w, new Point(2, 1), game);
         player.getPower().onYourBuild(w, firstBuild, game);
 
         assertTrue(player.getTurnState().shouldShowInteraction());

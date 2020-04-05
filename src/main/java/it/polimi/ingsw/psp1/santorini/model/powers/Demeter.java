@@ -53,12 +53,15 @@ public class Demeter extends Mortal {
      */
     @Override
     public void onYourBuild(Worker worker, Point where, Game game) {
-        super.onYourBuild(worker, where, game);
+        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+        game.getMap().buildBlock(where, shouldBuildDome);
 
         if (!hasBuilt) {
             oldBuild = new Point(where);
             hasBuilt = true;
             player.setTurnState(new Build(player, game));
+        } else {
+            player.setTurnState(new EndTurn(player, game));
         }
     }
 

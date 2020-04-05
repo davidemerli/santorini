@@ -1,5 +1,6 @@
 package it.polimi.ingsw.psp1.gods;
 
+import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Map;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -34,9 +35,9 @@ public class ApolloTest {
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
-        player1.setTurnState(new BeginTurn(player1, game));
+        player1.newTurn(game);
         player2.setGameState(new Play());
-        player2.setTurnState(new BeginTurn(player2, game));
+        player2.setTurnState(new EndTurn(player2, game));
     }
 
     @After

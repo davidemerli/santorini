@@ -25,6 +25,7 @@ public class Artemis extends Mortal {
      */
     @Override
     public void onBeginTurn(Game game) {
+        super.onBeginTurn(game);
         hasMoved = false;
         oldPosition = null;
     }

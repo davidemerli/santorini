@@ -1,5 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
+import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
@@ -22,6 +23,7 @@ public class Prometheus extends Mortal {
 
     @Override
     public void onBeginTurn(Game game) {
+        //TODO: check if loose condition is to be called here
         firstBuild = true;
         player.setTurnState(new Build(player, game));
     }
@@ -39,7 +41,8 @@ public class Prometheus extends Mortal {
 
     @Override
     public void onYourBuild(Worker worker, Point where, Game game) {
-        super.onYourBuild(worker, where, game);
+        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+        game.getMap().buildBlock(where, shouldBuildDome);
 
         if (firstBuild) {
             player.lockWorker();
@@ -47,6 +50,8 @@ public class Prometheus extends Mortal {
             firstBuild = false;
             hasBuiltBeforeMoving = true;
             player.setTurnState(new Move(player, game));
+        } else {
+            player.setTurnState(new EndTurn(player, game));
         }
     }
 

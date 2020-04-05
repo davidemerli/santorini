@@ -28,6 +28,7 @@ public class ChronusTest {
         player.setPower(new Chronus(player));
 
         player.setGameState(new Play());
+        player.newTurn(game);
     }
 
     @After

@@ -18,6 +18,7 @@ public class Triton extends Mortal {
 
     @Override
     public void onBeginTurn(Game game) {
+        super.onBeginTurn(game);
         firstMove = false;
     }
 

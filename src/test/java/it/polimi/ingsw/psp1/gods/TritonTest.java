@@ -32,7 +32,7 @@ public class TritonTest {
         player.setPower(new Triton(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After

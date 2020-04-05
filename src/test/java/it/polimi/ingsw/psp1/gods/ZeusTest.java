@@ -32,7 +32,7 @@ public class ZeusTest {
         player.setPower(new Zeus(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After
@@ -50,7 +50,7 @@ public class ZeusTest {
         player.addWorker(w);
         player.setSelectedWorker(w);
 
-        player.getPower().onYourMove(w, new Point(2,2), game);
+        player.getPower().onYourMove(w, new Point(2, 2), game);
 
         assertTrue(player.getTurnState() instanceof Build);
         assertTrue(player.getTurnState().getValidMoves().contains(position));

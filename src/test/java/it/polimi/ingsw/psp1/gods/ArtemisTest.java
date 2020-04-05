@@ -32,7 +32,7 @@ public class ArtemisTest {
         player.setPower(new Artemis(player));
 
         player.setGameState(new Play());
-        player.setTurnState(new BeginTurn(player, game));
+        player.newTurn(game);
     }
 
     @After
