@@ -1,12 +1,14 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.controller.game.Play;
 import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
+import it.polimi.ingsw.psp1.santorini.model.Game;
+import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Map;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
+import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import org.junit.After;
 import org.junit.Before;
@@ -16,7 +18,7 @@ import java.awt.*;
 
 import static org.junit.Assert.*;
 
-public class ApolloTest {
+public class AthenaTest {
 
     private Game game;
     private Player player1, player2;
@@ -30,13 +32,13 @@ public class ApolloTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
 
-        player1.setPower(new Apollo(player1));
+        player1.setPower(new Athena(player1));
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
         player1.setTurnState(new BeginTurn(player1, game));
         player2.setGameState(new Play());
-        player2.setTurnState(new BeginTurn(player2, game));
+        player2.setTurnState(new EndTurn(player2, game));
     }
 
     @After
@@ -50,48 +52,30 @@ public class ApolloTest {
     }
 
     @Test
-    public void getValidMoves_normalBehaviour_shouldContainOtherWorkerPosition() {
-        Worker w1 = new Worker(new Point(1, 1));
-        Worker w2 = new Worker(new Point(2, 2));
-        Worker w3 = new Worker(new Point(1, 2));
-
-        player1.addWorker(w1);
-        player2.addWorker(w2);
-        player1.addWorker(w3);
-
-        player1.setSelectedWorker(w1);
-
-        assertTrue(player1.getPower().getValidMoves(game).contains(w2.getPosition()));
-
-        assertFalse(player1.getPower().getValidMoves(game).contains(w3.getPosition()));
-    }
-
-    @Test
     public void onYourMove_normalBehaviour_shouldSwapWorkers() {
+        Point newPosition = new Point(0, 0);
+        Point blockedPosition = new Point(2, 3);
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
 
-        player1.addWorker(w1);
-        player2.addWorker(w2);
-
-        player1.setSelectedWorker(w1);
-
-        player1.getPower().onYourMove(w1, w2.getPosition(), game);
-
-        assertEquals(new Point(2, 2), w1.getPosition());
-        assertEquals(new Point(1, 1), w2.getPosition());
-    }
-
-    @Test
-    public void getValidMoves_normalBehaviour_shouldNotContainOtherWorkerPosition() {
-        Worker w1 = new Worker(new Point(1, 1));
-        Worker w2 = new Worker(new Point(3, 3));
+        game.getMap().buildBlock(newPosition, false);
+        game.getMap().buildBlock(blockedPosition, false);
 
         player1.addWorker(w1);
         player2.addWorker(w2);
 
         player1.setSelectedWorker(w1);
 
-        assertFalse(player1.getPower().getValidMoves(game).contains(w2.getPosition()));
+        player1.getPower().onYourMove(w1, newPosition, game);
+        player1.getPower().onYourBuild(w1, new Point(0, 1), game);
+
+        assertTrue(player1.getTurnState() instanceof EndTurn);
+
+        player2.newTurn(game);
+        player2.setSelectedWorker(w2);
+
+        assertTrue(player2.getTurnState().getBlockedMoves().contains(blockedPosition));
     }
 }
+
+

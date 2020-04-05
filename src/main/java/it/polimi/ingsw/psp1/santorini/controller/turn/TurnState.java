@@ -73,9 +73,8 @@ public abstract class TurnState {
 
         List<Point> blockedMoves = new ArrayList<>();
 
-        game.getPlayerList().stream()
-                .filter(p -> p != player)
-                .forEach(p -> blockedMoves.addAll(p.getPower().getBlockedMoves(p.getSelectedWorker(),
+        game.getPlayerOpponents(player)
+                .forEach(p -> blockedMoves.addAll(p.getPower().getBlockedMoves(player.getSelectedWorker(),
                         this, game)));
 
         return blockedMoves;

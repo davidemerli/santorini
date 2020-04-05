@@ -1,5 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
+import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.controller.game.GameState;
 import it.polimi.ingsw.psp1.santorini.controller.turn.TurnState;
@@ -47,6 +48,10 @@ public class Player {
         }
 
         workerList.remove(worker);
+    }
+
+    public void newTurn(Game game) {
+        new BeginTurn(this, game);
     }
 
     public List<Worker> getWorkers() {

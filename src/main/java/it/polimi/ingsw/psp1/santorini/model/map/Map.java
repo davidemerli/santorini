@@ -125,7 +125,7 @@ public class Map {
      * @return true if the square is on the perimeter
      */
     public boolean isPerimeter(Point position) {
-        return position.x == 0 || position.y == 0 || position.x == SIDE_LENGTH || position.y == SIDE_LENGTH;
+        return position.x == 0 || position.y == 0 || position.x == SIDE_LENGTH - 1 || position.y == SIDE_LENGTH - 1;
     }
 
     /**

@@ -40,6 +40,7 @@ public class Hestia extends Mortal {
 
         if (!hasBuilt) {
             player.setTurnState(new Build(player, game));
+            hasBuilt = true;
         }
     }
 

@@ -33,12 +33,13 @@ public class Mortal implements Power {
     public void onBeginTurn(Game game) {
         player.setTurnState(new Move(player, game));
 
-        List<Point> validMoves = player.getTurnState().getValidMoves();
-        List<Point> blockedMoves = player.getTurnState().getBlockedMoves();
+        //TODO: check both workers
+        //List<Point> validMoves = player.getTurnState().getValidMoves();
+        //List<Point> blockedMoves = player.getTurnState().getBlockedMoves();
 
-        if (validMoves.size() == 0 || blockedMoves.containsAll(validMoves)) {
-            player.setLost(true);
-        }
+        // if (validMoves.size() == 0 || blockedMoves.containsAll(validMoves)) {
+        //    player.setLost(true);
+        //}
     }
 
     /**

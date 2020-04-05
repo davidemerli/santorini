@@ -1,11 +1,10 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.controller.game.Play;
 import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.Game;
+import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import org.junit.After;
@@ -16,7 +15,7 @@ import java.awt.*;
 
 import static org.junit.Assert.*;
 
-public class ApolloTest {
+public class PrometheusTest {
 
     private Game game;
     private Player player1, player2;
@@ -36,7 +35,7 @@ public class ApolloTest {
         player1.setGameState(new Play());
         player1.setTurnState(new BeginTurn(player1, game));
         player2.setGameState(new Play());
-        player2.setTurnState(new BeginTurn(player2, game));
+        player2.setTurnState(new BeginTurn(player1, game));
     }
 
     @After
