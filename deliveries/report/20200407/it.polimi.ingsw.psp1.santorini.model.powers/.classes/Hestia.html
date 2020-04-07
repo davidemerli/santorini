@@ -1,0 +1,145 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Hestia</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.powers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Hestia (it.polimi.ingsw.psp1.santorini.model.powers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Hestia</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.5%
+  </span>
+  <span class="absValue">
+    (19/ 21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.powers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.controller.turn.Build;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.awt.*;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.stream.Collectors;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;public class Hestia extends Mortal {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private boolean hasBuilt;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    public Hestia(Player player) {
+<b class="fc"><i>18</i>&nbsp;        super(player);</b>
+<b class="fc"><i>19</i>&nbsp;    }</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public void onBeginTurn(Game game) {
+<b class="fc"><i>23</i>&nbsp;        super.onBeginTurn(game);</b>
+<b class="fc"><i>24</i>&nbsp;        hasBuilt = false;</b>
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @Override
+<i>28</i>&nbsp;    public boolean shouldShowInteraction() {
+<b class="fc"><i>29</i>&nbsp;        return hasBuilt;</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public void onToggleInteraction(Game game) {
+<b class="fc"><i>34</i>&nbsp;        player.setTurnState(new EndTurn(player, game));</b>
+<b class="fc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public void onYourBuild(Worker worker, Point where, Game game) {
+<b class="fc"><i>39</i>&nbsp;        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;</b>
+<b class="fc"><i>40</i>&nbsp;        game.getMap().buildBlock(where, shouldBuildDome);</b>
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;        if (!hasBuilt) {</b>
+<b class="fc"><i>43</i>&nbsp;            player.setTurnState(new Build(player, game));</b>
+<b class="fc"><i>44</i>&nbsp;            hasBuilt = true;</b>
+<i>45</i>&nbsp;        } else {
+<b class="nc"><i>46</i>&nbsp;            player.setTurnState(new EndTurn(player, game));</b>
+<i>47</i>&nbsp;        }
+<b class="fc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public List&lt;Point&gt; getValidMoves(Game game) {
+<b class="fc"><i>52</i>&nbsp;        List&lt;Point&gt; list = super.getValidMoves(game);</b>
+<i>53</i>&nbsp;
+<b class="fc"><i>54</i>&nbsp;        if (player.getTurnState() instanceof Build &amp;&amp; hasBuilt) {</b>
+<b class="fc"><i>55</i>&nbsp;            return list.stream()</b>
+<b class="fc"><i>56</i>&nbsp;                    .filter(point -&gt; !game.getMap().isPerimeter(point))</b>
+<b class="fc"><i>57</i>&nbsp;                    .collect(Collectors.toList());</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        return list;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-06 18:53</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Power</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.powers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Power (it.polimi.ingsw.psp1.santorini.model.powers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Power</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.powers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.controller.turn.TurnState;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.awt.*;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public interface Power {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * Called on the beginning of own turn
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * @param game current game
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    void onBeginTurn(Game game);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * Called on the beginning of enemy turn
+<i>22</i>&nbsp;     *
+<i>23</i>&nbsp;     * @param game current game
+<i>24</i>&nbsp;     * @param player enemy player
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    void onEnemyBeginTurn(Game game, Player player);
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * Called when you want to set the final state
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param game current game
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    void onEndTurn(Game game);
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Called on the end of enemy turn
+<i>37</i>&nbsp;     *
+<i>38</i>&nbsp;     * @param game current game
+<i>39</i>&nbsp;     * @param player enemy player
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    void onEnemyEndTurn(Game game, Player player);
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Called after input from the view that asks for a build on given position
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param worker current selected worker
+<i>47</i>&nbsp;     * @param where point where you want to build
+<i>48</i>&nbsp;     * @param game   current game
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    void onYourBuild(Worker worker, Point where, Game game);
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Called after input from the view that asks for a move on given position
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @param worker current selected worker
+<i>56</i>&nbsp;     * @param where  point where you want to move
+<i>57</i>&nbsp;     * @param game   current game
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    void onYourMove(Worker worker, Point where, Game game);
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * Called before the enemy build on the given position
+<i>63</i>&nbsp;     *
+<i>64</i>&nbsp;     * @param player enemy player
+<i>65</i>&nbsp;     * @param worker enemy worker
+<i>66</i>&nbsp;     * @param where next position
+<i>67</i>&nbsp;     * @param game current game
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    void onOpponentsBuild(Player player, Worker worker, Point where, Game game);
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Called before the move build on the given position
+<i>73</i>&nbsp;     *
+<i>74</i>&nbsp;     * @param player enemy player
+<i>75</i>&nbsp;     * @param where next position
+<i>76</i>&nbsp;     * @param game current game
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    void onOpponentsMove(Player player, Point where, Game game);
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /**
+<i>81</i>&nbsp;     * Called when the player interacts with custom bottom on the UI
+<i>82</i>&nbsp;     *
+<i>83</i>&nbsp;     * @param game current game
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    void onToggleInteraction(Game game);
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Called when the player decides to show the bottom for interaction or not
+<i>89</i>&nbsp;     *
+<i>90</i>&nbsp;     * @return true if the GUI needs to enable the bottom for interaction
+<i>91</i>&nbsp;     */
+<i>92</i>&nbsp;    boolean shouldShowInteraction();
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /**
+<i>95</i>&nbsp;     * Gets the list of unavailable moves for the enemy worker
+<i>96</i>&nbsp;     *
+<i>97</i>&nbsp;     * @param worker current selected worker
+<i>98</i>&nbsp;     * @param playerState current player status
+<i>99</i>&nbsp;     * @param game current game
+<i>100</i>&nbsp;     * @return list of blocked moves
+<i>101</i>&nbsp;     */
+<i>102</i>&nbsp;    List&lt;Point&gt; getBlockedMoves(Worker worker, TurnState playerState, Game game);
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    /**
+<i>105</i>&nbsp;     * Called when you want to list all the valid moves that a worker can make
+<i>106</i>&nbsp;     *
+<i>107</i>&nbsp;     * @param game current game
+<i>108</i>&nbsp;     * @return list of valid moves
+<i>109</i>&nbsp;     */
+<i>110</i>&nbsp;    List&lt;Point&gt; getValidMoves(Game game);
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-06 18:53</div>
+</div>
+</body>
+</html>

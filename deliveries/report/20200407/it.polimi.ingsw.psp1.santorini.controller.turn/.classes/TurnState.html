@@ -1,0 +1,191 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TurnState</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.controller.turn</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TurnState (it.polimi.ingsw.psp1.santorini.controller.turn)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TurnState</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (3/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56.5%
+  </span>
+  <span class="absValue">
+    (13/ 23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.controller.turn;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Map;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.awt.*;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.Collections;
+<i>11</i>&nbsp;import java.util.List;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;public abstract class TurnState {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    protected Player player;
+<i>16</i>&nbsp;    protected Game game;
+<i>17</i>&nbsp;    protected TurnState previousTurn;
+<i>18</i>&nbsp;    protected Map previousMap;
+<i>19</i>&nbsp;
+<b class="fc"><i>20</i>&nbsp;    public TurnState(Player player, Game game) {</b>
+<b class="fc"><i>21</i>&nbsp;        this.player = player;</b>
+<b class="fc"><i>22</i>&nbsp;        this.game = game;</b>
+<b class="fc"><i>23</i>&nbsp;        this.previousTurn = player.getTurnState();</b>
+<b class="fc"><i>24</i>&nbsp;        this.previousMap = game.getMap().copy();</b>
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Called when a square is selected by the player
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @param position of the selected square
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public void selectSquare(Point position) {
+<b class="nc"><i>33</i>&nbsp;        throw new UnsupportedOperationException(&quot;Not permitted in this state&quot;);</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Called when a worker is selected by the player
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @param worker selected by the player
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public void selectWorker(Worker worker) {
+<b class="nc"><i>42</i>&nbsp;        throw new UnsupportedOperationException(&quot;Not permitted in this state&quot;);</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Checks if the custom interaction button should be shown in the current state of the turn
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @return true if the player can activate/deactivate powers
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    public abstract boolean shouldShowInteraction();
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Called every time the player clicks on a special button that&#39;s customized
+<i>54</i>&nbsp;     * based on the behaviour of the player current power. &lt;br&gt;
+<i>55</i>&nbsp;     * &lt;p&gt;
+<i>56</i>&nbsp;     * For example, if a player has the possibility to build another time in the turn,
+<i>57</i>&nbsp;     * the button allows him to end the turn instead. &lt;br&gt;
+<i>58</i>&nbsp;     * &lt;p&gt;
+<i>59</i>&nbsp;     * Every power is handled differently but uses the same button
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public void toggleInteraction() {
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Checks what squares near the selected worker are unavailable for the current action
+<i>66</i>&nbsp;     *
+<i>67</i>&nbsp;     * @return the list of unavailable squares
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public List&lt;Point&gt; getBlockedMoves() {
+<b class="fc"><i>70</i>&nbsp;        if (!player.isWorkerSelected()) {</b>
+<b class="nc"><i>71</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;
+<b class="fc"><i>74</i>&nbsp;        List&lt;Point&gt; blockedMoves = new ArrayList&lt;&gt;();</b>
+<i>75</i>&nbsp;
+<b class="fc"><i>76</i>&nbsp;        game.getPlayerOpponents(player)</b>
+<b class="fc"><i>77</i>&nbsp;                .forEach(p -&gt; blockedMoves.addAll(p.getPower().getBlockedMoves(player.getSelectedWorker(),</b>
+<i>78</i>&nbsp;                        this, game)));
+<i>79</i>&nbsp;
+<b class="fc"><i>80</i>&nbsp;        return blockedMoves;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Checks what squares near the selected worker are available for the current action
+<i>85</i>&nbsp;     *
+<i>86</i>&nbsp;     * @return the list of available squares
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public List&lt;Point&gt; getValidMoves() {
+<b class="fc"><i>89</i>&nbsp;        if (!player.isWorkerSelected()) {</b>
+<b class="nc"><i>90</i>&nbsp;            return Collections.emptyList();</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;
+<b class="fc"><i>93</i>&nbsp;        return player.getPower().getValidMoves(game);</b>
+<i>94</i>&nbsp;    }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    /**
+<i>97</i>&nbsp;     * Returns to the previous state of the map, deleting the last action made
+<i>98</i>&nbsp;     */
+<i>99</i>&nbsp;    public void undo() {
+<i>100</i>&nbsp;        //TODO: copy and restore worker positions
+<b class="nc"><i>101</i>&nbsp;        if (previousTurn == null) {</b>
+<b class="nc"><i>102</i>&nbsp;            throw new IllegalStateException(&quot;There is no previous move to return to&quot;);</b>
+<i>103</i>&nbsp;        }
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        game.setMap(previousMap);</b>
+<b class="nc"><i>106</i>&nbsp;        player.setTurnState(previousTurn);</b>
+<b class="nc"><i>107</i>&nbsp;    }</b>
+<i>108</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-06 18:53</div>
+</div>
+</body>
+</html>
