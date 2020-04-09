@@ -1,9 +1,9 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
-import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-import it.polimi.ingsw.psp1.santorini.controller.game.GameState;
-import it.polimi.ingsw.psp1.santorini.controller.turn.TurnState;
+import it.polimi.ingsw.psp1.santorini.model.game.GameState;
+import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
 import java.util.ArrayList;

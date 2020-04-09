@@ -1,6 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
-import it.polimi.ingsw.psp1.santorini.controller.turn.Move;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 

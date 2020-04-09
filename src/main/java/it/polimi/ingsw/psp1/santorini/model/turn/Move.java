@@ -1,10 +1,11 @@
-package it.polimi.ingsw.psp1.santorini.controller.turn;
+package it.polimi.ingsw.psp1.santorini.model.turn;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 
 import java.awt.*;
+import java.util.NoSuchElementException;
 
 public class Move extends TurnState {
 
@@ -35,6 +36,10 @@ public class Move extends TurnState {
 
     @Override
     public void selectWorker(Worker worker) {
+        if (!player.getWorkers().contains(worker)) {
+            throw new NoSuchElementException("Player does not own this worker");
+        }
+
         if (player.isWorkerLocked()) {
             throw new UnsupportedOperationException("Worker is locked from previous turn");
         }

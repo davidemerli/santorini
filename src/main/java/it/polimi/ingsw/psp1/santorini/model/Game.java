@@ -3,22 +3,41 @@ package it.polimi.ingsw.psp1.santorini.model;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.model.map.Map;
+import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
+import it.polimi.ingsw.psp1.santorini.view.View;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Game {
 
     private final List<Power> availableGodList;
     private final List<Player> playerList;
+
+    private final Set<ModelObserver> observers;
+
     private Map map;
 
     public Game() {
         this.availableGodList = new ArrayList<>();
         this.playerList = new ArrayList<>();
+        this.observers = new HashSet<>();
         this.map = new Map();
+    }
+
+    public void addObserver(View view) {
+        observers.add(view);
+    }
+
+    public void removeObserver(View view) {
+        observers.remove(view);
+    }
+
+    public void notifyObservers(Consumer<ModelObserver> lambda) {
+        observers.forEach(lambda);
     }
 
     public void addPlayer(Player player) {

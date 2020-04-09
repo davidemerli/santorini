@@ -1,4 +1,4 @@
-package it.polimi.ingsw.psp1.santorini.controller.turn;
+package it.polimi.ingsw.psp1.santorini.model.turn;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;

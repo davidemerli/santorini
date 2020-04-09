@@ -1,12 +1,10 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.controller.turn.EndTurn;
+import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.controller.game.Play;
-import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import org.junit.After;

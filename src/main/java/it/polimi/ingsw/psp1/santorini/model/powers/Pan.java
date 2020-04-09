@@ -3,7 +3,6 @@ package it.polimi.ingsw.psp1.santorini.model.powers;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.controller.turn.TurnState;
 
 import java.awt.*;
 

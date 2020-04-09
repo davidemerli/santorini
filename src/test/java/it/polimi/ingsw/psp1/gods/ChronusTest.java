@@ -1,7 +1,7 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.controller.game.Play;
-import it.polimi.ingsw.psp1.santorini.controller.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.game.Play;
+import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.powers.Chronus;

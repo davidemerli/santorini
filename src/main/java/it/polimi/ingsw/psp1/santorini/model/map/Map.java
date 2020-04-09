@@ -62,7 +62,6 @@ public class Map {
      *
      * @param position coordinates of the square where the player is removing
      * @throws ArrayIndexOutOfBoundsException if you try to remove a block out of the map
-     * @throws IllegalArgumentException       if you try to remove a block occupied by another worker
      * @throws IllegalArgumentException       if you try to remove a block that doesn't exist
      */
     public void removeBlock(Point position) {
