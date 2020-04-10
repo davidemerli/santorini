@@ -1,20 +1,19 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
-import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
+import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class AthenaTest {
 
@@ -30,8 +29,8 @@ public class AthenaTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
 
-        player1.setPower(new Athena(player1));
-        player2.setPower(new Mortal(player2));
+        player1.setPower(new Athena());
+        player2.setPower(new Mortal());
 
         player1.setGameState(new Play());
         player2.setGameState(new Play());
