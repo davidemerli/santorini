@@ -20,42 +20,49 @@ public class Hephaestus extends Mortal {
     }
 
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        oldBuild = null;
-        hasBuilt = false;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if(player.equals(this.player)) {
+            oldBuild = null;
+            hasBuilt = false;
+        }
     }
 
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Game game) {
         return hasBuilt;
     }
 
     @Override
     public void onToggleInteraction(Game game) {
-        player.setTurnState(new EndTurn(player, game));
+        game.setTurnState(new EndTurn(game));
     }
 
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-        game.getMap().buildBlock(where, shouldBuildDome);
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if(player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+            game.getMap().buildBlock(where, shouldBuildDome);
 
-        if (!hasBuilt && game.getMap().getLevel(where) < 3) {
-            oldBuild = new Point(where);
-            hasBuilt = true;
-            player.setTurnState(new Build(player, game));
-        } else  {
-            player.setTurnState(new EndTurn(player, game));
+            if (!hasBuilt && game.getMap().getLevel(where) < 3) {
+                oldBuild = new Point(where);
+                hasBuilt = true;
+                game.setTurnState(new Build(game));
+            } else  {
+                game.setTurnState(new EndTurn(game));
+            }
+        } else {
+            super.onBuild(player, worker, where, game);
         }
     }
 
     @Override
-    public List<Point> getValidMoves(Game game) {
-        if (player.getTurnState() instanceof Build && hasBuilt) {
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        if (game.getTurnState() instanceof Build && hasBuilt) {
             return Collections.singletonList(oldBuild);
         }
 
-        return super.getValidMoves(game);
+        return super.getValidMoves(worker, game);
     }
 }

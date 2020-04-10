@@ -2,7 +2,6 @@ package it.polimi.ingsw.psp1;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import org.junit.After;
 import org.junit.Before;

@@ -1,16 +1,18 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
-import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
+import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,27 +32,24 @@ public class Mortal implements Power {
      * If selected worker cannot make valid moves or all the moves are blocked, lose condition is set true
      */
     @Override
-    public void onBeginTurn(Game game) {
-        player.setTurnState(new Move(player, game));
+    public void onBeginTurn(Player player, Game game) {
+        if (player.equals(this.player)) {
+            game.setTurnState(new Move(game));
 
-        //TODO: check both workers
-        //List<Point> validMoves = player.getTurnState().getValidMoves();
-        //List<Point> blockedMoves = player.getTurnState().getBlockedMoves();
-
-        // if (validMoves.size() == 0 || blockedMoves.containsAll(validMoves)) {
-        //    player.setLost(true);
-        //}
+            if (player.getWorkers().stream().allMatch(noValidMoves(game))) {
+                player.setLost(true);
+            }
+        }
     }
 
     /**
-     * Called on the beginning of enemy turn
+     * Called upon finish turn
      *
+     * @param player that is ending his turn
      * @param game   current game
-     * @param player enemy player
      */
     @Override
-    public void onEnemyBeginTurn(Game game, Player player) {
-
+    public void onEndTurn(Player player, Game game) {
     }
 
     /**
@@ -59,12 +58,14 @@ public class Mortal implements Power {
      * Checks if you have to build a dome or not in the selected position
      */
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
 
-        game.getMap().buildBlock(where, shouldBuildDome);
+            game.getMap().buildBlock(where, shouldBuildDome);
 
-        player.setTurnState(new EndTurn(player, game));
+            game.setTurnState(new EndTurn(game));
+        }
     }
 
     /**
@@ -74,19 +75,21 @@ public class Mortal implements Power {
      * Locks the chosen worker for the next TurnState
      */
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        int oldLevel = game.getMap().getLevel(worker.getPosition());
-        int newLevel = game.getMap().getLevel(where);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            int oldLevel = game.getMap().getLevel(worker.getPosition());
+            int newLevel = game.getMap().getLevel(where);
 
-        game.moveWorker(player, worker, where);
+            game.moveWorker(player, worker, where);
 
-        if (newLevel == 3 && oldLevel == 2) {
-            player.setWinner(true);
+            if (newLevel == 3 && oldLevel == 2) {
+                player.setWinner(true);
+            }
+
+            player.lockWorker();
+
+            game.setTurnState(new Build(game));
         }
-
-        player.lockWorker();
-
-        player.setTurnState(new Build(player, game));
     }
 
     /**
@@ -96,7 +99,7 @@ public class Mortal implements Power {
      * @return boolean is set false, so the bottom is not shown
      */
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Game game) {
         return false;
     }
 
@@ -107,7 +110,7 @@ public class Mortal implements Power {
      * All moves are allowed
      */
     @Override
-    public List<Point> getBlockedMoves(Worker worker, TurnState playerState, Game game) {
+    public List<Point> getBlockedMoves(Player player, Worker worker, Game game) {
         return Collections.emptyList();
     }
 
@@ -124,54 +127,35 @@ public class Mortal implements Power {
      * - positions with workers on them
      */
     @Override
-    public List<Point> getValidMoves(Game game) {
-        /* getSelectedWorker is always != null */
-        Point wPos = player.getSelectedWorker().getPosition();
-        List<Point> neighbors = game.getMap().getNeighbors(wPos);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        List<Point> neighbors = game.getMap().getNeighbors(worker.getPosition());
 
-        if (player.getTurnState() instanceof Move) {
+        if (game.getTurnState() instanceof Move) {
             return neighbors.stream()
                     .filter(getStandardDomeCheck(game))
-                    .filter(getStandardMoveCheck(game))
+                    .filter(getStandardMoveCheck(worker, game))
                     .filter(getStandardWorkerCheck(game))
                     .collect(Collectors.toList());
-        } else if (player.getTurnState() instanceof Build) {
+        } else if (game.getTurnState() instanceof Build) {
             return neighbors.stream()
                     .filter(getStandardDomeCheck(game))
                     .filter(getStandardWorkerCheck(game))
                     .collect(Collectors.toList());
+        } else if (game.getTurnState() instanceof WorkerPlacing) {
+            return game.getMap().getAllSquares().stream()
+                    .filter(p -> game.getWorkerOn(p).isEmpty())
+                    .collect(Collectors.toUnmodifiableList());
         } else {
             return Collections.emptyList();
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Returns to the previous turn state, should be customized for powers that can possibly do lots of moves
      */
     @Override
-    public void onEndTurn(Game game) {
-    }
+    public void undo() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onEnemyEndTurn(Game game, Player player) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onOpponentsBuild(Player player, Worker worker, Point where, Game game) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onOpponentsMove(Player player, Point where, Game game) {
     }
 
     /**
@@ -185,14 +169,24 @@ public class Mortal implements Power {
         return p -> !game.getMap().hasDome(p);
     }
 
-    protected Predicate<Point> getStandardMoveCheck(Game game) {
-        Point wPos = player.getSelectedWorker().getPosition();
-        int currentLevel = game.getMap().getLevel(wPos);
-
-        return p -> game.getMap().getLevel(p) <= currentLevel + 1;
+    protected Predicate<Point> getStandardMoveCheck(Worker worker, Game game) {
+        return p -> game.getMap().getLevel(p) <= game.getMap().getLevel(worker.getPosition()) + 1;
     }
 
     protected Predicate<Point> getStandardWorkerCheck(Game game) {
         return p -> game.getWorkerOn(p).isEmpty();
+    }
+
+    protected Predicate<Worker> noValidMoves(Game game) {
+        Predicate<Worker> noValidMoves = w -> game.getTurnState().getValidMoves(player, w).size() == 0;
+        Predicate<Worker> allBlocked = w -> {
+            Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(player, w);
+            List<Point> notAvailable = blockedMoves.values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+            return notAvailable.containsAll(game.getTurnState().getValidMoves(player, w));
+        };
+
+        return allBlocked.or(noValidMoves);
     }
 }

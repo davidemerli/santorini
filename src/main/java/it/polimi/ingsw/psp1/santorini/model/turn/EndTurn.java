@@ -5,18 +5,21 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 
 public class EndTurn extends TurnState {
 
-    public EndTurn(Player player, Game game) {
-        super(player, game);
+    public EndTurn(Game game) {
+        super(game);
 
-        player.getPower().onEndTurn(game);
-        game.getPlayerOpponents(player).forEach(p -> p.getPower().onEnemyEndTurn(game, player));
+        game.getPlayerList().forEach(p -> p.getPower().onEndTurn(p, game));
 
-        player.setSelectedWorker(null);
-        player.unlockWorker();
+        resetWorkerState();
+    }
+
+    private void resetWorkerState() {
+        game.getCurrentPlayer().setSelectedWorker(null);
+        game.getCurrentPlayer().unlockWorker();
     }
 
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Player player) {
         return false;
     }
 }

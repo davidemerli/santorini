@@ -18,13 +18,12 @@ public class Minotaur extends Mortal {
     }
 
     @Override
-    public List<Point> getValidMoves(Game game) {
-        if (player.getTurnState() instanceof Build) {
-            return super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        if (game.getTurnState() instanceof Build) {
+            return super.getValidMoves(worker, game);
         }
 
-        Point wPos = player.getSelectedWorker().getPosition();
-        List<Point> neighbors = game.getMap().getNeighbors(wPos);
+        List<Point> neighbors = game.getMap().getNeighbors(worker.getPosition());
 
         Predicate<Point> enemyWorkerCheck = p -> {
             Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
@@ -32,7 +31,7 @@ public class Minotaur extends Mortal {
         };
 
         Predicate<Point> isValidPosition = p -> {
-            Point pushPos = getPushLocation(wPos, p);
+            Point pushPos = getPushLocation(worker.getPosition(), p);
 
             return !game.getMap().isPositionOutOfMap(p) && !game.getMap().hasDome(pushPos) &&
                     game.getWorkerOn(pushPos).isEmpty();
@@ -40,22 +39,24 @@ public class Minotaur extends Mortal {
 
         return neighbors.stream()
                 .filter(getStandardDomeCheck(game))
-                .filter(getStandardMoveCheck(game))
+                .filter(getStandardMoveCheck(worker, game))
                 .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck.and(isValidPosition)))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        Optional<Worker> optWorker = game.getWorkerOn(where);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            Optional<Worker> optWorker = game.getWorkerOn(where);
 
-        if (optWorker.isPresent()) {
-            Point pushPos = getPushLocation(worker.getPosition(), where);
+            if (optWorker.isPresent()) {
+                Point pushPos = getPushLocation(worker.getPosition(), where);
 
-            optWorker.get().setPosition(pushPos);
+                optWorker.get().setPosition(pushPos);
+            }
         }
 
-        super.onYourMove(worker, where, game);
+        super.onMove(player, worker, where, game);
     }
 
     private Point getPushLocation(Point position, Point opponent) {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.network.packets.server;
 
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
@@ -11,10 +11,10 @@ import java.util.List;
 
 public class ServerGameData implements Packet<ServerHandler> {
 
-    private final Map gameMap;
+    private final GameMap gameMap;
     private final HashMap<PlayerData, EnumTurnState> players;
 
-    public ServerGameData(Map gameMap, HashMap<PlayerData, EnumTurnState> players) {
+    public ServerGameData(GameMap gameMap, HashMap<PlayerData, EnumTurnState> players) {
         this.gameMap = gameMap;
         this.players = players;
     }
@@ -24,7 +24,7 @@ public class ServerGameData implements Packet<ServerHandler> {
         netHandler.handleSendGameData(this);
     }
 
-    public Map getGameMap() {
+    public GameMap getGameMap() {
         return gameMap;
     }
 

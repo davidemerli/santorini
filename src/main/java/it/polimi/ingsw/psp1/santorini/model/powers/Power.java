@@ -11,71 +11,39 @@ import java.util.List;
 public interface Power {
 
     /**
-     * Called on the beginning of own turn
+     * Called on the beginning of a player turn (both own and enemy)
      *
-     * @param game current game
+     * @param player current player
+     * @param game   current game
      */
-    void onBeginTurn(Game game);
-
-    /**
-     * Called on the beginning of enemy turn
-     *
-     * @param game current game
-     * @param player enemy player
-     */
-    void onEnemyBeginTurn(Game game, Player player);
+    void onBeginTurn(Player player, Game game);
 
     /**
      * Called when you want to set the final state
      *
      * @param game current game
      */
-    void onEndTurn(Game game);
-
-    /**
-     * Called on the end of enemy turn
-     *
-     * @param game current game
-     * @param player enemy player
-     */
-    void onEnemyEndTurn(Game game, Player player);
+    void onEndTurn(Player player, Game game);
 
     /**
      * Called after input from the view that asks for a build on given position
      *
+     * @param player current player
      * @param worker current selected worker
-     * @param where point where you want to build
+     * @param where  point where you want to build
      * @param game   current game
      */
-    void onYourBuild(Worker worker, Point where, Game game);
+    void onBuild(Player player, Worker worker, Point where, Game game);
 
     /**
      * Called after input from the view that asks for a move on given position
      *
+     * @param player current player
      * @param worker current selected worker
      * @param where  point where you want to move
      * @param game   current game
      */
-    void onYourMove(Worker worker, Point where, Game game);
-
-    /**
-     * Called before the enemy build on the given position
-     *
-     * @param player enemy player
-     * @param worker enemy worker
-     * @param where next position
-     * @param game current game
-     */
-    void onOpponentsBuild(Player player, Worker worker, Point where, Game game);
-
-    /**
-     * Called before the move build on the given position
-     *
-     * @param player enemy player
-     * @param where next position
-     * @param game current game
-     */
-    void onOpponentsMove(Player player, Point where, Game game);
+    void onMove(Player player, Worker worker, Point where, Game game);
 
     /**
      * Called when the player interacts with custom bottom on the UI
@@ -87,25 +55,32 @@ public interface Power {
     /**
      * Called when the player decides to show the bottom for interaction or not
      *
+     * @param game current game
      * @return true if the GUI needs to enable the bottom for interaction
      */
-    boolean shouldShowInteraction();
+    boolean shouldShowInteraction(Game game);
 
     /**
      * Gets the list of unavailable moves for the enemy worker
      *
-     * @param worker current selected worker
-     * @param playerState current player status
-     * @param game current game
+     * @param player current player playing
+     * @param worker worker to get blocked moves of
+     * @param game   current game
      * @return list of blocked moves
      */
-    List<Point> getBlockedMoves(Worker worker, TurnState playerState, Game game);
+    List<Point> getBlockedMoves(Player player, Worker worker, Game game);
 
     /**
      * Called when you want to list all the valid moves that a worker can make
      *
-     * @param game current game
+     * @param game   current game
+     * @param worker to get valid moves of
      * @return list of valid moves
      */
-    List<Point> getValidMoves(Game game);
+    List<Point> getValidMoves(Worker worker, Game game);
+
+    /**
+     * Returns to the previous turn state, should be customized for powers that can possibly do lots of moves
+     */
+    void undo();
 }

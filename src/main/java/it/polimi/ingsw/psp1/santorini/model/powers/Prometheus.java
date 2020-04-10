@@ -21,45 +21,52 @@ public class Prometheus extends Mortal {
     }
 
     @Override
-    public void onBeginTurn(Game game) {
-        //TODO: check if loose condition is to be called here
-        firstBuild = true;
-        player.setTurnState(new Build(player, game));
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            firstBuild = true;
+            game.setTurnState(new Build(game));
+        }
     }
 
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Game game) {
         return firstBuild;
     }
 
     @Override
     public void onToggleInteraction(Game game) {
         firstBuild = false;
-        player.setTurnState(new Move(player, game));
+        game.setTurnState(new Move(game));
     }
 
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-        game.getMap().buildBlock(where, shouldBuildDome);
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+            game.getMap().buildBlock(where, shouldBuildDome);
 
-        if (firstBuild) {
-            player.lockWorker();
+            if (firstBuild) {
+                player.lockWorker();
 
-            firstBuild = false;
-            hasBuiltBeforeMoving = true;
-            player.setTurnState(new Move(player, game));
+                firstBuild = false;
+                hasBuiltBeforeMoving = true;
+                game.setTurnState(new Move(game));
+            } else {
+                game.setTurnState(new EndTurn(game));
+            }
         } else {
-            player.setTurnState(new EndTurn(player, game));
+            super.onBuild(player, worker, where, game);
         }
     }
 
     @Override
-    public List<Point> getValidMoves(Game game) {
-        List<Point> list = super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        List<Point> list = super.getValidMoves(worker, game);
 
-        if (player.getTurnState() instanceof Move && hasBuiltBeforeMoving) {
-            int level = game.getMap().getLevel(player.getSelectedWorker().getPosition());
+        if (game.getTurnState() instanceof Move && hasBuiltBeforeMoving) {
+            int level = game.getMap().getLevel(worker.getPosition());
 
             return list.stream()
                     .filter(p -> game.getMap().getLevel(p) <= level)

@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
 import java.awt.*;
 import java.util.List;
@@ -23,24 +24,24 @@ public class Apollo extends Mortal {
      * Blocks occupied by enemy worker are included in valid moves
      */
     @Override
-    public List<Point> getValidMoves(Game game) {
-        if (player.getTurnState() instanceof Build) {
-            return super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        if (game.getTurnState() instanceof Move) {
+            Point wPos = worker.getPosition();
+            List<Point> neighbors = game.getMap().getNeighbors(wPos);
+
+            Predicate<Point> enemyWorkerCheck = p -> {
+                Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
+                return optionalPlayer.isPresent() && optionalPlayer.get() != player;
+            };
+
+            return neighbors.stream()
+                    .filter(getStandardDomeCheck(game))
+                    .filter(getStandardMoveCheck(worker, game))
+                    .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck))
+                    .collect(Collectors.toList());
+        } else {
+            return super.getValidMoves(worker, game);
         }
-
-        Point wPos = player.getSelectedWorker().getPosition();
-        List<Point> neighbors = game.getMap().getNeighbors(wPos);
-
-        Predicate<Point> enemyWorkerCheck = p -> {
-            Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
-            return optionalPlayer.isPresent() && optionalPlayer.get() != player;
-        };
-
-        return neighbors.stream()
-                .filter(getStandardDomeCheck(game))
-                .filter(getStandardMoveCheck(game))
-                .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck))
-                .collect(Collectors.toList());
     }
 
     /**
@@ -49,14 +50,16 @@ public class Apollo extends Mortal {
      * If worker moves on enemy worker, they are swapped.
      */
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        Optional<Worker> optWorker = game.getWorkerOn(where);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        if(player.equals(this.player)) {
+            Optional<Worker> optWorker = game.getWorkerOn(where);
 
-        if (optWorker.isPresent()) {
-            Point oldPos = player.getSelectedWorker().getPosition();
-            optWorker.get().setPosition(oldPos);//switch
+            if (optWorker.isPresent()) {
+                Point oldPos = worker.getPosition();
+                optWorker.get().setPosition(oldPos);//switch
+            }
         }
 
-        super.onYourMove(worker, where, game);//normal moving behaviour
+        super.onMove(player, worker, where, game);//normal moving behaviour
     }
 }

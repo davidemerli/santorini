@@ -24,10 +24,12 @@ public class Athena extends Mortal {
      * Resets the moving upwards status
      */
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
 
-        hasMovedUpwards = false;
+        if (player.equals(this.player)) {
+            hasMovedUpwards = false;
+        }
     }
 
     /**
@@ -36,15 +38,17 @@ public class Athena extends Mortal {
      * Checks if the new level is higher than previous level, if so blocks other players moves
      */
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        int oldLevel = game.getMap().getLevel(worker.getPosition());
-        int newLevel = game.getMap().getLevel(where);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            int oldLevel = game.getMap().getLevel(worker.getPosition());
+            int newLevel = game.getMap().getLevel(where);
 
-        if(newLevel > oldLevel) {
-            hasMovedUpwards = true;
+            if (newLevel > oldLevel) {
+                hasMovedUpwards = true;
+            }
         }
 
-        super.onYourMove(worker, where, game);
+        super.onMove(player, worker, where, game);
     }
 
     /**
@@ -54,8 +58,8 @@ public class Athena extends Mortal {
      * have made them go up
      */
     @Override
-    public List<Point> getBlockedMoves(Worker worker, TurnState playerState, Game game) {
-        if(playerState instanceof Move && hasMovedUpwards) {
+    public List<Point> getBlockedMoves(Player player, Worker worker, Game game) {
+        if (game.getTurnState() instanceof Move && hasMovedUpwards) {
             int workerLevel = game.getMap().getLevel(worker.getPosition());
 
             return game.getMap().getAllSquares().stream()
@@ -63,6 +67,6 @@ public class Athena extends Mortal {
                     .collect(Collectors.toUnmodifiableList());
         }
 
-        return super.getBlockedMoves(worker, playerState, game);
+        return super.getBlockedMoves(player, worker, game);
     }
 }

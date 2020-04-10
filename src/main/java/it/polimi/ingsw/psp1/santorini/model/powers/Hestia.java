@@ -19,39 +19,46 @@ public class Hestia extends Mortal {
     }
 
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        hasBuilt = false;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            hasBuilt = false;
+        }
     }
 
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Game game) {
         return hasBuilt;
     }
 
     @Override
     public void onToggleInteraction(Game game) {
-        player.setTurnState(new EndTurn(player, game));
+        game.setTurnState(new EndTurn(game));
     }
 
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-        game.getMap().buildBlock(where, shouldBuildDome);
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+            game.getMap().buildBlock(where, shouldBuildDome);
 
-        if (!hasBuilt) {
-            player.setTurnState(new Build(player, game));
-            hasBuilt = true;
+            if (!hasBuilt) {
+                game.setTurnState(new Build(game));
+                hasBuilt = true;
+            } else {
+                game.setTurnState(new EndTurn(game));
+            }
         } else {
-            player.setTurnState(new EndTurn(player, game));
+            super.onBuild(player, worker, where, game);
         }
     }
 
     @Override
-    public List<Point> getValidMoves(Game game) {
-        List<Point> list = super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        List<Point> list = super.getValidMoves(worker, game);
 
-        if (player.getTurnState() instanceof Build && hasBuilt) {
+        if (game.getTurnState() instanceof Build && hasBuilt) {
             return list.stream()
                     .filter(point -> !game.getMap().isPerimeter(point))
                     .collect(Collectors.toList());

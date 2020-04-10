@@ -1,14 +1,16 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
+import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -19,13 +21,15 @@ public class Game {
 
     private final Set<ModelObserver> observers;
 
-    private Map map;
+    private TurnState turnState;
+
+    private GameMap map;
 
     public Game() {
         this.availableGodList = new ArrayList<>();
         this.playerList = new ArrayList<>();
         this.observers = new HashSet<>();
-        this.map = new Map();
+        this.map = new GameMap();
     }
 
     public void addObserver(View view) {
@@ -41,15 +45,11 @@ public class Game {
     }
 
     public void addPlayer(Player player) {
-        this.playerList.add(player);
+        playerList.add(player);
     }
 
-    public Map getMap() {
-        return map;
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
+    public void removePlayer(Player player) {
+        playerList.remove(player);
     }
 
     /**
@@ -93,11 +93,54 @@ public class Game {
         worker.setPosition(newPosition);
     }
 
+    public Player getCurrentPlayer() {
+        if (playerList.size() == 0) {
+            throw new UnsupportedOperationException("Player list is empty");
+        }
+        return playerList.get(0);
+    }
+
+    public void startTurn() {
+        if (playerList.size() == 0) {
+            throw new UnsupportedOperationException("Player list is empty");
+        }
+
+        BeginTurn turn = new BeginTurn(this);
+        setTurnState(turn);
+        turn.onStart();
+    }
+
+    public void nextTurn() {
+        Collections.rotate(playerList, 1);
+
+        startTurn();
+    }
+
     public List<Player> getPlayerList() {
         return Collections.unmodifiableList(playerList);
     }
 
     public List<Player> getPlayerOpponents(Player player) {
         return playerList.stream().filter(p -> p != player).collect(Collectors.toUnmodifiableList());
+    }
+
+    public TurnState getTurnState() {
+        return turnState;
+    }
+
+    public void setTurnState(TurnState turnState) {
+        this.turnState = turnState;
+    }
+
+    public List<Power> getAvailableGodList() {
+        return availableGodList;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 }

@@ -23,9 +23,12 @@ public class Demeter extends Mortal {
      * Reset state
      */
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        hasBuilt = false;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            hasBuilt = false;
+        }
     }
 
     /**
@@ -35,7 +38,7 @@ public class Demeter extends Mortal {
      * @return true if worker has built once
      */
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Game game) {
         return hasBuilt;
     }
 
@@ -45,23 +48,28 @@ public class Demeter extends Mortal {
      */
     @Override
     public void onToggleInteraction(Game game) {
-        player.setTurnState(new EndTurn(player, game));
+        game.setTurnState(new EndTurn(game));
     }
 
     /**
      * If the worker has built once, the old position is saved
      */
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-        game.getMap().buildBlock(where, shouldBuildDome);
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if(player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+            game.getMap().buildBlock(where, shouldBuildDome);
 
-        if (!hasBuilt) {
-            oldBuild = new Point(where);
-            hasBuilt = true;
-            player.setTurnState(new Build(player, game));
+            if (!hasBuilt) {
+                oldBuild = new Point(where);
+                hasBuilt = true;
+
+                game.setTurnState(new Build(game));
+            } else {
+                game.setTurnState(new EndTurn(game));
+            }
         } else {
-            player.setTurnState(new EndTurn(player, game));
+            super.onBuild(player, worker, where, game);
         }
     }
 
@@ -70,10 +78,10 @@ public class Demeter extends Mortal {
      * If the worker can build a second time, the old position is blocked
      */
     @Override
-    public List<Point> getValidMoves(Game game) {
-        List<Point> list = super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        List<Point> list = super.getValidMoves(worker, game);
 
-        if (player.getTurnState() instanceof Build && hasBuilt) {
+        if (game.getTurnState() instanceof Build && hasBuilt) {
             list.remove(oldBuild);
         }
 

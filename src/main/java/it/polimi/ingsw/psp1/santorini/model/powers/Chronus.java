@@ -11,12 +11,12 @@ public class Chronus extends Mortal {
     }
 
     @Override
-    public void onBeginTurn(Game game) {
-        if (customWinCondition(game)) {
+    public void onBeginTurn(Player player, Game game) {
+        if (player.equals(this.player) && customWinCondition(game)) {
             player.setWinner(true);
-            player.setTurnState(new Move(player, game));
+            game.setTurnState(new Move(game));
         } else {
-            super.onBeginTurn(game);
+            super.onBeginTurn(player, game);
         }
     }
 

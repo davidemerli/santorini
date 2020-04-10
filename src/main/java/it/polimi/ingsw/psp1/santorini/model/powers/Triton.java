@@ -10,37 +10,41 @@ import java.awt.*;
 
 public class Triton extends Mortal {
 
-    private boolean firstMove;
+    private boolean hasMoved;
 
     public Triton(Player player) {
         super(player);
     }
 
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        firstMove = false;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            hasMoved = false;
+        }
     }
 
     @Override
-    public boolean shouldShowInteraction() {
-        return player.getTurnState() instanceof Move && firstMove;
+    public boolean shouldShowInteraction(Game game) {
+        return game.getTurnState() instanceof Move && hasMoved;
     }
 
     @Override
     public void onToggleInteraction(Game game) {
-        player.setTurnState(new Build(player, game));
+        game.setTurnState(new Build(game));
     }
 
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        super.onYourMove(worker, where, game);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        super.onMove(player, worker, where, game);
 
-        if (game.getMap().isPerimeter(where)) {
-            if (!firstMove) {
-                firstMove = true;
+        if (player.equals(this.player) && game.getMap().isPerimeter(where)) {
+            if (!hasMoved) {
+                hasMoved = true;
             }
-            player.setTurnState(new Move(player, game));
+
+            game.setTurnState(new Move(game));
         }
     }
 }

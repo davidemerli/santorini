@@ -2,6 +2,7 @@ package it.polimi.ingsw.psp1.santorini.model.turn;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 
 import java.awt.*;
 import java.util.List;
@@ -9,19 +10,17 @@ import java.util.stream.Collectors;
 
 public class WorkerPlacing extends TurnState {
 
-    public WorkerPlacing(Player player, Game game) {
-        super(player, game);
+    public WorkerPlacing(Game game) {
+        super(game);
     }
 
     @Override
-    public boolean shouldShowInteraction() {
+    public boolean shouldShowInteraction(Player player) {
         return false;
     }
 
     @Override
-    public List<Point> getValidMoves() {
-        return game.getMap().getAllSquares().stream()
-                .filter(p -> game.getWorkerOn(p).isEmpty())
-                .collect(Collectors.toUnmodifiableList());
+    public List<Point> getValidMoves(Player player, Worker worker) {
+        return player.getPower().getValidMoves(worker, game);
     }
 }

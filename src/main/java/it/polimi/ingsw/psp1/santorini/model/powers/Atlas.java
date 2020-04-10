@@ -22,9 +22,12 @@ public class Atlas extends Mortal {
      * Reset state
      */
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        abilityToggled = false;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            abilityToggled = false;
+        }
     }
 
     /**
@@ -33,8 +36,8 @@ public class Atlas extends Mortal {
      * @return show interaction bottom during build state
      */
     @Override
-    public boolean shouldShowInteraction() {
-        return player.getTurnState() instanceof Build;
+    public boolean shouldShowInteraction(Game game) {
+        return game.getTurnState() instanceof Build;
     }
 
     /**
@@ -51,11 +54,15 @@ public class Atlas extends Mortal {
      * A dome can be built everywhere by worker if the ability toggle is true or if is the third level
      */
     @Override
-    public void onYourBuild(Worker worker, Point where, Game game) {
-        boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        if(player.equals(this.player)) {
+            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
 
-        game.getMap().buildBlock(where, shouldBuildDome || abilityToggled);
+            game.getMap().buildBlock(where, shouldBuildDome || abilityToggled);
 
-        player.setTurnState(new EndTurn(player, game));
+            game.setTurnState(new EndTurn(game));
+        } else {
+            super.onBuild(player, worker, where, game);
+        }
     }
 }

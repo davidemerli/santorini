@@ -8,34 +8,30 @@ import java.awt.*;
 
 public class Build extends TurnState {
 
-    public Build(Player player, Game game) {
-        super(player, game);
+    public Build(Game game) {
+        super(game);
     }
 
     @Override
-    public void selectSquare(Point position) {
+    public void selectSquare(Player player, Point position) {
         if (!player.isWorkerSelected()) {
             throw new UnsupportedOperationException("Tried to build with no selected worker");
         }
 
-        if(getBlockedMoves().contains(position)) {
+        if (isPositionBlocked(getBlockedMoves(player, player.getSelectedWorker()), position)) {
             throw new IllegalArgumentException("Given position is a forbidden build position by some power");
         }
 
-        if(!getValidMoves().contains(position)) {
+        if (!getValidMoves(player, player.getSelectedWorker()).contains(position)) {
             throw new IllegalArgumentException("Invalid build position");
         }
 
-        game.getPlayerList().stream()
-                .filter(p -> p != player)
-                .forEach(p -> p.getPower().onOpponentsBuild(player, player.getSelectedWorker(), position, game));
-
-        player.getPower().onYourBuild(player.getSelectedWorker(), position, game);
+        player.getPower().onBuild(player, player.getSelectedWorker(), position, game);
     }
 
     @Override
-    public void selectWorker(Worker worker) {
-        if(player.isWorkerLocked()) {
+    public void selectWorker(Player player, Worker worker) {
+        if (player.isWorkerLocked()) {
             throw new UnsupportedOperationException("Worker is locked from previous turn");
         }
 
@@ -43,12 +39,12 @@ public class Build extends TurnState {
     }
 
     @Override
-    public void toggleInteraction() {
+    public void toggleInteraction(Player player) {
         player.getPower().onToggleInteraction(game);
     }
 
     @Override
-    public boolean shouldShowInteraction() {
-        return player.getPower().shouldShowInteraction();
+    public boolean shouldShowInteraction(Player player) {
+        return player.getPower().shouldShowInteraction(game);
     }
 }

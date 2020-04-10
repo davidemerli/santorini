@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.game.Play;
+import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
@@ -33,9 +34,7 @@ public class AthenaTest {
         player2.setPower(new Mortal(player2));
 
         player1.setGameState(new Play());
-        player1.newTurn(game);
         player2.setGameState(new Play());
-        player2.setTurnState(new EndTurn(player2, game));
     }
 
     @After
@@ -49,7 +48,7 @@ public class AthenaTest {
     }
 
     @Test
-    public void onYourMove_normalBehaviour_shouldSwapWorkers() {
+    public void onYourMove_normalBehaviour_secondWorkerHasABlockedMove() {
         Point newPosition = new Point(0, 0);
         Point blockedPosition = new Point(2, 3);
         Worker w1 = new Worker(new Point(1, 1));
@@ -61,17 +60,21 @@ public class AthenaTest {
         player1.addWorker(w1);
         player2.addWorker(w2);
 
-        player1.setSelectedWorker(w1);
+        game.startTurn();
 
-        player1.getPower().onYourMove(w1, newPosition, game);
-        player1.getPower().onYourBuild(w1, new Point(0, 1), game);
+        game.getTurnState().selectWorker(player1, w1);
+        game.getTurnState().selectSquare(player1, newPosition);
 
-        assertTrue(player1.getTurnState() instanceof EndTurn);
+        game.getTurnState().selectSquare(player1, new Point(0, 1));
 
-        player2.newTurn(game);
-        player2.setSelectedWorker(w2);
+        assertTrue(game.getTurnState() instanceof EndTurn);
 
-        assertTrue(player2.getTurnState().getBlockedMoves().contains(blockedPosition));
+        game.nextTurn();
+        game.getTurnState().selectWorker(player2, w2);
+
+        assertTrue(game.getTurnState().isPositionBlocked(
+                game.getTurnState().getBlockedMoves(player2, player2.getSelectedWorker()),
+                blockedPosition));
     }
 }
 

@@ -3,9 +3,8 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class Map {
+public class GameMap {
 
     public static final int SIDE_LENGTH = 5;
 
@@ -15,7 +14,7 @@ public class Map {
      * Main constructor for the Map class
      * Used to instantiate an empty map with no workers and every square set to level 0
      */
-    public Map() {
+    public GameMap() {
         this.blockMatrix = new SquareData[SIDE_LENGTH][SIDE_LENGTH];
 
         for (int i = 0; i < SIDE_LENGTH; i++) {
@@ -30,7 +29,7 @@ public class Map {
      *
      * @param toCopy where the current state is copied from.
      */
-    private Map(Map toCopy) {
+    private GameMap(GameMap toCopy) {
         this.blockMatrix = toCopy.getMatrixCopy();
     }
 
@@ -173,8 +172,8 @@ public class Map {
         return list;
     }
 
-    public Map copy() {
-        return new Map(this);
+    public GameMap copy() {
+        return new GameMap(this);
     }
 
     public List<Point> getAllSquares() {

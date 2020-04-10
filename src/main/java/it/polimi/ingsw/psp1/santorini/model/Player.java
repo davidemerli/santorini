@@ -1,10 +1,9 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
-import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
+import it.polimi.ingsw.psp1.santorini.model.game.PreGameState;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-import it.polimi.ingsw.psp1.santorini.model.game.GameState;
-import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,10 +11,9 @@ import java.util.List;
 
 public class Player {
 
-    private String name;
+    private final String name;
 
-    private GameState gameState;
-    private TurnState turnState;
+    private PreGameState gameState;
     private Power power;
 
     private Worker selectedWorker;
@@ -23,7 +21,7 @@ public class Player {
     private boolean hasWon;
     private boolean hasLost;
 
-    private List<Worker> workerList;
+    private final List<Worker> workerList;
 
     public Player(String name) {
         this.name = name;
@@ -50,28 +48,16 @@ public class Player {
         workerList.remove(worker);
     }
 
-    public void newTurn(Game game) {
-        new BeginTurn(this, game);
-    }
-
     public List<Worker> getWorkers() {
         return Collections.unmodifiableList(workerList);
     }
 
-    public GameState getGameState() {
+    public PreGameState getGameState() {
         return gameState;
     }
 
-    public void setGameState(GameState gameState) {
+    public void setGameState(PreGameState gameState) {
         this.gameState = gameState;
-    }
-
-    public TurnState getTurnState() {
-        return turnState;
-    }
-
-    public void setTurnState(TurnState turnState) {
-        this.turnState = turnState;
     }
 
     public Power getPower() {
@@ -120,5 +106,9 @@ public class Player {
 
     public void setLost(boolean hasLost) {
         this.hasLost = hasLost;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -24,10 +24,13 @@ public class Artemis extends Mortal {
      * Reset state
      */
     @Override
-    public void onBeginTurn(Game game) {
-        super.onBeginTurn(game);
-        hasMoved = false;
-        oldPosition = null;
+    public void onBeginTurn(Player player, Game game) {
+        super.onBeginTurn(player, game);
+
+        if (player.equals(this.player)) {
+            hasMoved = false;
+            oldPosition = null;
+        }
     }
 
     /**
@@ -38,8 +41,8 @@ public class Artemis extends Mortal {
      * @return false if worker has make the first move
      */
     @Override
-    public boolean shouldShowInteraction() {
-        return hasMoved && player.getTurnState() instanceof Move;
+    public boolean shouldShowInteraction(Game game) {
+        return hasMoved && game.getTurnState() instanceof Move;
     }
 
     /**
@@ -47,7 +50,7 @@ public class Artemis extends Mortal {
      */
     @Override
     public void onToggleInteraction(Game game) {
-        player.setTurnState(new Build(player, game));
+        game.setTurnState(new Build(game));
     }
 
     /**
@@ -56,12 +59,13 @@ public class Artemis extends Mortal {
      * if the worker has moved once, he can move a second time but not in the previous position
      */
     @Override
-    public List<Point> getValidMoves(Game game) {
-        List<Point> list = super.getValidMoves(game);
+    public List<Point> getValidMoves(Worker worker, Game game) {
+        List<Point> list = super.getValidMoves(worker, game);
 
-        if (player.getTurnState() instanceof Move && hasMoved) {
+        if (game.getTurnState() instanceof Move && hasMoved) {
             list.remove(oldPosition);
         }
+
         return list;
     }
 
@@ -72,13 +76,17 @@ public class Artemis extends Mortal {
      * otherwise next state is build
      */
     @Override
-    public void onYourMove(Worker worker, Point where, Game game) {
-        oldPosition = worker.getPosition();
-        super.onYourMove(worker, where, game);
+    public void onMove(Player player, Worker worker, Point where, Game game) {
+        if (player.equals(this.player)) {
+            oldPosition = worker.getPosition();
+        }
 
-        if (!hasMoved) {
+        super.onMove(player, worker, where, game);
+
+        if (player.equals(this.player) && !hasMoved) {
             hasMoved = true;
-            player.setTurnState(new Move(player, game));
+
+            game.setTurnState(new Move(game));
         }
     }
 }

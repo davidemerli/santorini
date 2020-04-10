@@ -1,27 +1,25 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.GameState;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class TurnState {
 
-    protected Player player;
     protected Game game;
-    protected TurnState previousTurn;
-    protected Map previousMap;
+    protected GameState previousState;//TODO: remove from here and copy manually on power
 
-    public TurnState(Player player, Game game) {
-        this.player = player;
+    public TurnState(Game game) {
         this.game = game;
-        this.previousTurn = player.getTurnState();
-        this.previousMap = game.getMap().copy();
+        this.previousState = copyState();
     }
 
     /**
@@ -29,7 +27,7 @@ public abstract class TurnState {
      *
      * @param position of the selected square
      */
-    public void selectSquare(Point position) {
+    public void selectSquare(Player player, Point position) {
         throw new UnsupportedOperationException("Not permitted in this state");
     }
 
@@ -38,7 +36,7 @@ public abstract class TurnState {
      *
      * @param worker selected by the player
      */
-    public void selectWorker(Worker worker) {
+    public void selectWorker(Player player, Worker worker) {
         throw new UnsupportedOperationException("Not permitted in this state");
     }
 
@@ -47,7 +45,7 @@ public abstract class TurnState {
      *
      * @return true if the player can activate/deactivate powers
      */
-    public abstract boolean shouldShowInteraction();
+    public abstract boolean shouldShowInteraction(Player player);
 
     /**
      * Called every time the player clicks on a special button that's customized
@@ -58,7 +56,8 @@ public abstract class TurnState {
      * <p>
      * Every power is handled differently but uses the same button
      */
-    public void toggleInteraction() {
+    public void toggleInteraction(Player player) {
+        throw new UnsupportedOperationException("Not permitted in this state");
     }
 
     /**
@@ -66,18 +65,12 @@ public abstract class TurnState {
      *
      * @return the list of unavailable squares
      */
-    public List<Point> getBlockedMoves() {
-        if (!player.isWorkerSelected()) {
-            return new ArrayList<>();
-        }
+    public Map<Power, List<Point>> getBlockedMoves(Player player, Worker worker) {
+        Map<Power, List<Point>> map = new HashMap<>();
+        game.getPlayerOpponents(player).forEach(p ->
+                map.put(p.getPower(), p.getPower().getBlockedMoves(player, worker, game)));
 
-        List<Point> blockedMoves = new ArrayList<>();
-
-        game.getPlayerOpponents(player)
-                .forEach(p -> blockedMoves.addAll(p.getPower().getBlockedMoves(player.getSelectedWorker(),
-                        this, game)));
-
-        return blockedMoves;
+        return map;
     }
 
     /**
@@ -85,24 +78,40 @@ public abstract class TurnState {
      *
      * @return the list of available squares
      */
-    public List<Point> getValidMoves() {
-        if (!player.isWorkerSelected()) {
-            return Collections.emptyList();
-        }
-
-        return player.getPower().getValidMoves(game);
+    public List<Point> getValidMoves(Player player, Worker worker) {
+        return player.getPower().getValidMoves(worker, game);
     }
 
     /**
      * Returns to the previous state of the map, deleting the last action made
      */
-    public void undo() {
-        //TODO: copy and restore worker positions
-        if (previousTurn == null) {
-            throw new IllegalStateException("There is no previous move to return to");
+    public void undo(Player player) {
+        player.getPower().undo();
+    }
+
+    /**
+     * Utility check for blocked positions
+     *
+     * @param map with blocked moves and by which power
+     * @param point to be checked
+     * @return true if given position is blocked by some power
+     */
+    public boolean isPositionBlocked(Map<Power, List<Point>> map, Point point) {
+        return map.keySet().stream().anyMatch(power -> map.get(power).contains(point));
+    }
+
+    public GameState copyState() {
+        GameMap copy = game.getMap().copy();
+        HashMap<Player, HashMap<Worker, Point>> playerWorkerState = new HashMap<>();
+
+        for (Player player : game.getPlayerList()) {
+            HashMap<Worker, Point> workerState = new HashMap<>();
+            player.getWorkers().forEach(w -> workerState.put(w, new Point(w.getPosition())));
+            playerWorkerState.put(player, workerState);
         }
 
-        game.setMap(previousMap);
-        player.setTurnState(previousTurn);
+        TurnState previousTurnState = game.getTurnState();
+
+        return new GameState(copy, previousTurnState, playerWorkerState);
     }
 }

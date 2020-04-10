@@ -1,6 +1,6 @@
 package it.polimi.ingsw.psp1;
 
-import it.polimi.ingsw.psp1.santorini.model.map.Map;
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,11 +10,11 @@ import static org.junit.Assert.*;
 
 public class MapTest {
 
-    private Map map;
+    private GameMap map;
 
     @Before
     public void setup() {
-        this.map = new Map();
+        this.map = new GameMap();
     }
 
     @Test
