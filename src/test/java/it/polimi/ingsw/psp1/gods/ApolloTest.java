@@ -59,7 +59,7 @@ public class ApolloTest {
 
         game.getTurnState().selectWorker(player1, w1);
 
-        assertTrue(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition());
+        assertTrue(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition()));
         assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w3.getPosition()));
     }
 
@@ -74,7 +74,6 @@ public class ApolloTest {
         game.startTurn();
 
         game.getTurnState().selectWorker(player1, w1);
-
         game.getTurnState().selectSquare(player1, w2.getPosition());
 
         assertEquals(new Point(2, 2), w1.getPosition());

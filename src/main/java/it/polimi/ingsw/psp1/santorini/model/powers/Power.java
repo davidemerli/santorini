@@ -83,4 +83,6 @@ public interface Power {
      * Returns to the previous turn state, should be customized for powers that can possibly do lots of moves
      */
     void undo();
+
+    void setPlayer(Player player);
 }

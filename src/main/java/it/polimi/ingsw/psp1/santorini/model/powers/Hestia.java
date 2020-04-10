@@ -14,10 +14,6 @@ public class Hestia extends Mortal {
 
     private boolean hasBuilt;
 
-    public Hestia(Player player) {
-        super(player);
-    }
-
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);

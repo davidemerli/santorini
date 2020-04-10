@@ -1,88 +1,86 @@
-//package it.polimi.ingsw.psp1.gods;
-//
-//import it.polimi.ingsw.psp1.santorini.model.game.Play;
-//import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-//import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
-//import it.polimi.ingsw.psp1.santorini.model.turn.Move;
-//import it.polimi.ingsw.psp1.santorini.model.Game;
-//import it.polimi.ingsw.psp1.santorini.model.Player;
-//import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-//import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
-//import it.polimi.ingsw.psp1.santorini.model.powers.Prometheus;
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//
-//import java.awt.*;
-//
-//import static org.junit.Assert.*;
-//
-//public class PrometheusTest {
-//
-//    private Game game;
-//    private Player player1, player2;
-//
-//    @Before
-//    public void setup() {
-//        this.game = new Game();
-//        this.player1 = new Player("p1");
-//        this.player2 = new Player("p2");
-//
-//        game.addPlayer(player1);
-//        game.addPlayer(player2);
-//
-//        player1.setPower(new Prometheus(player1));
-//        player2.setPower(new Mortal(player2));
-//
-//        player1.setGameState(new Play());
-//        player1.newTurn(game);
-//        player2.setGameState(new Play());
-//        player2.setTurnState(new EndTurn(player2, game));
-//    }
-//
-//    @After
-//    public void teardown() {
-//        for (int i = player1.getWorkers().size() - 1; i >= 0; i--) {
-//            player1.removeWorker(player1.getWorkers().get(i));
-//        }
-//        for (int i = player2.getWorkers().size() - 1; i >= 0; i--) {
-//            player2.removeWorker(player2.getWorkers().get(i));
-//        }
-//    }
-//
-//    @Test
-//    public void onYourBuild_normalBehaviour_shouldEndBuild() {
-//        Point position = new Point(1, 1);
-//        Worker w1 = new Worker(position);
-//
-//        player1.addWorker(w1);
-//        player1.setSelectedWorker(w1);
-//
-//        assertTrue(player1.getTurnState().shouldShowInteraction());
-//
-//        player1.getTurnState().toggleInteraction();
-//
-//        assertTrue(player1.getTurnState() instanceof Move);
-//    }
-//
-//    @Test
-//    public void onYourBuild_normalBehaviour_shouldStopPlayerFromGoingUpIfBuilt() {
-//        Point oldPosition = new Point(1, 1);
-//        Point newPosition = new Point(2, 2);
-//        Point blockedPosition = new Point(2, 1);
-//        Worker w1 = new Worker(oldPosition);
-//
-//        player1.addWorker(w1);
-//        player1.setSelectedWorker(w1);
-//
-//        assertTrue(player1.getTurnState().shouldShowInteraction());
-//
-//        game.getMap().buildBlock(blockedPosition, false);
-//
-//        assertTrue(player1.getTurnState() instanceof Build);
-//        player1.getPower().onBuild(w1, newPosition, game);
-//        assertTrue(player1.getTurnState() instanceof Move);
-//
-//        assertFalse(player1.getTurnState().getValidMoves().contains(blockedPosition));
-//    }
-//}
+package it.polimi.ingsw.psp1.gods;
+
+import it.polimi.ingsw.psp1.santorini.model.Game;
+import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.game.Play;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.powers.Prometheus;
+import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.awt.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class PrometheusTest {
+
+    private Game game;
+    private Player player;
+
+    @Before
+    public void setup() {
+        this.game = new Game();
+        this.player = new Player("p1");
+
+        game.addPlayer(player);
+
+        player.setPower(new Prometheus());
+
+        player.setGameState(new Play());
+    }
+
+    @After
+    public void teardown() {
+        for (int i = player.getWorkers().size() - 1; i >= 0; i--) {
+            player.removeWorker(player.getWorkers().get(i));
+        }
+    }
+
+    @Test
+    public void onYourBuild_normalBehaviour_shouldEndBuild() {
+        Point position = new Point(1, 1);
+        Worker w = new Worker(position);
+
+        player.addWorker(w);
+
+        game.startTurn();
+
+        game.getTurnState().selectWorker(player, w);
+
+        assertTrue(game.getTurnState().shouldShowInteraction(player));
+
+        game.getTurnState().toggleInteraction(player);
+
+        assertTrue(game.getTurnState() instanceof Move);
+    }
+
+    @Test
+    public void onYourBuild_normalBehaviour_shouldStopPlayerFromGoingUpIfBuilt() {
+        Point oldPosition = new Point(1, 1);
+        Point newPosition = new Point(2, 2);
+        Point blockedPosition = new Point(2, 1);
+        Worker w = new Worker(oldPosition);
+
+        player.addWorker(w);
+
+        game.startTurn();
+
+        game.getTurnState().selectWorker(player, w);
+
+        assertTrue(game.getTurnState().shouldShowInteraction(player));
+
+        game.getMap().buildBlock(blockedPosition, false);
+
+        assertTrue(game.getTurnState() instanceof Build);
+
+        game.getTurnState().selectSquare(player, newPosition);
+
+        assertTrue(game.getTurnState() instanceof Move);
+
+        assertFalse(game.getTurnState().getValidMoves(player, w).contains(blockedPosition));
+    }
+}

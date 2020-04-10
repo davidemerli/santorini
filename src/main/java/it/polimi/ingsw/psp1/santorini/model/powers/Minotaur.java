@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 
 public class Minotaur extends Mortal {
 
-    public Minotaur(Player player) {
-        super(player);
-    }
-
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         if (game.getTurnState() instanceof Build) {

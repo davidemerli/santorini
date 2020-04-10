@@ -14,10 +14,6 @@ public class Demeter extends Mortal {
     private boolean hasBuilt;
     private Point oldBuild;
 
-    public Demeter(Player player) {
-        super(player);
-    }
-
     /**
      * {@inheritDoc}
      * Reset state

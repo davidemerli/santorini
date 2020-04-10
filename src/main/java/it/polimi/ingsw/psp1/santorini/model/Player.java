@@ -66,6 +66,7 @@ public class Player {
 
     public void setPower(Power power) {
         this.power = power;
+        this.power.setPlayer(this);
     }
 
     public Worker getSelectedWorker() {

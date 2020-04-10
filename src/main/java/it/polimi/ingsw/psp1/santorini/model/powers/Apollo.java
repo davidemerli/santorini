@@ -14,10 +14,6 @@ import java.util.stream.Collectors;
 
 public class Apollo extends Mortal {
 
-    public Apollo(Player player) {
-        super(player);
-    }
-
     /**
      * {@inheritDoc}
      * <p>

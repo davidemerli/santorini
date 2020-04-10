@@ -50,9 +50,8 @@ public class HestiaTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
-        game.getTurnState().selectSquare(player, newPosition));
+        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectSquare(player, newPosition);
         game.getTurnState().selectSquare(player, oldPosition);
 
         assertTrue(game.getTurnState().shouldShowInteraction(player));
@@ -71,8 +70,7 @@ public class HestiaTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, newPosition);
         game.getTurnState().selectSquare(player, oldPosition);
 

@@ -25,7 +25,7 @@ public class PanTest {
 
         game.addPlayer(player);
 
-        player.setPower(new Pan(player));
+        player.setPower(new Pan());
 
         player.setGameState(new Play());
     }
@@ -51,8 +51,7 @@ public class PanTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, newPosition);
 
         assertTrue(player.hasWon());

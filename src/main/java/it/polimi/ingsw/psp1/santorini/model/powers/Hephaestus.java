@@ -15,10 +15,6 @@ public class Hephaestus extends Mortal {
     private boolean hasBuilt;
     private Point oldBuild;
 
-    public Hephaestus(Player player) {
-        super(player);
-    }
-
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);

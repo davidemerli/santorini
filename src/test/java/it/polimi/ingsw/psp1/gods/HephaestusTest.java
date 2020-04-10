@@ -48,8 +48,7 @@ public class HephaestusTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, new Point(1, 2));
 
         assertFalse(game.getTurnState().shouldShowInteraction(player));
@@ -72,7 +71,7 @@ public class HephaestusTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
+        game.getTurnState().selectWorker(player, w);
 
         for (int i = 0; i < 2; i++) {
             game.getMap().buildBlock(firstBuild, false);
@@ -94,7 +93,7 @@ public class HephaestusTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
+        game.getTurnState().selectWorker(player, w);
 
         game.getTurnState().selectSquare(player, new Point(2, 1));
         game.getTurnState().selectSquare(player, firstBuild);

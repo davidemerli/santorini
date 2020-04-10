@@ -50,7 +50,7 @@ public class ArtemisTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
+        game.getTurnState().selectWorker(player, w);
 
         assertFalse(game.getTurnState().shouldShowInteraction(player));
 
@@ -71,8 +71,7 @@ public class ArtemisTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, firstMove);
         game.getTurnState().toggleInteraction(player);
 

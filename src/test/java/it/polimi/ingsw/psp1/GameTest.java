@@ -2,7 +2,10 @@ package it.polimi.ingsw.psp1;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.game.SelectPowers;
+import it.polimi.ingsw.psp1.santorini.model.game.Wait;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,5 +104,16 @@ public class GameTest {
     public void getPlayerOpponents_normalBehaviour_shouldListOpponentsOfPlayer() {
         assertTrue(game.getPlayerOpponents(player1).contains(player2));
         assertTrue(game.getPlayerOpponents(player1).contains(player3));
+    }
+
+    @Test
+    public void preGameStates_normalBehaviour_shouldStartGame() {
+        Player challenger = game.getPlayerList().get(1);
+        challenger.setGameState(new SelectPowers());
+
+        game.getPlayerOpponents(challenger).forEach(p -> p.setGameState(new Wait()));
+
+        challenger.getGameState().selectGod(game, challenger, new Athena());
+
     }
 }

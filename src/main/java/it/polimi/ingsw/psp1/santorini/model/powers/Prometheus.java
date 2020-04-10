@@ -16,10 +16,6 @@ public class Prometheus extends Mortal {
     private boolean firstBuild;
     private boolean hasBuiltBeforeMoving;
 
-    public Prometheus(Player player) {
-        super(player);
-    }
-
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);

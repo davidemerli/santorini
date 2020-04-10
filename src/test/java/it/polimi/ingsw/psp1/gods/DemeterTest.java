@@ -50,11 +50,10 @@ public class DemeterTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, new Point(2, 1));
 
-        assertFalse(game.getTurnState().shouldShowInteraction());
+        assertFalse(game.getTurnState().shouldShowInteraction(player));
 
         game.getTurnState().selectSquare(player, firstBuild);
 
@@ -73,12 +72,11 @@ public class DemeterTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
-
+        game.getTurnState().selectWorker(player, w);
         game.getTurnState().selectSquare(player, new Point(2, 1));
         game.getTurnState().selectSquare(player, firstBuild);
 
-        assertTrue(game.getTurnState().shouldShowInteraction());
+        assertTrue(game.getTurnState().shouldShowInteraction(player));
         assertTrue(game.getTurnState() instanceof Build);
         assertFalse(game.getTurnState().getValidMoves(player, w).contains(firstBuild));
 

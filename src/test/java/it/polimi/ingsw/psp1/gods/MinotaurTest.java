@@ -53,8 +53,8 @@ public class MinotaurTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
 
-        player1.setPower(new Minotaur(player1));
-        player2.setPower(new Mortal(player2));
+        player1.setPower(new Minotaur());
+        player2.setPower(new Mortal());
 
         player1.setGameState(new Play());
         player2.setGameState(new Play());
@@ -82,7 +82,7 @@ public class MinotaurTest {
 
         game.startTurn();
 
-        player1.setSelectedWorker(w1);
+        game.getTurnState().selectWorker(player1, w1);
 
         assertTrue(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition()));
         assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w3.getPosition()));
@@ -100,8 +100,7 @@ public class MinotaurTest {
 
         game.startTurn();
 
-        player1.setSelectedWorker(w1);
-
+        game.getTurnState().selectWorker(player1, w1);
         game.getTurnState().selectSquare(player1, e);
 
         assertEquals(e, w1.getPosition());
@@ -120,7 +119,7 @@ public class MinotaurTest {
 
         game.startTurn();
 
-        player1.setSelectedWorker(w1);
+        game.getTurnState().selectWorker(player1, w1);
 
         assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition()));
     }

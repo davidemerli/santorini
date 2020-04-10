@@ -6,10 +6,6 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 
 public class Chronus extends Mortal {
 
-    public Chronus(Player player) {
-        super(player);
-    }
-
     @Override
     public void onBeginTurn(Player player, Game game) {
         if (player.equals(this.player) && customWinCondition(game)) {

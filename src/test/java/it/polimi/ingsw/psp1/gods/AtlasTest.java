@@ -47,7 +47,7 @@ public class AtlasTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w);
+        game.getTurnState().selectWorker(player, w);
 
         assertFalse(game.getTurnState().shouldShowInteraction(player));
 

@@ -44,6 +44,7 @@ public class ChronusTest {
                 game.getMap().buildBlock(new Point(0, i), false);
             }
         }
+        game.startTurn();
 
         game.setTurnState(new BeginTurn(game));
 

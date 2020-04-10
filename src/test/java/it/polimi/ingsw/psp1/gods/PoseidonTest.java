@@ -1,12 +1,12 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
-import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Poseidon;
+import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class PoseidonTest {
 
         game.addPlayer(player);
 
-        player.setPower(new Poseidon(player));
+        player.setPower(new Poseidon());
 
         player.setGameState(new Play());
     }
@@ -51,28 +51,26 @@ public class PoseidonTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w1);
+        game.getTurnState().selectWorker(player, w1);
 
         assertFalse(game.getTurnState().shouldShowInteraction(player));
 
-        game.getTurnState().selectSquare(player, new Point(1,2));
+        game.getTurnState().selectSquare(player, new Point(1, 2));
 
         assertFalse(game.getTurnState().shouldShowInteraction(player));
 
-        game.getTurnState().selectSquare(player, new Point(1,1));
+        game.getTurnState().selectSquare(player, new Point(1, 1));
 
         assertTrue(game.getTurnState() instanceof Build);
         assertTrue(game.getTurnState().shouldShowInteraction(player));
         assertTrue(player.isWorkerLocked());
         assertEquals(player.getSelectedWorker(), w2);
 
-        assertTrue(game.getTurnState().getValidMoves(player, w1).containsAll(game.getMap().getNeighbors(w2.getPosition())));
+        assertTrue(game.getTurnState().getValidMoves(player, w2).containsAll(game.getMap().getNeighbors(w2.getPosition())));
 
-        player.setSelectedWorker();
-
-        game.getTurnState().selectSquare(player, new Point(3,4));
-        game.getTurnState().selectSquare(player, new Point(4,3));
-        game.getTurnState().selectSquare(player, new Point(4,4));
+        game.getTurnState().selectSquare(player, new Point(3, 4));
+        game.getTurnState().selectSquare(player, new Point(4, 3));
+        game.getTurnState().selectSquare(player, new Point(4, 4));
 
         assertTrue(game.getTurnState() instanceof EndTurn);
     }
@@ -89,12 +87,12 @@ public class PoseidonTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w1);
+        game.getTurnState().selectWorker(player, w1);
 
-        game.getTurnState().selectSquare(player, new Point(1,2));
-        game.getTurnState().selectSquare(player, new Point(1,1));
+        game.getTurnState().selectSquare(player, new Point(1, 2));
+        game.getTurnState().selectSquare(player, new Point(1, 1));
 
-        game.getTurnState().selectSquare(player, new Point(3,4));
+        game.getTurnState().selectSquare(player, new Point(3, 4));
         game.getTurnState().toggleInteraction(player);
 
         assertTrue(game.getTurnState() instanceof EndTurn);
@@ -112,11 +110,11 @@ public class PoseidonTest {
 
         game.startTurn();
 
-        player.setSelectedWorker(w2);
+        game.getTurnState().selectWorker(player, w2);
 
-        game.getTurnState().selectSquare(player, new Point(1,2));
-        game.getTurnState().selectSquare(player, new Point(1,1));
+        game.getTurnState().selectSquare(player, new Point(3, 2));
+        game.getTurnState().selectSquare(player, new Point(3, 3));
 
-        assertTrue(player.getTurnState() instanceof EndTurn);
+        assertTrue(game.getTurnState() instanceof EndTurn);
     }
 }

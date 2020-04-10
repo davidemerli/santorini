@@ -8,10 +8,6 @@ import java.awt.*;
 
 public class Pan extends Mortal {
 
-    public Pan(Player player) {
-        super(player);
-    }
-
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
         if(player.equals(this.player)) {
