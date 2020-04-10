@@ -19,11 +19,7 @@ import java.util.stream.Collectors;
 //TODO: handle loosing condition whether you cannot build after any move
 public class Mortal implements Power {
 
-    protected final Player player;
-
-    public Mortal(Player player) {
-        this.player = player;
-    }
+    protected Player player;
 
     /**
      * {@inheritDoc} <br>
@@ -188,5 +184,9 @@ public class Mortal implements Power {
         };
 
         return allBlocked.or(noValidMoves);
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

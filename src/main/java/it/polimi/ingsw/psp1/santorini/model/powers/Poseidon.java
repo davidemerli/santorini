@@ -13,10 +13,6 @@ public class Poseidon extends Mortal {
 
     private int counter;
 
-    public Poseidon(Player player) {
-        super(player);
-    }
-
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);

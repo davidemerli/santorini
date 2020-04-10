@@ -12,10 +12,6 @@ import java.util.stream.Collectors;
 
 public class Athena extends Mortal {
 
-    public Athena(Player player) {
-        super(player);
-    }
-
     private boolean hasMovedUpwards;
 
     /**

@@ -12,10 +12,6 @@ public class Atlas extends Mortal {
 
     private boolean abilityToggled;
 
-    public Atlas(Player player) {
-        super(player);
-    }
-
     /**
      * {@inheritDoc}<br>
      * <p>

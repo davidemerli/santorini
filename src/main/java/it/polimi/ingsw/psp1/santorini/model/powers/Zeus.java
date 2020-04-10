@@ -10,10 +10,6 @@ import java.util.List;
 
 public class Zeus extends Mortal {
 
-    public Zeus(Player player) {
-        super(player);
-    }
-
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);

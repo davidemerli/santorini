@@ -14,10 +14,6 @@ public class Artemis extends Mortal {
     private boolean hasMoved;
     private Point oldPosition;
 
-    public Artemis(Player player) {
-        super(player);
-    }
-
     /**
      * {@inheritDoc}
      * <p>

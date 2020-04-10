@@ -30,8 +30,8 @@ public class AthenaTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
 
-        player1.setPower(new Athena(player1));
-        player2.setPower(new Mortal(player2));
+        player1.setPower(new Athena());
+        player2.setPower(new Mortal());
 
         player1.setGameState(new Play());
         player2.setGameState(new Play());
