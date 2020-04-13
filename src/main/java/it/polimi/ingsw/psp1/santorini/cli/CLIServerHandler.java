@@ -9,7 +9,8 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
+import java.util.StringJoiner;
+import java.util.stream.IntStream;
 
 import static it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType.*;
 
@@ -24,7 +25,17 @@ public class CLIServerHandler implements ServerHandler {
     public void handleSendGameData(ServerGameData packet) {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayers();
-        playerList.get(0).getName();
+        StringJoiner players = new StringJoiner("\t-\t", "", "");
+        StringJoiner gods = new StringJoiner("\t-\t", "", "");
+
+        playerList.forEach(p -> players.add(p.getName()));
+        playerList.forEach(g -> gods.add(g.getPower().getClass().getSimpleName()));
+
+        System.out.println(players);
+        System.out.println(gods);
+
+        PrintUtils.stampMap(map);
+
         // stampo le info generali
         // stampo la mappa
         // stampo le info sui player
@@ -85,9 +96,26 @@ public class CLIServerHandler implements ServerHandler {
     @Override
     public void handlePowerList(ServerPowerList serverPowerList) {
         List<Power> powerList = serverPowerList.getPowerList();
-        // stampo la power list
-        for (int i = 0; i < powerList.size(); i++) {
-            System.out.print(powerList.get(i));
+
+        // da sistemare. La suddivisione delle colonne deve dipendere dal numero di gods
+        for (int i = 1; i < powerList.size() + 1; i++) {
+            System.out.print(i + ") " + powerList.get(i - 1).getClass().getSimpleName() + " \t\t");
+            if (i % 3 == 0) {
+                System.out.println();
+            }
         }
+
+
+        /*
+        StringJoiner powers = new StringJoiner("\t", "", "");
+        IntStream.range(0, powerList.size())
+                .forEach(i -> powers.add(String.format("%d) %s", i + 1, powerList.get(i).getClass().getSimpleName())));
+
+        System.out.println(powers);
+
+        */
+
     }
 }
+
+// salvare il precedente sempre (mappa)
