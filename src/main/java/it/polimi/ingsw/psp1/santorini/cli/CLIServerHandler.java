@@ -112,7 +112,6 @@ public class CLIServerHandler implements ServerHandler {
                 .forEach(i -> powers.add(String.format("%d) %s", i + 1, powerList.get(i).getClass().getSimpleName())));
 
         System.out.println(powers);
-
         */
 
     }
