@@ -9,10 +9,8 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -188,5 +186,14 @@ public class Mortal implements Power {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return Objects.equals(this.player, ((Mortal) obj).player);
     }
 }

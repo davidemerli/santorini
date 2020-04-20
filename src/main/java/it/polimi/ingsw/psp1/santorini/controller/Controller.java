@@ -89,7 +89,7 @@ public class Controller implements ViewObserver {
                 return;
             }
 
-            powerList.forEach(p -> player.getGameState().selectGod(model, player, p));
+            powerList.forEach(p -> player.getGameState().selectGod(model, p));
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
         }

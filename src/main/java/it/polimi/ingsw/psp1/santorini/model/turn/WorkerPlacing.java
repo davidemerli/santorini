@@ -19,6 +19,25 @@ public class WorkerPlacing extends TurnState {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void selectSquare(Player player, Point position) {
+        if (game.getWorkerOn(position).isPresent()) {
+            throw new IllegalArgumentException("Occupied square");
+        }
+
+        player.addWorker(new Worker(position));
+
+        if (player.getWorkers().size() == 2 &&
+                game.getPlayerOpponents(player).stream().allMatch(p -> p.getWorkers().size() == 2)) {
+            game.setTurnState(new BeginTurn(game));
+        } else {
+            game.setTurnState(new WorkerPlacing(game));
+        }
+    }
+
     @Override
     public List<Point> getValidMoves(Player player, Worker worker) {
         return player.getPower().getValidMoves(worker, game);

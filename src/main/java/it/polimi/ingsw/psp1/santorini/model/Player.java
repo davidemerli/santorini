@@ -58,6 +58,7 @@ public class Player {
 
     public void setGameState(PreGameState gameState) {
         this.gameState = gameState;
+        this.gameState.setPlayer(this);
     }
 
     public Power getPower() {

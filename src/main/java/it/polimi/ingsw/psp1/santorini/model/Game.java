@@ -52,6 +52,12 @@ public class Game {
         playerList.remove(player);
     }
 
+    public void buildBlock(Point position, boolean forceDome) {
+        map.buildBlock(position, forceDome);
+
+        notifyObservers(o -> o.mapChange(this, map));
+    }
+
     /**
      * Used to get a Optional containing a worker if there is one on the given position
      *
@@ -97,6 +103,7 @@ public class Game {
         if (playerList.size() == 0) {
             throw new UnsupportedOperationException("Player list is empty");
         }
+
         return playerList.get(0);
     }
 
@@ -108,12 +115,40 @@ public class Game {
         BeginTurn turn = new BeginTurn(this);
         setTurnState(turn);
         turn.onStart();
+
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+    }
+
+    public void setWinner(Player player) {
+        if(!playerList.contains(player)) {
+            throw new NoSuchElementException("Given player is not in this game");
+        }
+
+        player.setWinner(true);
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+    }
+
+    public void setLoser(Player player) {
+        if(!playerList.contains(player)) {
+            throw new NoSuchElementException("Given player is not in this game");
+        }
+
+        player.setLost(true);
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
     }
 
     public void nextTurn() {
-        Collections.rotate(playerList, 1);
+        shiftPlayers(1);
 
         startTurn();
+    }
+
+    public void shiftPlayers(int distance) {
+        Collections.rotate(playerList, distance);
+    }
+
+    public void shufflePlayers() {
+        Collections.shuffle(playerList);
     }
 
     public List<Player> getPlayerList() {
@@ -132,7 +167,7 @@ public class Game {
         this.turnState = turnState;
     }
 
-    public List<Power> getAvailableGodList() {
+    public List<Power> getAvailablePowers() {
         return availableGodList;
     }
 

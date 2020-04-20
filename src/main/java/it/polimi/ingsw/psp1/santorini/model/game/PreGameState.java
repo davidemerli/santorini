@@ -6,7 +6,13 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
 public abstract class PreGameState {
 
-    public void selectGod(Game game, Player player, Power power) {
+    protected Player player;
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void selectGod(Game game, Power power) {
         throw new UnsupportedOperationException("Cannot undo in this state");
     }
 

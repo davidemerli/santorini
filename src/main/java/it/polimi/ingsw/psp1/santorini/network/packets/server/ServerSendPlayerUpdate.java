@@ -6,12 +6,16 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
 
-    private final String playerName;
+    private final PlayerData playerData;
     private final EnumTurnState playerState;
+    private final boolean hasWon;
+    private final boolean hasLost;
 
-    public ServerSendPlayerUpdate(String playerName, EnumTurnState playerState) {
-        this.playerName = playerName;
+    public ServerSendPlayerUpdate(PlayerData playerData, EnumTurnState playerState, boolean hasWon, boolean hasLost) {
+        this.playerData = playerData;
         this.playerState = playerState;
+        this.hasWon = hasWon;
+        this.hasLost = hasLost;
     }
 
     @Override
@@ -19,11 +23,19 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
         netHandler.handlePlayerUpdate(this);
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public PlayerData getPlayerData() {
+        return playerData;
     }
 
     public EnumTurnState getPlayerState() {
         return playerState;
+    }
+
+    public boolean hasWon() {
+        return hasWon;
+    }
+
+    public boolean hasLost() {
+        return hasLost;
     }
 }
