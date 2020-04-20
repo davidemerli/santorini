@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Game {
+public class Game implements Runnable {
 
     private final List<Power> availableGodList;
     private final List<Player> playerList;
@@ -30,6 +30,10 @@ public class Game {
         this.playerList = new ArrayList<>();
         this.observers = new HashSet<>();
         this.map = new GameMap();
+    }
+
+    public void run() {
+        //TODO: game turn auto changes @see GameTest.java
     }
 
     public void addObserver(View view) {

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.network.server;
 
+import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerInvalidPacket;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,13 +16,16 @@ import java.util.concurrent.Executors;
 
 public class ClientConnectionHandler implements Runnable, ClientHandler {
 
+    private final Server server;
+
     private final Socket clientSocket;
     private final ExecutorService executionQueue;
 
     private final ObjectInputStream objectInputStream;
     private final ObjectOutputStream objectOutputStream;
 
-    ClientConnectionHandler(Socket clientSocket) throws IOException {
+    ClientConnectionHandler(Server server, Socket clientSocket) throws IOException {
+        this.server = server;
         this.clientSocket = clientSocket;
         this.executionQueue = Executors.newSingleThreadExecutor();
 
@@ -52,12 +57,21 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
 
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
-
+        Player player = new Player(packet.getName());
+        try {
+            server.addToWait(player, this);
+        } catch (UnsupportedOperationException e) {
+            sendPacket(new ServerInvalidPacket("There is a player with the same name. Please choose another name"));
+        }
     }
 
     @Override
     public void handleCreateGame(ClientCreateGame packet) {
-
+        try {
+            server.createGame(this);
+        }catch (UnsupportedOperationException e) {
+            sendPacket(new ServerInvalidPacket("A game is already created"));
+        }
     }
 
     @Override
