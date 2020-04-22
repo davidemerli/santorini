@@ -24,5 +24,5 @@ public interface ClientHandler extends NetHandler {
 
     void handleWorkerSelection(ClientSelectWorker clientSelectWorker);
 
-    void handleSetPlayerNumber(ClientSetPlayerNumber clientSetPlayerNumber);
+    void handleSelectStartingPlayer(ClientSelectStartingPlayer clientSelectStartingPlayer);
 }

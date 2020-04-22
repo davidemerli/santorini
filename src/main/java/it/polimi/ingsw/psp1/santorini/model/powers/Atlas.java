@@ -1,7 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -56,7 +55,7 @@ public class Atlas extends Mortal {
 
             game.getMap().buildBlock(where, shouldBuildDome || abilityToggled);
 
-            game.setTurnState(new EndTurn(game));
+            game.endTurn();
         } else {
             super.onBuild(player, worker, where, game);
         }

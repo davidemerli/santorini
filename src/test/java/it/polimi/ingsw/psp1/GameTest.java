@@ -2,10 +2,8 @@ package it.polimi.ingsw.psp1;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.ChoosePlayerPower;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
-import it.polimi.ingsw.psp1.santorini.model.game.SelectPowers;
-import it.polimi.ingsw.psp1.santorini.model.game.Wait;
+import it.polimi.ingsw.psp1.santorini.model.turn.ChoosePlayerPower;
+import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Minotaur;
@@ -17,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -30,7 +27,7 @@ public class GameTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(3);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
         this.player3 = new Player("p3");
@@ -116,45 +113,43 @@ public class GameTest {
 
     @Test
     public void preGameStates_normalBehaviour_shouldStartGame() {
-        Player challenger = player1;
-        challenger.setGameState(new SelectPowers());
+        game.setTurnState(new SelectPowers(game));
 
-        game.getPlayerOpponents(challenger).forEach(p -> p.setGameState(new Wait()));
+        game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Athena());
+        game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Minotaur());
+        game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Triton());
 
-        challenger.getGameState().selectGod(game, new Athena());
-        challenger.getGameState().selectGod(game, new Minotaur());
-        challenger.getGameState().selectGod(game, new Triton());
-
-        assertTrue(challenger.getGameState() instanceof Wait);
-
-        player2.setGameState(new ChoosePlayerPower());
+        assertTrue(game.getTurnState() instanceof ChoosePlayerPower);
 
         List<Power> powers = game.getAvailablePowers();
 
-        player2.getGameState().selectGod(game, powers.get(0));
-        player2.setGameState(new Wait());
+        assertEquals(3, powers.size());
 
-        player3.setGameState(new ChoosePlayerPower());
-        player3.getGameState().selectGod(game, powers.get(0));
+        assertEquals(player2, game.getCurrentPlayer());
 
-        player1.setPower(powers.get(0));
-        powers.clear();
-        game.getPlayerList().forEach(p -> p.setGameState(new Play()));
+        game.getTurnState().selectGod(game, game.getCurrentPlayer(), powers.get(0));
 
-        game.shufflePlayers();
-        game.removePlayer(player1);
-        game.addPlayer(player1);
+        assertTrue(game.getTurnState() instanceof ChoosePlayerPower);
 
-        game.setTurnState(new WorkerPlacing(game));
+        assertEquals(player3, game.getCurrentPlayer());
+
+        game.getTurnState().selectGod(game, game.getCurrentPlayer(), powers.get(0));
+
+        assertEquals(player1, game.getCurrentPlayer());
+
+        game.getTurnState().selectStartingPlayer(game, player1, "p2");
+
+        assertEquals(player2, game.getCurrentPlayer());
+        assertTrue(game.getTurnState() instanceof WorkerPlacing);
 
         int[][] ints = {{0, 0}, {0, 1}, {1, 0}, {0, 2}, {2, 0}, {3, 3}};
 
         for (int i = 0; i < 6; i++) {
             game.getTurnState().selectSquare(game.getPlayerList().get(0), new Point(ints[i][0], ints[i][1]));
 
-            if (i % 2 == 0) {
-                game.shiftPlayers(1);
-            }
+//            if (i % 2 == 0) {
+//                game.shiftPlayers(-1);
+//            }
         }
 
         game.nextTurn();

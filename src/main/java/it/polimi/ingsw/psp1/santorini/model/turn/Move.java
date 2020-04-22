@@ -1,8 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
+import it.polimi.ingsw.psp1.santorini.model.EnumMoveType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.awt.*;
 import java.util.NoSuchElementException;
@@ -11,6 +13,12 @@ public class Move extends TurnState {
 
     public Move(Game game) {
         super(game);
+
+        if(game.getCurrentPlayer().getSelectedWorker() != null) {
+            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_WORKER);
+        } else {
+            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
+        }
     }
 
     @Override
@@ -27,7 +35,11 @@ public class Move extends TurnState {
             throw new IllegalArgumentException("Invalid move");
         }
 
+        Point old = player.getSelectedWorker().getPosition();
+
         game.getPlayerList().forEach(p -> p.getPower().onMove(player, player.getSelectedWorker(), position, game));
+
+        game.notifyObservers(o -> o.playerMove(player, EnumMoveType.MOVE, player.getSelectedWorker(), old, position));
     }
 
     @Override
@@ -44,6 +56,9 @@ public class Move extends TurnState {
         //should we block selection if no moves are
 
         player.setSelectedWorker(worker);
+        game.notifyObservers(o -> o.availableMovesUpdate(getValidMoves(player, worker), getBlockedMoves(player, worker)));
+
+        game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }
 
     @Override

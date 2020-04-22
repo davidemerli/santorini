@@ -1,10 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
+import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
-import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class Game implements Runnable {
 
+    private final int playerNumber;
     private final List<Power> availableGodList;
     private final List<Player> playerList;
 
@@ -25,15 +27,28 @@ public class Game implements Runnable {
 
     private GameMap map;
 
-    public Game() {
+    private boolean running;
+
+    public Game(int playerNumber) {
+        this.playerNumber = playerNumber;
         this.availableGodList = new ArrayList<>();
         this.playerList = new ArrayList<>();
         this.observers = new HashSet<>();
         this.map = new GameMap();
+
+        this.turnState = null;
+        this.running = true;
     }
 
+    @Override
     public void run() {
-        //TODO: game turn auto changes @see GameTest.java
+        while (running) {
+            if (turnState == null) {
+                setTurnState(new SelectPowers(this));
+            }
+
+
+        }
     }
 
     public void addObserver(View view) {
@@ -111,20 +126,8 @@ public class Game implements Runnable {
         return playerList.get(0);
     }
 
-    public void startTurn() {
-        if (playerList.size() == 0) {
-            throw new UnsupportedOperationException("Player list is empty");
-        }
-
-        BeginTurn turn = new BeginTurn(this);
-        setTurnState(turn);
-        turn.onStart();
-
-        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
-    }
-
     public void setWinner(Player player) {
-        if(!playerList.contains(player)) {
+        if (!playerList.contains(player)) {
             throw new NoSuchElementException("Given player is not in this game");
         }
 
@@ -133,7 +136,7 @@ public class Game implements Runnable {
     }
 
     public void setLoser(Player player) {
-        if(!playerList.contains(player)) {
+        if (!playerList.contains(player)) {
             throw new NoSuchElementException("Given player is not in this game");
         }
 
@@ -141,18 +144,44 @@ public class Game implements Runnable {
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
     }
 
+    public void startTurn() {
+        if (playerList.size() == 0) {
+            throw new UnsupportedOperationException("Player list is empty");
+        }
+
+        getPlayerList().forEach(p -> p.getPower().onBeginTurn(this.getCurrentPlayer(), this));
+
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+    }
+
     public void nextTurn() {
-        shiftPlayers(1);
+        shiftPlayers(-1);
 
         startTurn();
     }
 
+    public void endTurn() {
+        //TODO: wait X seconds before starting new turn
+
+        getPlayerList().forEach(p -> p.getPower().onEndTurn(p, this));
+        getCurrentPlayer().setSelectedWorker(null);
+        getCurrentPlayer().unlockWorker();
+
+        nextTurn();
+    }
+
     public void shiftPlayers(int distance) {
         Collections.rotate(playerList, distance);
+
+        notifyObservers(o -> o.gameUpdate(this));
     }
 
     public void shufflePlayers() {
         Collections.shuffle(playerList);
+    }
+
+    public void askRequest(Player player, EnumRequestType requestType) {
+        notifyObservers(o -> o.requestToPlayer(player, requestType));
     }
 
     public List<Player> getPlayerList() {
@@ -169,6 +198,16 @@ public class Game implements Runnable {
 
     public void setTurnState(TurnState turnState) {
         this.turnState = turnState;
+
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+
+        if (getCurrentPlayer().getSelectedWorker() != null) {
+            Player player = getCurrentPlayer();
+            Worker worker = player.getSelectedWorker();
+
+            notifyObservers(o -> o.availableMovesUpdate(getTurnState().getValidMoves(player, worker),
+                    getTurnState().getBlockedMoves(player, worker)));
+        }
     }
 
     public List<Power> getAvailablePowers() {
@@ -181,5 +220,14 @@ public class Game implements Runnable {
 
     public void setMap(GameMap map) {
         this.map = map;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public synchronized void end() {
+        this.running = false;
+        //TODO: notify client game has ended
     }
 }

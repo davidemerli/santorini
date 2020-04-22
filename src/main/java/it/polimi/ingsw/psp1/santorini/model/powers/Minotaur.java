@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
 import java.awt.*;
 import java.util.List;
@@ -15,7 +16,7 @@ public class Minotaur extends Mortal {
 
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
-        if (game.getTurnState() instanceof Build) {
+        if (!(game.getTurnState() instanceof Move)) {
             return super.getValidMoves(worker, game);
         }
 
@@ -29,8 +30,11 @@ public class Minotaur extends Mortal {
         Predicate<Point> isValidPosition = p -> {
             Point pushPos = getPushLocation(worker.getPosition(), p);
 
-            return !game.getMap().isPositionOutOfMap(p) && !game.getMap().hasDome(pushPos) &&
-                    game.getWorkerOn(pushPos).isEmpty();
+            if (game.getMap().isPositionOutOfMap(p) || game.getMap().isPositionOutOfMap(pushPos)) {
+                return false;
+            }
+
+            return !game.getMap().hasDome(pushPos) && game.getWorkerOn(pushPos).isEmpty();
         };
 
         return neighbors.stream()

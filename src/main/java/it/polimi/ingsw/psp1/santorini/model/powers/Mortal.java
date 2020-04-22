@@ -4,7 +4,6 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 
@@ -58,7 +57,7 @@ public class Mortal implements Power {
 
             game.getMap().buildBlock(where, shouldBuildDome);
 
-            game.setTurnState(new EndTurn(game));
+            game.endTurn();
         }
     }
 

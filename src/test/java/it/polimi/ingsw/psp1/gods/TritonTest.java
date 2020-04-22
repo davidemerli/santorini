@@ -1,6 +1,5 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.Game;
@@ -23,14 +22,12 @@ public class TritonTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
 
         player.setPower(new Triton());
-
-        player.setGameState(new Play());
     }
 
     @After

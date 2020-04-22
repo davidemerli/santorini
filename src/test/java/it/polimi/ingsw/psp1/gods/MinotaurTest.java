@@ -2,7 +2,6 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Minotaur;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
@@ -46,7 +45,7 @@ public class MinotaurTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 
@@ -55,9 +54,6 @@ public class MinotaurTest {
 
         player1.setPower(new Minotaur());
         player2.setPower(new Mortal());
-
-        player1.setGameState(new Play());
-        player2.setGameState(new Play());
     }
 
     @After

@@ -1,8 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
+import it.polimi.ingsw.psp1.santorini.model.EnumMoveType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.awt.*;
 
@@ -10,6 +12,12 @@ public class Build extends TurnState {
 
     public Build(Game game) {
         super(game);
+
+        if(game.getCurrentPlayer().getSelectedWorker() != null) {
+            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_WORKER);
+        } else {
+            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
+        }
     }
 
     @Override
@@ -27,6 +35,8 @@ public class Build extends TurnState {
         }
 
         player.getPower().onBuild(player, player.getSelectedWorker(), position, game);
+
+        game.notifyObservers(o -> o.playerBuild(player, EnumMoveType.BUILD, player.getSelectedWorker(), position));
     }
 
     @Override
@@ -36,6 +46,10 @@ public class Build extends TurnState {
         }
 
         player.setSelectedWorker(worker);
+
+        game.notifyObservers(o -> o.availableMovesUpdate(getValidMoves(player, worker), getBlockedMoves(player, worker)));
+
+        game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }
 
     @Override

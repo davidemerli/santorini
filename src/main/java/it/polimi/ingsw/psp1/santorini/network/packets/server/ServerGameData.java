@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Stores as a packet all relevant information about a game
+ *
+ * The first element in 'players' is the CURRENT PLAYER playing its turn
+ */
 public class ServerGameData implements Packet<ServerHandler> {
 
     private final GameMap gameMap;

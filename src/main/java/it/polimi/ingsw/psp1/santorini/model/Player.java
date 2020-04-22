@@ -1,9 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
-import it.polimi.ingsw.psp1.santorini.model.game.PreGameState;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
-import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +11,6 @@ public class Player {
 
     private final String name;
 
-    private PreGameState gameState;
     private Power power;
 
     private Worker selectedWorker;
@@ -52,15 +49,6 @@ public class Player {
         return Collections.unmodifiableList(workerList);
     }
 
-    public PreGameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(PreGameState gameState) {
-        this.gameState = gameState;
-        this.gameState.setPlayer(this);
-    }
-
     public Power getPower() {
         return power;
     }
@@ -71,6 +59,7 @@ public class Player {
     }
 
     public Worker getSelectedWorker() {
+        //TODO: maybe turn this into optional?
         return selectedWorker;
     }
 

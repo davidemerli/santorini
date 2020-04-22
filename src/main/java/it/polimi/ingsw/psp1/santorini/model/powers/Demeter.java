@@ -1,7 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -44,7 +43,7 @@ public class Demeter extends Mortal {
      */
     @Override
     public void onToggleInteraction(Game game) {
-        game.setTurnState(new EndTurn(game));
+        game.endTurn();
     }
 
     /**
@@ -52,7 +51,7 @@ public class Demeter extends Mortal {
      */
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
-        if(player.equals(this.player)) {
+        if (player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
             game.getMap().buildBlock(where, shouldBuildDome);
 
@@ -62,7 +61,7 @@ public class Demeter extends Mortal {
 
                 game.setTurnState(new Build(game));
             } else {
-                game.setTurnState(new EndTurn(game));
+                game.endTurn();
             }
         } else {
             super.onBuild(player, worker, where, game);

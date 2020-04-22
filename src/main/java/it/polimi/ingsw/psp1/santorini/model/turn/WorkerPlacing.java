@@ -3,8 +3,10 @@ package it.polimi.ingsw.psp1.santorini.model.turn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +14,11 @@ public class WorkerPlacing extends TurnState {
 
     public WorkerPlacing(Game game) {
         super(game);
+
+        game.notifyObservers(o -> o.availableMovesUpdate(getValidMoves(game.getCurrentPlayer(), null),
+                Collections.emptyMap()));
+
+        game.askRequest(game.getCurrentPlayer(), EnumRequestType.PLACE_WORKER);
     }
 
     @Override
@@ -28,14 +35,25 @@ public class WorkerPlacing extends TurnState {
             throw new IllegalArgumentException("Occupied square");
         }
 
+        //TODO: move add worker in game class?
+        //TODO: notify move in EnumMoveType?
         player.addWorker(new Worker(position));
 
-        if (player.getWorkers().size() == 2 &&
-                game.getPlayerOpponents(player).stream().allMatch(p -> p.getWorkers().size() == 2)) {
-            game.setTurnState(new BeginTurn(game));
-        } else {
-            game.setTurnState(new WorkerPlacing(game));
+        game.notifyObservers(o -> o.playerUpdate(game, player));
+
+        boolean allDone = game.getPlayerList().stream().allMatch(p -> p.getWorkers().size() == 2);
+
+        //if everyone has put down 2 workers, the game can begin with normal turns
+        if(allDone) {
+            game.nextTurn();
+            return;
         }
+
+        if (player.getWorkers().size() == 2) {
+            game.shiftPlayers(-1);
+        }
+
+        game.setTurnState(new WorkerPlacing(game));
     }
 
     @Override

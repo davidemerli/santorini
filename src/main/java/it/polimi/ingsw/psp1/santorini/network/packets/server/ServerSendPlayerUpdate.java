@@ -8,14 +8,12 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
 
     private final PlayerData playerData;
     private final EnumTurnState playerState;
-    private final boolean hasWon;
-    private final boolean hasLost;
+    private final boolean shouldShowInteraction;
 
-    public ServerSendPlayerUpdate(PlayerData playerData, EnumTurnState playerState, boolean hasWon, boolean hasLost) {
+    public ServerSendPlayerUpdate(PlayerData playerData, EnumTurnState playerState, boolean shouldShowInteraction) {
         this.playerData = playerData;
         this.playerState = playerState;
-        this.hasWon = hasWon;
-        this.hasLost = hasLost;
+        this.shouldShowInteraction = shouldShowInteraction;
     }
 
     @Override
@@ -31,11 +29,7 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
         return playerState;
     }
 
-    public boolean hasWon() {
-        return hasWon;
-    }
-
-    public boolean hasLost() {
-        return hasLost;
+    public boolean isShouldShowInteraction() {
+        return shouldShowInteraction;
     }
 }

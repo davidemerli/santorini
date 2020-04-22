@@ -23,8 +23,31 @@ public abstract class TurnState {
     }
 
     /**
+     * Called when the 'Challenger' chooses a starting player
+     *
+     * @param game current game
+     * @param player current player
+     * @param chosenPlayerName player chosen to start the game
+     */
+    public void selectStartingPlayer(Game game, Player player, String chosenPlayerName) {
+        throw new UnsupportedOperationException("Not permitted in this state");
+    }
+
+    /**
+     * Called when power is selected in ChoosePlayerPower or SelectPowers
+     *
+     * @param game current game
+     * @param player current player
+     * @param power selected power
+     */
+    public void selectGod(Game game, Player player, Power power) {
+        throw new UnsupportedOperationException("Not permitted in this state");
+    }
+
+    /**
      * Called when a square is selected by the player
      *
+     * @param player   current player
      * @param position of the selected square
      */
     public void selectSquare(Player player, Point position) {
@@ -34,6 +57,7 @@ public abstract class TurnState {
     /**
      * Called when a worker is selected by the player
      *
+     * @param player current player
      * @param worker selected by the player
      */
     public void selectWorker(Player player, Worker worker) {
@@ -43,6 +67,7 @@ public abstract class TurnState {
     /**
      * Checks if the custom interaction button should be shown in the current state of the turn
      *
+     * @param player current player
      * @return true if the player can activate/deactivate powers
      */
     public abstract boolean shouldShowInteraction(Player player);
@@ -55,6 +80,8 @@ public abstract class TurnState {
      * the button allows him to end the turn instead. <br>
      * <p>
      * Every power is handled differently but uses the same button
+     *
+     * @param player current player
      */
     public void toggleInteraction(Player player) {
         throw new UnsupportedOperationException("Not permitted in this state");
@@ -63,6 +90,8 @@ public abstract class TurnState {
     /**
      * Checks what squares near the selected worker are unavailable for the current action
      *
+     * @param player current player
+     * @param worker selected worker
      * @return the list of unavailable squares
      */
     public Map<Power, List<Point>> getBlockedMoves(Player player, Worker worker) {
@@ -76,6 +105,8 @@ public abstract class TurnState {
     /**
      * Checks what squares near the selected worker are available for the current action
      *
+     * @param player current player
+     * @param worker selectedWorker
      * @return the list of available squares
      */
     public List<Point> getValidMoves(Player player, Worker worker) {
@@ -84,6 +115,8 @@ public abstract class TurnState {
 
     /**
      * Returns to the previous state of the map, deleting the last action made
+     *
+     * @param player current player
      */
     public void undo(Player player) {
         player.getPower().undo();
@@ -92,7 +125,7 @@ public abstract class TurnState {
     /**
      * Utility check for blocked positions
      *
-     * @param map with blocked moves and by which power
+     * @param map   with blocked moves and by which power
      * @param point to be checked
      * @return true if given position is blocked by some power
      */

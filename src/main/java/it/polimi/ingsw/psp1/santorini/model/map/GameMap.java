@@ -156,6 +156,7 @@ public class GameMap {
         if (isPositionOutOfMap(point)) {
             throw new ArrayIndexOutOfBoundsException("Given point is not on map");
         }
+        //if everyone has put down 2 workers,
 
         List<Point> list = new ArrayList<>();
 
