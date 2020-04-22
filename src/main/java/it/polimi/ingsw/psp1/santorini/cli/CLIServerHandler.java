@@ -8,13 +8,20 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.IntStream;
+import java.util.Scanner;
 
 import static it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType.*;
 
 public class CLIServerHandler implements ServerHandler {
+
+    public CLIServerHandler() {
+
+    }
+
+    Scanner scanner = new Scanner(System.in);
+    List<PlayerData> playerDataList;
 
     @Override
     public void handleKeepAlive(ServerKeepAlive packet) {
@@ -25,20 +32,12 @@ public class CLIServerHandler implements ServerHandler {
     public void handleSendGameData(ServerGameData packet) {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayers();
-        StringJoiner players = new StringJoiner("\t-\t", "", "");
-        StringJoiner gods = new StringJoiner("\t-\t", "", "");
+        playerDataList = new ArrayList<>(playerList);
 
-        playerList.forEach(p -> players.add(p.getName()));
-        playerList.forEach(g -> gods.add(g.getPower().getClass().getSimpleName()));
-
-        System.out.println(players);
-        System.out.println(gods);
-
+        PrintUtils.printPlayerInfo(playerList);
         PrintUtils.stampMap(map);
 
-        // stampo le info generali
-        // stampo la mappa
-        // stampo le info sui player
+        // aggiungere lo stato attuale
     }
 
     @Override
@@ -46,16 +45,28 @@ public class CLIServerHandler implements ServerHandler {
         // il server dice al client cosa deve fare
         EnumRequestType action = packet.getRequestType();
         if (action == SELECT_NAME) {
-            System.out.print("Choose your name: ");
+            String toStamp = "Choose your name: ";
+            PrintUtils.print(toStamp, 2, 0, false);
+            // restituisco il nome al server
         } else if (action == CHOOSE_POWERS) {
-            System.out.print("Choose the gods who will play: ");
+            String toStamp = "Choose the gods who will play: use select command";
+            PrintUtils.print(toStamp, 10, 0, false);
+            // ci pensa il comando
         } else if (action == SELECT_POWER) {
-            System.out.print("Choose your god: ");
+            // prima il server manda activeGods ed essa viene stampata a schermo
+            // il client decide quale gods prendere
+            String str = "Choose your god: ";
+            PrintUtils.print(str, 16, 0, true);
+            // ci pensa il comando
         } else if (action == SELECT_SQUARE) {
-            System.out.print("Select square: ");
+            String str = "Select square: ";
+            PrintUtils.print(str, 16, 0, true);
         } else if (action == SELECT_WORKER) {
-            System.out.print("Select worker: ");
+            String str = "Select worker: ";
+            PrintUtils.print(str, 16, 0, true);
+            // int worker = scanner.nextInt();
         }
+        // TODO: sistemare i cursori
     }
 
     @Override
@@ -74,11 +85,8 @@ public class CLIServerHandler implements ServerHandler {
 
     @Override
     public void handleError(ServerInvalidPacket packet) {
-        // il server invia questo packet per segnalare un errore
-        // l'errore viene mostrato in console
         String error = packet.getError();
-        // stampo errore nella cli correttamente col cursore
-        System.out.println(error);
+        PrintUtils.print(error, 20, 0, true);
     }
 
     @Override
@@ -86,7 +94,7 @@ public class CLIServerHandler implements ServerHandler {
         // il server segnala al client che un player ha effettuato una mossa (move o build)
         // prendo le info dal packet
         PlayerData playerInfo = serverPlayerMove.getPlayerData();
-        EnumMoveType move = serverPlayerMove.getMoveType();
+        EnumMoveType move = serverPlayerMove.getMoveType(); // --> in ServerGameData
         // stampo dicendo che il player x ha fatto la mossa y
         String name = playerInfo.getName();
         System.out.print(name + ": ");
@@ -96,15 +104,7 @@ public class CLIServerHandler implements ServerHandler {
     @Override
     public void handlePowerList(ServerPowerList serverPowerList) {
         List<Power> powerList = serverPowerList.getPowerList();
-
-        // da sistemare. La suddivisione delle colonne deve dipendere dal numero di gods
-        for (int i = 1; i < powerList.size() + 1; i++) {
-            System.out.print(i + ") " + powerList.get(i - 1).getClass().getSimpleName() + " \t\t");
-            if (i % 3 == 0) {
-                System.out.println();
-            }
-        }
-
+        PrintUtils.printGodList(powerList);
 
         /*
         StringJoiner powers = new StringJoiner("\t", "", "");
