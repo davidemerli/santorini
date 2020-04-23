@@ -6,12 +6,14 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
 
-    private final String playerName;
+    private final PlayerData playerData;
     private final EnumTurnState playerState;
+    private final boolean shouldShowInteraction;
 
-    public ServerSendPlayerUpdate(String playerName, EnumTurnState playerState) {
-        this.playerName = playerName;
+    public ServerSendPlayerUpdate(PlayerData playerData, EnumTurnState playerState, boolean shouldShowInteraction) {
+        this.playerData = playerData;
         this.playerState = playerState;
+        this.shouldShowInteraction = shouldShowInteraction;
     }
 
     @Override
@@ -19,11 +21,15 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
         netHandler.handlePlayerUpdate(this);
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public PlayerData getPlayerData() {
+        return playerData;
     }
 
     public EnumTurnState getPlayerState() {
         return playerState;
+    }
+
+    public boolean isShouldShowInteraction() {
+        return shouldShowInteraction;
     }
 }

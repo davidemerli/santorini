@@ -2,7 +2,6 @@ package it.polimi.ingsw.psp1.santorini.controller;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.observer.ViewObserver;
@@ -11,12 +10,13 @@ import it.polimi.ingsw.psp1.santorini.view.View;
 import java.awt.*;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class Controller implements ViewObserver {
 
     private final Game model;
 
-    private Controller(Game model) {
+    public Controller(Game model) {
         this.model = model;
     }
 
@@ -25,10 +25,6 @@ public class Controller implements ViewObserver {
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
-            }
-
-            if (!(player.getGameState() instanceof Play)) {
-                view.notifyError("Unsupported operation in this state");
                 return;
             }
 
@@ -40,18 +36,26 @@ public class Controller implements ViewObserver {
     }
 
     @Override
-    public void selectWorker(View view, Player player, Worker worker) {
+    public void selectWorker(View view, Player player, Point workerPosition) {
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
-            }
-
-            if (!(player.getGameState() instanceof Play)) {
-                view.notifyError("Unsupported operation in this state");
                 return;
             }
 
-            model.getTurnState().selectWorker(player, worker);
+            Optional<Worker> worker = model.getWorkerOn(workerPosition);
+
+            if(worker.isEmpty()) {
+                view.notifyError("There is no worker at given position");
+                return;
+            }
+
+            if(!player.getWorkers().contains(worker.get())) {
+                view.notifyError("Not your worker");
+                return;
+            }
+
+            model.getTurnState().selectWorker(player, worker.get());
         } catch (UnsupportedOperationException | ArrayIndexOutOfBoundsException |
                 IllegalArgumentException | NoSuchElementException ex) {
             view.notifyError(ex.getMessage());
@@ -63,10 +67,6 @@ public class Controller implements ViewObserver {
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
-            }
-
-            if (!(player.getGameState() instanceof Play)) {
-                view.notifyError("Unsupported operation in this state");
                 return;
             }
 
@@ -82,14 +82,24 @@ public class Controller implements ViewObserver {
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
-            }
-
-            if (player.getGameState() instanceof Play) {
-                view.notifyError("Unsupported operation in this state");
                 return;
             }
 
-            powerList.forEach(p -> player.getGameState().selectGod(model, player, p));
+            powerList.forEach(p -> model.getTurnState().selectGod(model, player, p));
+        } catch (UnsupportedOperationException ex) {
+            view.notifyError(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void selectStartingPlayer(View view, Player player, String chosenPlayerName) {
+        try {
+            if (!player.equals(model.getCurrentPlayer())) {
+                view.notifyError("Not your turn");
+                return;
+            }
+
+            model.getTurnState().selectStartingPlayer(model, player, chosenPlayerName);
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
         }
@@ -100,6 +110,7 @@ public class Controller implements ViewObserver {
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
+                return;
             }
 
             model.getTurnState().undo(player);

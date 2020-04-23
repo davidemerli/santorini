@@ -1,7 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -30,7 +29,7 @@ public class Hestia extends Mortal {
 
     @Override
     public void onToggleInteraction(Game game) {
-        game.setTurnState(new EndTurn(game));
+        game.endTurn();
     }
 
     @Override
@@ -43,7 +42,7 @@ public class Hestia extends Mortal {
                 game.setTurnState(new Build(game));
                 hasBuilt = true;
             } else {
-                game.setTurnState(new EndTurn(game));
+                game.endTurn();
             }
         } else {
             super.onBuild(player, worker, where, game);

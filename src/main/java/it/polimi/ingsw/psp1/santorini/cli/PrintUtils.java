@@ -7,77 +7,55 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 public class PrintUtils {
 
     public final static int MAX_LENGTH = 150;
-    public final static int size = 6;
-    private final static int space = 2 * size;
+    public final static int size = 4;
+    public final static int spacing = 1;
+
+    private static int mapX = 2;
+    private static int mapY = 5;
 
     public static void stampMap(GameMap map) {
-        Point cursor;
-        Point p;
-        String s = String.format("%1$" + space + "s", "");
+        String s = String.format("%" + (size * 2 - 1) + "s", "");
+
+        StringBuilder bgLine = new StringBuilder();
+        IntStream.range(0, GameMap.SIDE_LENGTH * ((size * 2) + (spacing * 2 - 1)))
+                .forEach(i -> bgLine.append(" "));
+
+        for (int i = 0; i < GameMap.SIDE_LENGTH * (size + spacing) + 1; i++) {
+            print(Color.BACKGROUND_GRASS + bgLine.toString(), mapX, mapY + i, false);
+        }
+
         for (int i = 0; i < GameMap.SIDE_LENGTH; i++) {
             for (int j = 0; j < GameMap.SIDE_LENGTH; j++) {
-                p = new Point(i, j);
-                int level = map.getLevel(p);
-                cursor = setCursorInMap(i, j);
-                if (level == 0) {
-                    // solo spazi
-                    for (int k = 1; k <= size; k++) {
-                        System.out.print(s + Color.RESET + " ");
-                        setCursor(cursor.x + k, cursor.y);
-                    }
-                } else if (level == 1) {
-                    for (int k = 1; k <= size; k++) {
-                        System.out.print(Color.BACKGROUND_GRAY2 + s + Color.RESET + " ");
-                        setCursor(cursor.x + k, cursor.y);
-                    }
-                } else if (level == 2) {
-                    for (int k = 1; k <= size; k++) {
-                        System.out.print(Color.BACKGROUND_YELLOW + s + Color.RESET + " ");
-                        setCursor(cursor.x + k, cursor.y);
-                    }
-                } else if (level == 3) {
-                    for (int k = 1; k <= size; k++) {
-                        System.out.print(Color.BACKGROUND_BRIGHT_RED + s + Color.RESET + " ");
-                        setCursor(cursor.x + k, cursor.y);
-                    }
-                } else {
-                    String isDome;
-                    String notDome;
-                    int red, blue;
-                    for (int k = 1; k <= size; k++) {
-                        if (k == 1 || k == size) {
-                            System.out.print(Color.BACKGROUND_BRIGHT_RED + s + Color.RESET + " ");
-                        } else {
-                            red = space / 4 - 1;
-                            blue = space - 2 * red;
-                            notDome = String.format("%1$" + red + "s", "");
-                            isDome = String.format("%1$" + blue + "s", "");
-                            System.out.print(Color.BACKGROUND_BRIGHT_RED + notDome +
-                                    Color.BACKGROUND_BLUE + isDome +
-                                    Color.BACKGROUND_BRIGHT_RED + notDome +
-                                    Color.RESET + " ");
-                        }
-                        setCursor(cursor.x + k, cursor.y);
+                Point point = new Point(i, j);
+                for (int k = 0; k < size; k++) {
+                    int x = mapX + i * (size * 2) + i + spacing;
+                    int y = mapY + j * size + j * spacing + k + spacing;
+
+                    String string = getColorFromLevel(map.getLevel(point) - (map.hasDome(point) ? 1 : 0)) + s;
+
+                    print(string, x, y, false);
+                }
+
+                if (map.hasDome(point)) {
+                    for (int k = 1; k < size - 1; k++) {
+                        int x = mapX + i * (size * 2) + i + spacing;
+                        int y = mapY + j * size + j * spacing + k + spacing;
+
+                        String string = Color.BACKGROUND_BRIGHT_BLUE + s.substring(4);
+
+                        print(string, x + 2, y, false);
                     }
                 }
             }
         }
-    }
 
-    public static Point setCursorInMap(int i, int j) {
-        int x, y;
-        int defaultPositionX = 8;
-        int defaultPositionY = 1;
-
-        x = defaultPositionX + (i * (size + 1));
-        y = defaultPositionY + (j * (space + 2));
-
-        setCursor(x, y);
-        return new Point(x, y);
+        resetCursor();
+        System.out.println(Color.RESET);
     }
 
     public static void clearBoard() {
@@ -88,16 +66,17 @@ public class PrintUtils {
     // prendere il puntatore uguale sotto ma con R
 
     public static void setCursor(int x, int y) {
-        System.out.print(String.format("%c[%d;%df", 0x1B, x, y));
+        System.out.print(String.format("\033[%d;%df", y, x));
+        System.out.flush();
     }
 
     public static void resetCursor() {
-        System.out.print(String.format("%c[%d;%df", 0x1B, 10, 0));
+        setCursor(3, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
     }
 
     public static void clearRow(int x, int y) {
-        for (int i = MAX_LENGTH; i >= y; i--) {
-            PrintUtils.setCursor(x, i);
+        for (int i = MAX_LENGTH; i >= x; i--) {
+            PrintUtils.setCursor(i, y);
             System.out.print(" ");
         }
     }
@@ -106,8 +85,16 @@ public class PrintUtils {
         if (toClean) {
             clearRow(x, y);
         }
+
         setCursor(x, y);
         System.out.print(string);
+        System.out.flush();
+
+        resetCursor();
+    }
+
+    public static void printCommand() {
+        print("> ", 0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing, true);
     }
 
     public static void printGodList(List<Power> list) {
@@ -121,45 +108,64 @@ public class PrintUtils {
     }
 
     public static void printPlayerInfo(List<PlayerData> list) {
-        //      StringJoiner players = new StringJoiner("\t\t-\t");
-        //      StringJoiner gods = new StringJoiner("\t\t-\t");
+        StringBuilder builder = new StringBuilder();
+        list.stream().map(p -> String.format("%-20s", p.getName())).forEach(builder::append);
 
-        //      setCursor(3, 0);
+        print(builder.toString(), 2, 0, true);
 
-        //      list.forEach(p -> players.add(p.getName()));
-        //      list.forEach(g -> gods.add(g.getPower().getClass().getSimpleName()));
+        builder = new StringBuilder();
+        list.stream().map(p -> p.getPower().getClass().getSimpleName())
+                .map(s -> String.format("%-20s", s)).forEach(builder::append);
 
-        //      System.out.println(players);
-        //      System.out.println(gods);
-
-        setCursor(2, 0);
-        list.forEach(p -> System.out.format("%-20s", p.getName()));
-        System.out.println();
-        list.stream().map(p -> p.getPower().getClass().getSimpleName()).forEach(s -> System.out.format("%-20s", s));
-
-        // stato attuale
+        print(builder.toString(), 2, 2, true);
     }
 
     public static void printValidMoves(List<Point> valid, List<Point> blocked) {
-        setCursor(16, 0);
-        for (int i = 0; i < valid.size(); i++) {
+        int counter = 1;
 
+        for (Point point : valid) {
+            if (!blocked.contains(point)) {
+                String s = String.valueOf(counter);
+                print(Color.BACKGROUND_BRIGHT_YELLOW + "" + Color.BLUE + s + Color.RESET,
+                        point.x + mapX, point.y + mapY, false);
+                counter++;
+            }
         }
         // gioco di cursore e con il worker? o metto la mappa come parametro?
     }
-
 
     // per testing
     public static GameMap createMap() {
         GameMap map = new GameMap();
         for (int i = 0; i < 15; i++) {
-            map.buildBlock(new Point(new Random().nextInt(5), new Random().nextInt(5)), false);
+            Point point = new Point(new Random().nextInt(5), new Random().nextInt(5));
+            if (!map.hasDome(point)) {
+                map.buildBlock(point, false);
+            } else {
+                i--;
+            }
         }
         return map;
     }
 
     public static void updateMap(GameMap map) {
-        map.buildBlock(new Point(new Random().nextInt(5), new Random().nextInt(5)), false);
+        Point point = new Point(new Random().nextInt(5), new Random().nextInt(5));
+        if (!map.hasDome(point)) {
+            map.buildBlock(point, false);
+        }
+    }
+
+    private static Color getColorFromLevel(int level) {
+        switch (level) {
+            case 1:
+                return Color.BACKGROUND_GRAY1;
+            case 2:
+                return Color.BACKGROUND_GRAY2;
+            case 3:
+                return Color.BACKGROUND_GRAY3;
+            default:
+                return Color.BACKGROUND_GRASS;
+        }
     }
 
     // pulire la parte sotto dello schermo (sotto la mia scritta help) circa 15 righe prima di un command faccio la clear

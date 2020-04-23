@@ -2,21 +2,51 @@ package it.polimi.ingsw.psp1.santorini.cli;
 
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.powers.*;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
+import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientCreateGame;
+import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSetName;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerAskRequest;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerGameData;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerPowerList;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainCli {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+//        mainTest(args);
+
+        Client client = new Client(new CLIServerHandler());
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please insert server ip: ");
+        String serverIp = scanner.nextLine();
+        System.out.print("Please insert server port: ");
+        int port = scanner.nextInt();
+//
+        client.connectToServer(serverIp, port);
+
+        Thread.sleep(1000);
+
+        scanner = new Scanner(System.in);
+        String name = scanner.nextLine();
+        System.out.println("NAME: " + name);
+
+        client.sendPacket(new ClientSetName(name));
+
+        System.out.println("Game name: ");
+        String gameName = scanner.nextLine();
+        System.out.println("# players: ");
+        int players = scanner.nextInt();
+
+        client.sendPacket(new ClientCreateGame(gameName, players));
+    }
+
+    public static void mainTest(String[] args) {
         CLIServerHandler cliServerHandler = new CLIServerHandler();
 
         // lista di tutte le divinità
@@ -29,13 +59,13 @@ public class MainCli {
         PrintUtils.clearBoard();
 
         // info generali sulla partita
-        HashMap<PlayerData, EnumTurnState> hash = new HashMap<>();
-        PlayerData p1 = new PlayerData("Alberto", new Athena());
-        PlayerData p2 = new PlayerData("Maurizio", new Apollo());
-        hash.put(p1, EnumTurnState.BUILD);
-        hash.put(p2, EnumTurnState.END_TURN);
+        List<PlayerData> hash = new ArrayList<>();
+        PlayerData p1 = new PlayerData("Alberto", new Athena(), Collections.emptyList());
+        PlayerData p2 = new PlayerData("Maurizio", new Apollo(), Collections.emptyList());
+        hash.add(p1);
+        hash.add(p2);
         GameMap map = PrintUtils.createMap();
-        ServerGameData sgd = new ServerGameData(map, hash);
+        ServerGameData sgd = new ServerGameData(map, hash, EnumTurnState.BUILD);
 
         // creo uno scanner
         Scanner scanner = new Scanner(System.in);
@@ -72,15 +102,14 @@ public class MainCli {
             // update matrice
             PrintUtils.updateMap(map);
             // stampo la matrice partendo da 8, 0 (sovrascrivo la vecchia)
-            cliServerHandler.handleSendGameData(sgd);
+            sgd.processPacket(cliServerHandler);
 
-            int x = 20 + (4 * (PrintUtils.size + 1));
-            PrintUtils.print(command, x, 0, true);
+//            int y = 2 + (GameMap.SIDE_LENGTH * (PrintUtils.size + 1));
+//            PrintUtils.print(command, 0, y, true);
+            PrintUtils.printCommand();
 
             String s = scanner.nextLine();
         }
 
     }
 }
-
-// ingrandire mappa

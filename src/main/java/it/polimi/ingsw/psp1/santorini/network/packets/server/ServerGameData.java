@@ -9,14 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Stores as a packet all relevant information about a game
+ *
+ * The first element in 'players' is the CURRENT PLAYER playing its turn
+ */
 public class ServerGameData implements Packet<ServerHandler> {
 
     private final GameMap gameMap;
-    private final HashMap<PlayerData, EnumTurnState> players;
+    private final EnumTurnState gameState;
+    private final List<PlayerData> players;
 
-    public ServerGameData(GameMap gameMap, HashMap<PlayerData, EnumTurnState> players) {
+    public ServerGameData(GameMap gameMap, List<PlayerData> players, EnumTurnState gameState) {
         this.gameMap = gameMap;
         this.players = players;
+        this.gameState = gameState;
     }
 
     @Override
@@ -28,14 +35,13 @@ public class ServerGameData implements Packet<ServerHandler> {
         return gameMap;
     }
 
-    public HashMap<PlayerData, EnumTurnState> getPlayerData() {
+    public EnumTurnState getGameState() {
+        return gameState;
+    }
+
+    public List<PlayerData> getPlayerData() {
         return players;
     }
-
-    public List<PlayerData> getPlayers() {
-        return new ArrayList<>(players.keySet());
-    }
-
 }
 
 

@@ -1,15 +1,21 @@
 package it.polimi.ingsw.psp1.santorini.network.packets.server;
 
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
-public class PlayerData {
+import java.io.Serializable;
+import java.util.List;
+
+public class PlayerData implements Serializable {
 
     private final String name;
     private final Power power;
+    private final List<Worker> workers;
 
-    public PlayerData(String name, Power power) {
+    public PlayerData(String name, Power power, List<Worker> workers) {
         this.name = name;
         this.power = power;
+        this.workers = workers;
     }
 
     public String getName() {
@@ -18,5 +24,9 @@ public class PlayerData {
 
     public Power getPower() {
         return power;
+    }
+
+    public List<Worker> getWorkers() {
+        return workers;
     }
 }

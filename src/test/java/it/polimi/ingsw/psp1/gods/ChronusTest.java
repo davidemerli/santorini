@@ -2,9 +2,7 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.powers.Chronus;
-import it.polimi.ingsw.psp1.santorini.model.turn.BeginTurn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +18,12 @@ public class ChronusTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
 
         player.setPower(new Chronus());
-
-        player.setGameState(new Play());
     }
 
     @After
@@ -45,8 +41,6 @@ public class ChronusTest {
             }
         }
         game.startTurn();
-
-        game.setTurnState(new BeginTurn(game));
 
         assertTrue(player.hasWon());
     }

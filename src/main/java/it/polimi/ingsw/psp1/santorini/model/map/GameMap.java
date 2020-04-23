@@ -1,10 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMap {
+public class GameMap implements Serializable {
 
     public static final int SIDE_LENGTH = 5;
 
@@ -156,6 +157,7 @@ public class GameMap {
         if (isPositionOutOfMap(point)) {
             throw new ArrayIndexOutOfBoundsException("Given point is not on map");
         }
+        //if everyone has put down 2 workers,
 
         List<Point> list = new ArrayList<>();
 

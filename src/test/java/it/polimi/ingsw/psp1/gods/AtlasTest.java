@@ -2,7 +2,6 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Atlas;
 import org.junit.After;
@@ -21,14 +20,12 @@ public class AtlasTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
 
         player.setPower(new Atlas());
-
-        player.setGameState(new Play());
     }
 
     @After

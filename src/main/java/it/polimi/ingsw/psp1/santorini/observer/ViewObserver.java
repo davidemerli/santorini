@@ -12,11 +12,13 @@ public interface ViewObserver {
 
     void selectSquare(View view, Player player, Point location);
 
-    void selectWorker(View view, Player player, Worker worker);
+    void selectWorker(View view, Player player, Point workerPosition);
 
     void toggleInteraction(View view, Player player);
 
     void selectPowers(View view, Player player, List<Power> powerList);
+
+    void selectStartingPlayer(View view, Player player, String chosenPlayerName);
 
     void undo(View view, Player player);
 

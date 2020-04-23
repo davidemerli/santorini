@@ -6,9 +6,10 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.List;
 
-public interface Power {
+public interface Power extends Serializable {
 
     /**
      * Called on the beginning of a player turn (both own and enemy)

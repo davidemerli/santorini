@@ -2,18 +2,14 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.game.Play;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
-import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -25,7 +21,7 @@ public class MortalTest {
 
     @Before
     public void setup() {
-        this.game = new Game();
+        this.game = new Game(2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 
@@ -34,9 +30,6 @@ public class MortalTest {
 
         player1.setPower(new Mortal());
         player2.setPower(new Mortal());
-
-        player1.setGameState(new Play());
-        player2.setGameState(new Play());
     }
 
     @Test

@@ -23,4 +23,6 @@ public interface ClientHandler extends NetHandler {
     void handleRequestGameData(ClientRequestGameData clientRequestGameData);
 
     void handleWorkerSelection(ClientSelectWorker clientSelectWorker);
+
+    void handleSelectStartingPlayer(ClientSelectStartingPlayer clientSelectStartingPlayer);
 }

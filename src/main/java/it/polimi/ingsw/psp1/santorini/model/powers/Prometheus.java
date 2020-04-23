@@ -1,6 +1,5 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
-import it.polimi.ingsw.psp1.santorini.model.turn.EndTurn;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
@@ -50,7 +49,7 @@ public class Prometheus extends Mortal {
                 hasBuiltBeforeMoving = true;
                 game.setTurnState(new Move(game));
             } else {
-                game.setTurnState(new EndTurn(game));
+                game.endTurn();
             }
         } else {
             super.onBuild(player, worker, where, game);

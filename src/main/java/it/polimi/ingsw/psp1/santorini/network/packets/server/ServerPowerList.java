@@ -8,10 +8,10 @@ import java.util.List;
 
 public class ServerPowerList implements Packet<ServerHandler> {
 
-    private final List<Power> powerList;
+    private final List<Power> availablePowers;
 
-    public ServerPowerList(List<Power> validMoves) {
-        this.powerList = validMoves;
+    public ServerPowerList(List<Power> availablePowers) {
+        this.availablePowers = availablePowers;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class ServerPowerList implements Packet<ServerHandler> {
         netHandler.handlePowerList(this);
     }
 
-    public List<Power> getPowerList() {
-        return powerList;
+    public List<Power> getAvailablePowers() {
+        return availablePowers;
     }
 }

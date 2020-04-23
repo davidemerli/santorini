@@ -1,6 +1,8 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
-public class SquareData {
+import java.io.Serializable;
+
+public class SquareData implements Serializable {
 
     private final int level;
     private final boolean isDome;
