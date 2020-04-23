@@ -3,8 +3,10 @@ package it.polimi.ingsw.psp1.santorini.network.server;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerAskRequest;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerInvalidPacket;
 import it.polimi.ingsw.psp1.santorini.observer.ConnectionObserver;
 
@@ -26,8 +28,8 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
     private final Socket clientSocket;
     private final List<ConnectionObserver> observers;
 
-    private final ObjectInputStream objectInputStream;
-    private final ObjectOutputStream objectOutputStream;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     private Player player;
 
@@ -36,14 +38,15 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
         this.clientSocket = clientSocket;
         this.observers = new ArrayList<>();
 
-        this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+
+        sendPacket(new ServerAskRequest(EnumRequestType.SELECT_NAME));
     }
 
     public void sendPacket(Packet<ServerHandler> packet) {
         try {
+            System.out.println("sent " + packet);
             objectOutputStream.writeObject(packet);
-            objectOutputStream.flush();
         } catch (IOException e) {
             //TODO: what if send packet fails? try to resend?
             e.printStackTrace();
@@ -54,11 +57,16 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
     @SuppressWarnings("unchecked")
     public void run() {
         try {
-            Object object = objectInputStream.readObject();
+            this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
-            ((Packet<ClientHandler>) object).processPacket(this);
+            while (true) {
+                Object object = objectInputStream.readObject();
+                System.out.println("received " + object);
+                ((Packet<ClientHandler>) object).processPacket(this);
+            }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 

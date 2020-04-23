@@ -27,4 +27,6 @@ public interface ModelObserver {
     void availableMovesUpdate(List<Point> validMoves, Map<Power, List<Point>> blockedMoves);
 
     void requestToPlayer(Player player, EnumRequestType requestType);
+
+    void sendPowerList(Player player, List<Power> availablePowers);
 }

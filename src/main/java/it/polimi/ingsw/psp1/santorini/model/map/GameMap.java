@@ -1,10 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMap {
+public class GameMap implements Serializable {
 
     public static final int SIDE_LENGTH = 5;
 

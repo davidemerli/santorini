@@ -1,9 +1,9 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
-import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
-import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.model.powers.*;
+import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
@@ -38,6 +38,8 @@ public class Game implements Runnable {
 
         this.turnState = null;
         this.running = true;
+
+        this.addPowers();
     }
 
     @Override
@@ -229,5 +231,24 @@ public class Game implements Runnable {
     public synchronized void end() {
         this.running = false;
         //TODO: notify client game has ended
+    }
+
+    public void addPowers() {
+        availableGodList.add(new Apollo());
+        availableGodList.add(new Artemis());
+        availableGodList.add(new Athena());
+        availableGodList.add(new Atlas());
+        availableGodList.add(new Chronus());
+        availableGodList.add(new Demeter());
+        availableGodList.add(new Hephaestus());
+        availableGodList.add(new Hestia());
+        availableGodList.add(new Minotaur());
+        availableGodList.add(new Mortal());
+        availableGodList.add(new Pan());
+        availableGodList.add(new Poseidon());
+        availableGodList.add(new Prometheus());
+        availableGodList.add(new Triton());
+        availableGodList.add(new Zeus());
+        //TODO: remove in unplayable in 3 player games
     }
 }

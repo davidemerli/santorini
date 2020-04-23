@@ -3,9 +3,10 @@ package it.polimi.ingsw.psp1.santorini.network.packets.server;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PlayerData {
+public class PlayerData implements Serializable {
 
     private final String name;
     private final Power power;

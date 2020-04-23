@@ -128,8 +128,15 @@ public class RemoteView extends View {
 
     @Override
     public void requestToPlayer(Player player, EnumRequestType requestType) {
-        if(connection.getPlayer().isPresent() && connection.getPlayer().get().equals(player)) {
+        if (connection.getPlayer().isPresent() && connection.getPlayer().get().equals(player)) {
             connection.sendPacket(new ServerAskRequest(requestType));
+        }
+    }
+
+    @Override
+    public void sendPowerList(Player player, List<Power> availablePowers) {
+        if (this.getPlayer().equals(player)) {
+            connection.sendPacket(new ServerPowerList(availablePowers));
         }
     }
 

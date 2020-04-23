@@ -16,16 +16,19 @@ public class SelectPowers extends TurnState {
         super(game);
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
+        game.notifyObservers(o -> o.sendPowerList(game.getCurrentPlayer(), game.getAvailablePowers()));
     }
 
     @Override
     public void selectGod(Game game, Player player, Power power) {
-        if(!selectedPowers.contains(power)) {
+        if(!selectedPowers.contains(power) && !game.getAvailablePowers().contains(power)) {
             selectedPowers.add(power);
             //TODO: throw error if more times same power
         }
 
         if (selectedPowers.size() == game.getPlayerNumber()) {
+            //TODO: maybe don't expose the REP
+            game.getAvailablePowers().clear();
             game.getAvailablePowers().addAll(selectedPowers);
 
             game.shiftPlayers(-1);
