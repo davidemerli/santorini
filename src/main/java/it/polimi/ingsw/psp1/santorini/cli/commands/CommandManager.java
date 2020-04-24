@@ -1,16 +1,67 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
+import it.polimi.ingsw.psp1.santorini.network.Client;
+import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
+import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
-public class CommandManager {
+public class CommandManager implements Runnable {
+
     private final List<Command> commandList;
+    private final CLIServerHandler serverHandler;
+    private final Client client;
 
-    public CommandManager() {
-        commandList = new ArrayList<>();
+    public CommandManager(Client client, CLIServerHandler serverHandler) {
+        this.commandList = new ArrayList<>();
+        this.client = client;
+        this.serverHandler = serverHandler;
         this.addCMDs();
+    }
+
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+
+        while(true) {
+            String result = runCommand(scanner.next());
+            Point p = PrintUtils.getCommandCoords();
+            PrintUtils.print(result, p.x, p.y + 1, true);
+        }
+    }
+
+    public String runCommand(String input) {
+        String[] arguments = input.split(" ");
+
+        if (arguments.length > 0) {
+            String cmd = arguments[0];
+            Optional<Command> command = getCommand(cmd);
+
+            if (command.isPresent()) {
+                if (input.matches(command.get().getPattern())) {
+                    try {
+                        String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length + 1);
+                        return command.get().onCommand(client, serverHandler, input, subarray);
+                    } catch (Exception ex) {
+                        return ex.getMessage();
+                    }
+                }
+                return "Invalid argument, the usage for this command is: ";
+            }
+        }
+
+        return "Invalid command, type help for the list of commands";
+    }
+
+
+    public Optional<Command> getCommand(String command) {
+        return commandList.stream()
+                .filter(c -> c.getName().equalsIgnoreCase(command) || c.getAliases().contains(command.toLowerCase()))
+                .findFirst();
     }
 
     public void addCMDs() {
@@ -23,38 +74,6 @@ public class CommandManager {
         commandList.add(new CommandSelectWorker());
         commandList.add(new CommandShowDescription());
         commandList.add(new CommandSurrender());
-
-    }
-
-    public String runCommand(String input) {
-        String[] arguments = input.split(" ");
-        if (arguments.length > 0) {
-            String cmd = arguments[0];
-            Optional<Command> command = getCommand(cmd);
-            if (command.isPresent()) {
-                if (input.matches(command.get().getPattern())) {
-                    try {
-                        String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length + 1);
-                        return command.get().onCommand(input, subarray);
-                    } catch (Exception ex) {
-                        return ex.getMessage();
-                    }
-                }
-                return "Invalid argument, the usage for this command is: ";
-            }
-        }
-
-        return "invalid command, type help for the list of commands";
-    }
-
-
-    public Optional<Command> getCommand(String command) {
-        for (Command c : this.commandList) {
-            if (c.getName().equalsIgnoreCase(command) || c.getAliases().contains(command.toLowerCase())) {
-                return Optional.of(c);
-            }
-        }
-        return Optional.empty();
     }
 }
 

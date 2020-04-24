@@ -1,12 +1,15 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
+import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.Client;
+
 import java.util.List;
 
 public abstract class Command {
 
-    private String command, desc, usage, pattern;
+    private final String command, desc, usage, pattern;
 
-    private List<String> aliases;
+    private final List<String> aliases;
 
     public Command(String command, String desc, String usage, String pattern, List<String> aliases) {
         this.command = command;
@@ -16,7 +19,8 @@ public abstract class Command {
         this.aliases = aliases;
     }
 
-    public abstract String onCommand(String input, String[] arguments) throws Exception;
+    public abstract String onCommand(Client client, CLIServerHandler serverHandler,
+                                     String input, String[] arguments) throws Exception;
 
     public List<String> getAliases() {
         return aliases;

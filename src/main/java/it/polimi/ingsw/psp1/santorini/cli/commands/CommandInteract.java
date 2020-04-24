@@ -1,9 +1,9 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
-import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
+import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientToggleInteraction;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class CommandInteract extends Command {
@@ -17,7 +17,7 @@ public class CommandInteract extends Command {
     }
 
     @Override
-    public String onCommand(String input, String[] arguments) throws Exception {
+    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         ClientToggleInteraction packet = new ClientToggleInteraction();
         return "";
     }

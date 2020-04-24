@@ -1,5 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
+import it.polimi.ingsw.psp1.santorini.cli.commands.CommandManager;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.powers.*;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
@@ -20,7 +21,11 @@ public class MainCli {
     public static void main(String[] args) throws InterruptedException {
 //        mainTest(args);
 
-        Client client = new Client(new CLIServerHandler());
+        Client client = new Client();
+        CLIServerHandler serverHandler = new CLIServerHandler();
+        client.setServerHandler(serverHandler);
+        CommandManager commandManager = new CommandManager(client, serverHandler);
+
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Please insert server ip: ");
@@ -37,6 +42,8 @@ public class MainCli {
         System.out.println("NAME: " + name);
 
         client.sendPacket(new ClientSetName(name));
+
+        new Thread(commandManager).start();
 
         System.out.println("Game name: ");
         String gameName = scanner.nextLine();

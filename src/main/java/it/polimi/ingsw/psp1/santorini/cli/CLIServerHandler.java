@@ -9,19 +9,21 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
-import static it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType.*;
 
 public class CLIServerHandler implements ServerHandler {
 
+    private final List<PlayerData> playerDataList;
+    private final Map<Power, List<Point>> blockedMoves;
+    private final List<Point> validMoves;
+
     public CLIServerHandler() {
-
+        this.playerDataList = new ArrayList<>();
+        this.blockedMoves = new HashMap<>();
+        this.validMoves = new ArrayList<>();
     }
-
-    List<PlayerData> playerDataList;
 
     @Override
     public void handleKeepAlive(ServerKeepAlive packet) {
@@ -32,7 +34,9 @@ public class CLIServerHandler implements ServerHandler {
     public void handleSendGameData(ServerGameData packet) {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayerData();
-        playerDataList = new ArrayList<>(playerList);
+
+        playerDataList.clear();
+        playerDataList.addAll(playerList);
 
         PrintUtils.printPlayerInfo(playerList);
         PrintUtils.stampMap(map);
@@ -49,7 +53,7 @@ public class CLIServerHandler implements ServerHandler {
 
         System.out.println(packet.getRequestType());
 
-        switch(action) {
+        switch (action) {
             case SELECT_NAME:
 //                System.out.println("Please insert a name: ");
                 //code
@@ -134,6 +138,18 @@ public class CLIServerHandler implements ServerHandler {
         System.out.println(powers);
         */
 
+    }
+
+    public List<PlayerData> getPlayerDataList() {
+        return playerDataList;
+    }
+
+    public List<Point> getValidMoves() {
+        return validMoves;
+    }
+
+    public Map<Power, List<Point>> getBlockedMoves() {
+        return blockedMoves;
     }
 }
 

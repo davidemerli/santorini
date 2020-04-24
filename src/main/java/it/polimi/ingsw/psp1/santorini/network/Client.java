@@ -1,7 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.network;
 
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
-import it.polimi.ingsw.psp1.santorini.network.server.Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,19 +9,15 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private boolean running;
-
     private ObjectOutputStream objectOutputStream;
-
-    private final ServerHandler serverHandler;
+    private ServerHandler serverHandler;
+    private Socket server;
 
     private String ip;
     private int port;
+    private boolean running;
 
-    private Socket server;
-
-    public Client(ServerHandler serverHandler) {
-        this.serverHandler = serverHandler;
+    public Client() {
         this.running = true;
     }
 
@@ -48,7 +43,7 @@ public class Client implements Runnable {
 
     public void sendPacket(Packet<ClientHandler> packet) {
         try {
-            if(objectOutputStream == null) {
+            if (objectOutputStream == null) {
                 objectOutputStream = new ObjectOutputStream(server.getOutputStream());
             }
 
@@ -63,19 +58,24 @@ public class Client implements Runnable {
     @Override
     @SuppressWarnings("unchecked")
     public void run() {
-        try (Socket server = new Socket(ip, port)){
+        try (Socket server = new Socket(ip, port)) {
             this.server = server;
 
             ObjectInputStream objectInputStream = new ObjectInputStream(server.getInputStream());
 
-            while(true) {
-
-                Object object = objectInputStream.readObject();
-                System.out.println(object);
-                ((Packet<ServerHandler>) object).processPacket(serverHandler);
+            while (true) {
+                if (serverHandler != null) {
+                    Object object = objectInputStream.readObject();
+                    System.out.println(object);
+                    ((Packet<ServerHandler>) object).processPacket(serverHandler);
+                }
             }
-        } catch(IOException | ClassNotFoundException | ClassCastException e){
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setServerHandler(ServerHandler serverHandler) {
+        this.serverHandler = serverHandler;
     }
 }

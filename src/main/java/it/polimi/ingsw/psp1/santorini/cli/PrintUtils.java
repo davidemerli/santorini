@@ -97,6 +97,10 @@ public class PrintUtils {
         print("> ", 0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing, true);
     }
 
+    public static Point getCommandCoords() {
+        return new Point(0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
+    }
+
     public static void printGodList(List<Power> list) {
         setCursor(2, 0);
         for (int i = 1; i < list.size() + 1; i++) {

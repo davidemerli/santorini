@@ -1,5 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
+import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
 
 import java.awt.*;
@@ -16,7 +18,7 @@ public class CommandPlaceWorker extends Command {
     }
 
     @Override
-    public String onCommand(String input, String[] arguments) throws Exception {
+    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (arguments.length == 1) {
         //TODO: ricevere la lista per controllare lo square selezionato
         } else if (arguments.length == 2) {
