@@ -51,13 +51,9 @@ public class CLIServerHandler implements ServerHandler {
 
         //TODO: check every request, use a switch instead of ifs
 
-        System.out.println(packet.getRequestType());
+//        PrintUtils.printFromCommand(packet.getRequestType().toString(), 0, -2, true);
 
         switch (action) {
-            case SELECT_NAME:
-//                System.out.println("Please insert a name: ");
-                //code
-                break;
             case CHOOSE_POWERS:
                 //code
                 break;
@@ -108,9 +104,7 @@ public class CLIServerHandler implements ServerHandler {
 
     @Override
     public void handleError(ServerInvalidPacket packet) {
-        String error = packet.getError();
-//        PrintUtils.print(error, 20, 0, true);
-        System.out.println(error);
+        PrintUtils.printFromCommand(packet.getError(), 0, 2, true);
     }
 
     @Override
@@ -121,7 +115,6 @@ public class CLIServerHandler implements ServerHandler {
         EnumMoveType move = serverPlayerMove.getMoveType(); // --> in ServerGameData
         // stampo dicendo che il player x ha fatto la mossa y
         String name = playerInfo.getName();
-        System.out.print(name + ": ");
         // stampo la mappa aggiornata per far visualizzare i cambiamenti
     }
 
@@ -135,7 +128,6 @@ public class CLIServerHandler implements ServerHandler {
         IntStream.range(0, powerList.size())
                 .forEach(i -> powers.add(String.format("%d) %s", i + 1, powerList.get(i).getClass().getSimpleName())));
 
-        System.out.println(powers);
         */
 
     }

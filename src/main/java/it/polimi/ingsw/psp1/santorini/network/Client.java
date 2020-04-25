@@ -48,8 +48,6 @@ public class Client implements Runnable {
             }
 
             objectOutputStream.writeObject(packet);
-
-            System.out.println("sent " + packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +64,6 @@ public class Client implements Runnable {
             while (true) {
                 if (serverHandler != null) {
                     Object object = objectInputStream.readObject();
-                    System.out.println(object);
                     ((Packet<ServerHandler>) object).processPacket(serverHandler);
                 }
             }

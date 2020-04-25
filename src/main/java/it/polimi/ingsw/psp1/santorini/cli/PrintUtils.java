@@ -93,6 +93,11 @@ public class PrintUtils {
         resetCursor();
     }
 
+    public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
+        Point point = getCommandCoords();
+        print(string, point.x + xOff, point.y + yOff, toClear);
+    }
+
     public static void printCommand() {
         print("> ", 0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing, true);
     }
@@ -102,13 +107,17 @@ public class PrintUtils {
     }
 
     public static void printGodList(List<Power> list) {
-        setCursor(2, 0);
-        for (int i = 1; i < list.size() + 1; i++) {
+        setCursor(0, 0);
+        clearBoard();
+        for (int i = 1; i <= list.size(); i++) {
             System.out.print(i + ") " + list.get(i - 1).getClass().getSimpleName() + " \t\t");
+
             if (i % 3 == 0) {
                 System.out.println();
             }
         }
+
+        printCommand();
     }
 
     public static void printPlayerInfo(List<PlayerData> list) {
@@ -122,6 +131,8 @@ public class PrintUtils {
                 .map(s -> String.format("%-20s", s)).forEach(builder::append);
 
         print(builder.toString(), 2, 2, true);
+
+        printCommand();
     }
 
     public static void printValidMoves(List<Point> valid, List<Point> blocked) {

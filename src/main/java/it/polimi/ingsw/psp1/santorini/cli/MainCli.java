@@ -26,6 +26,7 @@ public class MainCli {
         client.setServerHandler(serverHandler);
         CommandManager commandManager = new CommandManager(client, serverHandler);
 
+        PrintUtils.clearBoard();
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Please insert server ip: ");
@@ -33,24 +34,20 @@ public class MainCli {
         System.out.print("Please insert server port: ");
         int port = scanner.nextInt();
 //
-        client.connectToServer(serverIp, port);
+        client.connectToServer("localhost", 34567);
+
+        scanner = new Scanner(System.in);
+        System.out.print("Please choose a nickname: ");
+        String name = scanner.nextLine();
 
         Thread.sleep(1000);
 
-        scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
-        System.out.println("NAME: " + name);
-
         client.sendPacket(new ClientSetName(name));
 
+        PrintUtils.clearBoard();
+        PrintUtils.printCommand();
+
         new Thread(commandManager).start();
-
-        System.out.println("Game name: ");
-        String gameName = scanner.nextLine();
-        System.out.println("# players: ");
-        int players = scanner.nextInt();
-
-        client.sendPacket(new ClientCreateGame(gameName, players));
     }
 
     public static void mainTest(String[] args) {

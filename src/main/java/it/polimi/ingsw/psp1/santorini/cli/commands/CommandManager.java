@@ -27,10 +27,10 @@ public class CommandManager implements Runnable {
     public void run() {
         Scanner scanner = new Scanner(System.in);
 
-        while(true) {
-            String result = runCommand(scanner.next());
-            Point p = PrintUtils.getCommandCoords();
-            PrintUtils.print(result, p.x, p.y + 1, true);
+        while (true) {
+            String result = runCommand(scanner.nextLine());
+            PrintUtils.printCommand();
+            PrintUtils.printFromCommand(result, 0, 2, true);
         }
     }
 
@@ -42,15 +42,16 @@ public class CommandManager implements Runnable {
             Optional<Command> command = getCommand(cmd);
 
             if (command.isPresent()) {
-                if (input.matches(command.get().getPattern())) {
-                    try {
-                        String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length + 1);
-                        return command.get().onCommand(client, serverHandler, input, subarray);
-                    } catch (Exception ex) {
-                        return ex.getMessage();
-                    }
+                //if (input.matches(command.get().getPattern())) {
+                try {
+                    String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length + 1);
+
+                    return command.get().onCommand(client, serverHandler, input, subarray);
+                } catch (Exception ex) {
+                    return ex.getMessage();
                 }
-                return "Invalid argument, the usage for this command is: ";
+                //}
+//                return "Invalid argument, the usage for this command is: ";
             }
         }
 
@@ -66,6 +67,7 @@ public class CommandManager implements Runnable {
 
     public void addCMDs() {
         commandList.add(new CommandBuild());
+        commandList.add(new CommandCreateGame());
         commandList.add(new CommandHelp());
         commandList.add(new CommandInteract());
         commandList.add(new CommandMove());

@@ -153,7 +153,5 @@ public class GameTest {
         }
 
         game.nextTurn();
-
-        System.out.println();
     }
 }
