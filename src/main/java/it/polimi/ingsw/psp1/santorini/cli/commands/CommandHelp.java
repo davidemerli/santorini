@@ -9,7 +9,7 @@ public class CommandHelp extends Command {
 
     public CommandHelp() {
         super("help",
-                "shows the list of commands",
+                "Shows the list of commands",
                 "",
                 "",
                 Arrays.asList("h", "getcommands"));

@@ -11,7 +11,7 @@ public class CommandBuild extends Command {
 
     public CommandBuild() {
         super("build",
-                "place a block in the selected square",
+                "Places a block in the selected square",
                 " <x> <y> / <n-move>",
                 "",
                 Arrays.asList("b", "place"));

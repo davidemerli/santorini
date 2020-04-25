@@ -68,14 +68,14 @@ public class CommandManager implements Runnable {
     public void addCMDs() {
         commandList.add(new CommandBuild());
         commandList.add(new CommandCreateGame());
+        commandList.add(new CommandSurrender());
         commandList.add(new CommandHelp());
         commandList.add(new CommandInteract());
         commandList.add(new CommandMove());
         commandList.add(new CommandPlaceWorker());
         commandList.add(new CommandReload());
         commandList.add(new CommandSelectWorker());
-        commandList.add(new CommandShowDescription());
-        commandList.add(new CommandSurrender());
+        commandList.add(new CommandDescription());
     }
 }
 

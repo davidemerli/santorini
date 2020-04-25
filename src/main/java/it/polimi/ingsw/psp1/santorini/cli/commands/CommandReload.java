@@ -10,7 +10,7 @@ public class CommandReload extends Command {
 
     public CommandReload() {
         super("reload",
-                "send the current map and all available info to the player",
+                "Sends the current map and all available info to the player",
                 "",
                 "",
                 Arrays.asList("r", "loadagain"));
@@ -18,7 +18,7 @@ public class CommandReload extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        ClientRequestGameData packet = new ClientRequestGameData();
+    client.sendPacket(new ClientRequestGameData());
         return "";
     }
 }

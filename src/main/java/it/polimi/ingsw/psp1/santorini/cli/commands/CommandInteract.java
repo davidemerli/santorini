@@ -10,7 +10,7 @@ public class CommandInteract extends Command {
 
     public CommandInteract() {
         super("interact",
-                "activate your God's power, if possible",
+                "Activates your God's power, if possible",
                 "",
                 "",
                 Arrays.asList("usepower", "power"));

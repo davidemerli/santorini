@@ -10,7 +10,7 @@ public class CommandSurrender extends Command {
 
     public CommandSurrender() {
         super("surrender",
-                "desc",
+                "Forfeits the current game",
                 "",
                 "",
                 Arrays.asList("ff", "forfeit"));

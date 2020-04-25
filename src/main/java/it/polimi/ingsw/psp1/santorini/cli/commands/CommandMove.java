@@ -11,7 +11,7 @@ public class CommandMove extends Command {
 
     public CommandMove() {
         super("move",
-                "move the worker in the selected square",
+                "Moves the worker in the selected square",
                 " <x> <y> / <n-move>",
                 "",
                 Arrays.asList("m", "mv"));
