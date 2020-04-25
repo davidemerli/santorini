@@ -73,6 +73,7 @@ public class CommandManager implements Runnable {
         commandList.add(new CommandMove());
         commandList.add(new CommandPlaceWorker());
         commandList.add(new CommandReload());
+        commandList.add(new CommandSelectPower());
         commandList.add(new CommandSelectWorker());
         commandList.add(new CommandShowDescription());
         commandList.add(new CommandSurrender());

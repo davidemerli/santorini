@@ -21,7 +21,7 @@ public class SelectPowers extends TurnState {
 
     @Override
     public void selectGod(Game game, Player player, Power power) {
-        if(!selectedPowers.contains(power) && !game.getAvailablePowers().contains(power)) {
+        if(!selectedPowers.contains(power) && game.getAvailablePowers().contains(power)) {
             selectedPowers.add(power);
             //TODO: throw error if more times same power
         }

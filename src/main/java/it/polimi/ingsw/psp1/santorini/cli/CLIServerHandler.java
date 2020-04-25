@@ -18,11 +18,13 @@ public class CLIServerHandler implements ServerHandler {
     private final List<PlayerData> playerDataList;
     private final Map<Power, List<Point>> blockedMoves;
     private final List<Point> validMoves;
+    private final List<Power> powerList;
 
     public CLIServerHandler() {
         this.playerDataList = new ArrayList<>();
         this.blockedMoves = new HashMap<>();
         this.validMoves = new ArrayList<>();
+        this.powerList = new ArrayList<>();
     }
 
     @Override
@@ -51,7 +53,7 @@ public class CLIServerHandler implements ServerHandler {
 
         //TODO: check every request, use a switch instead of ifs
 
-//        PrintUtils.printFromCommand(packet.getRequestType().toString(), 0, -2, true);
+        PrintUtils.printFromCommand(packet.getRequestType().toString(), 0, -2, true);
 
         switch (action) {
             case CHOOSE_POWERS:
@@ -97,6 +99,13 @@ public class CLIServerHandler implements ServerHandler {
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         List<Point> validMoves = packet.getValidMoves();
         Map<Power, List<Point>> blockedMoves = packet.getBlockedMoves();
+
+        getValidMoves().clear();
+        getValidMoves().addAll(validMoves);
+
+        getBlockedMoves().clear();
+        getBlockedMoves().putAll(blockedMoves);
+
         // le validMoves non devono essere dentro le blockedMoves
         // stampo le mosse valide sulla map
         // stampo la mappa aggiornata
@@ -123,6 +132,9 @@ public class CLIServerHandler implements ServerHandler {
         List<Power> powerList = serverPowerList.getAvailablePowers();
         PrintUtils.printGodList(powerList);
 
+        getPowerList().clear();
+        getPowerList().addAll(powerList);
+
         /*
         StringJoiner powers = new StringJoiner("\t", "", "");
         IntStream.range(0, powerList.size())
@@ -140,9 +152,11 @@ public class CLIServerHandler implements ServerHandler {
         return validMoves;
     }
 
+    public List<Power> getPowerList() {
+        return powerList;
+    }
+
     public Map<Power, List<Point>> getBlockedMoves() {
         return blockedMoves;
     }
 }
-
-// salvare il precedente sempre (mappa)

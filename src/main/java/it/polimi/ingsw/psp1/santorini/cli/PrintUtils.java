@@ -127,7 +127,8 @@ public class PrintUtils {
         print(builder.toString(), 2, 0, true);
 
         builder = new StringBuilder();
-        list.stream().map(p -> p.getPower().getClass().getSimpleName())
+        list.stream().filter(p -> p.getPower() != null)
+                .map(p -> p.getPower().getClass().getSimpleName())
                 .map(s -> String.format("%-20s", s)).forEach(builder::append);
 
         print(builder.toString(), 2, 2, true);

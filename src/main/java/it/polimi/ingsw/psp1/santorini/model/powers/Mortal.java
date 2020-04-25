@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 //TODO: handle loosing condition whether you cannot build after any move
 public class Mortal implements Power {
 
-    protected Player player;
+    protected transient Player player;
 
     /**
      * {@inheritDoc} <br>
@@ -192,6 +192,8 @@ public class Mortal implements Power {
         if (obj.getClass() != getClass()) {
             return false;
         }
+
+        //TODO: add name check ?
 
         return Objects.equals(this.player, ((Mortal) obj).player);
     }

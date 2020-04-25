@@ -21,6 +21,7 @@ public class CommandBuild extends Command {
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (arguments.length == 1) {
             //TODO: ricevere la lista per controllare lo square selezionato
+
         } else if (arguments.length == 2) {
             int x = Integer.parseInt(arguments[0]);
             int y = Integer.parseInt(arguments[1]);

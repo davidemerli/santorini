@@ -106,7 +106,9 @@ public class RemoteView extends View {
         EnumTurnState turnState = EnumTurnState.fromTurnState(game.getTurnState());
         boolean interaction = game.getTurnState().shouldShowInteraction(player);
 
-        ServerSendPlayerUpdate packet = new ServerSendPlayerUpdate(toData(player), turnState, interaction);
+        PlayerData playerData = toData(player);
+
+        ServerSendPlayerUpdate packet = new ServerSendPlayerUpdate(playerData, turnState, interaction);
         connection.sendPacket(packet);
     }
 

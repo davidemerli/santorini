@@ -13,7 +13,7 @@ public class CommandReload extends Command {
                 "send the current map and all available info to the player",
                 "",
                 "",
-                Arrays.asList("r", "loadagain"));
+                Arrays.asList("r", "clear"));
     }
 
     @Override
