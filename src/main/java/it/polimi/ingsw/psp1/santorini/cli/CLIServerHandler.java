@@ -18,11 +18,13 @@ public class CLIServerHandler implements ServerHandler {
     private final List<PlayerData> playerDataList;
     private final Map<Power, List<Point>> blockedMoves;
     private final List<Point> validMoves;
+    private boolean shouldShowInteraction;
 
     public CLIServerHandler() {
         this.playerDataList = new ArrayList<>();
         this.blockedMoves = new HashMap<>();
         this.validMoves = new ArrayList<>();
+        this.shouldShowInteraction = false;
     }
 
     @Override
@@ -46,45 +48,34 @@ public class CLIServerHandler implements ServerHandler {
 
     @Override
     public void handleRequest(ServerAskRequest packet) {
-        // il server dice al client cosa deve fare
         EnumRequestType action = packet.getRequestType();
-
-        //TODO: check every request, use a switch instead of ifs
+        String toStamp;
 
 //        PrintUtils.printFromCommand(packet.getRequestType().toString(), 0, -2, true);
 
         switch (action) {
-            case CHOOSE_POWERS:
-                //code
+            case SELECT_NAME:
+                toStamp = "Choose your name: ";
+                PrintUtils.print(toStamp, 2, 0, false);
                 break;
-
-            //...
+            case CHOOSE_POWERS:
+                toStamp = "Choose the gods who will play: use select command";
+                PrintUtils.print(toStamp, 0, 10, false);
+                break;
+            case SELECT_POWER:
+                toStamp = "Choose your god: ";
+                PrintUtils.print(toStamp, 16, 0, true);
+                break;
+            case SELECT_SQUARE:
+                toStamp = "Select square: ";
+                PrintUtils.print(toStamp, 16, 0, true);
+                break;
+            case SELECT_WORKER:
+                toStamp = "Select worker: ";
+                PrintUtils.print(toStamp, 16, 0, true);
             default:
                 break;
         }
-
-//        if (action == SELECT_NAME) {
-//            String toStamp = "Choose your name: ";
-//            PrintUtils.print(toStamp, 2, 0, false);
-//            // restituisco il nome al server
-//        } else if (action == CHOOSE_POWERS) {
-//            String toStamp = "Choose the gods who will play: use select command";
-//            PrintUtils.print(toStamp, 0, 10, false);
-//            // ci pensa il comando
-//        } else if (action == SELECT_POWER) {
-//            // prima il server manda activeGods ed essa viene stampata a schermo
-//            // il client decide quale gods prendere
-//            String str = "Choose your god: ";
-//            PrintUtils.print(str, 16, 0, true);
-//            // ci pensa il comando
-//        } else if (action == SELECT_SQUARE) {
-//            String str = "Select square: ";
-//            PrintUtils.print(str, 16, 0, true);
-//        } else if (action == SELECT_WORKER) {
-//            String str = "Select worker: ";
-//            PrintUtils.print(str, 16, 0, true);
-//            // int worker = scanner.nextInt();
-//        }
         // TODO: sistemare i cursori
     }
 
@@ -97,9 +88,7 @@ public class CLIServerHandler implements ServerHandler {
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         List<Point> validMoves = packet.getValidMoves();
         Map<Power, List<Point>> blockedMoves = packet.getBlockedMoves();
-        // le validMoves non devono essere dentro le blockedMoves
-        // stampo le mosse valide sulla map
-        // stampo la mappa aggiornata
+        PrintUtils.printValidMoves(validMoves, blockedMoves);
     }
 
     @Override
@@ -142,6 +131,14 @@ public class CLIServerHandler implements ServerHandler {
 
     public Map<Power, List<Point>> getBlockedMoves() {
         return blockedMoves;
+    }
+
+    public boolean getShowInteraction() {
+        return shouldShowInteraction;
+    }
+
+    public void setShouldShowInteraction(boolean shouldShowInteraction) {
+        this.shouldShowInteraction = shouldShowInteraction;
     }
 }
 

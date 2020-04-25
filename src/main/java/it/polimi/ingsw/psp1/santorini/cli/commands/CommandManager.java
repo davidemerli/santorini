@@ -3,12 +3,8 @@ package it.polimi.ingsw.psp1.santorini.cli.commands;
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.network.Client;
-import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
-import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class CommandManager implements Runnable {
 
@@ -30,6 +26,7 @@ public class CommandManager implements Runnable {
         while (true) {
             String result = runCommand(scanner.nextLine());
             PrintUtils.printCommand();
+            PrintUtils.clearFrom(PrintUtils.getCommandCoords().y + 1);
             PrintUtils.printFromCommand(result, 0, 2, true);
         }
     }

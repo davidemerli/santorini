@@ -17,6 +17,6 @@ public class CommandHelp extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        return null;
+        return "";
     }
 }

@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class CommandShowDescription extends Command {
 
     public CommandShowDescription() {
-        super("showdescription",
+        super("description",
                 "show the selected God's description",
                 "<God name>",
                 "",
