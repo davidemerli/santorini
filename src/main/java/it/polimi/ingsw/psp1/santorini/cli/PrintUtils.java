@@ -5,7 +5,9 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -81,6 +83,14 @@ public class PrintUtils {
         }
     }
 
+    public static void clearFrom(int y) {
+        String s = String.format("%" + (MAX_LENGTH) + "s", "");
+        for (int i = 0; i < 15; i++) {
+            PrintUtils.setCursor(0, y + i);
+            System.out.print(s);
+        }
+    }
+
     public static void print(String string, int x, int y, boolean toClean) {
         if (toClean) {
             clearRow(x, y);
@@ -135,18 +145,17 @@ public class PrintUtils {
         printCommand();
     }
 
-    public static void printValidMoves(List<Point> valid, List<Point> blocked) {
+    public static void printValidMoves(List<Point> valid, Map<Power, List<Point>> blocked) {
         int counter = 1;
 
         for (Point point : valid) {
-            if (!blocked.contains(point)) {
+            if (!blocked.values().stream().flatMap(Collection::stream).anyMatch(p -> p.equals(valid))) {
                 String s = String.valueOf(counter);
                 print(Color.BACKGROUND_BRIGHT_YELLOW + "" + Color.BLUE + s + Color.RESET,
                         point.x + mapX, point.y + mapY, false);
                 counter++;
             }
         }
-        // gioco di cursore e con il worker? o metto la mappa come parametro?
     }
 
     // per testing
