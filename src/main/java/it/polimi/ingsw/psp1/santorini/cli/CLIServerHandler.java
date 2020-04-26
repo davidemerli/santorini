@@ -5,6 +5,7 @@ import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.awt.*;
@@ -21,6 +22,7 @@ public class CLIServerHandler implements ServerHandler {
     private boolean shouldShowInteraction;
 
     private EnumRequestType lastRequest;
+    private EnumTurnState lastTurnState;
 
     public CLIServerHandler() {
         this.playerDataList = new ArrayList<>();
@@ -30,6 +32,7 @@ public class CLIServerHandler implements ServerHandler {
         this.shouldShowInteraction = false;
         this.gameMap = null;
         this.lastRequest = null;
+        this.lastTurnState = null;
     }
 
     @Override
@@ -49,7 +52,9 @@ public class CLIServerHandler implements ServerHandler {
 
         PrintUtils.clearBoard();
 
-        PrintUtils.printPlayerInfo(playerList, packet.getTurnState());
+        this.lastTurnState = packet.getTurnState();
+
+        PrintUtils.printPlayerInfo(playerList, lastTurnState, shouldShowInteraction);
         PrintUtils.stampMap(map, playerList);
 
         PrintUtils.printCommand();
@@ -62,25 +67,40 @@ public class CLIServerHandler implements ServerHandler {
 
         switch (action) {
             case SELECT_NAME:
-                toStamp = "Choose your name: ";
+                toStamp = "Choose a nickname: ";
                 break;
             case CHOOSE_POWERS:
-                toStamp = "Choose the gods who will play: use 'selectpower' command";
+                toStamp = String.format("Choose God Powers for this game: use '%s' command",
+                        Color.BLUE + "selectpower"+ Color.RESET);
                 break;
             case SELECT_POWER:
-                toStamp = "Choose your god: ";
+                toStamp = String.format("Choose your God Power: use '%s' command",
+                        Color.BLUE + "selectpower" + Color.RESET);
+                break;
+            case SELECT_STARTING_PLAYER:
+                toStamp = String.format("Choose the starting player: use '%s' command",
+                        Color.BLUE + "start" + Color.RESET);
+                break;
+            case PLACE_WORKER:
+                toStamp = String.format("Place a worker: use '%s' command",
+                        Color.BLUE + "placeworker" + Color.RESET);
                 break;
             case SELECT_SQUARE:
-                toStamp = "Select square: ";
+                toStamp = String.format("Select square to %s: use '%s' command",
+                        Color.RED + lastTurnState.toString().toLowerCase() + Color.RESET,
+                        Color.BLUE + "select" + Color.RESET);
                 break;
             case SELECT_WORKER:
-                toStamp = "Select worker: ";
+                toStamp = String.format("Select worker: use '%s' command",
+                        Color.BLUE + "selectworker" + Color.RESET);
                 break;
             default:
                 toStamp = packet.getRequestType().toString();
+                break;
         }
 
         PrintUtils.printFromCommand(toStamp, 0, -2, true);
+        PrintUtils.printCommand();
 
         this.lastRequest = action;
     }
@@ -92,7 +112,9 @@ public class CLIServerHandler implements ServerHandler {
                 .findFirst();
         updated.ifPresent(playerData -> playerDataList.set(playerDataList.indexOf(playerData), packet.getPlayerData()));
 
-        PrintUtils.printPlayerInfo(playerDataList, packet.getPlayerState());
+        shouldShowInteraction = packet.shouldShowInteraction();
+
+        PrintUtils.printPlayerInfo(playerDataList, packet.getPlayerState(), shouldShowInteraction);
     }
 
     @Override

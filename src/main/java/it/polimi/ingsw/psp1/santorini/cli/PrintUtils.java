@@ -148,7 +148,7 @@ public class PrintUtils {
         printCommand();
     }
 
-    public static void printPlayerInfo(List<PlayerData> list, EnumTurnState state) {
+    public static void printPlayerInfo(List<PlayerData> list, EnumTurnState state, boolean interact) {
         StringBuilder builder = new StringBuilder();
         list.stream().map(p -> String.format("%-20s", p.getName())).forEach(builder::append);
 

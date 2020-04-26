@@ -34,13 +34,15 @@ public class MainCli {
         System.out.print("Please insert server port: ");
         int port = scanner.nextInt();
 //
-        client.connectToServer("localhost", 34567);
+        client.connectToServer(serverIp, 34567);
 
         scanner = new Scanner(System.in);
-        System.out.print("Please choose a nickname: ");
         String name = scanner.nextLine();
 
         Thread.sleep(1000);
+
+        PrintUtils.clearBoard();
+        PrintUtils.printCommand();
 
         client.sendPacket(new ClientSetName(name));
 

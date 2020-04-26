@@ -29,7 +29,7 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
         return playerState;
     }
 
-    public boolean isShouldShowInteraction() {
+    public boolean shouldShowInteraction() {
         return shouldShowInteraction;
     }
 }

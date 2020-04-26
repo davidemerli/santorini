@@ -18,7 +18,7 @@ public class CommandReload extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-    client.sendPacket(new ClientRequestGameData());
+        client.sendPacket(new ClientRequestGameData());
         return "";
     }
 }
