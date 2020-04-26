@@ -60,7 +60,7 @@ public class Prometheus extends Mortal {
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);
 
-        if (game.getTurnState() instanceof Move && hasBuiltBeforeMoving) {
+        if (game.getTurnState() instanceof Move && worker != null && hasBuiltBeforeMoving) {
             int level = game.getMap().getLevel(worker.getPosition());
 
             return list.stream()

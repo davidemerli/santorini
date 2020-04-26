@@ -3,12 +3,8 @@ package it.polimi.ingsw.psp1.santorini.cli.commands;
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.network.Client;
-import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
-import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class CommandManager implements Runnable {
 
@@ -30,7 +26,8 @@ public class CommandManager implements Runnable {
         while (true) {
             String result = runCommand(scanner.nextLine());
             PrintUtils.printCommand();
-            PrintUtils.printFromCommand(result, 0, 2, true);
+//            PrintUtils.clearFrom(PrintUtils.getCommandCoords().y + 1);
+            PrintUtils.printFromCommand("Last action: " + result, 0, 2, true);
         }
     }
 
@@ -44,11 +41,13 @@ public class CommandManager implements Runnable {
             if (command.isPresent()) {
                 //if (input.matches(command.get().getPattern())) {
                 try {
-                    String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length + 1);
+                    String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length);
 
                     return command.get().onCommand(client, serverHandler, input, subarray);
                 } catch (Exception ex) {
-                    return ex.getMessage();
+                    String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length);
+
+                    return "exception: " + ex.getClass() + " " + ex.getMessage() + " " + input + subarray.length;
                 }
                 //}
 //                return "Invalid argument, the usage for this command is: ";
@@ -66,17 +65,17 @@ public class CommandManager implements Runnable {
     }
 
     public void addCMDs() {
-        commandList.add(new CommandBuild());
         commandList.add(new CommandCreateGame());
+        commandList.add(new CommandSurrender());
         commandList.add(new CommandHelp());
         commandList.add(new CommandInteract());
-        commandList.add(new CommandMove());
         commandList.add(new CommandPlaceWorker());
         commandList.add(new CommandReload());
+        commandList.add(new CommandSelect());
         commandList.add(new CommandSelectPower());
+        commandList.add(new CommandSelectStartingPlayer());
         commandList.add(new CommandSelectWorker());
-        commandList.add(new CommandShowDescription());
-        commandList.add(new CommandSurrender());
+        commandList.add(new CommandDescription());
     }
 }
 

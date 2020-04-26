@@ -5,8 +5,6 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,14 +26,14 @@ public class ServerGameData implements Packet<ServerHandler> {
 
     @Override
     public void processPacket(ServerHandler netHandler) {
-        netHandler.handleSendGameData(this);
+        netHandler.handleGameData(this);
     }
 
     public GameMap getGameMap() {
         return gameMap;
     }
 
-    public EnumTurnState getGameState() {
+    public EnumTurnState getTurnState() {
         return gameState;
     }
 

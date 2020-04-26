@@ -14,8 +14,11 @@ public class SelectPowers extends TurnState {
 
     public SelectPowers(Game game) {
         super(game);
+    }
 
-        game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
+    @Override
+    public void init() {
+        game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
         game.notifyObservers(o -> o.sendPowerList(game.getCurrentPlayer(), game.getAvailablePowers()));
     }
 
@@ -34,7 +37,7 @@ public class SelectPowers extends TurnState {
             game.shiftPlayers(-1);
             game.setTurnState(new ChoosePlayerPower(game));
         } else {
-            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
+            game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
         }
     }
 

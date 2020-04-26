@@ -20,10 +20,10 @@ public class CommandSelectPower extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        if(isNumeric(arguments[0])) {
-            int index = Integer.parseInt(arguments[0]);
+        if (isNumeric(arguments[0])) {
+            int index = Integer.parseInt(arguments[0]) - 1;
 
-            if(index < 0 || index >= serverHandler.getPowerList().size()) {
+            if (index < 0 || index >= serverHandler.getPowerList().size()) {
                 return "Invalid index";
             }
 
@@ -37,7 +37,7 @@ public class CommandSelectPower extends Command {
                 .filter(p -> p.getClass().getSimpleName().equalsIgnoreCase(arguments[0]))
                 .findFirst();
 
-        if(power.isPresent()) {
+        if (power.isPresent()) {
             client.sendPacket(new ClientChoosePower(power.get()));
 
             return String.format("Selected power: '%s'", power.get().getClass().getSimpleName());

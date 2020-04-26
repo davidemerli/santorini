@@ -6,10 +6,11 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 import java.awt.*;
+import java.io.Serializable;
 
 public class ServerPlayerMove implements Packet<ServerHandler> {
 
-    private abstract static class PlayerTurn {
+    private abstract static class PlayerTurn implements Serializable {
         private final Point where;
         private final Worker worker;
 

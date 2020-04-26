@@ -12,12 +12,21 @@ public class Build extends TurnState {
 
     public Build(Game game) {
         super(game);
+    }
 
-        if(game.getCurrentPlayer().getSelectedWorker() != null) {
-            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_WORKER);
+    @Override
+    public void init() {
+        Player current = game.getCurrentPlayer();
+        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker();
+
+        if (current.getSelectedWorker() == null) {
+            game.askRequest(current, EnumRequestType.SELECT_WORKER);
         } else {
-            game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
+            game.askRequest(current, EnumRequestType.SELECT_SQUARE);
         }
+
+        game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
+                getValidMoves(current, currentWorker), getBlockedMoves(current, currentWorker)));
     }
 
     @Override
@@ -47,7 +56,8 @@ public class Build extends TurnState {
 
         player.setSelectedWorker(worker);
 
-        game.notifyObservers(o -> o.availableMovesUpdate(getValidMoves(player, worker), getBlockedMoves(player, worker)));
+        game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
+                getValidMoves(player, worker), getBlockedMoves(player, worker)));
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }

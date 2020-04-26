@@ -1,11 +1,15 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -18,7 +22,11 @@ public class PrintUtils {
     private static int mapX = 2;
     private static int mapY = 5;
 
-    public static void stampMap(GameMap map) {
+    public static void stampMap(GameMap map, List<PlayerData> players) {
+        if(map == null) {
+            return;
+        }
+
         String s = String.format("%" + (size * 2 - 1) + "s", "");
 
         StringBuilder bgLine = new StringBuilder();
@@ -26,31 +34,40 @@ public class PrintUtils {
                 .forEach(i -> bgLine.append(" "));
 
         for (int i = 0; i < GameMap.SIDE_LENGTH * (size + spacing) + 1; i++) {
-            print(Color.BACKGROUND_GRASS + bgLine.toString(), mapX, mapY + i, false);
+            print(Color.BACKGROUND_GRASS2 + bgLine.toString(), mapX, mapY + i, false);
         }
 
         for (int i = 0; i < GameMap.SIDE_LENGTH; i++) {
             for (int j = 0; j < GameMap.SIDE_LENGTH; j++) {
                 Point point = new Point(i, j);
+                int level = map.getLevel(point) - (map.hasDome(point) ? 1 : 0);
+                int x = mapX + i * (size * 2) + i + spacing;
+                int y = mapY + j * size + j * spacing + spacing;
+
                 for (int k = 0; k < size; k++) {
-                    int x = mapX + i * (size * 2) + i + spacing;
-                    int y = mapY + j * size + j * spacing + k + spacing;
-
-                    String string = getColorFromLevel(map.getLevel(point) - (map.hasDome(point) ? 1 : 0)) + s;
-
-                    print(string, x, y, false);
+                    print(getColorFromLevel(level) + s, x, y + k, false);
                 }
+
+                print("L" + level, x + size*2 - 3, y + size - 1, false);
 
                 if (map.hasDome(point)) {
                     for (int k = 1; k < size - 1; k++) {
-                        int x = mapX + i * (size * 2) + i + spacing;
-                        int y = mapY + j * size + j * spacing + k + spacing;
-
                         String string = Color.BACKGROUND_BRIGHT_BLUE + s.substring(4);
 
-                        print(string, x + 2, y, false);
+                        print(string, x + 2, y + k, false);
                     }
                 }
+            }
+        }
+
+        for (PlayerData player : players) {
+            for (Worker w : player.getWorkers()) {
+                int x = mapX + 2 + w.getPosition().x * (size * 2 + spacing * 2 - 1);
+                int y = mapY + 2 + w.getPosition().y * (size + spacing);
+
+                String string = Color.BACKGROUND_BRIGHT_RED + "W";
+
+                print(string, x, y, false);
             }
         }
 
@@ -71,13 +88,22 @@ public class PrintUtils {
     }
 
     public static void resetCursor() {
-        setCursor(3, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
+        Point point = getCommandCoords();
+        setCursor(point.x + 3, point.y);
     }
 
     public static void clearRow(int x, int y) {
         for (int i = MAX_LENGTH; i >= x; i--) {
             PrintUtils.setCursor(i, y);
             System.out.print(" ");
+        }
+    }
+
+    public static void clearFrom(int y) {
+        String s = String.format("%" + (MAX_LENGTH) + "s", "");
+        for (int i = 0; i < 15; i++) {
+            PrintUtils.setCursor(0, y + i);
+            System.out.print(s);
         }
     }
 
@@ -99,55 +125,64 @@ public class PrintUtils {
     }
 
     public static void printCommand() {
-        print("> ", 0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing, true);
+        Point point = getCommandCoords();
+        print("> ", point.x, point.y, true);
     }
 
     public static Point getCommandCoords() {
-        return new Point(0, 2 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
+        return new Point(0, 4 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
     }
 
-    public static void printGodList(List<Power> list) {
-        setCursor(0, 0);
+    public static void printPowerList(List<Power> list) {
         clearBoard();
-        for (int i = 1; i <= list.size(); i++) {
-            System.out.print(i + ") " + list.get(i - 1).getClass().getSimpleName() + " \t\t");
 
+        int row = 0;
+        for (int i = 0; i < list.size(); i++) {
             if (i % 3 == 0) {
-                System.out.println();
+                row++;
             }
+
+            print((i + 1) + ") " + list.get(i).getClass().getSimpleName(), (i % 3) * 20, row + 3, false);
         }
 
         printCommand();
     }
 
-    public static void printPlayerInfo(List<PlayerData> list) {
+    public static void printPlayerInfo(List<PlayerData> list, EnumTurnState state) {
         StringBuilder builder = new StringBuilder();
         list.stream().map(p -> String.format("%-20s", p.getName())).forEach(builder::append);
 
-        print(builder.toString(), 2, 0, true);
+        print(builder.toString(), 2, 1, true);
 
         builder = new StringBuilder();
-        list.stream().filter(p -> p.getPower() != null)
-                .map(p -> p.getPower().getClass().getSimpleName())
+        list.stream().map(p -> p.getPower() == null ? "N/A" : p.getPower().getClass().getSimpleName())
                 .map(s -> String.format("%-20s", s)).forEach(builder::append);
 
         print(builder.toString(), 2, 2, true);
 
+        if(list.size() > 0 && state != null) {
+            print(String.format("Playing: '%s', Turn State: %s",
+                    Color.BLUE + list.get(0).getName() + Color.RESET,
+                    Color.RED + state.toString() + Color.RESET),
+                    2, 3, true);
+        }
+
         printCommand();
     }
 
-    public static void printValidMoves(List<Point> valid, List<Point> blocked) {
+    public static void printValidMoves(List<Point> valid, Map<Power, List<Point>> blocked) {
         int counter = 1;
 
         for (Point point : valid) {
-            if (!blocked.contains(point)) {
+            if (!blocked.values().stream().flatMap(Collection::stream).anyMatch(p -> p.equals(valid))) {
                 String s = String.valueOf(counter);
-                print(Color.BACKGROUND_BRIGHT_YELLOW + "" + Color.BLUE + s + Color.RESET,
-                        point.x + mapX, point.y + mapY, false);
+                print(Color.BACKGROUND_BRIGHT_YELLOW + "" + Color.RED + s + Color.RESET,
+                        mapX + point.x * (size * 2 - 1 + spacing * 2) + 1,
+                        mapY + point.y * (size + spacing) + 1,
+                        false);
                 counter++;
             }
         }
-        // gioco di cursore e con il worker? o metto la mappa come parametro?
     }
 
     // per testing

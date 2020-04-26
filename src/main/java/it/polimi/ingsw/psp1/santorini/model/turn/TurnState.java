@@ -22,6 +22,9 @@ public abstract class TurnState {
         this.previousState = copyState();
     }
 
+    public void init() {
+    }
+
     /**
      * Called when the 'Challenger' chooses a starting player
      *

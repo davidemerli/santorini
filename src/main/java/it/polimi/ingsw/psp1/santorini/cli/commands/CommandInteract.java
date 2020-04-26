@@ -10,7 +10,7 @@ public class CommandInteract extends Command {
 
     public CommandInteract() {
         super("interact",
-                "activate your God's power, if possible",
+                "Activates your God's power, if possible",
                 "",
                 "",
                 Arrays.asList("usepower", "power"));
@@ -18,7 +18,11 @@ public class CommandInteract extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        ClientToggleInteraction packet = new ClientToggleInteraction();
-        return "";
+        if (serverHandler.getShowInteraction()) {
+            serverHandler.setShouldShowInteraction(false);
+            client.sendPacket(new ClientToggleInteraction());
+            return "Activated power";
+        }
+        return "Command not available";
     }
 }

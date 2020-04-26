@@ -121,6 +121,19 @@ public class Mortal implements Power {
      */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
+        if (game.getTurnState() instanceof WorkerPlacing) {
+            return game.getMap().getAllSquares().stream()
+                    .filter(p -> game.getWorkerOn(p).isEmpty())
+                    .collect(Collectors.toUnmodifiableList());
+        }
+
+        //worker is null if the player has not selected the current worker
+        //valid moves include worker positions
+        if(worker == null) {
+            return player.getWorkers().stream()
+                    .map(Worker::getPosition).collect(Collectors.toList());
+        }
+
         List<Point> neighbors = game.getMap().getNeighbors(worker.getPosition());
 
         if (game.getTurnState() instanceof Move) {
@@ -134,11 +147,7 @@ public class Mortal implements Power {
                     .filter(getStandardDomeCheck(game))
                     .filter(getStandardWorkerCheck(game))
                     .collect(Collectors.toList());
-        } else if (game.getTurnState() instanceof WorkerPlacing) {
-            return game.getMap().getAllSquares().stream()
-                    .filter(p -> game.getWorkerOn(p).isEmpty())
-                    .collect(Collectors.toUnmodifiableList());
-        } else {
+        }  else {
             return Collections.emptyList();
         }
     }

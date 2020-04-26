@@ -5,7 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 public interface ServerHandler extends NetHandler {
     void handleKeepAlive(ServerKeepAlive packet);
 
-    void handleSendGameData(ServerGameData packet);
+    void handleGameData(ServerGameData packet);
 
     void handleRequest(ServerAskRequest packet);
 

@@ -14,8 +14,6 @@ import java.util.Map;
 
 public interface ModelObserver {
 
-    void mapChange(Game game, GameMap map);
-
     void playerMove(Player player, EnumMoveType moveType, Worker worker, Point from, Point where);
 
     void playerBuild(Player player, EnumMoveType moveType, Worker worker, Point where);
@@ -24,7 +22,7 @@ public interface ModelObserver {
 
     void gameUpdate(Game game);
 
-    void availableMovesUpdate(List<Point> validMoves, Map<Power, List<Point>> blockedMoves);
+    void availableMovesUpdate(Player player, List<Point> validMoves, Map<Power, List<Point>> blockedMoves);
 
     void requestToPlayer(Player player, EnumRequestType requestType);
 

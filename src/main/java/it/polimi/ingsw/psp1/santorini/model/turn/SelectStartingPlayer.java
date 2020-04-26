@@ -16,7 +16,10 @@ public class SelectStartingPlayer extends TurnState {
 
     public SelectStartingPlayer(Game game) {
         super(game);
+    }
 
+    @Override
+    public void init() {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_STARTING_PLAYER);
     }
 

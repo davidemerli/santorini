@@ -58,7 +58,7 @@ public class Artemis extends Mortal {
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);
 
-        if (game.getTurnState() instanceof Move && hasMoved) {
+        if (game.getTurnState() instanceof Move && worker != null && hasMoved) {
             list.remove(oldPosition);
         }
 

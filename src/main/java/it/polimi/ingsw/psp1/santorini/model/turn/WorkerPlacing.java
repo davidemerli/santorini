@@ -8,15 +8,18 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WorkerPlacing extends TurnState {
 
     public WorkerPlacing(Game game) {
         super(game);
+    }
 
-        game.notifyObservers(o -> o.availableMovesUpdate(getValidMoves(game.getCurrentPlayer(), null),
-                Collections.emptyMap()));
+    @Override
+    public void init() {
+        game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
+                getValidMoves(game.getCurrentPlayer(), null),
+                getBlockedMoves(game.getCurrentPlayer(), null)));
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.PLACE_WORKER);
     }
@@ -44,7 +47,7 @@ public class WorkerPlacing extends TurnState {
         boolean allDone = game.getPlayerList().stream().allMatch(p -> p.getWorkers().size() == 2);
 
         //if everyone has put down 2 workers, the game can begin with normal turns
-        if(allDone) {
+        if (allDone) {
             game.nextTurn();
             return;
         }

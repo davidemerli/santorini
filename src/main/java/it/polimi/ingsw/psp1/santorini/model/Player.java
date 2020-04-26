@@ -6,6 +6,7 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Player {
 
@@ -101,5 +102,14 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        return this.getName().equals(((Player)obj).getName());
     }
 }

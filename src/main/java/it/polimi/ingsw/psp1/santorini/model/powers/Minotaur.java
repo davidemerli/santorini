@@ -16,7 +16,7 @@ public class Minotaur extends Mortal {
 
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
-        if (!(game.getTurnState() instanceof Move)) {
+        if (!(game.getTurnState() instanceof Move) || worker == null) {
             return super.getValidMoves(worker, game);
         }
 

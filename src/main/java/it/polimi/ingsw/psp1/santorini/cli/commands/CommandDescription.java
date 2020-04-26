@@ -5,14 +5,14 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 
 import java.util.Arrays;
 
-public class CommandShowDescription extends Command {
+public class CommandDescription extends Command {
 
-    public CommandShowDescription() {
+    public CommandDescription() {
         super("description",
-                "show the selected God's description",
+                "Shows the selected God's description",
                 "<power-name>",
                 "",
-                Arrays.asList("sd", "desc"));
+                Arrays.asList("d", "desc"));
     }
 
     @Override

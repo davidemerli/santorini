@@ -76,7 +76,7 @@ public class Game implements Runnable {
     public void buildBlock(Point position, boolean forceDome) {
         map.buildBlock(position, forceDome);
 
-        notifyObservers(o -> o.mapChange(this, map));
+        notifyObservers(o -> o.gameUpdate(this));
     }
 
     /**
@@ -113,11 +113,13 @@ public class Game implements Runnable {
             throw new IndexOutOfBoundsException("Given position is out of map");
         }
 
-        if (!player.getWorkers().contains(worker)) {
+        if (getWorkerOn(worker.getPosition()).isEmpty()) {
             throw new NoSuchElementException("Given worker is not present on the map");
         }
 
-        worker.setPosition(newPosition);
+        getWorkerOn(worker.getPosition()).get().setPosition(newPosition);
+
+        notifyObservers(o -> o.gameUpdate(this));
     }
 
     public Player getCurrentPlayer() {
@@ -200,6 +202,7 @@ public class Game implements Runnable {
 
     public void setTurnState(TurnState turnState) {
         this.turnState = turnState;
+        this.turnState.init();
 
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
 
@@ -207,8 +210,8 @@ public class Game implements Runnable {
             Player player = getCurrentPlayer();
             Worker worker = player.getSelectedWorker();
 
-            notifyObservers(o -> o.availableMovesUpdate(getTurnState().getValidMoves(player, worker),
-                    getTurnState().getBlockedMoves(player, worker)));
+            notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(),
+                    getTurnState().getValidMoves(player, worker), getTurnState().getBlockedMoves(player, worker)));
         }
     }
 

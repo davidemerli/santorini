@@ -54,7 +54,7 @@ public class Hephaestus extends Mortal {
 
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
-        if (game.getTurnState() instanceof Build && hasBuilt) {
+        if (game.getTurnState() instanceof Build && worker != null && hasBuilt) {
             return Collections.singletonList(oldBuild);
         }
 

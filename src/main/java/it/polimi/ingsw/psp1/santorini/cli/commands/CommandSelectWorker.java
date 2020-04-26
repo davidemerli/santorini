@@ -3,15 +3,17 @@ package it.polimi.ingsw.psp1.santorini.cli.commands;
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
+import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectWorker;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collection;
 
 public class CommandSelectWorker extends Command {
 
     public CommandSelectWorker() {
         super("selectworker",
-                "choose the worker you want to use in this turn",
+                "Chooses the worker you want to use in this turn",
                 " <x> <y> / <n-move>",
                 "",
                 Arrays.asList("sw", "sworker"));
@@ -20,13 +22,40 @@ public class CommandSelectWorker extends Command {
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (arguments.length == 1) {
-        //TODO: ricevere la lista per controllare lo square selezionato
-        } else if (arguments.length == 2) {
+            int i = Integer.parseInt(arguments[0]) - 1;
+
+            if (i < 0 || i >= serverHandler.getValidMoves().size()) {
+                return "Invalid move";
+            }
+
+            Point point = serverHandler.getValidMoves().get(i);
+
+            if (serverHandler.getBlockedMoves().values().stream()
+                    .flatMap(Collection::stream).anyMatch(p -> p.equals(point))) {
+                return "Blocked move";
+            }
+
+            client.sendPacket(new ClientSelectWorker(point));
+
+            return String.format("Selected Worker at position %d, %d", point.x, point.y);
+        } else {
             int x = Integer.parseInt(arguments[0]);
             int y = Integer.parseInt(arguments[1]);
-            ClientSelectSquare packet = new ClientSelectSquare(new Point(x, y));
-            return "";
+
+            Point point = new Point(x, y);
+
+            if (!serverHandler.getValidMoves().contains(point)) {
+                return "Invalid move";
+            }
+
+            if (serverHandler.getBlockedMoves().values().stream()
+                    .flatMap(Collection::stream).anyMatch(p -> p.equals(point))) {
+                return "Blocked move";
+            }
+
+            client.sendPacket(new ClientSelectWorker(point));
+
+            return String.format("Selected Worker at position %d, %d", point.x, point.y);
         }
-        return null;
     }
 }

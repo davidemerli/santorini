@@ -53,7 +53,7 @@ public class Hestia extends Mortal {
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);
 
-        if (game.getTurnState() instanceof Build && hasBuilt) {
+        if (game.getTurnState() instanceof Build && worker != null && hasBuilt) {
             return list.stream()
                     .filter(point -> !game.getMap().isPerimeter(point))
                     .collect(Collectors.toList());

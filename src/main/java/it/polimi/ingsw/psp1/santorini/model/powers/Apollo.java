@@ -21,7 +21,7 @@ public class Apollo extends Mortal {
      */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
-        if (game.getTurnState() instanceof Move) {
+        if (game.getTurnState() instanceof Move && worker != null) {
             Point wPos = worker.getPosition();
             List<Point> neighbors = game.getMap().getNeighbors(wPos);
 

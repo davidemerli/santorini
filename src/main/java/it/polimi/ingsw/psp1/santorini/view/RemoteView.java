@@ -77,15 +77,6 @@ public class RemoteView extends View {
     }
 
     @Override
-    public void mapChange(Game game, GameMap map) {
-        List<PlayerData> playerDataList = game.getPlayerList().stream()
-                .map(this::toData).collect(Collectors.toList());
-
-        ServerGameData packet = new ServerGameData(map, playerDataList, EnumTurnState.fromTurnState(game.getTurnState()));
-        connection.sendPacket(packet);
-    }
-
-    @Override
     public void playerMove(Player player, EnumMoveType moveType, Worker worker, Point from, Point where) {
         ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, where, from);
 
@@ -118,14 +109,16 @@ public class RemoteView extends View {
                 .map(this::toData).collect(Collectors.toList());
         EnumTurnState turnState = EnumTurnState.fromTurnState(game.getTurnState());
 
-        ServerGameData packet = new ServerGameData(game.getMap(), players, turnState);
+        ServerGameData packet = new ServerGameData(game.getMap().copy(), players, turnState);
         connection.sendPacket(packet);
     }
 
     @Override
-    public void availableMovesUpdate(List<Point> validMoves, Map<Power, List<Point>> blockedMoves) {
-        ServerMovePossibilities packet = new ServerMovePossibilities(validMoves, blockedMoves);
-        connection.sendPacket(packet);
+    public void availableMovesUpdate(Player player, List<Point> validMoves, Map<Power, List<Point>> blockedMoves) {
+        if(getPlayer().equals(player)) {
+            ServerMovePossibilities packet = new ServerMovePossibilities(validMoves, blockedMoves);
+            connection.sendPacket(packet);
+        }
     }
 
     @Override
@@ -149,6 +142,8 @@ public class RemoteView extends View {
      * @return a PlayerData object
      */
     private PlayerData toData(Player player) {
-        return new PlayerData(player.getName(), player.getPower(), new ArrayList<>(player.getWorkers()));
+        return new PlayerData(player.getName(), player.getPower(),
+                player.getWorkers().stream()
+                        .map(w -> new Worker(w.getPosition())).collect(Collectors.toList()));
     }
 }
