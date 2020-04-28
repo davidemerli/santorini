@@ -1,11 +1,13 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientChoosePower;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class CommandSelectPower extends Command {
@@ -15,11 +17,13 @@ public class CommandSelectPower extends Command {
                 "Selects a power from a given list",
                 "<power-name> / <power-id>",
                 "",
-                Arrays.asList("sp", "power"));
+                List.of("sp", "power"));
     }
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        Power power;
+
         if (isNumeric(arguments[0])) {
             int index = Integer.parseInt(arguments[0]) - 1;
 
@@ -27,23 +31,25 @@ public class CommandSelectPower extends Command {
                 return "Invalid index";
             }
 
-            Power power = serverHandler.getPowerList().get(index);
-            client.sendPacket(new ClientChoosePower(power));
+            power = serverHandler.getPowerList().get(index);
+        } else {
+            Optional<Power> optPower = serverHandler.getPowerList().stream()
+                    .filter(p -> p.getClass().getSimpleName().equalsIgnoreCase(arguments[0]))
+                    .findFirst();
 
-            return String.format("Selected power: '%s'", power.getClass().getSimpleName());
+            if (optPower.isPresent()) {
+                power = optPower.get();
+            } else {
+                return "Invalid name";
+            }
         }
 
-        Optional<Power> power = serverHandler.getPowerList().stream()
-                .filter(p -> p.getClass().getSimpleName().equalsIgnoreCase(arguments[0]))
-                .findFirst();
+        client.sendPacket(new ClientChoosePower(power));
+        serverHandler.getPowerList().remove(power);
 
-        if (power.isPresent()) {
-            client.sendPacket(new ClientChoosePower(power.get()));
+        PrintUtils.printPowerList(serverHandler.getPowerList());
 
-            return String.format("Selected power: '%s'", power.get().getClass().getSimpleName());
-        }
-
-        return "Invalid name";
+        return String.format("Selected power: '%s'", power.getClass().getSimpleName());
     }
 
     private boolean isNumeric(String string) {

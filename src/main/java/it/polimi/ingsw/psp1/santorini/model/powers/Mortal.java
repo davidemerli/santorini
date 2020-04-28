@@ -206,4 +206,15 @@ public class Mortal implements Power {
 
         return Objects.equals(this.player, ((Mortal) obj).player);
     }
+
+    public Power copy() {
+        try {
+            return (Power) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
+

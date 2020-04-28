@@ -1,49 +1,45 @@
-package it.polimi.ingsw.psp1.santorini.network.server;
+package it.polimi.ingsw.psp1.santorini.network;
 
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
-import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerAskRequest;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerInvalidPacket;
 import it.polimi.ingsw.psp1.santorini.observer.ConnectionObserver;
+import it.polimi.ingsw.psp1.santorini.observer.Observer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
-public class ClientConnectionHandler implements Runnable, ClientHandler {
+public class ClientConnectionHandler extends Observer<ConnectionObserver> implements Runnable, ClientHandler {
 
     private final Server server;
 
     private final Socket clientSocket;
-    private final List<ConnectionObserver> observers;
 
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
     private Player player;
+    private boolean closed;
 
     ClientConnectionHandler(Server server, Socket clientSocket) throws IOException {
         this.server = server;
         this.clientSocket = clientSocket;
-        this.observers = new ArrayList<>();
-
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
         sendPacket(new ServerAskRequest(EnumRequestType.SELECT_NAME));
     }
 
     public void sendPacket(Packet<ServerHandler> packet) {
+        if (closed) {
+            return;
+        }
+
         try {
             System.out.println("sent " + packet);
             objectOutputStream.writeObject(packet);
@@ -59,14 +55,13 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
         try {
             this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
-            while (true) {
+            while (!closed) {
                 Object object = objectInputStream.readObject();
                 System.out.println("received " + object);
                 ((Packet<ClientHandler>) object).processPacket(this);
             }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
-            e.printStackTrace();
-            System.exit(1);
+            closeConnection();
         }
     }
 
@@ -118,7 +113,7 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
 
     @Override
     public void handleKeepAlive(ClientKeepAlive clientKeepAlive) {
-        notifyObservers(ConnectionObserver::processKeepAlive);
+        //TODO: send another keep alive
     }
 
     @Override
@@ -136,20 +131,26 @@ public class ClientConnectionHandler implements Runnable, ClientHandler {
         notifyObservers(o -> o.processStartingPlayerSelection(clientSelectStartingPlayer.getName()));
     }
 
-    public void addObserver(ConnectionObserver observer) {
-        observers.add(observer);
-    }
+    public void closeConnection() {
+        closed = true;
 
-    public void removeObserver(ConnectionObserver observer) {
-        observers.remove(observer);
-    }
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    private void notifyObservers(Consumer<ConnectionObserver> lambda) {
-        observers.forEach(lambda);
+        server.disconnectClient(this);
+
+        notifyObservers(ConnectionObserver::handleCloseConnection);
     }
 
     public Optional<Player> getPlayer() {
         return Optional.ofNullable(player);
+    }
+
+    public boolean isClosed() {
+        return closed;
     }
 
 }

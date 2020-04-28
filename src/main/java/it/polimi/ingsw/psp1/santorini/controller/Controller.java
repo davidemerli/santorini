@@ -45,12 +45,12 @@ public class Controller implements ViewObserver {
 
             Optional<Worker> worker = model.getWorkerOn(workerPosition);
 
-            if(worker.isEmpty()) {
+            if (worker.isEmpty()) {
                 view.notifyError("There is no worker at given position");
                 return;
             }
 
-            if(!player.getWorkers().contains(worker.get())) {
+            if (!player.getWorkers().contains(worker.get())) {
                 view.notifyError("Not your worker");
                 return;
             }
@@ -116,6 +116,16 @@ public class Controller implements ViewObserver {
             model.getTurnState().undo(player);
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void leaveGame(View view) {
+        if (view.getPlayer().hasLost()) {
+            model.removeObserver(view);
+            view.removeObserver(this);
+        } else if(model.isRunning()){
+            model.forceEndGame();
         }
     }
 }

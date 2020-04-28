@@ -55,7 +55,7 @@ public class Athena extends Mortal {
      */
     @Override
     public List<Point> getBlockedMoves(Player player, Worker worker, Game game) {
-        if (game.getTurnState() instanceof Move && hasMovedUpwards) {
+        if (game.getTurnState() instanceof Move && hasMovedUpwards && worker != null) {
             int workerLevel = game.getMap().getLevel(worker.getPosition());
 
             return game.getMap().getAllSquares().stream()

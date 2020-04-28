@@ -1,6 +1,6 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
-import it.polimi.ingsw.psp1.santorini.model.EnumMoveType;
+import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
@@ -48,7 +48,7 @@ public class Move extends TurnState {
 
         game.getPlayerList().forEach(p -> p.getPower().onMove(player, player.getSelectedWorker(), position, game));
 
-        game.notifyObservers(o -> o.playerMove(player, EnumMoveType.MOVE, player.getSelectedWorker(), old, position));
+        game.notifyObservers(o -> o.playerMove(player, player.getSelectedWorker(), old, position));
     }
 
     @Override

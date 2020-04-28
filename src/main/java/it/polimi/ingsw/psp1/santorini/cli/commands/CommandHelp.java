@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandHelp extends Command {
 
@@ -12,7 +13,7 @@ public class CommandHelp extends Command {
                 "Shows the list of commands",
                 "",
                 "",
-                Arrays.asList("h", "getcommands"));
+                List.of("h", "getcommands"));
     }
 
     @Override

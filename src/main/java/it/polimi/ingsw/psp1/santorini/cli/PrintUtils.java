@@ -10,20 +10,21 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.IntStream;
+
+import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
 
 public class PrintUtils {
 
     public final static int MAX_LENGTH = 150;
-    public final static int size = 4;
+    public final static int size = 3;
     public final static int spacing = 1;
 
     private static int mapX = 2;
     private static int mapY = 5;
 
-    public static void stampMap(GameMap map, List<PlayerData> players) {
-        if(map == null) {
+    public static void stampMap(GameMap map, List<PlayerData> players, Map<String, Color> colorMap) {
+        if (map == null) {
             return;
         }
 
@@ -34,7 +35,7 @@ public class PrintUtils {
                 .forEach(i -> bgLine.append(" "));
 
         for (int i = 0; i < GameMap.SIDE_LENGTH * (size + spacing) + 1; i++) {
-            print(Color.BACKGROUND_GRASS2 + bgLine.toString(), mapX, mapY + i, false);
+            print(BACKGROUND_GRASS2 + bgLine.toString(), mapX, mapY + i, false);
         }
 
         for (int i = 0; i < GameMap.SIDE_LENGTH; i++) {
@@ -48,11 +49,11 @@ public class PrintUtils {
                     print(getColorFromLevel(level) + s, x, y + k, false);
                 }
 
-                print("L" + level, x + size*2 - 3, y + size - 1, false);
+                print(BACKGROUND_GRASS2 + BLACK.toString() + "L" + level, x + size * 2 - 3, y + size - 1, false);
 
                 if (map.hasDome(point)) {
                     for (int k = 1; k < size - 1; k++) {
-                        String string = Color.BACKGROUND_BRIGHT_BLUE + s.substring(4);
+                        String string = BACKGROUND_BRIGHT_BLUE + s.substring(4);
 
                         print(string, x + 2, y + k, false);
                     }
@@ -61,18 +62,17 @@ public class PrintUtils {
         }
 
         for (PlayerData player : players) {
-            for (Worker w : player.getWorkers()) {
+            for (int i = 0; i < player.getWorkers().size(); i++) {
+                Worker w = player.getWorkers().get(i);
+
                 int x = mapX + 2 + w.getPosition().x * (size * 2 + spacing * 2 - 1);
                 int y = mapY + 2 + w.getPosition().y * (size + spacing);
 
-                String string = Color.BACKGROUND_BRIGHT_RED + "W";
+                String string = colorMap.get(player.getName()) + "W" + (i + 1);
 
                 print(string, x, y, false);
             }
         }
-
-        resetCursor();
-        System.out.println(Color.RESET);
     }
 
     public static void clearBoard() {
@@ -93,18 +93,9 @@ public class PrintUtils {
     }
 
     public static void clearRow(int x, int y) {
-        for (int i = MAX_LENGTH; i >= x; i--) {
-            PrintUtils.setCursor(i, y);
-            System.out.print(" ");
-        }
-    }
-
-    public static void clearFrom(int y) {
-        String s = String.format("%" + (MAX_LENGTH) + "s", "");
-        for (int i = 0; i < 15; i++) {
-            PrintUtils.setCursor(0, y + i);
-            System.out.print(s);
-        }
+        setCursor(x, y);
+        System.out.print("\033[K");
+        System.out.flush();
     }
 
     public static void print(String string, int x, int y, boolean toClean) {
@@ -112,11 +103,18 @@ public class PrintUtils {
             clearRow(x, y);
         }
 
+        System.out.print(RESET);
+        System.out.flush();
+
         setCursor(x, y);
+
         System.out.print(string);
         System.out.flush();
 
         resetCursor();
+
+        System.out.print(RESET);
+        System.out.flush();
     }
 
     public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
@@ -134,36 +132,50 @@ public class PrintUtils {
     }
 
     public static void printPowerList(List<Power> list) {
-        clearBoard();
+        int row = 5;
+        int offset = GameMap.SIDE_LENGTH * ((size + spacing) * 2 - 1) + 10;
 
-        int row = 0;
+        print(list.size() > 0 ? "Power list:" : "", offset, 4, true);
+
+        for (int i = mapY; i < getCommandCoords().y - 3; i++) {
+            clearRow(offset, i);
+        }
+
         for (int i = 0; i < list.size(); i++) {
             if (i % 3 == 0) {
                 row++;
             }
 
-            print((i + 1) + ") " + list.get(i).getClass().getSimpleName(), (i % 3) * 20, row + 3, false);
+            print((i + 1) + ") " + BLUE + list.get(i).getClass().getSimpleName(),
+                    (i % 3) * 20 + offset,
+                    row,
+                    false);
         }
 
         printCommand();
+        resetCursor();
     }
 
-    public static void printPlayerInfo(List<PlayerData> list, EnumTurnState state, boolean interact) {
+    public static void printPlayerInfo(String clientPlayer, List<PlayerData> list,
+                                       EnumTurnState state, boolean interact) {
         StringBuilder builder = new StringBuilder();
         list.stream().map(p -> String.format("%-20s", p.getName())).forEach(builder::append);
 
         print(builder.toString(), 2, 1, true);
 
         builder = new StringBuilder();
-        list.stream().map(p -> p.getPower() == null ? "N/A" : p.getPower().getClass().getSimpleName())
-                .map(s -> String.format("%-20s", s)).forEach(builder::append);
+        list.stream()
+                .map(p -> p.getPower() == null ? "N/A" : p.getPower().getClass().getSimpleName())
+                .map(s -> String.format("%-20s", s))
+                .map(s -> s.equals(clientPlayer) ? s + "(" + RED + "YOU" + RESET + ")" : s)
+                .forEach(builder::append);
 
         print(builder.toString(), 2, 2, true);
 
-        if(list.size() > 0 && state != null) {
+        if (list.size() > 0 && state != null) {
             print(String.format("Playing: '%s', Turn State: %s",
-                    Color.BLUE + list.get(0).getName() + Color.RESET,
-                    Color.RED + state.toString() + Color.RESET),
+                    BLUE + list.get(0).getName() + RESET,
+                    RED + state.toString()),
                     2, 3, true);
         }
 
@@ -174,9 +186,9 @@ public class PrintUtils {
         int counter = 1;
 
         for (Point point : valid) {
-            if (!blocked.values().stream().flatMap(Collection::stream).anyMatch(p -> p.equals(valid))) {
+            if (blocked.values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(point))) {
                 String s = String.valueOf(counter);
-                print(Color.BACKGROUND_BRIGHT_YELLOW + "" + Color.RED + s + Color.RESET,
+                print(BACKGROUND_BRIGHT_YELLOW + "" + RED + s,
                         mapX + point.x * (size * 2 - 1 + spacing * 2) + 1,
                         mapY + point.y * (size + spacing) + 1,
                         false);
@@ -185,52 +197,16 @@ public class PrintUtils {
         }
     }
 
-    // per testing
-    public static GameMap createMap() {
-        GameMap map = new GameMap();
-        for (int i = 0; i < 15; i++) {
-            Point point = new Point(new Random().nextInt(5), new Random().nextInt(5));
-            if (!map.hasDome(point)) {
-                map.buildBlock(point, false);
-            } else {
-                i--;
-            }
-        }
-        return map;
-    }
-
-    public static void updateMap(GameMap map) {
-        Point point = new Point(new Random().nextInt(5), new Random().nextInt(5));
-        if (!map.hasDome(point)) {
-            map.buildBlock(point, false);
-        }
-    }
-
     private static Color getColorFromLevel(int level) {
         switch (level) {
             case 1:
-                return Color.BACKGROUND_GRAY1;
+                return BACKGROUND_GRAY1;
             case 2:
-                return Color.BACKGROUND_GRAY2;
+                return BACKGROUND_GRAY2;
             case 3:
-                return Color.BACKGROUND_GRAY3;
+                return BACKGROUND_GRAY3;
             default:
-                return Color.BACKGROUND_GRASS;
+                return BACKGROUND_GRASS;
         }
     }
-
-    // pulire la parte sotto dello schermo (sotto la mia scritta help) circa 15 righe prima di un command faccio la clear
 }
-
-/*
-STAMPARE TITOLO
-CHIEDERE NOME E SERVER:
-
-CLEAR
-
-SCELTA GODS
-
-CLEAR
-
-SCHERMATA GIOCO
- */

@@ -21,6 +21,7 @@ public class Prometheus extends Mortal {
 
         if (player.equals(this.player)) {
             firstBuild = true;
+            hasBuiltBeforeMoving = false;
             game.setTurnState(new Build(game));
         }
     }

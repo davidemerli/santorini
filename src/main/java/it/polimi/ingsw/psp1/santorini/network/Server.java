@@ -1,9 +1,8 @@
-package it.polimi.ingsw.psp1.santorini.network.server;
+package it.polimi.ingsw.psp1.santorini.network;
 
 import it.polimi.ingsw.psp1.santorini.controller.Controller;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.view.RemoteView;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
@@ -13,6 +12,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 public class Server implements Runnable {
 
@@ -59,8 +59,19 @@ public class Server implements Runnable {
 
     private void gameStarter() {
         System.out.println("Game starter thread ready");
+
+        Predicate<Game> closeFinished = g -> !g.isRunning();
+        Predicate<Game> someoneDisconnected = g -> games.get(g).keySet().stream()
+                .anyMatch(ClientConnectionHandler::isClosed);
+
         while (true) {//TODO: make server stoppable
             synchronized (waitingForGame) {
+                //Removes terminated games from the games map
+                games.keySet().stream()
+                        .filter(closeFinished.or(someoneDisconnected))
+                        .forEach(games::remove);
+
+
                 for (Game game : games.keySet()) {
                     Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
@@ -143,5 +154,9 @@ public class Server implements Runnable {
             waitingForGame.put(connectionHandler, player);
             clientsToRelocate.remove(connectionHandler);
         }
+    }
+
+    public void disconnectClient(ClientConnectionHandler connectionHandler) {
+        waitingForGame.remove(connectionHandler);
     }
 }

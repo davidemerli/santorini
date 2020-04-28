@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandDescription extends Command {
 
@@ -12,7 +13,7 @@ public class CommandDescription extends Command {
                 "Shows the selected God's description",
                 "<power-name>",
                 "",
-                Arrays.asList("d", "desc"));
+                List.of("d", "desc"));
     }
 
     @Override

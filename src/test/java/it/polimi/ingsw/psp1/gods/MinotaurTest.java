@@ -14,6 +14,7 @@ import org.junit.runners.Parameterized;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +32,7 @@ public class MinotaurTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
+        return List.of(new Object[][]{
                 {new Point(1, 1), new Point(0, 0)},
                 {new Point(2, 1), new Point(2, 0)},
                 {new Point(3, 1), new Point(4, 0)},

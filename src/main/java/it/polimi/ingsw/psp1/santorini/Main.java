@@ -1,6 +1,6 @@
 package it.polimi.ingsw.psp1.santorini;
 
-import it.polimi.ingsw.psp1.santorini.network.server.Server;
+import it.polimi.ingsw.psp1.santorini.network.Server;
 
 public class Main {
 

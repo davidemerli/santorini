@@ -7,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientCreateGame;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientForfeit;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandCreateGame extends Command {
 
@@ -15,7 +16,7 @@ public class CommandCreateGame extends Command {
                 "Creates a new game",
                 "<game-name> <num-players>",
                 "",
-                Arrays.asList("cg", "newgame"));
+                List.of("cg", "newgame"));
     }
 
     @Override

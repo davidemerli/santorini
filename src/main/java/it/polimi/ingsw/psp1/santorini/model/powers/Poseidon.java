@@ -35,7 +35,7 @@ public class Poseidon extends Mortal {
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-            game.getMap().buildBlock(where, shouldBuildDome);
+            game.buildBlock(where, shouldBuildDome);
 
             if (counter == 0) {
                 //Try to get the unmoved worker, the optional will be empty if only one worker is present on the map
@@ -52,8 +52,8 @@ public class Poseidon extends Mortal {
                         player.setSelectedWorker(otherWorker.get());
                         player.lockWorker();
 
-                        game.setTurnState(new Build(game));
                         counter++;
+                        game.setTurnState(new Build(game));
                         return;
                     }
                 }

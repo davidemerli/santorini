@@ -7,21 +7,18 @@ import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
-import it.polimi.ingsw.psp1.santorini.view.View;
+import it.polimi.ingsw.psp1.santorini.observer.Observer;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Game implements Runnable {
+public class Game extends Observer<ModelObserver> implements Runnable {
 
     private final int playerNumber;
     private final List<Power> availableGodList;
     private final List<Player> playerList;
-
-    private final Set<ModelObserver> observers;
 
     private TurnState turnState;
 
@@ -33,7 +30,6 @@ public class Game implements Runnable {
         this.playerNumber = playerNumber;
         this.availableGodList = new ArrayList<>();
         this.playerList = new ArrayList<>();
-        this.observers = new HashSet<>();
         this.map = new GameMap();
 
         this.turnState = null;
@@ -47,22 +43,36 @@ public class Game implements Runnable {
         while (running) {
             if (turnState == null) {
                 setTurnState(new SelectPowers(this));
+
+                notifyObservers(o -> o.gameUpdate(this));
             }
 
+            Optional<Player> winner = playerList.stream().filter(Player::hasWon).findFirst();
 
+            if(winner.isPresent()) {
+                notifyObservers(o -> o.playerUpdate(this, winner.get()));
+
+                getPlayerOpponents(winner.get()).forEach(p -> {
+                    p.setLost(true);
+                    notifyObservers(o -> o.playerUpdate(this, p));
+                });
+
+                endGame();
+
+                return;
+            }
+
+            Optional<Player> loser = playerList.stream().filter(Player::hasWon).findFirst();
+
+            if(loser.isPresent()) {
+                List<Worker> workers = loser.get().getWorkers();
+                for (int i = workers.size() - 1; i >= 0; i--) {
+                    loser.get().removeWorker(workers.get(0));
+                }
+
+                notifyObservers(o -> o.playerUpdate(this, loser.get()));
+            }
         }
-    }
-
-    public void addObserver(View view) {
-        observers.add(view);
-    }
-
-    public void removeObserver(View view) {
-        observers.remove(view);
-    }
-
-    public void notifyObservers(Consumer<ModelObserver> lambda) {
-        observers.forEach(lambda);
     }
 
     public void addPlayer(Player player) {
@@ -231,9 +241,17 @@ public class Game implements Runnable {
         return playerNumber;
     }
 
-    public synchronized void end() {
-        this.running = false;
-        //TODO: notify client game has ended
+    public void forceEndGame() {
+        playerList.forEach(p -> askRequest(p, EnumRequestType.DISCONNECT));
+        endGame();
+    }
+
+    public void endGame() {
+        running = false;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 
     public void addPowers() {

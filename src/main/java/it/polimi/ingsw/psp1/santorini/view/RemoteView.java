@@ -1,19 +1,17 @@
 package it.polimi.ingsw.psp1.santorini.view;
 
-import it.polimi.ingsw.psp1.santorini.model.EnumMoveType;
+import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.ClientConnectionHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
-import it.polimi.ingsw.psp1.santorini.network.server.ClientConnectionHandler;
 import it.polimi.ingsw.psp1.santorini.observer.ConnectionObserver;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,74 +22,144 @@ public class RemoteView extends View {
 
     private class PacketReceiver implements ConnectionObserver {
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processPowerList(List<Power> powerList) {
             notifyObservers(o -> o.selectPowers(RemoteView.this, getPlayer(), powerList));
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processSquareSelection(Point square) {
             notifyObservers(o -> o.selectSquare(RemoteView.this, getPlayer(), square));
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processToggleInteraction() {
             notifyObservers(o -> o.toggleInteraction(RemoteView.this, getPlayer()));
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void handlePlayerForfeit() {
             //TODO: ff
         }
 
-        @Override
-        public void processKeepAlive() {
-            //TODO: keep alive, maybe process in connection?
-        }
-
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processRequestGameData() {
             //TODO: request game data,  maybe process in connection?
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processWorkerSelection(Point workerPosition) {
             notifyObservers(o -> o.selectWorker(RemoteView.this, getPlayer(), workerPosition));
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
         @Override
         public void processStartingPlayerSelection(String name) {
             notifyObservers(o -> o.selectStartingPlayer(RemoteView.this, getPlayer(), name));
         }
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Translates connection data into a notification for ViewObservers (i.e. controllers)
+         */
+        @Override
+        public void handleCloseConnection() {
+            notifyObservers(o -> o.leaveGame(RemoteView.this));
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The RemoteView will convert every received packet into commands for the controller
+     * to apply changes to the model, and will convert any receiving model information into packets
+     * to send to the client.
+     *
+     * @param player     associated with the current view
+     * @param connection channel where packets are transparently sent and received from
+     */
     public RemoteView(Player player, ClientConnectionHandler connection) {
         super(player);
         this.connection = connection;
         this.connection.addObserver(new PacketReceiver());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet a String notification error
+     */
     @Override
     public void notifyError(String error) {
         connection.sendPacket(new ServerInvalidPacket(error));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with action data
+     */
     @Override
-    public void playerMove(Player player, EnumMoveType moveType, Worker worker, Point from, Point where) {
+    public void playerMove(Player player, Worker worker, Point from, Point where) {
         ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, where, from);
 
-        ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumMoveType.MOVE);
+        ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumActionType.MOVE);
         connection.sendPacket(packet);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with action data
+     */
     @Override
-    public void playerBuild(Player player, EnumMoveType moveType, Worker worker, Point where) {
+    public void playerBuild(Player player, Worker worker, Point where) {
         ServerPlayerMove.PlayerBuild move = new ServerPlayerMove.PlayerBuild(worker, where);
 
-        ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumMoveType.BUILD);
+        ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumActionType.BUILD);
         connection.sendPacket(packet);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with updated player status
+     */
     @Override
     public void playerUpdate(Game game, Player player) {
         EnumTurnState turnState = EnumTurnState.fromTurnState(game.getTurnState());
@@ -101,8 +169,19 @@ public class RemoteView extends View {
 
         ServerSendPlayerUpdate packet = new ServerSendPlayerUpdate(playerData, turnState, interaction);
         connection.sendPacket(packet);
+
+        if (player.hasLost()) {
+            connection.sendPacket(new ServerSendPlayerUpdate(playerData, EnumTurnState.LOOSE, interaction));
+        } else if (player.hasWon()) {
+            connection.sendPacket(new ServerSendPlayerUpdate(playerData, EnumTurnState.WIN, interaction));
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with the game current status
+     */
     @Override
     public void gameUpdate(Game game) {
         List<PlayerData> players = game.getPlayerList().stream()
@@ -113,14 +192,24 @@ public class RemoteView extends View {
         connection.sendPacket(packet);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with the available moves
+     */
     @Override
     public void availableMovesUpdate(Player player, List<Point> validMoves, Map<Power, List<Point>> blockedMoves) {
-        if(getPlayer().equals(player)) {
+        if (getPlayer().equals(player)) {
             ServerMovePossibilities packet = new ServerMovePossibilities(validMoves, blockedMoves);
             connection.sendPacket(packet);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with the request
+     */
     @Override
     public void requestToPlayer(Player player, EnumRequestType requestType) {
         if (connection.getPlayer().isPresent() && connection.getPlayer().get().equals(player)) {
@@ -128,11 +217,16 @@ public class RemoteView extends View {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a packet with the god powers list
+     */
     @Override
-    public void sendPowerList(Player player, List<Power> availablePowers) {
-        if (this.getPlayer().equals(player)) {
-            connection.sendPacket(new ServerPowerList(availablePowers));
-        }
+    public void sendPowerList(List<Power> availablePowers) {
+        List<Power> powers = availablePowers.stream()
+                .map(Power::copy).collect(Collectors.toList());
+        connection.sendPacket(new ServerPowerList(powers));
     }
 
     /**
@@ -143,7 +237,6 @@ public class RemoteView extends View {
      */
     private PlayerData toData(Player player) {
         return new PlayerData(player.getName(), player.getPower(),
-                player.getWorkers().stream()
-                        .map(w -> new Worker(w.getPosition())).collect(Collectors.toList()));
+                player.getWorkers().stream().map(w -> new Worker(w.getPosition())).collect(Collectors.toList()));
     }
 }

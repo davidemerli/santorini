@@ -8,6 +8,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectStartin
 import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class CommandSelectStartingPlayer extends Command {
@@ -17,7 +18,7 @@ public class CommandSelectStartingPlayer extends Command {
                 "Selects the starting player",
                 "<player-name> / <player-id>",
                 "",
-                Arrays.asList("start", "begin"));
+                List.of("start", "begin"));
     }
 
     @Override

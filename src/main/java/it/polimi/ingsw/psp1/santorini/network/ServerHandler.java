@@ -18,4 +18,6 @@ public interface ServerHandler extends NetHandler {
     void handlePlayerMove(ServerPlayerMove serverPlayerMove);
 
     void handlePowerList(ServerPowerList serverPowerList);
+
+    void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame);
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientForfeit;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandSurrender extends Command {
 
@@ -13,7 +14,7 @@ public class CommandSurrender extends Command {
                 "Forfeits the current game",
                 "",
                 "",
-                Arrays.asList("ff", "forfeit"));
+                List.of("ff", "forfeit"));
     }
 
     @Override

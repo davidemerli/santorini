@@ -18,7 +18,7 @@ public class CommandSelect extends Command {
                 "Moves/Build in the selected square",
                 " <x> <y> / <n-move>",
                 "",
-                Arrays.asList("sel", "sos"));
+                List.of("sel", "sos"));
     }
 
     @Override

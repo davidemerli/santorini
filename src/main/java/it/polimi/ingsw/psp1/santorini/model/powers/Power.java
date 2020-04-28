@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.List;
 
-public interface Power extends Serializable {
+public interface Power extends Serializable, Cloneable {
 
     /**
      * Called on the beginning of a player turn (both own and enemy)
@@ -86,4 +86,6 @@ public interface Power extends Serializable {
     void undo();
 
     void setPlayer(Player player);
+
+    Power copy();
 }

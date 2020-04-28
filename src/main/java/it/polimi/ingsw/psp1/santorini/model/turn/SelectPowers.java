@@ -19,7 +19,7 @@ public class SelectPowers extends TurnState {
     @Override
     public void init() {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
-        game.notifyObservers(o -> o.sendPowerList(game.getCurrentPlayer(), game.getAvailablePowers()));
+        game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers()));
     }
 
     @Override

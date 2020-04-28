@@ -1,38 +1,72 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
-import it.polimi.ingsw.psp1.santorini.model.EnumMoveType;
+import it.polimi.ingsw.psp1.santorini.cli.commands.CommandManager;
+import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
-public class CLIServerHandler implements ServerHandler {
+public class CLIServerHandler implements ServerHandler, Runnable {
+
+    private final Client client;
+    private final CommandManager commandManager;
+
+    private final List<Color> colors = Arrays.asList(
+            Color.BACKGROUND_BRIGHT_BLUE,
+            Color.BACKGROUND_RED,
+            Color.BACKGROUND_GREEN);
+
+    private final Map<String, Color> playerColorMap;
 
     private final List<PlayerData> playerDataList;
     private final Map<Power, List<Point>> blockedMoves;
     private final List<Point> validMoves;
     private final List<Power> powerList;
+    private String playerName;
+
     private GameMap gameMap;
     private boolean shouldShowInteraction;
 
     private EnumRequestType lastRequest;
     private EnumTurnState lastTurnState;
 
-    public CLIServerHandler() {
+    public CLIServerHandler(Client client) {
+        this.client = client;
+
         this.playerDataList = new ArrayList<>();
         this.blockedMoves = new HashMap<>();
         this.validMoves = new ArrayList<>();
         this.powerList = new ArrayList<>();
+        this.playerColorMap = new HashMap<>();
+
         this.shouldShowInteraction = false;
-        this.gameMap = null;
+        this.gameMap = new GameMap();
         this.lastRequest = null;
         this.lastTurnState = null;
+
+        this.commandManager = new CommandManager();
+
+        new Thread(this).start();
+    }
+
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            String result = commandManager.runCommand(client, this, scanner.nextLine());
+            PrintUtils.printCommand();
+//            PrintUtils.clearFrom(PrintUtils.getCommandCoords().y + 1);
+            PrintUtils.printFromCommand("Last action: " + result, 0, 2, true);
+        }
     }
 
     @Override
@@ -45,17 +79,23 @@ public class CLIServerHandler implements ServerHandler {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayerData();
 
+        playerList.stream()
+                .map(PlayerData::getName)
+                .filter(p -> !playerColorMap.containsKey(p))
+                .forEach(p -> playerColorMap.put(p, colors.stream()
+                        .filter(c -> !playerColorMap.containsValue(c)).findAny().get()));
+
         this.playerDataList.clear();
         this.playerDataList.addAll(playerList);
 
         this.gameMap = map;
 
-        PrintUtils.clearBoard();
+//        PrintUtils.clearBoard();
 
         this.lastTurnState = packet.getTurnState();
 
-        PrintUtils.printPlayerInfo(playerList, lastTurnState, shouldShowInteraction);
-        PrintUtils.stampMap(map, playerList);
+        PrintUtils.printPlayerInfo(getPlayerName(), playerList, lastTurnState, shouldShowInteraction);
+        PrintUtils.stampMap(map, playerList, playerColorMap);
 
         PrintUtils.printCommand();
     }
@@ -67,11 +107,13 @@ public class CLIServerHandler implements ServerHandler {
 
         switch (action) {
             case SELECT_NAME:
-                toStamp = "Choose a nickname: ";
+                PrintUtils.clearBoard();
+                toStamp = String.format("Choose a nickname: use '%s' command",
+                        Color.BLUE + "setname" + Color.RESET);
                 break;
             case CHOOSE_POWERS:
                 toStamp = String.format("Choose God Powers for this game: use '%s' command",
-                        Color.BLUE + "selectpower"+ Color.RESET);
+                        Color.BLUE + "selectpower" + Color.RESET);
                 break;
             case SELECT_POWER:
                 toStamp = String.format("Choose your God Power: use '%s' command",
@@ -87,19 +129,22 @@ public class CLIServerHandler implements ServerHandler {
                 break;
             case SELECT_SQUARE:
                 toStamp = String.format("Select square to %s: use '%s' command",
-                        Color.RED + lastTurnState.toString().toLowerCase() + Color.RESET,
-                        Color.BLUE + "select" + Color.RESET);
+                        Color.RED + action.toString() + Color.RESET,
+                        Color.BLUE + "select");
                 break;
             case SELECT_WORKER:
                 toStamp = String.format("Select worker: use '%s' command",
                         Color.BLUE + "selectworker" + Color.RESET);
+                break;
+            case DISCONNECT:
+                toStamp = Color.RED + "Unfortunately the game has forcefully ended, please disconnect";
                 break;
             default:
                 toStamp = packet.getRequestType().toString();
                 break;
         }
 
-        PrintUtils.printFromCommand(toStamp, 0, -2, true);
+        PrintUtils.printFromCommand("Last request: " + toStamp, 0, -2, true);
         PrintUtils.printCommand();
 
         this.lastRequest = action;
@@ -110,11 +155,19 @@ public class CLIServerHandler implements ServerHandler {
         Optional<PlayerData> updated = getPlayerDataList().stream()
                 .filter(p -> p.getName().equals(packet.getPlayerData().getName()))
                 .findFirst();
+
         updated.ifPresent(playerData -> playerDataList.set(playerDataList.indexOf(playerData), packet.getPlayerData()));
 
         shouldShowInteraction = packet.shouldShowInteraction();
 
-        PrintUtils.printPlayerInfo(playerDataList, packet.getPlayerState(), shouldShowInteraction);
+        if (shouldShowInteraction && packet.getPlayerData().getName().equals(getPlayerName())) {
+            PrintUtils.printFromCommand(Color.RED + "You can interact this turn" + Color.RESET,
+                    0, -1, true);
+        } else {
+            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y);
+        }
+
+        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, packet.getPlayerState(), shouldShowInteraction);
     }
 
     @Override
@@ -128,7 +181,7 @@ public class CLIServerHandler implements ServerHandler {
         getBlockedMoves().clear();
         getBlockedMoves().putAll(blockedMoves);
 
-        PrintUtils.stampMap(gameMap, playerDataList);
+        PrintUtils.stampMap(gameMap, playerDataList, playerColorMap);
         PrintUtils.printValidMoves(validMoves, blockedMoves);
     }
 
@@ -140,7 +193,7 @@ public class CLIServerHandler implements ServerHandler {
     @Override
     public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
         PlayerData playerInfo = serverPlayerMove.getPlayerData();
-        EnumMoveType move = serverPlayerMove.getMoveType();
+        EnumActionType move = serverPlayerMove.getMoveType();
         String name = playerInfo.getName();
     }
 
@@ -151,14 +204,17 @@ public class CLIServerHandler implements ServerHandler {
 
         getPowerList().clear();
         getPowerList().addAll(powerList);
+    }
 
-        /*
-        StringJoiner powers = new StringJoiner("\t", "", "");
-        IntStream.range(0, powerList.size())
-                .forEach(i -> powers.add(String.format("%d) %s", i + 1, powerList.get(i).getClass().getSimpleName())));
+    @Override
+    public void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame) {
 
-        */
+    }
 
+    public PlayerData getPlayerData() {
+        return playerDataList.stream()
+                .filter(p -> p.getName().equals(this.playerName))
+                .findFirst().get();
     }
 
     public List<PlayerData> getPlayerDataList() {
@@ -187,5 +243,17 @@ public class CLIServerHandler implements ServerHandler {
 
     public EnumRequestType getLastRequest() {
         return lastRequest;
+    }
+
+    public Map<String, Color> getPlayerColorMap() {
+        return playerColorMap;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 }

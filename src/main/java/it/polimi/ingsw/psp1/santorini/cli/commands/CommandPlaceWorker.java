@@ -7,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class CommandPlaceWorker extends Command {
 
@@ -15,7 +16,7 @@ public class CommandPlaceWorker extends Command {
                 "Places your worker in the map",
                 " <x> <y> / <n-move>",
                 "",
-                Arrays.asList("pw", "pworker"));
+                List.of("pw", "pworker"));
     }
 
     @Override
