@@ -22,6 +22,10 @@ public class CommandSelectPower extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!serverHandler.isYourTurn()) {
+            return "Not your turn";
+        }
+
         Power power;
 
         if (isNumeric(arguments[0])) {

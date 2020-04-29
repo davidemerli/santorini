@@ -30,7 +30,7 @@ public class Mortal implements Power {
             game.setTurnState(new Move(game));
 
             if (player.getWorkers().stream().allMatch(noValidMoves(game))) {
-                player.setLost(true);
+                game.setLoser(player);
             }
         }
     }

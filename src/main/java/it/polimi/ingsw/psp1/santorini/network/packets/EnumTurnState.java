@@ -11,7 +11,7 @@ public enum EnumTurnState {
     WORKER_PLACING,
     END_TURN,
     WIN,
-    LOOSE,
+    LOSE,
     END_GAME;
 
     public static EnumTurnState fromTurnState(TurnState state) {

@@ -24,7 +24,7 @@ public class Game extends Observer<ModelObserver> implements Runnable {
 
     private GameMap map;
 
-    private boolean running;
+    private boolean hasEnded;
 
     public Game(int playerNumber) {
         this.playerNumber = playerNumber;
@@ -33,15 +33,15 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         this.map = new GameMap();
 
         this.turnState = null;
-        this.running = true;
 
         this.addPowers();
     }
 
     @Override
     public void run() {
-        while (running) {
+        while (!hasEnded) {
             if (turnState == null) {
+                shufflePlayers();
                 setTurnState(new SelectPowers(this));
 
                 notifyObservers(o -> o.gameUpdate(this));
@@ -52,17 +52,11 @@ public class Game extends Observer<ModelObserver> implements Runnable {
             if(winner.isPresent()) {
                 notifyObservers(o -> o.playerUpdate(this, winner.get()));
 
-                getPlayerOpponents(winner.get()).forEach(p -> {
-                    p.setLost(true);
-                    notifyObservers(o -> o.playerUpdate(this, p));
-                });
-
                 endGame();
-
                 return;
             }
 
-            Optional<Player> loser = playerList.stream().filter(Player::hasWon).findFirst();
+            Optional<Player> loser = playerList.stream().filter(Player::hasLost).findFirst();
 
             if(loser.isPresent()) {
                 List<Worker> workers = loser.get().getWorkers();
@@ -163,8 +157,8 @@ public class Game extends Observer<ModelObserver> implements Runnable {
             throw new UnsupportedOperationException("Player list is empty");
         }
 
+        notifyObservers(o -> o.gameUpdate(this));
         getPlayerList().forEach(p -> p.getPower().onBeginTurn(this.getCurrentPlayer(), this));
-
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
     }
 
@@ -246,12 +240,16 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         endGame();
     }
 
-    public void endGame() {
-        running = false;
+    public boolean hasStarted() {
+        return this.turnState != null;
     }
 
-    public boolean isRunning() {
-        return running;
+    public void endGame() {
+        this.hasEnded = true;
+    }
+
+    public boolean hasEnded() {
+        return this.hasEnded;
     }
 
     public void addPowers() {

@@ -44,8 +44,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
             System.out.println("sent " + packet);
             objectOutputStream.writeObject(packet);
         } catch (IOException e) {
-            //TODO: what if send packet fails? try to resend?
-            e.printStackTrace();
+            closeConnection();
         }
     }
 
@@ -82,7 +81,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
             //TODO: give the game custom name from packet
             server.createGame(this, packet.getPlayerNumber());
         } catch (UnsupportedOperationException e) {
-            sendPacket(new ServerInvalidPacket("A game is already created"));
+            sendPacket(new ServerInvalidPacket(e.getMessage()));
         }
     }
 

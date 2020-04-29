@@ -19,11 +19,20 @@ public class CommandConnect extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-//        String ip = arguments[0];
-//        int port = Integer.parseInt(arguments[1]);
+        if(client.isConnected()) {
+            return "Connection already established.";
+        }
 
-        client.connectToServer("localhost", 34567);
+        if(arguments.length == 0) {
+            client.connectToServer("localhost", 34567);
+            return String.format("Trying connection to '%s':'%d'", "localhost", 34567);
+        }
 
-        return String.format("Trying connection to '%s':'%d'", "localhost", 34567);
+        String ip = arguments[0];
+        int port = Integer.parseInt(arguments[1]);
+
+        client.connectToServer(ip, port);
+
+        return String.format("Trying connection to '%s':'%d'", ip, port);
     }
 }

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
@@ -75,15 +76,21 @@ public class PrintUtils {
         }
     }
 
-    public static void clearBoard() {
-        System.out.print("\033[H\033[2J");
+    public static void firstClear() {
+        System.out.print("\033[H\033[3J\033[2J");
         System.out.flush();
+    }
+
+    public static void clear() {
+        for (int i = 0; i < 150; i++) {
+            clearRow(0, i);
+        }
     }
 
     // prendere il puntatore uguale sotto ma con R
 
     public static void setCursor(int x, int y) {
-        System.out.print(String.format("\033[%d;%df", y, x));
+        System.out.print(String.format("\033[%d;%dH", y, x));
         System.out.flush();
     }
 
@@ -156,28 +163,32 @@ public class PrintUtils {
         resetCursor();
     }
 
-    public static void printPlayerInfo(String clientPlayer, List<PlayerData> list,
-                                       EnumTurnState state, boolean interact) {
-        StringBuilder builder = new StringBuilder();
-        list.stream().map(p -> String.format("%-20s", p.getName())).forEach(builder::append);
+    public static void printPlayerInfo(String clientPlayer, List<PlayerData> list, EnumTurnState state,
+                                       Map<String, Color> colorMap, boolean interact) {
 
-        print(builder.toString(), 2, 1, true);
+        Function<String, String> name = (s) -> colorMap.get(s) + s +
+                (s.equals(clientPlayer) ? "(YOU)" : "") + RESET;
 
-        builder = new StringBuilder();
-        list.stream()
-                .map(p -> p.getPower() == null ? "N/A" : p.getPower().getClass().getSimpleName())
-                .map(s -> String.format("%-20s", s))
-                .map(s -> s.equals(clientPlayer) ? s + "(" + RED + "YOU" + RESET + ")" : s)
-                .forEach(builder::append);
+        clearRow(2, 1);
+        clearRow(2, 2);
+        clearRow(2, 3);
 
-        print(builder.toString(), 2, 2, true);
+        PrintUtils.print("\uD83E\uDC7E Current player", 1, 1, true);
 
-        if (list.size() > 0 && state != null) {
-            print(String.format("Playing: '%s', Turn State: %s",
-                    BLUE + list.get(0).getName() + RESET,
-                    RED + state.toString()),
-                    2, 3, true);
+        for (int i = 0; i < list.size(); i++) {
+            PlayerData data = list.get(i);
+
+            print(name.apply(data.getName()), i * 20 + 2, 2, false);
+            print(data.getPower() != null ? data.getPower().getClass().getSimpleName().toUpperCase() : "N/A",
+                    i * 20 + 2, 3, false);
         }
+
+//        if (list.size() > 0 && state != null) {
+//            print(String.format("Playing: '%s', Turn State: %s",
+//                    BLUE + list.get(0).getName() + RESET,
+//                    RED + state.toString()),
+//                    2, 3, true);
+//        }
 
         printCommand();
     }

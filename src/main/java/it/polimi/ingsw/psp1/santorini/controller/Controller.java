@@ -124,7 +124,7 @@ public class Controller implements ViewObserver {
         if (view.getPlayer().hasLost()) {
             model.removeObserver(view);
             view.removeObserver(this);
-        } else if(model.isRunning()){
+        } else if(!model.hasEnded() && model.hasStarted()){
             model.forceEndGame();
         }
     }

@@ -5,11 +5,10 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 public class MainCli {
 
     public static void main(String[] args) throws InterruptedException {
-
         Client client = new Client();
         client.setServerHandler(new CLIServerHandler(client));
 
-        PrintUtils.clearBoard();
+        PrintUtils.firstClear();
         System.out.println("Welcome to");
         System.out.println("\n\n" +
                 "███████╗ █████╗ ███╗   ██╗████████╗ ██████╗ ██████╗ ██╗███╗   ██╗██╗\n" +

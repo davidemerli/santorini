@@ -94,7 +94,7 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
         this.lastTurnState = packet.getTurnState();
 
-        PrintUtils.printPlayerInfo(getPlayerName(), playerList, lastTurnState, shouldShowInteraction);
+        PrintUtils.printPlayerInfo(getPlayerName(), playerList, lastTurnState, playerColorMap, shouldShowInteraction);
         PrintUtils.stampMap(map, playerList, playerColorMap);
 
         PrintUtils.printCommand();
@@ -107,7 +107,7 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
         switch (action) {
             case SELECT_NAME:
-                PrintUtils.clearBoard();
+                PrintUtils.clear();
                 toStamp = String.format("Choose a nickname: use '%s' command",
                         Color.BLUE + "setname" + Color.RESET);
                 break;
@@ -129,8 +129,8 @@ public class CLIServerHandler implements ServerHandler, Runnable {
                 break;
             case SELECT_SQUARE:
                 toStamp = String.format("Select square to %s: use '%s' command",
-                        Color.RED + action.toString() + Color.RESET,
-                        Color.BLUE + "select");
+                        Color.RED + lastTurnState.toString() + Color.RESET,
+                        Color.BLUE + "select" + Color.RESET);
                 break;
             case SELECT_WORKER:
                 toStamp = String.format("Select worker: use '%s' command",
@@ -160,14 +160,15 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
         shouldShowInteraction = packet.shouldShowInteraction();
 
-        if (shouldShowInteraction && packet.getPlayerData().getName().equals(getPlayerName())) {
+        if (shouldShowInteraction && isYourTurn()) {
             PrintUtils.printFromCommand(Color.RED + "You can interact this turn" + Color.RESET,
                     0, -1, true);
         } else {
-            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y);
+            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y - 1);
         }
 
-        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, packet.getPlayerState(), shouldShowInteraction);
+        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, packet.getPlayerState(),
+                playerColorMap, shouldShowInteraction);
     }
 
     @Override
@@ -255,5 +256,9 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public boolean isYourTurn() {
+        return getPlayerDataList().size() > 0 && getPlayerDataList().get(0).getName().equals(getPlayerName());
     }
 }

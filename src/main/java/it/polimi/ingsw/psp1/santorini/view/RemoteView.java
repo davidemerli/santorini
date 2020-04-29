@@ -171,7 +171,7 @@ public class RemoteView extends View {
         connection.sendPacket(packet);
 
         if (player.hasLost()) {
-            connection.sendPacket(new ServerSendPlayerUpdate(playerData, EnumTurnState.LOOSE, interaction));
+            connection.sendPacket(new ServerSendPlayerUpdate(playerData, EnumTurnState.LOSE, interaction));
         } else if (player.hasWon()) {
             connection.sendPacket(new ServerSendPlayerUpdate(playerData, EnumTurnState.WIN, interaction));
         }
