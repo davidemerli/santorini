@@ -41,7 +41,7 @@ public class Prometheus extends Mortal {
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-            game.getMap().buildBlock(where, shouldBuildDome);
+            game.buildBlock(where, shouldBuildDome);
 
             if (firstBuild) {
                 player.lockWorker();

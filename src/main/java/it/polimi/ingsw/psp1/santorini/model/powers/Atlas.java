@@ -53,7 +53,7 @@ public class Atlas extends Mortal {
         if(player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
 
-            game.getMap().buildBlock(where, shouldBuildDome || abilityToggled);
+            game.buildBlock(where, shouldBuildDome || abilityToggled);
 
             game.endTurn();
         } else {

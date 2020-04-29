@@ -55,7 +55,7 @@ public class Mortal implements Power {
         if (player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
 
-            game.getMap().buildBlock(where, shouldBuildDome);
+            game.buildBlock(where, shouldBuildDome);
 
             game.endTurn();
         }
