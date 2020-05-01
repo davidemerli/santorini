@@ -1,8 +1,8 @@
 package it.polimi.ingsw.psp1.santorini.observer;
 
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
-import java.awt.*;
 import java.util.List;
 
 public interface ConnectionObserver {
@@ -38,7 +38,7 @@ public interface ConnectionObserver {
 
     /**
      * Called when a packet with a worker selection is received
-
+     *
      * @param workerPosition position where the worker selected is supposed to be at
      */
     void processWorkerSelection(Point workerPosition);

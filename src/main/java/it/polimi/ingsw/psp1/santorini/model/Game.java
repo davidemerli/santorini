@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.*;
 import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
@@ -9,12 +10,12 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.observer.Observer;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Game extends Observer<ModelObserver> implements Runnable {
+public class Game extends Observer<ModelObserver> {
+
+    private final int gameID;
 
     private final int playerNumber;
     private final List<Power> availableGodList;
@@ -26,10 +27,12 @@ public class Game extends Observer<ModelObserver> implements Runnable {
 
     private boolean hasEnded;
 
-    public Game(int playerNumber) {
+    public Game(int gameID, int playerNumber) {
+        this.gameID = gameID;
+
         this.playerNumber = playerNumber;
         this.availableGodList = new ArrayList<>();
-        this.playerList = new ArrayList<>();
+        this.playerList = Collections.synchronizedList(new ArrayList<>());
         this.map = new GameMap();
 
         this.turnState = null;
@@ -37,44 +40,58 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         this.addPowers();
     }
 
-    @Override
-    public void run() {
-        while (!hasEnded) {
-            if (turnState == null) {
-                shufflePlayers();
-                setTurnState(new SelectPowers(this));
+    public void startGame() {
+        shufflePlayers();
+        setTurnState(new SelectPowers(this));
 
-                notifyObservers(o -> o.gameUpdate(this));
-            }
+        notifyObservers(o -> o.gameUpdate(this));
+    }
 
-            Optional<Player> winner = playerList.stream().filter(Player::hasWon).findFirst();
+    private Optional<Player> getWinner() {
+        Optional<Player> fulfilledWinCond = playerList.stream().filter(Player::hasWon).findFirst();
 
-            if(winner.isPresent()) {
-                notifyObservers(o -> o.playerUpdate(this, winner.get()));
+        List<Player> notLosers = playerList.stream().filter(p -> !p.hasLost()).collect(Collectors.toList());
 
-                endGame();
-                return;
-            }
-
-            Optional<Player> loser = playerList.stream().filter(Player::hasLost).findFirst();
-
-            if(loser.isPresent()) {
-                List<Worker> workers = loser.get().getWorkers();
-                for (int i = workers.size() - 1; i >= 0; i--) {
-                    loser.get().removeWorker(workers.get(0));
-                }
-
-                notifyObservers(o -> o.playerUpdate(this, loser.get()));
-            }
+        if (notLosers.size() == 0) {
+            throw new IllegalStateException("All players have lost");
         }
+
+        if (fulfilledWinCond.isPresent()) {
+            return fulfilledWinCond;
+        } else if (notLosers.size() == 1) {
+            setWinner(notLosers.get(0));
+            return Optional.of(notLosers.get(0));
+        }
+
+        return Optional.empty();
+    }
+
+    public void setWinner(Player player) {
+        if (!playerList.contains(player)) {
+            throw new NoSuchElementException("Given player is not in this game");
+        }
+
+        player.setWinner(true);
+        notifyObservers(o -> o.playerUpdate(this, player));
+    }
+
+    private void removeLoser() {
+        getCurrentPlayer().removeAllWorkers();
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+
+        playerList.remove(getCurrentPlayer());
+        nextTurn();
     }
 
     public void addPlayer(Player player) {
         playerList.add(player);
     }
 
-    public void removePlayer(Player player) {
-        playerList.remove(player);
+    public void addWorker(Player player, Point position) {
+        Worker worker = new Worker(position);
+        player.addWorker(worker);
+        notifyObservers(o -> o.playerUpdate(this, player));
+        notifyObservers(o -> o.playerPlaceWorker(player, worker));
     }
 
     public void buildBlock(Point position, boolean forceDome) {
@@ -126,32 +143,6 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         notifyObservers(o -> o.gameUpdate(this));
     }
 
-    public Player getCurrentPlayer() {
-        if (playerList.size() == 0) {
-            throw new UnsupportedOperationException("Player list is empty");
-        }
-
-        return playerList.get(0);
-    }
-
-    public void setWinner(Player player) {
-        if (!playerList.contains(player)) {
-            throw new NoSuchElementException("Given player is not in this game");
-        }
-
-        player.setWinner(true);
-        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
-    }
-
-    public void setLoser(Player player) {
-        if (!playerList.contains(player)) {
-            throw new NoSuchElementException("Given player is not in this game");
-        }
-
-        player.setLost(true);
-        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
-    }
-
     public void startTurn() {
         if (playerList.size() == 0) {
             throw new UnsupportedOperationException("Player list is empty");
@@ -160,6 +151,15 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         notifyObservers(o -> o.gameUpdate(this));
         getPlayerList().forEach(p -> p.getPower().onBeginTurn(this.getCurrentPlayer(), this));
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+
+        if (getCurrentPlayer().hasLost() && playerNumber == 3) {
+            removeLoser();
+        }
+
+        if (getWinner().isPresent()) {
+            getPlayerOpponents(getWinner().get()).forEach(this::setLoser);
+            endGame();
+        }
     }
 
     public void nextTurn() {
@@ -192,6 +192,33 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         notifyObservers(o -> o.requestToPlayer(player, requestType));
     }
 
+    public synchronized void endGame() {
+        this.hasEnded = true;
+        removeAllObservers();
+    }
+
+    public void forceEndGame() {
+        playerList.forEach(p -> askRequest(p, EnumRequestType.DISCONNECT));
+        endGame();
+    }
+
+    public void setLoser(Player player) {
+        if (!playerList.contains(player)) {
+            throw new NoSuchElementException("Given player is not in this game");
+        }
+
+        player.setLoser(true);
+        notifyObservers(o -> o.playerUpdate(this, player));
+    }
+
+    public Player getCurrentPlayer() {
+        if (playerList.size() == 0) {
+            throw new UnsupportedOperationException("Player list is empty");
+        }
+
+        return playerList.get(0);
+    }
+
     public List<Player> getPlayerList() {
         return Collections.unmodifiableList(playerList);
     }
@@ -210,9 +237,19 @@ public class Game extends Observer<ModelObserver> implements Runnable {
 
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
 
-        if (getCurrentPlayer().getSelectedWorker() != null) {
+        if (getCurrentPlayer().hasLost() && playerNumber == 3) {
+            removeLoser();
+        }
+
+        if (getWinner().isPresent()) {
+            getPlayerOpponents(getWinner().get()).forEach(this::setLoser);
+            endGame();
+            return;
+        }
+
+        if (getCurrentPlayer().getSelectedWorker().isPresent()) {
             Player player = getCurrentPlayer();
-            Worker worker = player.getSelectedWorker();
+            Worker worker = player.getSelectedWorker().get();
 
             notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(),
                     getTurnState().getValidMoves(player, worker), getTurnState().getBlockedMoves(player, worker)));
@@ -235,21 +272,16 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         return playerNumber;
     }
 
-    public void forceEndGame() {
-        playerList.forEach(p -> askRequest(p, EnumRequestType.DISCONNECT));
-        endGame();
-    }
-
     public boolean hasStarted() {
         return this.turnState != null;
     }
 
-    public void endGame() {
-        this.hasEnded = true;
+    public synchronized boolean hasEnded() {
+        return this.hasEnded;
     }
 
-    public boolean hasEnded() {
-        return this.hasEnded;
+    public int getGameID() {
+        return gameID;
     }
 
     public void addPowers() {
@@ -268,6 +300,7 @@ public class Game extends Observer<ModelObserver> implements Runnable {
         availableGodList.add(new Prometheus());
         availableGodList.add(new Triton());
         availableGodList.add(new Zeus());
-        //TODO: remove in unplayable in 3 player games
+
+        availableGodList.removeIf(power -> !power.getPlayableIn().contains(this.playerNumber));
     }
 }

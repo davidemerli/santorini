@@ -1,0 +1,12 @@
+{
+  "name": "Prometheus",
+  "alias": "Titan Benefactor of Mankind",
+  "description": "Your Turn: If your Worker does not move up, it may build both before and after moving.",
+  "interaction": "End Build",
+  "isSimple": true,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

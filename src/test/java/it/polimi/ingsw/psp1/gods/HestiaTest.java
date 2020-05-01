@@ -2,14 +2,13 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Hestia;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,7 +19,7 @@ public class HestiaTest {
 
     @Before
     public void setup() {
-        this.game = new Game(2);
+        this.game = new Game(1,2);
         this.player = new Player("p1");
 
         game.addPlayer(player);

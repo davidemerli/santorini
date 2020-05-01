@@ -1,11 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
+import it.polimi.ingsw.psp1.santorini.model.Game;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.Player;
 
-import java.awt.*;
 import java.util.List;
 
 public class Zeus extends Mortal {

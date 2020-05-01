@@ -4,10 +4,10 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.GameState;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +23,14 @@ public abstract class TurnState {
     }
 
     public void init() {
+        game.notifyObservers(o -> o.gameUpdate(game));
     }
 
     /**
      * Called when the 'Challenger' chooses a starting player
      *
-     * @param game current game
-     * @param player current player
+     * @param game             current game
+     * @param player           current player
      * @param chosenPlayerName player chosen to start the game
      */
     public void selectStartingPlayer(Game game, Player player, String chosenPlayerName) {
@@ -39,9 +40,9 @@ public abstract class TurnState {
     /**
      * Called when power is selected in ChoosePlayerPower or SelectPowers
      *
-     * @param game current game
+     * @param game   current game
      * @param player current player
-     * @param power selected power
+     * @param power  selected power
      */
     public void selectGod(Game game, Player player, Power power) {
         throw new UnsupportedOperationException("Not permitted in this state");

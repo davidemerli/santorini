@@ -18,16 +18,23 @@ public class SelectPowers extends TurnState {
 
     @Override
     public void init() {
+        super.init();
+
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
         game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers()));
     }
 
     @Override
     public void selectGod(Game game, Player player, Power power) {
-        if(!selectedPowers.contains(power) && game.getAvailablePowers().contains(power)) {
-            selectedPowers.add(power);
-            //TODO: throw error if more times same power
+        if(selectedPowers.contains(power)) {
+            throw new UnsupportedOperationException("Same player already chosen");
         }
+
+        if (!game.getAvailablePowers().contains(power)) {
+            throw new IllegalArgumentException("Given power is not playable in this game");
+        }
+
+        selectedPowers.add(power);
 
         if (selectedPowers.size() == game.getPlayerNumber()) {
             //TODO: maybe don't expose the REP
@@ -43,7 +50,7 @@ public class SelectPowers extends TurnState {
 
     @Override
     public void undo(Player player) {
-        if(selectedPowers.size() == 0) {
+        if (selectedPowers.size() == 0) {
             throw new UnsupportedOperationException("Cannot undo, no gods selected");
         }
         //TODO: undo

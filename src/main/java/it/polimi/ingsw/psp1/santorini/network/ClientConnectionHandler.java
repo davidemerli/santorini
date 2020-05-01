@@ -21,7 +21,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
 
     private final Socket clientSocket;
 
-    private ObjectOutputStream objectOutputStream;
+    private final ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
     private Player player;
@@ -70,15 +70,14 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
 
         try {
             server.addToWait(player, this);
-        } catch (UnsupportedOperationException e) {
-            sendPacket(new ServerInvalidPacket("There is a player with the same name. Please choose another name"));
+        } catch (UnsupportedOperationException | IllegalArgumentException e) {
+            sendPacket(new ServerInvalidPacket(e.getMessage()));
         }
     }
 
     @Override
     public void handleCreateGame(ClientCreateGame packet) {
         try {
-            //TODO: give the game custom name from packet
             server.createGame(this, packet.getPlayerNumber());
         } catch (UnsupportedOperationException e) {
             sendPacket(new ServerInvalidPacket(e.getMessage()));

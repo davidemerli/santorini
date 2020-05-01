@@ -4,7 +4,6 @@ import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientToggleInteraction;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CommandInteract extends Command {

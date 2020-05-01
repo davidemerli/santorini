@@ -2,14 +2,13 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,7 +19,7 @@ public class AthenaTest {
 
     @Before
     public void setup() {
-        this.game = new Game(2);
+        this.game = new Game(1,2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 
@@ -64,7 +63,7 @@ public class AthenaTest {
         game.getTurnState().selectWorker(player2, w2);
 
         assertTrue(game.getTurnState().isPositionBlocked(
-                game.getTurnState().getBlockedMoves(player2, player2.getSelectedWorker()),
+                game.getTurnState().getBlockedMoves(player2, player2.getSelectedWorker().get()),
                 blockedPosition));
     }
 }

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
-import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +182,7 @@ public class GameMap implements Serializable {
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                list.add(new Point(i, j));
+                list.add(new Point(j, i));
             }
         }
 

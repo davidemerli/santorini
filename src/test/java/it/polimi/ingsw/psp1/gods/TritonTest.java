@@ -1,16 +1,15 @@
 package it.polimi.ingsw.psp1.gods;
 
-import it.polimi.ingsw.psp1.santorini.model.turn.Build;
-import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Triton;
+import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +21,7 @@ public class TritonTest {
 
     @Before
     public void setup() {
-        this.game = new Game(2);
+        this.game = new Game(1,2);
         this.player = new Player("p1");
 
         game.addPlayer(player);

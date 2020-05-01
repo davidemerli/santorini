@@ -2,11 +2,10 @@ package it.polimi.ingsw.psp1.santorini.model.turn;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
-import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
 public class WorkerPlacing extends TurnState {
@@ -17,6 +16,8 @@ public class WorkerPlacing extends TurnState {
 
     @Override
     public void init() {
+        super.init();
+
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
                 getValidMoves(game.getCurrentPlayer(), null),
                 getBlockedMoves(game.getCurrentPlayer(), null)));
@@ -38,11 +39,7 @@ public class WorkerPlacing extends TurnState {
             throw new IllegalArgumentException("Occupied square");
         }
 
-        //TODO: move add worker in game class?
-        //TODO: notify move in EnumMoveType?
-        player.addWorker(new Worker(position));
-
-        game.notifyObservers(o -> o.playerUpdate(game, player));
+        game.addWorker(player, position);
 
         boolean allDone = game.getPlayerList().stream().allMatch(p -> p.getWorkers().size() == 2);
 

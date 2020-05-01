@@ -1,10 +1,12 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
-import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class CommandManager {
 

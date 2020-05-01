@@ -14,8 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Server implements Runnable {
+
+    private final Random rnd;
 
     private final int socketPort;
 
@@ -35,6 +38,8 @@ public class Server implements Runnable {
         this.pool = Executors.newFixedThreadPool(128);
 
         this.pool.execute(this::gameStarter);
+
+        this.rnd = new Random();
     }
 
     /**
@@ -71,7 +76,7 @@ public class Server implements Runnable {
                     .map(Map.Entry::getKey)
                     .forEach(games::remove);
 
-            for (Game game : games.keySet()) {
+            games.keySet().stream().filter(g -> !g.hasStarted()).forEach(game -> {
                 Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
                 if (gamePlayers.size() < game.getPlayerNumber()) {
@@ -98,10 +103,10 @@ public class Server implements Runnable {
                         //add players to the game
                         views.forEach(v -> game.addPlayer(v.getPlayer()));
 
-                        pool.submit(game);
+                        game.startGame();
                     }
                 }
-            }
+            });
         }
     }
 
@@ -121,11 +126,11 @@ public class Server implements Runnable {
         }
 
         if (!waitingForGame.containsKey(connectionHandler)) {
-            throw new UnsupportedOperationException("Username not set");
+            throw new UnsupportedOperationException("Cannot create game without setting an username first");
         }
 
         //create a new game
-        Game newGame = new Game(playerNumber);
+        Game newGame = new Game(generateValidID(), playerNumber);
 
         //create the list of the ClientHandlers of the players that will join the current game
         Map<ClientConnectionHandler, Player> clients = new LinkedHashMap<>();
@@ -147,11 +152,13 @@ public class Server implements Runnable {
             throw new UnsupportedOperationException("Given client handler is not from a player that needs relocation");
         }
 
-        boolean sameName = waitingForGame.values().stream()
+        boolean sameName = Stream.concat(
+                waitingForGame.values().stream(),
+                games.values().stream().map(Map::values).flatMap(Collection::stream))
                 .anyMatch(p -> p.getName().equalsIgnoreCase(player.getName()));
 
         if (sameName) {
-            throw new UnsupportedOperationException("There is already a player with the same name");
+            throw new IllegalArgumentException("There is already a player with the same name");
         }
 
         waitingForGame.put(connectionHandler, player);
@@ -172,5 +179,19 @@ public class Server implements Runnable {
                 games.get(optGame.get()).remove(connectionHandler);
             }
         }
+    }
+
+    private int generateValidID() {
+        Set<Integer> assignedIDs = games.keySet().stream()
+                .map(Game::getGameID)
+                .collect(Collectors.toSet());
+
+        int ID;
+
+        do {
+            ID = rnd.nextInt(10000);
+        } while (assignedIDs.contains(ID));
+
+        return ID;
     }
 }

@@ -6,20 +6,17 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class Player {
 
     private final String name;
-
+    private final List<Worker> workerList;
     private Power power;
-
     private Worker selectedWorker;
     private boolean isWorkerLocked;
     private boolean hasWon;
     private boolean hasLost;
-
-    private final List<Worker> workerList;
 
     public Player(String name) {
         this.name = name;
@@ -46,6 +43,10 @@ public class Player {
         workerList.remove(worker);
     }
 
+    public void removeAllWorkers() {
+        this.workerList.clear();
+    }
+
     public List<Worker> getWorkers() {
         return Collections.unmodifiableList(workerList);
     }
@@ -59,17 +60,12 @@ public class Player {
         this.power.setPlayer(this);
     }
 
-    public Worker getSelectedWorker() {
-        //TODO: maybe turn this into optional?
-        return selectedWorker;
+    public Optional<Worker> getSelectedWorker() {
+        return Optional.ofNullable(selectedWorker);
     }
 
     public void setSelectedWorker(Worker selectedWorker) {
         this.selectedWorker = selectedWorker;
-    }
-
-    public boolean isWorkerSelected() {
-        return selectedWorker != null;
     }
 
     public boolean isWorkerLocked() {
@@ -96,7 +92,7 @@ public class Player {
         return hasLost;
     }
 
-    public void setLost(boolean hasLost) {
+    public void setLoser(boolean hasLost) {
         this.hasLost = hasLost;
     }
 
@@ -106,10 +102,10 @@ public class Player {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj.getClass() != this.getClass()) {
+        if (obj.getClass() != this.getClass()) {
             return false;
         }
 
-        return this.getName().equals(((Player)obj).getName());
+        return this.getName().equals(((Player) obj).getName());
     }
 }

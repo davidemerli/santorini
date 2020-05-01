@@ -1,0 +1,12 @@
+{
+  "name": "Poseidon",
+  "alias": "God of the Sea",
+  "description": "End of Your Turn: If your unmoved Worker is on the ground level, it may build up to three times.",
+  "interaction": "End Turn",
+  "isSimple": false,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

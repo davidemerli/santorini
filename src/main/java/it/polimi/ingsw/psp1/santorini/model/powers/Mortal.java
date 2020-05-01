@@ -2,21 +2,21 @@ package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 
-import java.awt.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-//TODO: handle loosing condition whether you cannot build after any move
-public class Mortal implements Power {
-
-    protected transient Player player;
+//TODO: handle losing condition whether you cannot build after any move
+public class Mortal extends Power {
 
     /**
      * {@inheritDoc} <br>
@@ -129,7 +129,7 @@ public class Mortal implements Power {
 
         //worker is null if the player has not selected the current worker
         //valid moves include worker positions
-        if(worker == null) {
+        if (worker == null) {
             return player.getWorkers().stream()
                     .map(Worker::getPosition).collect(Collectors.toList());
         }
@@ -147,9 +147,29 @@ public class Mortal implements Power {
                     .filter(getStandardDomeCheck(game))
                     .filter(getStandardWorkerCheck(game))
                     .collect(Collectors.toList());
-        }  else {
+        } else {
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canCompleteValidTurn(Worker worker, Game game) {
+        if (!(game.getTurnState() instanceof Move)) {
+            throw new IllegalStateException("Turn validation should not be called here");
+        }
+
+//        List<Point> validMoves = getValidMoves(worker, game);
+//        List<Point> blockedMoves = game.getTurnState().getBlockedMoves(player, worker).values().stream()
+//                .flatMap(Collection::stream).collect(Collectors.toList());
+//
+//        validMoves.stream()
+//                .filter(m -> !blockedMoves.contains(m))
+//                .filter(m -> )
+
+        return false;
     }
 
     /**
@@ -157,7 +177,7 @@ public class Mortal implements Power {
      */
     @Override
     public void undo() {
-
+        //TODO
     }
 
     /**
@@ -181,6 +201,7 @@ public class Mortal implements Power {
 
     protected Predicate<Worker> noValidMoves(Game game) {
         Predicate<Worker> noValidMoves = w -> game.getTurnState().getValidMoves(player, w).size() == 0;
+
         Predicate<Worker> allBlocked = w -> {
             Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(player, w);
             List<Point> notAvailable = blockedMoves.values().stream()
@@ -190,31 +211,6 @@ public class Mortal implements Power {
         };
 
         return allBlocked.or(noValidMoves);
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        //TODO: add name check ?
-
-        return Objects.equals(this.player, ((Mortal) obj).player);
-    }
-
-    public Power copy() {
-        try {
-            return (Power) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 }
 

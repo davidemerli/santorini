@@ -1,0 +1,12 @@
+{
+  "name": "Triton",
+  "alias": "God of the Waves",
+  "description": "Your Move: Each time your Worker moves into a perimeter space, it may immediately move again.",
+  "interaction": "End Move",
+  "isSimple": false,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

@@ -2,12 +2,12 @@ package it.polimi.ingsw.psp1.santorini.controller;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.observer.ViewObserver;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
-import java.awt.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -123,9 +123,23 @@ public class Controller implements ViewObserver {
     public void leaveGame(View view) {
         if (view.getPlayer().hasLost()) {
             model.removeObserver(view);
-            view.removeObserver(this);
-        } else if(!model.hasEnded() && model.hasStarted()){
+        } else if (!model.hasEnded() && model.hasStarted()) {
             model.forceEndGame();
+        }
+    }
+
+    @Override
+    public void playerSurrender(View view, Player player) {
+        try {
+            if (!player.equals(model.getCurrentPlayer())) {
+                view.notifyError("Not your turn");
+                return;
+            }
+
+            player.setLoser(true);
+            model.nextTurn();
+        } catch (UnsupportedOperationException ex) {
+            view.notifyError(ex.getMessage());
         }
     }
 }

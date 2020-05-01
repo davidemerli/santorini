@@ -1,12 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
-import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
-
-import java.awt.*;
 
 public class Build extends TurnState {
 
@@ -16,10 +14,12 @@ public class Build extends TurnState {
 
     @Override
     public void init() {
-        Player current = game.getCurrentPlayer();
-        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker();
+        super.init();
 
-        if (current.getSelectedWorker() == null) {
+        Player current = game.getCurrentPlayer();
+        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker().orElse(null);
+
+        if (current.getSelectedWorker().isEmpty()) {
             game.askRequest(current, EnumRequestType.SELECT_WORKER);
         } else {
             game.askRequest(current, EnumRequestType.SELECT_SQUARE);
@@ -31,21 +31,23 @@ public class Build extends TurnState {
 
     @Override
     public void selectSquare(Player player, Point position) {
-        if (!player.isWorkerSelected()) {
+        if (player.getSelectedWorker().isEmpty()) {
             throw new UnsupportedOperationException("Tried to build with no selected worker");
         }
 
-        if (isPositionBlocked(getBlockedMoves(player, player.getSelectedWorker()), position)) {
+        Worker worker = player.getSelectedWorker().get();
+
+        if (isPositionBlocked(getBlockedMoves(player, worker), position)) {
             throw new IllegalArgumentException("Given position is a forbidden build position by some power");
         }
 
-        if (!getValidMoves(player, player.getSelectedWorker()).contains(position)) {
+        if (!getValidMoves(player, worker).contains(position)) {
             throw new IllegalArgumentException("Invalid build position");
         }
 
-        player.getPower().onBuild(player, player.getSelectedWorker(), position, game);
+        player.getPower().onBuild(player, worker, position, game);
 
-        game.notifyObservers(o -> o.playerBuild(player, player.getSelectedWorker(), position));
+        game.notifyObservers(o -> o.playerBuild(player, worker, position));
     }
 
     @Override

@@ -1,13 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.Client;
-import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectWorker;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

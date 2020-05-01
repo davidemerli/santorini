@@ -1,11 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
-import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class Hephaestus extends Mortal {
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);
 
-        if(player.equals(this.player)) {
+        if (player.equals(this.player)) {
             oldBuild = null;
             hasBuilt = false;
         }
@@ -36,7 +36,7 @@ public class Hephaestus extends Mortal {
 
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
-        if(player.equals(this.player)) {
+        if (player.equals(this.player)) {
             boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
             game.buildBlock(where, shouldBuildDome);
 
@@ -44,7 +44,7 @@ public class Hephaestus extends Mortal {
                 oldBuild = new Point(where);
                 hasBuilt = true;
                 game.setTurnState(new Build(game));
-            } else  {
+            } else {
                 game.endTurn();
             }
         } else {

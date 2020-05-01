@@ -1,12 +1,11 @@
 package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
-import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -47,7 +46,7 @@ public class Apollo extends Mortal {
      */
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
-        if(player.equals(this.player)) {
+        if (player.equals(this.player)) {
             Optional<Worker> optWorker = game.getWorkerOn(where);
 
             if (optWorker.isPresent()) {

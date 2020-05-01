@@ -1,15 +1,15 @@
 package it.polimi.ingsw.psp1.santorini.network.packets.server;
 
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
-import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 import java.util.List;
 
 /**
  * Stores as a packet all relevant information about a game
- *
+ * <p>
  * The first element in 'players' is the CURRENT PLAYER playing its turn
  */
 public class ServerGameData implements Packet<ServerHandler> {

@@ -1,0 +1,12 @@
+{
+  "name": "Hephaestus",
+  "alias": "God of Blacksmiths",
+  "description": "Your Build: Your Worker may build one additional block (not dome) on top of your first block.",
+  "interaction": "End Turn",
+  "isSimple": true,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

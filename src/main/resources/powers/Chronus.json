@@ -1,0 +1,10 @@
+{
+  "name": "Chronus",
+  "alias": "God of Time",
+  "description": "Win Condition: You also win when there are at least five Complete Towers on the board.",
+  "interaction": "",
+  "isSimple": false,
+  "playableIn": [
+    2
+  ]
+}

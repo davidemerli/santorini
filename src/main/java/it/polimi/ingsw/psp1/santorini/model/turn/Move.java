@@ -3,10 +3,10 @@ package it.polimi.ingsw.psp1.santorini.model.turn;
 import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
-import java.awt.*;
 import java.util.NoSuchElementException;
 
 public class Move extends TurnState {
@@ -17,10 +17,12 @@ public class Move extends TurnState {
 
     @Override
     public void init() {
-        Player current = game.getCurrentPlayer();
-        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker();
+        super.init();
 
-        if (current.getSelectedWorker() == null) {
+        Player current = game.getCurrentPlayer();
+        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker().orElse(null);
+
+        if (current.getSelectedWorker().isEmpty()) {
             game.askRequest(current, EnumRequestType.SELECT_WORKER);
         } else {
             game.askRequest(current, EnumRequestType.SELECT_SQUARE);
@@ -32,23 +34,25 @@ public class Move extends TurnState {
 
     @Override
     public void selectSquare(Player player, Point position) {
-        if (!player.isWorkerSelected()) {
+        if (player.getSelectedWorker().isEmpty()) {
             throw new UnsupportedOperationException("Tried to move with no selected worker");
         }
 
-        if (isPositionBlocked(getBlockedMoves(player, player.getSelectedWorker()), position)) {
+        Worker worker = player.getSelectedWorker().get();
+
+        if (isPositionBlocked(getBlockedMoves(player, worker), position)) {
             throw new IllegalArgumentException("Given position is a forbidden move position by some power");
         }
 
-        if (!getValidMoves(player, player.getSelectedWorker()).contains(position)) {
+        if (!getValidMoves(player, player.getSelectedWorker().get()).contains(position)) {
             throw new IllegalArgumentException("Invalid move");
         }
 
-        Point old = player.getSelectedWorker().getPosition();
+        Point old = worker.getPosition();
 
-        game.getPlayerList().forEach(p -> p.getPower().onMove(player, player.getSelectedWorker(), position, game));
+        game.getPlayerList().forEach(p -> p.getPower().onMove(player, worker, position, game));
 
-        game.notifyObservers(o -> o.playerMove(player, player.getSelectedWorker(), old, position));
+        game.notifyObservers(o -> o.playerMove(player, worker, old, position));
     }
 
     @Override
@@ -60,9 +64,6 @@ public class Move extends TurnState {
         if (player.isWorkerLocked()) {
             throw new UnsupportedOperationException("Worker is locked from previous turn");
         }
-
-        //TODO: check if he got moves to do
-        //should we block selection if no moves are
 
         player.setSelectedWorker(worker);
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),

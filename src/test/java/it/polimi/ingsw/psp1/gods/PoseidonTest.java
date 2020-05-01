@@ -2,14 +2,13 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Poseidon;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.junit.Assert.*;
 
@@ -20,7 +19,7 @@ public class PoseidonTest {
 
     @Before
     public void setup() {
-        this.game = new Game(2);
+        this.game = new Game(1,2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -60,7 +59,7 @@ public class PoseidonTest {
         assertTrue(game.getTurnState() instanceof Build);
         assertTrue(game.getTurnState().shouldShowInteraction(player));
         assertTrue(player.isWorkerLocked());
-        assertEquals(player.getSelectedWorker(), w2);
+        assertEquals(player.getSelectedWorker().get(), w2);
 
         assertTrue(game.getTurnState().getValidMoves(player, w2).containsAll(game.getMap().getNeighbors(w2.getPosition())));
 

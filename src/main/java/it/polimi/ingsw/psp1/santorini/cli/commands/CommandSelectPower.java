@@ -6,7 +6,6 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientChoosePower;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

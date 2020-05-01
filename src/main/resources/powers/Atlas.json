@@ -1,0 +1,12 @@
+{
+  "name": "Atlas",
+  "alias": "Titan Shouldering the Heavens",
+  "description": "Your Build: Your Worker may build a dome at any level.",
+  "interaction": "Build Dome",
+  "isSimple": true,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

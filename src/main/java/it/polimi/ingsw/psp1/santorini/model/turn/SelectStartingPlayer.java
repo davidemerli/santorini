@@ -20,6 +20,8 @@ public class SelectStartingPlayer extends TurnState {
 
     @Override
     public void init() {
+        super.init();
+
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_STARTING_PLAYER);
     }
 
@@ -32,7 +34,7 @@ public class SelectStartingPlayer extends TurnState {
                 .filter(p -> p.getName().equalsIgnoreCase(chosenPlayerName))
                 .findFirst();
 
-        if(chosenPlayer.isEmpty()) {
+        if (chosenPlayer.isEmpty()) {
             throw new NoSuchElementException("Given player is not in the game");
         }
 

@@ -1,0 +1,12 @@
+{
+  "name": "Zeus",
+  "alias": "God of the Sky",
+  "description": "Your Build: Your Worker may build a block under itself.",
+  "interaction": "",
+  "isSimple": false,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

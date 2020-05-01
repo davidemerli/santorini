@@ -1,0 +1,12 @@
+{
+  "name": "Mortal",
+  "alias": "",
+  "description": "A simple mortal without power.",
+  "interaction": "",
+  "isSimple": true,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

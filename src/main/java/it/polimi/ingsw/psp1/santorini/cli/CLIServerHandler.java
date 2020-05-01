@@ -3,6 +3,7 @@ package it.polimi.ingsw.psp1.santorini.cli;
 import it.polimi.ingsw.psp1.santorini.cli.commands.CommandManager;
 import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
@@ -10,8 +11,6 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 public class CLIServerHandler implements ServerHandler, Runnable {
@@ -20,9 +19,9 @@ public class CLIServerHandler implements ServerHandler, Runnable {
     private final CommandManager commandManager;
 
     private final List<Color> colors = Arrays.asList(
-            Color.BACKGROUND_BRIGHT_BLUE,
-            Color.BACKGROUND_RED,
-            Color.BACKGROUND_GREEN);
+            Color.BG_WORKER_BLUE,
+            Color.BG_WORKER_RED,
+            Color.BG_WORKER_ORANGE);
 
     private final Map<String, Color> playerColorMap;
 
@@ -62,9 +61,11 @@ public class CLIServerHandler implements ServerHandler, Runnable {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y + 3);
+            PrintUtils.resetCursor();
+
             String result = commandManager.runCommand(client, this, scanner.nextLine());
             PrintUtils.printCommand();
-//            PrintUtils.clearFrom(PrintUtils.getCommandCoords().y + 1);
             PrintUtils.printFromCommand("Last action: " + result, 0, 2, true);
         }
     }
@@ -79,18 +80,19 @@ public class CLIServerHandler implements ServerHandler, Runnable {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayerData();
 
-        playerList.stream()
-                .map(PlayerData::getName)
-                .filter(p -> !playerColorMap.containsKey(p))
-                .forEach(p -> playerColorMap.put(p, colors.stream()
-                        .filter(c -> !playerColorMap.containsValue(c)).findAny().get()));
+        if (playerColorMap.size() != playerList.size()) {
+            playerColorMap.clear();
+            Collections.shuffle(colors);
+
+            for (int i = 0; i < playerList.size(); i++) {
+                playerColorMap.put(playerList.get(i).getName(), colors.get(i));
+            }
+        }
 
         this.playerDataList.clear();
         this.playerDataList.addAll(playerList);
 
         this.gameMap = map;
-
-//        PrintUtils.clearBoard();
 
         this.lastTurnState = packet.getTurnState();
 
@@ -161,7 +163,9 @@ public class CLIServerHandler implements ServerHandler, Runnable {
         shouldShowInteraction = packet.shouldShowInteraction();
 
         if (shouldShowInteraction && isYourTurn()) {
-            PrintUtils.printFromCommand(Color.RED + "You can interact this turn" + Color.RESET,
+            PrintUtils.printFromCommand(String.format("You can use command '%s' to '%s'",
+                    Color.RED + "interact" + Color.RESET,
+                    Color.BLUE + packet.getPlayerData().getPower().getInteraction() + Color.RESET),
                     0, -1, true);
         } else {
             PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y - 1);
@@ -169,6 +173,16 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
         PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, packet.getPlayerState(),
                 playerColorMap, shouldShowInteraction);
+
+        if(packet.getPlayerData().getName().equals(getPlayerName())) {
+            if(packet.getPlayerState() == EnumTurnState.WIN) {
+                PrintUtils.printWin();
+            }
+
+            if(packet.getPlayerState() == EnumTurnState.LOSE) {
+                PrintUtils.printLoser();
+            }
+        }
     }
 
     @Override
@@ -188,7 +202,7 @@ public class CLIServerHandler implements ServerHandler, Runnable {
 
     @Override
     public void handleError(ServerInvalidPacket packet) {
-        PrintUtils.printFromCommand(packet.getError(), 0, 2, true);
+        PrintUtils.printFromCommand(Color.RED + packet.getError(), 0, 3, true);
     }
 
     @Override
@@ -250,15 +264,28 @@ public class CLIServerHandler implements ServerHandler, Runnable {
         return playerColorMap;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
     public String getPlayerName() {
         return playerName;
     }
 
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
     public boolean isYourTurn() {
         return getPlayerDataList().size() > 0 && getPlayerDataList().get(0).getName().equals(getPlayerName());
+    }
+
+    public void reset() {
+        this.playerDataList.clear();
+        this.blockedMoves.clear();
+        this.validMoves.clear();
+        this.powerList.clear();
+        this.playerColorMap.clear();
+
+        this.shouldShowInteraction = false;
+        this.gameMap = new GameMap();
+        this.lastRequest = null;
+        this.lastTurnState = null;
     }
 }

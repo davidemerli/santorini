@@ -41,5 +41,14 @@ public abstract class Observer<T> {
         }
     }
 
+    /**
+     * Removes all observers from being notified
+     */
+    public void removeAllObservers() {
+        synchronized (observers) {
+            observers.clear();
+        }
+    }
+
 }
 

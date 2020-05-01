@@ -1,0 +1,12 @@
+{
+  "name": "Artemis",
+  "alias": "Goddess of the Hunt",
+  "description": "Your Move: Your Worker may move one additional time, but not back to its initial space.",
+  "interaction": "End Move",
+  "isSimple": true,
+  "playableIn": [
+    2,
+    3,
+    4
+  ]
+}

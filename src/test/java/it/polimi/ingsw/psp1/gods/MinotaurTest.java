@@ -2,6 +2,7 @@ package it.polimi.ingsw.psp1.gods;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Minotaur;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
@@ -11,8 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class MinotaurTest {
 
     @Before
     public void setup() {
-        this.game = new Game(2);
+        this.game = new Game(1,2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 

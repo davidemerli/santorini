@@ -5,10 +5,6 @@ import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.observer.Observer;
 import it.polimi.ingsw.psp1.santorini.observer.ViewObserver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 public abstract class View extends Observer<ViewObserver> implements ModelObserver {
 
     private final Player player;

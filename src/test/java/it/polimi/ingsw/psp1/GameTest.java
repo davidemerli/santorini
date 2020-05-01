@@ -2,19 +2,19 @@ package it.polimi.ingsw.psp1;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
-import it.polimi.ingsw.psp1.santorini.model.turn.ChoosePlayerPower;
-import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Minotaur;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.model.powers.Triton;
+import it.polimi.ingsw.psp1.santorini.model.turn.ChoosePlayerPower;
+import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,7 +27,7 @@ public class GameTest {
 
     @Before
     public void setup() {
-        this.game = new Game(3);
+        this.game = new Game(1,3);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
         this.player3 = new Player("p3");
@@ -84,7 +84,6 @@ public class GameTest {
         assertFalse(game.getWorkerOn(oldPosition).isPresent());
         assertTrue(game.getWorkerOn(newPosition).isPresent());
         assertEquals(w1, game.getWorkerOn(newPosition).get());
-
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -113,7 +112,7 @@ public class GameTest {
 
     @Test
     public void preGameStates_normalBehaviour_shouldStartGame() {
-        game.setTurnState(new SelectPowers(game));
+        game.startGame();
 
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Athena());
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Minotaur());
@@ -125,33 +124,22 @@ public class GameTest {
 
         assertEquals(3, powers.size());
 
-        assertEquals(player2, game.getCurrentPlayer());
-
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), powers.get(0));
 
         assertTrue(game.getTurnState() instanceof ChoosePlayerPower);
 
-        assertEquals(player3, game.getCurrentPlayer());
-
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), powers.get(0));
-
-        assertEquals(player1, game.getCurrentPlayer());
 
         game.getTurnState().selectStartingPlayer(game, player1, "p2");
 
-        assertEquals(player2, game.getCurrentPlayer());
         assertTrue(game.getTurnState() instanceof WorkerPlacing);
 
         int[][] ints = {{0, 0}, {0, 1}, {1, 0}, {0, 2}, {2, 0}, {3, 3}};
 
         for (int i = 0; i < 6; i++) {
             game.getTurnState().selectSquare(game.getPlayerList().get(0), new Point(ints[i][0], ints[i][1]));
-
-//            if (i % 2 == 0) {
-//                game.shiftPlayers(-1);
-//            }
         }
 
-        game.nextTurn();
+        assertTrue(game.getTurnState() instanceof Move);
     }
 }

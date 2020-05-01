@@ -1,10 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.network.packets.server;
 
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 

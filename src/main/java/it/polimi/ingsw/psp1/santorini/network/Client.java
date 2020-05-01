@@ -30,7 +30,7 @@ public class Client implements Runnable {
         try {
             connected = false;
 
-            if(server != null) {
+            if (server != null) {
                 server.close();
                 server = null;
             }

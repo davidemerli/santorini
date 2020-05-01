@@ -3,12 +3,9 @@ package it.polimi.ingsw.psp1.santorini.cli.commands;
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.cli.Color;
 import it.polimi.ingsw.psp1.santorini.network.Client;
-import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectStartingPlayer;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSetName;
-import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommandSetName extends Command {
 
