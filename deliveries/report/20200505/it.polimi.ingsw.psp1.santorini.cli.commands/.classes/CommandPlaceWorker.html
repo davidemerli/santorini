@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandPlaceWorker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli.commands</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandPlaceWorker (it.polimi.ingsw.psp1.santorini.cli.commands)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandPlaceWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli.commands;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.Collection;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class CommandPlaceWorker extends Command {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    public CommandPlaceWorker() {
+<b class="nc"><i>14</i>&nbsp;        super(&quot;placeworker&quot;,</b>
+<i>15</i>&nbsp;                &quot;Places your worker in the map&quot;,
+<i>16</i>&nbsp;                &quot; &lt;x&gt; &lt;y&gt; / &lt;n-move&gt;&quot;,
+<i>17</i>&nbsp;                &quot;&quot;,
+<b class="nc"><i>18</i>&nbsp;                List.of(&quot;pw&quot;, &quot;pworker&quot;));</b>
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+<b class="nc"><i>23</i>&nbsp;        if (arguments.length == 1) {</b>
+<b class="nc"><i>24</i>&nbsp;            int i = Integer.parseInt(arguments[0]) - 1;</b>
+<i>25</i>&nbsp;
+<b class="nc"><i>26</i>&nbsp;            if (i &lt; 0 || i &gt;= serverHandler.getValidMoves().size()) {</b>
+<b class="nc"><i>27</i>&nbsp;                return &quot;Invalid move&quot;;</b>
+<i>28</i>&nbsp;            }
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;            Point point = serverHandler.getValidMoves().get(i);</b>
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;            if (serverHandler.getBlockedMoves().values().stream()</b>
+<b class="nc"><i>33</i>&nbsp;                    .flatMap(Collection::stream).anyMatch(p -&gt; p.equals(point))) {</b>
+<b class="nc"><i>34</i>&nbsp;                return &quot;Blocked move&quot;;</b>
+<i>35</i>&nbsp;            }
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;            client.sendPacket(new ClientSelectSquare(point));</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;            return String.format(&quot;Placed Worker at position %d, %d&quot;, point.x, point.y);</b>
+<i>40</i>&nbsp;        } else {
+<b class="nc"><i>41</i>&nbsp;            int x = Integer.parseInt(arguments[0]);</b>
+<b class="nc"><i>42</i>&nbsp;            int y = Integer.parseInt(arguments[1]);</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;            Point point = new Point(x, y);</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;            if (!serverHandler.getValidMoves().contains(point)) {</b>
+<b class="nc"><i>47</i>&nbsp;                return &quot;Invalid move&quot;;</b>
+<i>48</i>&nbsp;            }
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;            if (serverHandler.getBlockedMoves().values().stream()</b>
+<b class="nc"><i>51</i>&nbsp;                    .flatMap(Collection::stream).anyMatch(p -&gt; p.equals(point))) {</b>
+<b class="nc"><i>52</i>&nbsp;                return &quot;Blocked move&quot;;</b>
+<i>53</i>&nbsp;            }
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;            client.sendPacket(new ClientSelectSquare(point));</b>
+<b class="nc"><i>56</i>&nbsp;            return String.format(&quot;Placed Worker at position %d, %d&quot;, point.x, point.y);</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;    }
+<i>59</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>

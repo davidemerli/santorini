@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ServerSendPlayerUpdate</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.network.packets.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ServerSendPlayerUpdate (it.polimi.ingsw.psp1.santorini.network.packets.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerSendPlayerUpdate</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.network.packets.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;public class ServerSendPlayerUpdate implements Packet&lt;ServerHandler&gt; {
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    private final PlayerData playerData;
+<i>10</i>&nbsp;    private final EnumTurnState playerState;
+<i>11</i>&nbsp;    private final boolean shouldShowInteraction;
+<i>12</i>&nbsp;
+<b class="nc"><i>13</i>&nbsp;    public ServerSendPlayerUpdate(PlayerData playerData, EnumTurnState playerState, boolean shouldShowInteraction) {</b>
+<b class="nc"><i>14</i>&nbsp;        this.playerData = playerData;</b>
+<b class="nc"><i>15</i>&nbsp;        this.playerState = playerState;</b>
+<b class="nc"><i>16</i>&nbsp;        this.shouldShowInteraction = shouldShowInteraction;</b>
+<i>17</i>&nbsp;    }
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public void processPacket(ServerHandler netHandler) {
+<b class="nc"><i>21</i>&nbsp;        netHandler.handlePlayerUpdate(this);</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public PlayerData getPlayerData() {
+<b class="nc"><i>25</i>&nbsp;        return playerData;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public EnumTurnState getPlayerState() {
+<b class="nc"><i>29</i>&nbsp;        return playerState;</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public boolean shouldShowInteraction() {
+<b class="nc"><i>33</i>&nbsp;        return shouldShowInteraction;</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>

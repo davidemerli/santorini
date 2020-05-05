@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Player</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Player (it.polimi.ingsw.psp1.santorini.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Player</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.4%
+  </span>
+  <span class="absValue">
+    (17/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (33/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.Collections;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class Player {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    private final String name;
+<i>14</i>&nbsp;    private final List&lt;Worker&gt; workerList;
+<i>15</i>&nbsp;    private Power power;
+<i>16</i>&nbsp;    private Worker selectedWorker;
+<i>17</i>&nbsp;    private boolean isWorkerLocked;
+<i>18</i>&nbsp;    private boolean hasWon;
+<i>19</i>&nbsp;    private boolean hasLost;
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;    public Player(String name) {</b>
+<b class="fc"><i>22</i>&nbsp;        this.name = name;</b>
+<b class="fc"><i>23</i>&nbsp;        this.workerList = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public void addWorker(Worker worker) {
+<b class="fc"><i>27</i>&nbsp;        if (workerList.contains(worker)) {</b>
+<b class="nc"><i>28</i>&nbsp;            throw new IllegalArgumentException(&quot;Worker already present&quot;);</b>
+<i>29</i>&nbsp;        }
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;        if (workerList.size() &gt;= 2) {</b>
+<b class="nc"><i>32</i>&nbsp;            throw new UnsupportedOperationException(&quot;Cannot add more than 2 workers per player&quot;);</b>
+<i>33</i>&nbsp;        }
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;        workerList.add(worker);</b>
+<b class="fc"><i>36</i>&nbsp;    }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    public void removeWorker(Worker worker) {
+<b class="fc"><i>39</i>&nbsp;        if (!workerList.contains(worker)) {</b>
+<b class="nc"><i>40</i>&nbsp;            throw new IllegalArgumentException(&quot;Worker is not present&quot;);</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;
+<b class="fc"><i>43</i>&nbsp;        workerList.remove(worker);</b>
+<b class="fc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public void removeAllWorkers() {
+<b class="nc"><i>47</i>&nbsp;        this.workerList.clear();</b>
+<b class="nc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public List&lt;Worker&gt; getWorkers() {
+<b class="fc"><i>51</i>&nbsp;        return Collections.unmodifiableList(workerList);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public Power getPower() {
+<b class="fc"><i>55</i>&nbsp;        return power;</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public void setPower(Power power) {
+<b class="fc"><i>59</i>&nbsp;        this.power = power;</b>
+<b class="fc"><i>60</i>&nbsp;        this.power.setPlayer(this);</b>
+<b class="fc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public Optional&lt;Worker&gt; getSelectedWorker() {
+<b class="fc"><i>64</i>&nbsp;        return Optional.ofNullable(selectedWorker);</b>
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public void setSelectedWorker(Worker selectedWorker) {
+<b class="fc"><i>68</i>&nbsp;        this.selectedWorker = selectedWorker;</b>
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public boolean isWorkerLocked() {
+<b class="fc"><i>72</i>&nbsp;        return isWorkerLocked;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void lockWorker() {
+<b class="fc"><i>76</i>&nbsp;        isWorkerLocked = true;</b>
+<b class="fc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public void unlockWorker() {
+<b class="fc"><i>80</i>&nbsp;        isWorkerLocked = false;</b>
+<b class="fc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    public boolean hasWon() {
+<b class="fc"><i>84</i>&nbsp;        return hasWon;</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public void setWinner(boolean hasWon) {
+<b class="fc"><i>88</i>&nbsp;        this.hasWon = hasWon;</b>
+<b class="fc"><i>89</i>&nbsp;    }</b>
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public boolean hasLost() {
+<b class="fc"><i>92</i>&nbsp;        return hasLost;</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    public void setLoser(boolean hasLost) {
+<b class="fc"><i>96</i>&nbsp;        this.hasLost = hasLost;</b>
+<b class="fc"><i>97</i>&nbsp;    }</b>
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    public String getName() {
+<b class="fc"><i>100</i>&nbsp;        return name;</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @Override
+<i>104</i>&nbsp;    public boolean equals(Object obj) {
+<b class="fc"><i>105</i>&nbsp;        if (obj.getClass() != this.getClass()) {</b>
+<b class="nc"><i>106</i>&nbsp;            return false;</b>
+<i>107</i>&nbsp;        }
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;        return this.getName().equals(((Player) obj).getName());</b>
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>

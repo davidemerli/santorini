@@ -1,0 +1,112 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandInteract</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli.commands</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandInteract (it.polimi.ingsw.psp1.santorini.cli.commands)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandInteract</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli.commands;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientToggleInteraction;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class CommandInteract extends Command {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    public CommandInteract() {
+<b class="nc"><i>12</i>&nbsp;        super(&quot;interact&quot;,</b>
+<i>13</i>&nbsp;                &quot;Activates your God&#39;s power, if possible&quot;,
+<i>14</i>&nbsp;                &quot;&quot;,
+<i>15</i>&nbsp;                &quot;&quot;,
+<b class="nc"><i>16</i>&nbsp;                List.of(&quot;usepower&quot;, &quot;power&quot;));</b>
+<i>17</i>&nbsp;    }
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+<b class="nc"><i>21</i>&nbsp;        if (serverHandler.getShowInteraction()) {</b>
+<b class="nc"><i>22</i>&nbsp;            serverHandler.setShouldShowInteraction(false);</b>
+<b class="nc"><i>23</i>&nbsp;            client.sendPacket(new ClientToggleInteraction());</b>
+<b class="nc"><i>24</i>&nbsp;            return &quot;Activated power&quot;;</b>
+<i>25</i>&nbsp;        }
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;        return &quot;Command not available in this state&quot;;</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Atlas</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.powers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Atlas (it.polimi.ingsw.psp1.santorini.model.powers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Atlas</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.3%
+  </span>
+  <span class="absValue">
+    (14/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.powers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.turn.Build;
+<i>8</i>&nbsp;
+<b class="fc"><i>9</i>&nbsp;public class Atlas extends Mortal {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    private boolean abilityToggled;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * {@inheritDoc}&lt;br&gt;
+<i>15</i>&nbsp;     * &lt;p&gt;
+<i>16</i>&nbsp;     * Reset state
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    public void onBeginTurn(Player player, Game game) {
+<b class="fc"><i>20</i>&nbsp;        super.onBeginTurn(player, game);</b>
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;        if (player.equals(this.player)) {</b>
+<b class="fc"><i>23</i>&nbsp;            abilityToggled = false;</b>
+<i>24</i>&nbsp;        }
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * {@inheritDoc}
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @return show interaction bottom during build state
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public boolean shouldShowInteraction(Game game) {
+<b class="fc"><i>34</i>&nbsp;        return game.getTurnState() instanceof Build;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * {@inheritDoc}
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    public void onToggleInteraction(Game game) {
+<b class="fc"><i>42</i>&nbsp;        abilityToggled = !abilityToggled;</b>
+<b class="fc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * {@inheritDoc}&lt;br&gt;
+<i>47</i>&nbsp;     * &lt;p&gt;
+<i>48</i>&nbsp;     * A dome can be built everywhere by worker if the ability toggle is true or if is the third level
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public void onBuild(Player player, Worker worker, Point where, Game game) {
+<b class="fc"><i>52</i>&nbsp;        if (player.equals(this.player)) {</b>
+<b class="fc"><i>53</i>&nbsp;            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;</b>
+<i>54</i>&nbsp;
+<b class="fc"><i>55</i>&nbsp;            game.buildBlock(where, shouldBuildDome || abilityToggled);</b>
+<i>56</i>&nbsp;
+<b class="fc"><i>57</i>&nbsp;            game.endTurn();</b>
+<b class="fc"><i>58</i>&nbsp;        } else {</b>
+<b class="nc"><i>59</i>&nbsp;            super.onBuild(player, worker, where, game);</b>
+<i>60</i>&nbsp;        }
+<b class="fc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>

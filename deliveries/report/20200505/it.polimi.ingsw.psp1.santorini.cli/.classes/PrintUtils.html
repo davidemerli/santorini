@@ -1,0 +1,363 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrintUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrintUtils (it.polimi.ingsw.psp1.santorini.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrintUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 118)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.Collection;
+<i>11</i>&nbsp;import java.util.List;
+<i>12</i>&nbsp;import java.util.Map;
+<i>13</i>&nbsp;import java.util.Stack;
+<i>14</i>&nbsp;import java.util.function.Function;
+<i>15</i>&nbsp;import java.util.stream.Collectors;
+<i>16</i>&nbsp;import java.util.stream.IntStream;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;public class PrintUtils {</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public final static int MAX_LENGTH = 150;
+<i>23</i>&nbsp;    public final static int size = 3;
+<i>24</i>&nbsp;    public final static int spacing = 1;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private static final int mapX = 2;
+<i>27</i>&nbsp;    private static final int mapY = 5;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public static void stampMap(GameMap map, List&lt;PlayerData&gt; players, Map&lt;String, Color&gt; colorMap) {
+<b class="nc"><i>30</i>&nbsp;        if (map == null) {</b>
+<i>31</i>&nbsp;            return;
+<i>32</i>&nbsp;        }
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;        String s = String.format(&quot;%&quot; + (size * 2 - 1) + &quot;s&quot;, &quot;&quot;);</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        StringBuilder bgLine = new StringBuilder();</b>
+<b class="nc"><i>37</i>&nbsp;        IntStream.range(0, GameMap.SIDE_LENGTH * ((size * 2) + (spacing * 2 - 1)))</b>
+<b class="nc"><i>38</i>&nbsp;                .forEach(i -&gt; bgLine.append(&quot; &quot;));</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;        for (int i = 0; i &lt; GameMap.SIDE_LENGTH * (size + spacing) + 1; i++) {</b>
+<b class="nc"><i>41</i>&nbsp;            print(BG_GRASS2 + bgLine.toString(), mapX, mapY + i, false);</b>
+<i>42</i>&nbsp;        }
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;        for (int i = 0; i &lt; GameMap.SIDE_LENGTH; i++) {</b>
+<b class="nc"><i>45</i>&nbsp;            for (int j = 0; j &lt; GameMap.SIDE_LENGTH; j++) {</b>
+<b class="nc"><i>46</i>&nbsp;                Point point = new Point(i, j);</b>
+<b class="nc"><i>47</i>&nbsp;                int level = map.getLevel(point) - (map.hasDome(point) ? 1 : 0);</b>
+<b class="nc"><i>48</i>&nbsp;                int x = mapX + i * (size * 2) + i + spacing;</b>
+<b class="nc"><i>49</i>&nbsp;                int y = mapY + j * size + j * spacing + spacing;</b>
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;                for (int k = 0; k &lt; size; k++) {</b>
+<b class="nc"><i>52</i>&nbsp;                    print(getColorFromLevel(level) + s, x, y + k, false);</b>
+<i>53</i>&nbsp;                }
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;                print(BG_GRASS2 + BLACK.toString() + &quot;L&quot; + level, x + size * 2 - 3, y + size - 1, false);</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;                if (map.hasDome(point)) {</b>
+<b class="nc"><i>58</i>&nbsp;                    for (int k = 1; k &lt; size - 1; k++) {</b>
+<b class="nc"><i>59</i>&nbsp;                        String string = BG_BRIGHT_BLUE + s.substring(4);</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;                        print(string, x + 2, y + k, false);</b>
+<i>62</i>&nbsp;                    }
+<i>63</i>&nbsp;                }
+<i>64</i>&nbsp;            }
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        for (PlayerData player : players) {</b>
+<b class="nc"><i>68</i>&nbsp;            for (int i = 0; i &lt; player.getWorkers().size(); i++) {</b>
+<b class="nc"><i>69</i>&nbsp;                Worker w = player.getWorkers().get(i);</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;                int x = mapX + 2 + w.getPosition().x * (size * 2 + spacing * 2 - 1);</b>
+<b class="nc"><i>72</i>&nbsp;                int y = mapY + 2 + w.getPosition().y * (size + spacing);</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;                String string = colorMap.get(player.getName()) + &quot;W&quot; + (i + 1);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;                print(string, x, y, false);</b>
+<i>77</i>&nbsp;            }
+<b class="nc"><i>78</i>&nbsp;        }</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    public static void printWin() {
+<b class="nc"><i>82</i>&nbsp;        String c = BG_BRIGHT_BLUE.toString() + BLUE.toString();</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        print(c + &quot;                                                     &quot;, 6, 9, false);</b>
+<b class="nc"><i>85</i>&nbsp;        print(c + &quot;  ???    ??????????   ???????   ??????????????????   &quot;, 6, 10, false);</b>
+<b class="nc"><i>86</i>&nbsp;        print(c + &quot;  ???    ???????????  ????????  ???????????????????  &quot;, 6, 11, false);</b>
+<b class="nc"><i>87</i>&nbsp;        print(c + &quot;  ??? ?? ???????????? ????????? ?????????  ????????  &quot;, 6, 12, false);</b>
+<b class="nc"><i>88</i>&nbsp;        print(c + &quot;  ???????????????????????????????????????  ????????  &quot;, 6, 13, false);</b>
+<b class="nc"><i>89</i>&nbsp;        print(c + &quot;  ???????????????? ????????? ?????????????????  ???  &quot;, 6, 14, false);</b>
+<b class="nc"><i>90</i>&nbsp;        print(c + &quot;   ???????? ??????  ????????  ????????????????  ???  &quot;, 6, 15, false);</b>
+<b class="nc"><i>91</i>&nbsp;        print(c + &quot;                                                     &quot;, 6, 16, false);</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    public static void printLoser() {
+<b class="nc"><i>95</i>&nbsp;        String c = BG_DARK_RED.toString() + RED.toString();</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        print(c + &quot;                                             &quot;, 6, 9, false);</b>
+<b class="nc"><i>98</i>&nbsp;        print(c + &quot;  ???      ??????? ???????????????????????   &quot;, 6, 10, false);</b>
+<b class="nc"><i>99</i>&nbsp;        print(c + &quot;  ???     ?????????????????????????????????  &quot;, 6, 11, false);</b>
+<b class="nc"><i>100</i>&nbsp;        print(c + &quot;  ???     ???   ?????????????????  ????????  &quot;, 6, 12, false);</b>
+<b class="nc"><i>101</i>&nbsp;        print(c + &quot;  ???     ???   ?????????????????  ????????  &quot;, 6, 13, false);</b>
+<b class="nc"><i>102</i>&nbsp;        print(c + &quot;  ????????????????????????????????????  ???  &quot;, 6, 14, false);</b>
+<b class="nc"><i>103</i>&nbsp;        print(c + &quot;  ???????? ??????? ???????????????????  ???  &quot;, 6, 15, false);</b>
+<b class="nc"><i>104</i>&nbsp;        print(c + &quot;                                             &quot;, 6, 16, false);</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    public synchronized static void print(Object o) {
+<b class="nc"><i>108</i>&nbsp;        System.out.print(o);</b>
+<b class="nc"><i>109</i>&nbsp;        System.out.flush();</b>
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    public static void firstClear() {
+<b class="nc"><i>113</i>&nbsp;        print(&quot;\033[H\033[3J\033[2J&quot;);</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    public static void clear() {
+<b class="nc"><i>117</i>&nbsp;        for (int i = 0; i &lt; 150; i++) {</b>
+<b class="nc"><i>118</i>&nbsp;            clearRow(0, i);</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    public static void setCursor(int x, int y) {
+<b class="nc"><i>123</i>&nbsp;        print(String.format(&quot;\033[%d;%dH&quot;, y, x));</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public static void resetCursor() {
+<b class="nc"><i>127</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>128</i>&nbsp;        setCursor(point.x + 3, point.y);</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    public static void clearRow(int x, int y) {
+<b class="nc"><i>132</i>&nbsp;        setCursor(x, y);</b>
+<i>133</i>&nbsp;
+<b class="nc"><i>134</i>&nbsp;        print(&quot;\033[K&quot;);</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    public static void print(String string, int x, int y, boolean toClean) {
+<b class="nc"><i>138</i>&nbsp;        if (toClean) {</b>
+<b class="nc"><i>139</i>&nbsp;            clearRow(x, y);</b>
+<i>140</i>&nbsp;        }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        print(RESET);</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        setCursor(x, y);</b>
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;        print(string + RESET);</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;        resetCursor();</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
+<b class="nc"><i>152</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>153</i>&nbsp;        print(string, point.x + xOff, point.y + yOff, toClear);</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    public static void printCommand() {
+<b class="nc"><i>157</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>158</i>&nbsp;        print(&quot;&gt; &quot;, point.x, point.y, true);</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    public static Point getCommandCoords() {
+<b class="nc"><i>162</i>&nbsp;        return new Point(0, 4 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);</b>
+<i>163</i>&nbsp;    }
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    private static int getOffset() {
+<b class="nc"><i>166</i>&nbsp;        return GameMap.SIDE_LENGTH * ((size + spacing) * 2 - 1) + 10;</b>
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    public static void printPowerList(List&lt;Power&gt; list) {
+<b class="nc"><i>170</i>&nbsp;        int row = 5;</b>
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        print(list.size() &gt; 0 ? &quot;Power list:&quot; : &quot;&quot;, getOffset(), 4, true);</b>
+<i>173</i>&nbsp;
+<b class="nc"><i>174</i>&nbsp;        for (int i = mapY; i &lt; getCommandCoords().y - 3; i++) {</b>
+<b class="nc"><i>175</i>&nbsp;            clearRow(getOffset(), i);</b>
+<i>176</i>&nbsp;        }
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;        for (int i = 0; i &lt; list.size(); i++) {</b>
+<b class="nc"><i>179</i>&nbsp;            if (i % 3 == 0) {</b>
+<b class="nc"><i>180</i>&nbsp;                row++;</b>
+<i>181</i>&nbsp;            }
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;            print((i + 1) + &quot;) &quot; + BLUE + list.get(i).getClass().getSimpleName(),</b>
+<b class="nc"><i>184</i>&nbsp;                    (i % 3) * 20 + getOffset(), row, false);</b>
+<i>185</i>&nbsp;        }
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        printCommand();</b>
+<b class="nc"><i>188</i>&nbsp;        resetCursor();</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    public static void printPlayerInfo(String clientPlayer, List&lt;PlayerData&gt; list, EnumTurnState state,
+<i>192</i>&nbsp;                                       Map&lt;String, Color&gt; colorMap, boolean interact) {
+<i>193</i>&nbsp;
+<b class="nc"><i>194</i>&nbsp;        Function&lt;String, String&gt; name = (s) -&gt; colorMap.get(s) + s +</b>
+<b class="nc"><i>195</i>&nbsp;                (s.equals(clientPlayer) ? &quot;(YOU)&quot; : &quot;&quot;) + RESET;</b>
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;        clearRow(2, 1);</b>
+<b class="nc"><i>198</i>&nbsp;        clearRow(2, 2);</b>
+<b class="nc"><i>199</i>&nbsp;        clearRow(2, 3);</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;        PrintUtils.print(&quot;\uD83E\uDC7E Current player&quot;, 1, 1, true);</b>
+<i>202</i>&nbsp;
+<b class="nc"><i>203</i>&nbsp;        for (int i = 0; i &lt; list.size(); i++) {</b>
+<b class="nc"><i>204</i>&nbsp;            PlayerData data = list.get(i);</b>
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;            print(name.apply(data.getName()), i * 20 + 2, 2, false);</b>
+<b class="nc"><i>207</i>&nbsp;            print(data.getPower() != null ? data.getPower().getClass().getSimpleName().toUpperCase() : &quot;N/A&quot;,</b>
+<i>208</i>&nbsp;                    i * 20 + 2, 3, false);
+<i>209</i>&nbsp;        }
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;//        if (list.size() &gt; 0 &amp;&amp; state != null) {
+<i>212</i>&nbsp;//            print(String.format(&quot;Playing: &#39;%s&#39;, Turn State: %s&quot;,
+<i>213</i>&nbsp;//                    BLUE + list.get(0).getName() + RESET,
+<i>214</i>&nbsp;//                    RED + state.toString()),
+<i>215</i>&nbsp;//                    2, 3, true);
+<i>216</i>&nbsp;//        }
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;        printCommand();</b>
+<i>219</i>&nbsp;    }
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    public static void printValidMoves(List&lt;Point&gt; valid, Map&lt;Power, List&lt;Point&gt;&gt; blocked) {
+<b class="nc"><i>222</i>&nbsp;        int counter = 1;</b>
+<i>223</i>&nbsp;
+<b class="nc"><i>224</i>&nbsp;        for (Point point : valid) {</b>
+<b class="nc"><i>225</i>&nbsp;            boolean isBlocked = blocked.values().stream()</b>
+<b class="nc"><i>226</i>&nbsp;                    .flatMap(Collection::stream).anyMatch(p -&gt; p.equals(point));</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;            String s = String.valueOf(counter);</b>
+<b class="nc"><i>229</i>&nbsp;            print((isBlocked ? BG_DARK_RED : BG_BRIGHT_YELLOW) + &quot;&quot; + RED + s,</b>
+<i>230</i>&nbsp;                    mapX + point.x * (size * 2 - 1 + spacing * 2) + 1,
+<i>231</i>&nbsp;                    mapY + point.y * (size + spacing) + 1,
+<i>232</i>&nbsp;                    false);
+<b class="nc"><i>233</i>&nbsp;            counter++;</b>
+<b class="nc"><i>234</i>&nbsp;        }</b>
+<i>235</i>&nbsp;    }
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;    private static Color getColorFromLevel(int level) {
+<b class="nc"><i>238</i>&nbsp;        switch (level) {</b>
+<i>239</i>&nbsp;            case 1:
+<b class="nc"><i>240</i>&nbsp;                return BG_GRAY1;</b>
+<i>241</i>&nbsp;            case 2:
+<b class="nc"><i>242</i>&nbsp;                return BG_GRAY2;</b>
+<i>243</i>&nbsp;            case 3:
+<b class="nc"><i>244</i>&nbsp;                return BG_GRAY3;</b>
+<i>245</i>&nbsp;            default:
+<b class="nc"><i>246</i>&nbsp;                return BG_GRASS;</b>
+<i>247</i>&nbsp;        }
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    public static void printPowerInfo(Power power) {
+<b class="nc"><i>251</i>&nbsp;        List&lt;String&gt; desc = reduceInLines(power.getDescription(), 50);</b>
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;        int yOffset = 14;</b>
+<i>254</i>&nbsp;
+<b class="nc"><i>255</i>&nbsp;        for (int i = 0; i &lt; 10; i++) {</b>
+<b class="nc"><i>256</i>&nbsp;            clearRow(getOffset(), yOffset + i);</b>
+<i>257</i>&nbsp;        }
+<i>258</i>&nbsp;
+<b class="nc"><i>259</i>&nbsp;        print(RED + power.getName(), getOffset(), yOffset, true);</b>
+<b class="nc"><i>260</i>&nbsp;        print(BLUE + power.getAlias(), getOffset(), yOffset + 1, true);</b>
+<i>261</i>&nbsp;
+<b class="nc"><i>262</i>&nbsp;        for (int i = 0; i &lt; desc.size(); i++) {</b>
+<b class="nc"><i>263</i>&nbsp;            print(desc.get(i), getOffset(), i + yOffset + 2, true);</b>
+<i>264</i>&nbsp;        }
+<i>265</i>&nbsp;    }
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;    private static List&lt;String&gt; reduceInLines(String longString, int width) {
+<b class="nc"><i>268</i>&nbsp;        Stack&lt;StringBuilder&gt; list = new Stack&lt;&gt;();</b>
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;        for (String s : longString.split(&quot; &quot;)) {</b>
+<b class="nc"><i>271</i>&nbsp;            if (list.empty() || list.peek().length() + s.length() + 1 &gt; width) {</b>
+<b class="nc"><i>272</i>&nbsp;                list.push(new StringBuilder());</b>
+<i>273</i>&nbsp;            }
+<i>274</i>&nbsp;
+<b class="nc"><i>275</i>&nbsp;            list.peek().append(s).append(&quot; &quot;);</b>
+<i>276</i>&nbsp;        }
+<i>277</i>&nbsp;
+<b class="nc"><i>278</i>&nbsp;        return list.stream().map(StringBuilder::toString).collect(Collectors.toList());</b>
+<i>279</i>&nbsp;    }
+<i>280</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-05 12:33</div>
+</div>
+</body>
+</html>
