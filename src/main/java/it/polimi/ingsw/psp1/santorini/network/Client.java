@@ -11,6 +11,8 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
+    private final Object lock = new Object();
+
     private ObjectOutputStream objectOutputStream;
     private ServerHandler serverHandler;
     private Socket server;
@@ -20,6 +22,8 @@ public class Client implements Runnable {
     private boolean connected;
 
     public void connectToServer(String ip, int port) {
+        disconnect();
+
         this.ip = ip;
         this.port = port;
 
@@ -28,7 +32,10 @@ public class Client implements Runnable {
 
     public void disconnect() {
         try {
-            connected = false;
+            synchronized (lock) {
+                connected = false;
+                lock.notifyAll();
+            }
 
             if (server != null) {
                 server.close();
@@ -44,6 +51,7 @@ public class Client implements Runnable {
             objectOutputStream.writeObject(packet);
             objectOutputStream.flush();
         } catch (IOException e) {
+            //TODO: cannot print like this (not good in GUI)
             PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
                     0, -1, true);
 
@@ -55,19 +63,26 @@ public class Client implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         try (Socket serverSocket = new Socket(ip, port)) {
-            connected = true;
+            synchronized (lock) {
+                connected = true;
+                lock.notifyAll();
+            }
+
             server = serverSocket;
 
             ObjectInputStream objectInputStream = new ObjectInputStream(server.getInputStream());
             objectOutputStream = new ObjectOutputStream(server.getOutputStream());
 
-            while (connected) {
+
+            while (isConnected()) {
                 if (serverHandler != null) {
                     Object object = objectInputStream.readObject();
                     ((Packet<ServerHandler>) object).processPacket(serverHandler);
                 }
             }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            //TODO: cannot print like this (not good in GUI)
+
             PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
                     0, -1, true);
 
@@ -80,6 +95,14 @@ public class Client implements Runnable {
     }
 
     public boolean isConnected() {
+        try {
+            synchronized (lock) {
+                lock.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return connected;
     }
 }

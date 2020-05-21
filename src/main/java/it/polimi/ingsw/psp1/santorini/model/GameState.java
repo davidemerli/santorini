@@ -5,15 +5,15 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class GameState {
     private final GameMap previousMap;
     private final TurnState previousTurnState;
-    private final HashMap<Player, HashMap<Worker, Point>> playerWorkerState;
+    private final Map<Player, Map<Worker, Point>> playerWorkerState;
 
     public GameState(GameMap previousMap, TurnState previousTurnState,
-                     HashMap<Player, HashMap<Worker, Point>> playerWorkerState) {
+                     Map<Player, Map<Worker, Point>> playerWorkerState) {
         this.previousMap = previousMap;
         this.previousTurnState = previousTurnState;
         this.playerWorkerState = playerWorkerState;
@@ -27,7 +27,7 @@ public class GameState {
         return previousTurnState;
     }
 
-    public HashMap<Player, HashMap<Worker, Point>> getPlayerWorkerState() {
+    public Map<Player, Map<Worker, Point>> getPlayerWorkerState() {
         return playerWorkerState;
     }
 }

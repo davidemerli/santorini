@@ -15,8 +15,8 @@ public class CommandSelect extends Command {
     public CommandSelect() {
         super("select",
                 "Moves/Build in the selected square",
-                " <x> <y> / <n-move>",
-                "",
+                "<x> <y>/<move-index>",
+                "(\\d+ \\d+)|(\\d+)",
                 List.of("sel", "sos"));
     }
 

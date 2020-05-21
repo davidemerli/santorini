@@ -1,6 +1,5 @@
 package it.polimi.ingsw.psp1.santorini.model.turn;
 
-import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
@@ -8,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class Move extends TurnState {
 
@@ -19,40 +19,30 @@ public class Move extends TurnState {
     public void init() {
         super.init();
 
-        Player current = game.getCurrentPlayer();
-        Worker currentWorker = game.getCurrentPlayer().getSelectedWorker().orElse(null);
-
-        if (current.getSelectedWorker().isEmpty()) {
-            game.askRequest(current, EnumRequestType.SELECT_WORKER);
-        } else {
-            game.askRequest(current, EnumRequestType.SELECT_SQUARE);
-        }
-
-        game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
-                getValidMoves(current, currentWorker), getBlockedMoves(current, currentWorker)));
+        genericMoveOrBuildRequest();
     }
 
     @Override
     public void selectSquare(Player player, Point position) {
-        if (player.getSelectedWorker().isEmpty()) {
+        Optional<Worker> optWorker = player.getSelectedWorker();
+
+        if (optWorker.isEmpty()) {
             throw new UnsupportedOperationException("Tried to move with no selected worker");
         }
 
-        Worker worker = player.getSelectedWorker().get();
-
-        if (isPositionBlocked(getBlockedMoves(player, worker), position)) {
+        if (isPositionBlocked(getBlockedMoves(player, optWorker.get()), position)) {
             throw new IllegalArgumentException("Given position is a forbidden move position by some power");
         }
 
-        if (!getValidMoves(player, player.getSelectedWorker().get()).contains(position)) {
+        if (!getValidMoves(player, optWorker.get()).contains(position)) {
             throw new IllegalArgumentException("Invalid move");
         }
 
-        Point old = worker.getPosition();
+        Point old = optWorker.get().getPosition();
 
-        game.getPlayerList().forEach(p -> p.getPower().onMove(player, worker, position, game));
+        game.getPlayerList().forEach(p -> p.getPower().onMove(player, optWorker.get(), position, game));
 
-        game.notifyObservers(o -> o.playerMove(player, worker, old, position));
+        game.notifyObservers(o -> o.playerMove(player, optWorker.get(), old, position));
     }
 
     @Override

@@ -12,7 +12,7 @@ public class CommandInteract extends Command {
         super("interact",
                 "Activates your God's power, if possible",
                 "",
-                "",
+                "^$",
                 List.of("usepower", "power"));
     }
 

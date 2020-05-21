@@ -5,9 +5,11 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectWorker;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CommandSelectWorker extends Command {
@@ -15,14 +17,20 @@ public class CommandSelectWorker extends Command {
     public CommandSelectWorker() {
         super("selectworker",
                 "Chooses the worker you want to use in this turn",
-                " <x> <y> / <n-move>",
-                "",
+                "<x> <y>/<move-index>",
+                "(\\d+ \\d+)|(\\d+)",
                 List.of("sw", "sworker"));
     }
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        List<Point> validMoves = serverHandler.getPlayerData().getWorkers().stream()
+        Optional<PlayerData> optPlayer = serverHandler.getPlayerData();
+
+        if(optPlayer.isEmpty()) {
+            return "You are not part of any game";
+        }
+
+        List<Point> validMoves = optPlayer.get().getWorkers().stream()
                 .map(Worker::getPosition).collect(Collectors.toList());
 
         if (arguments.length == 1) {

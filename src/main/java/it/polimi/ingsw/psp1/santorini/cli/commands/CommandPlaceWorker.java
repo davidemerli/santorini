@@ -13,8 +13,8 @@ public class CommandPlaceWorker extends Command {
     public CommandPlaceWorker() {
         super("placeworker",
                 "Places your worker in the map",
-                " <x> <y> / <n-move>",
-                "",
+                "<x> <y>/<move-index>",
+                "(\\d+ \\d+)|(\\d+)",
                 List.of("pw", "pworker"));
     }
 

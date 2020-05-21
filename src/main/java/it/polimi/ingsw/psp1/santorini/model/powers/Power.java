@@ -149,16 +149,26 @@ public abstract class Power implements Serializable, Cloneable {
      * <p>
      * When choosing powers player is not set, so if both object player is null, the check is valid
      *
-     * @param obj other object to control
+     * @param o other object to control
      * @return true if the given object is equal to this
      */
     @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != getClass()) {
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
 
-        return Objects.equals(this.player, ((Mortal) obj).player);
+        Power power = (Power) o;
+        return Objects.equals(player, power.player);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(player);
     }
 
     /**

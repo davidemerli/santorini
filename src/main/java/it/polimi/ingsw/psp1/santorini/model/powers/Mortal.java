@@ -43,6 +43,7 @@ public class Mortal extends Power {
      */
     @Override
     public void onEndTurn(Player player, Game game) {
+        //basic implementation does not need to do anything on turn end
     }
 
     /**
@@ -169,7 +170,7 @@ public class Mortal extends Power {
 //                .filter(m -> !blockedMoves.contains(m))
 //                .filter(m -> )
 
-        return false;
+        return true;
     }
 
     /**
@@ -185,6 +186,7 @@ public class Mortal extends Power {
      */
     @Override
     public void onToggleInteraction(Game game) {
+        //basic implementation does not need to do anything on interaction
     }
 
     protected Predicate<Point> getStandardDomeCheck(Game game) {

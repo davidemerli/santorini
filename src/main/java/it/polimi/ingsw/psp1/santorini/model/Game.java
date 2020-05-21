@@ -8,12 +8,12 @@ import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
-import it.polimi.ingsw.psp1.santorini.observer.Observer;
+import it.polimi.ingsw.psp1.santorini.observer.Observable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Game extends Observer<ModelObserver> {
+public class Game extends Observable<ModelObserver> {
 
     private final int gameID;
 
@@ -52,7 +52,7 @@ public class Game extends Observer<ModelObserver> {
 
         List<Player> notLosers = playerList.stream().filter(p -> !p.hasLost()).collect(Collectors.toList());
 
-        if (notLosers.size() == 0) {
+        if (notLosers.isEmpty()) {
             throw new IllegalStateException("All players have lost");
         }
 
@@ -134,17 +134,25 @@ public class Game extends Observer<ModelObserver> {
             throw new IndexOutOfBoundsException("Given position is out of map");
         }
 
-        if (getWorkerOn(worker.getPosition()).isEmpty()) {
+        Optional<Worker> optWorker = getWorkerOn(worker.getPosition());
+
+        if (optWorker.isEmpty()) {
             throw new NoSuchElementException("Given worker is not present on the map");
         }
 
-        getWorkerOn(worker.getPosition()).get().setPosition(newPosition);
+        Optional<Player> optPlayer = getPlayerOf(optWorker.get());
+
+        if (optPlayer.isEmpty() || optPlayer.get() != player) {
+            throw new UnsupportedOperationException("Player does not own given worker");
+        }
+
+        optWorker.get().setPosition(newPosition);
 
         notifyObservers(o -> o.gameUpdate(this));
     }
 
     public void startTurn() {
-        if (playerList.size() == 0) {
+        if (playerList.isEmpty()) {
             throw new UnsupportedOperationException("Player list is empty");
         }
 
@@ -156,8 +164,10 @@ public class Game extends Observer<ModelObserver> {
             removeLoser();
         }
 
-        if (getWinner().isPresent()) {
-            getPlayerOpponents(getWinner().get()).forEach(this::setLoser);
+        Optional<Player> optWinner = getWinner();
+
+        if (optWinner.isPresent()) {
+            getPlayerOpponents(optWinner.get()).forEach(this::setLoser);
             endGame();
         }
     }
@@ -212,7 +222,7 @@ public class Game extends Observer<ModelObserver> {
     }
 
     public Player getCurrentPlayer() {
-        if (playerList.size() == 0) {
+        if (playerList.isEmpty()) {
             throw new UnsupportedOperationException("Player list is empty");
         }
 
@@ -241,18 +251,21 @@ public class Game extends Observer<ModelObserver> {
             removeLoser();
         }
 
-        if (getWinner().isPresent()) {
-            getPlayerOpponents(getWinner().get()).forEach(this::setLoser);
+        Optional<Player> optWinner = getWinner();
+
+        if (optWinner.isPresent()) {
+            getPlayerOpponents(optWinner.get()).forEach(this::setLoser);
             endGame();
             return;
         }
 
-        if (getCurrentPlayer().getSelectedWorker().isPresent()) {
-            Player player = getCurrentPlayer();
-            Worker worker = player.getSelectedWorker().get();
+        Optional<Worker> optWorker = getCurrentPlayer().getSelectedWorker();
 
-            notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(),
-                    getTurnState().getValidMoves(player, worker), getTurnState().getBlockedMoves(player, worker)));
+        if (optWorker.isPresent()) {
+            List<Point> validMoves = getTurnState().getValidMoves(getCurrentPlayer(), optWorker.get());
+            Map<Power, List<Point>> blockedMoves = getTurnState().getBlockedMoves(getCurrentPlayer(), optWorker.get());
+
+            notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(), validMoves, blockedMoves));
         }
     }
 

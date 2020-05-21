@@ -7,10 +7,12 @@ import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class TurnState {
 
@@ -137,12 +139,32 @@ public abstract class TurnState {
         return map.keySet().stream().anyMatch(power -> map.get(power).contains(point));
     }
 
+    /**
+     * Sends a request to select a worker or a square if the worker has already been selected
+     */
+    protected void genericMoveOrBuildRequest() {
+        Player current = game.getCurrentPlayer();
+        Optional<Worker> optWorker = current.getSelectedWorker();
+
+        if (optWorker.isEmpty()) {
+            game.askRequest(current, EnumRequestType.SELECT_WORKER);
+        } else {
+            game.askRequest(current, EnumRequestType.SELECT_SQUARE);
+        }
+
+        List<Point> validMoves = getValidMoves(current, optWorker.orElse(null));
+        Map<Power, List<Point>> blockedMoves = getBlockedMoves(current, optWorker.orElse(null));
+
+        game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(), validMoves, blockedMoves));
+
+    }
+
     public GameState copyState() {
         GameMap copy = game.getMap().copy();
-        HashMap<Player, HashMap<Worker, Point>> playerWorkerState = new HashMap<>();
+        Map<Player, Map<Worker, Point>> playerWorkerState = new HashMap<>();
 
         for (Player player : game.getPlayerList()) {
-            HashMap<Worker, Point> workerState = new HashMap<>();
+            Map<Worker, Point> workerState = new HashMap<>();
             player.getWorkers().forEach(w -> workerState.put(w, new Point(w.getPosition())));
             playerWorkerState.put(player, workerState);
         }

@@ -12,7 +12,7 @@ public class CommandReload extends Command {
         super("reload",
                 "Sends the current map and all available info to the player",
                 "",
-                "",
+                "^$",
                 List.of("r", "clear"));
     }
 

@@ -11,7 +11,7 @@ public class CommandHelp extends Command {
         super("help",
                 "Shows the list of commands",
                 "",
-                "",
+                "^$",
                 List.of("h", "getcommands"));
     }
 

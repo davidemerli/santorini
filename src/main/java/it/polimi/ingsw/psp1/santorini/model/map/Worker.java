@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Worker implements Serializable {
 
@@ -19,11 +20,18 @@ public class Worker implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != this.getClass()) {
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
 
-        return this.getPosition().equals(((Worker) obj).getPosition());
+        Worker worker = (Worker) o;
+        return position.equals(worker.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(position);
     }
 }

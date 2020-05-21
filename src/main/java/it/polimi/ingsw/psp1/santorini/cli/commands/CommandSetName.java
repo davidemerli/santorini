@@ -13,7 +13,7 @@ public class CommandSetName extends Command {
         super("setname",
                 "Tries to set an username on the server",
                 "<player-name>",
-                "",
+                ".+",
                 List.of("sn", "name"));
     }
 

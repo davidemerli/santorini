@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Server implements Runnable {
 
@@ -24,7 +23,9 @@ public class Server implements Runnable {
 
     private final List<ClientConnectionHandler> clientsToRelocate;
 
-    private final Map<ClientConnectionHandler, Player> waitingForGame;
+    private final Map<ClientConnectionHandler, Player> twoPlayerGameQueue;
+    private final Map<ClientConnectionHandler, Player> threePlayerGameQueue;
+
     private final Map<Game, Map<ClientConnectionHandler, Player>> games;
 
     private final ExecutorService pool;
@@ -32,7 +33,9 @@ public class Server implements Runnable {
     public Server(int socketPort) {
         this.socketPort = socketPort;
         this.clientsToRelocate = Collections.synchronizedList(new ArrayList<>());
-        this.waitingForGame = new ConcurrentHashMap<>();
+        this.twoPlayerGameQueue = new ConcurrentHashMap<>();
+        this.threePlayerGameQueue = new ConcurrentHashMap<>();
+
         this.games = Collections.synchronizedMap(new LinkedHashMap<>());
 
         this.pool = Executors.newFixedThreadPool(128);
@@ -53,6 +56,8 @@ public class Server implements Runnable {
         try (ServerSocket serverSocket = new ServerSocket(socketPort)) {
             while (!serverSocket.isClosed()) {
                 Socket client = serverSocket.accept();
+                client.setSoTimeout(20000);
+
                 System.out.println("Accepted client: " + client.getInetAddress());
                 //when a client connects it is put into a list of connected sockets and a ClientHandler is created
                 ClientConnectionHandler clientHandler = new ClientConnectionHandler(this, client);
@@ -80,31 +85,40 @@ public class Server implements Runnable {
                 Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
                 if (gamePlayers.size() < game.getPlayerNumber()) {
-                    Optional<Map.Entry<ClientConnectionHandler, Player>> waitingClient =
-                            waitingForGame.entrySet().stream().findFirst();
+                    Optional<Map.Entry<ClientConnectionHandler, Player>> waitingClient;
+
+                    if (game.getPlayerNumber() == 2) {
+                        waitingClient = twoPlayerGameQueue.entrySet().stream().findFirst();
+                    } else {
+                        waitingClient = threePlayerGameQueue.entrySet().stream().findFirst();
+                    }
 
                     if (waitingClient.isPresent()) {
                         gamePlayers.put(waitingClient.get().getKey(), waitingClient.get().getValue());
 
-                        waitingForGame.remove(waitingClient.get().getKey());
+                        if (game.getPlayerNumber() == 2) {
+                            twoPlayerGameQueue.remove(waitingClient.get().getKey());
+                        } else {
+                            threePlayerGameQueue.remove(waitingClient.get().getKey());
+                        }
                     }
+                }
 
-                    if (gamePlayers.size() == game.getPlayerNumber()) {
-                        Controller controller = new Controller(game);
-                        List<View> views = new ArrayList<>();
-                        gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
+                if (gamePlayers.size() == game.getPlayerNumber()) {
+                    Controller controller = new Controller(game);
+                    List<View> views = new ArrayList<>();
+                    gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
 
-                        //views observe model
-                        views.forEach(game::addObserver);
+                    //views observe model
+                    views.forEach(game::addObserver);
 
-                        //controller observes views
-                        views.forEach(v -> v.addObserver(controller));
+                    //controller observes views
+                    views.forEach(v -> v.addObserver(controller));
 
-                        //add players to the game
-                        views.forEach(v -> game.addPlayer(v.getPlayer()));
+                    //add players to the game
+                    views.forEach(v -> game.addPlayer(v.getPlayer()));
 
-                        game.startGame();
-                    }
+                    game.startGame();
                 }
             });
         }
@@ -125,60 +139,72 @@ public class Server implements Runnable {
             throw new UnsupportedOperationException("Connection already assigned to game");
         }
 
-        if (!waitingForGame.containsKey(connectionHandler)) {
-            throw new UnsupportedOperationException("Cannot create game without setting an username first");
+        Optional<Player> optPlayer = connectionHandler.getPlayer();
+
+        if (optPlayer.isEmpty()) {
+            throw new IllegalStateException("You need to set a name first");
         }
 
         //create a new game
         Game newGame = new Game(generateValidID(), playerNumber);
 
-        //create the list of the ClientHandlers of the players that will join the current game
-        Map<ClientConnectionHandler, Player> clients = new LinkedHashMap<>();
-        clients.put(connectionHandler, waitingForGame.get(connectionHandler));
         //add a new game to the list of games
-        games.put(newGame, clients);
-
-        waitingForGame.remove(connectionHandler);
-    }
-
-    /**
-     * Adds a player and its ClientHandler to the waitingList
-     *
-     * @param player            instance with the name already set (power is not set yet)
-     * @param connectionHandler player ClientHandler
-     */
-    public void addToWait(Player player, ClientConnectionHandler connectionHandler) {
-        if (!clientsToRelocate.contains(connectionHandler)) {
-            throw new UnsupportedOperationException("Given client handler is not from a player that needs relocation");
-        }
-
-        boolean sameName = Stream.concat(
-                waitingForGame.values().stream(),
-                games.values().stream().map(Map::values).flatMap(Collection::stream))
-                .anyMatch(p -> p.getName().equalsIgnoreCase(player.getName()));
-
-        if (sameName) {
-            throw new IllegalArgumentException("There is already a player with the same name");
-        }
-
-        waitingForGame.put(connectionHandler, player);
-
-        clientsToRelocate.remove(connectionHandler);
+        games.put(newGame, new LinkedHashMap<>(Map.of(connectionHandler, optPlayer.get())));
     }
 
     public void disconnectClient(ClientConnectionHandler connectionHandler) {
-        waitingForGame.remove(connectionHandler);
+        twoPlayerGameQueue.remove(connectionHandler);
+        threePlayerGameQueue.remove(connectionHandler);
         clientsToRelocate.remove(connectionHandler);
 
         Optional<Game> optGame = games.entrySet().stream()
                 .filter(e -> e.getValue().containsKey(connectionHandler))
                 .map(Map.Entry::getKey).findFirst();
 
-        if (optGame.isPresent()) {
-            if (!optGame.get().hasStarted()) {
-                games.get(optGame.get()).remove(connectionHandler);
-            }
+        if (optGame.isPresent() && !optGame.get().hasStarted()) {
+            games.get(optGame.get()).remove(connectionHandler);
         }
+    }
+
+    public void joinGame(ClientConnectionHandler connectionHandler, int gameRoom) {
+        Optional<Game> toJoin = games.keySet().stream()
+                .filter(game -> game.getGameID() == gameRoom)
+                .findFirst();
+
+        if (toJoin.isEmpty()) {
+            throw new IllegalArgumentException("No game found with given ID");
+        }
+
+        if (games.get(toJoin.get()).size() == toJoin.get().getPlayerNumber()) {
+            throw new IllegalStateException("Game is already full");
+        }
+
+        Optional<Player> optPlayer = connectionHandler.getPlayer();
+
+        if (optPlayer.isEmpty()) {
+            throw new IllegalStateException("You need to set a name first");
+        }
+
+        games.get(toJoin.get()).put(connectionHandler, optPlayer.get());
+        clientsToRelocate.remove(connectionHandler);
+    }
+
+    public void joinQueue(ClientConnectionHandler connectionHandler, int playerNumber) {
+        Optional<Player> optPlayer = connectionHandler.getPlayer();
+
+        if (optPlayer.isEmpty()) {
+            throw new IllegalStateException("You need to set a name first");
+        }
+
+        if (playerNumber == 2) {
+            twoPlayerGameQueue.put(connectionHandler, optPlayer.get());
+        } else if (playerNumber == 3) {
+            threePlayerGameQueue.put(connectionHandler, optPlayer.get());
+        } else {
+            throw new IllegalArgumentException("Invalid player number");
+        }
+
+        clientsToRelocate.remove(connectionHandler);
     }
 
     private int generateValidID() {
@@ -186,12 +212,12 @@ public class Server implements Runnable {
                 .map(Game::getGameID)
                 .collect(Collectors.toSet());
 
-        int ID;
+        int gameID;
 
-        do {
-            ID = rnd.nextInt(10000);
-        } while (assignedIDs.contains(ID));
+        do {//generates a random number between 1000 and 9999
+            gameID = 1000 + rnd.nextInt(9000);
+        } while (assignedIDs.contains(gameID));
 
-        return ID;
+        return gameID;
     }
 }

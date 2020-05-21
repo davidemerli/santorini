@@ -1,23 +1,168 @@
 package it.polimi.ingsw.psp1.santorini.network;
 
+import it.polimi.ingsw.psp1.santorini.cli.Color;
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientKeepAlive;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
-public interface ServerHandler extends NetHandler {
-    void handleKeepAlive(ServerKeepAlive packet);
+import java.util.*;
 
-    void handleGameData(ServerGameData packet);
+public abstract class ServerHandler implements NetHandler {
+    protected final Client client;
 
-    void handleRequest(ServerAskRequest packet);
+    protected final Map<String, Color> playerColorMap;
 
-    void handlePlayerUpdate(ServerSendPlayerUpdate packet);
+    protected final List<PlayerData> playerDataList;
+    protected final Map<Power, List<Point>> blockedMoves;
+    protected final List<Point> validMoves;
+    protected final List<Power> powerList;
+    private final List<Color> colors = Arrays.asList(//TODO: Make server side colors
+            Color.BG_WORKER_BLUE,
+            Color.BG_WORKER_RED,
+            Color.BG_WORKER_ORANGE);
+    protected String playerName;
+    protected GameMap gameMap;
+    protected boolean shouldShowInteraction;
+    protected EnumRequestType lastRequest;
+    protected EnumTurnState lastTurnState;
 
-    void handleReceivedMoves(ServerMovePossibilities packet);
+    public ServerHandler(Client client) {
+        this.client = client;
 
-    void handleError(ServerInvalidPacket packet);
+        this.playerDataList = new ArrayList<>();
+        this.blockedMoves = new HashMap<>();
+        this.validMoves = new ArrayList<>();
+        this.powerList = new ArrayList<>();
+        this.playerColorMap = new HashMap<>();
 
-    void handlePlayerMove(ServerPlayerMove serverPlayerMove);
+        this.shouldShowInteraction = false;
+        this.gameMap = new GameMap();
+        this.lastRequest = null;
+        this.lastTurnState = null;
+    }
 
-    void handlePowerList(ServerPowerList serverPowerList);
+    public void handleKeepAlive(ServerKeepAlive packet) {
+        client.sendPacket(new ClientKeepAlive());
+    }
 
-    void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame);
+    public void handleGameData(ServerGameData packet) {
+        GameMap map = packet.getGameMap();
+        List<PlayerData> playerList = packet.getPlayerData();
+
+        if (playerColorMap.size() != playerList.size()) {
+            playerColorMap.clear();
+            Collections.shuffle(colors);
+
+            for (int i = 0; i < playerList.size(); i++) {
+                playerColorMap.put(playerList.get(i).getName(), colors.get(i));
+            }
+        }
+
+        this.playerDataList.clear();
+        this.playerDataList.addAll(playerList);
+
+        this.gameMap = map;
+
+        this.lastTurnState = packet.getTurnState();
+    }
+
+    public void handleRequest(ServerAskRequest packet) {
+        this.lastRequest = packet.getRequestType();
+    }
+
+    public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
+        Optional<PlayerData> updated = getPlayerDataList().stream()
+                .filter(p -> p.getName().equals(packet.getPlayerData().getName()))
+                .findFirst();
+
+        updated.ifPresent(playerData -> playerDataList.set(playerDataList.indexOf(playerData), packet.getPlayerData()));
+
+        shouldShowInteraction = packet.shouldShowInteraction();
+    }
+
+    public void handleReceivedMoves(ServerMovePossibilities packet) {
+        getValidMoves().clear();
+        getValidMoves().addAll(packet.getValidMoves());
+
+        getBlockedMoves().clear();
+        getBlockedMoves().putAll(packet.getBlockedMoves());
+    }
+
+    public abstract void handleError(ServerInvalidPacket packet);
+
+    public abstract void handlePlayerMove(ServerPlayerMove serverPlayerMove);
+
+    public void handlePowerList(ServerPowerList serverPowerList) {
+        getPowerList().clear();
+        getPowerList().addAll(serverPowerList.getAvailablePowers());
+    }
+
+    public abstract void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame);
+
+    public Optional<PlayerData> getPlayerData() {
+        return playerDataList.stream()
+                .filter(p -> p.getName().equals(this.playerName))
+                .findFirst();
+    }
+
+    public List<PlayerData> getPlayerDataList() {
+        return playerDataList;
+    }
+
+    public List<Point> getValidMoves() {
+        return validMoves;
+    }
+
+    public List<Power> getPowerList() {
+        return powerList;
+    }
+
+    public Map<Power, List<Point>> getBlockedMoves() {
+        return blockedMoves;
+    }
+
+    public boolean getShowInteraction() {
+        return shouldShowInteraction;
+    }
+
+    public void setShouldShowInteraction(boolean shouldShowInteraction) {
+        this.shouldShowInteraction = shouldShowInteraction;
+    }
+
+    public EnumRequestType getLastRequest() {
+        return lastRequest;
+    }
+
+    public Map<String, Color> getPlayerColorMap() {
+        return playerColorMap;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public boolean isYourTurn() {
+        return !getPlayerDataList().isEmpty() && getPlayerDataList().get(0).getName().equals(getPlayerName());
+    }
+
+    public void reset() {
+        this.playerDataList.clear();
+        this.blockedMoves.clear();
+        this.validMoves.clear();
+        this.powerList.clear();
+        this.playerColorMap.clear();
+
+        this.shouldShowInteraction = false;
+        this.gameMap = new GameMap();
+        this.lastRequest = null;
+        this.lastTurnState = null;
+    }
 }

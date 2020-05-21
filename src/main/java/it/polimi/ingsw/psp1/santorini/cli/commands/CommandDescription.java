@@ -16,8 +16,8 @@ public class CommandDescription extends Command {
     public CommandDescription() {
         super("description",
                 "Shows the selected God's description",
-                "<power-name>",
-                "",
+                "<power-name>/<power-index>",
+                "(\\w+)|(\\d+)",
                 List.of("d", "desc"));
     }
 
@@ -25,9 +25,9 @@ public class CommandDescription extends Command {
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         Power power;
 
-        List<Power> powerList = serverHandler.getPowerList().size() != 0 ?
-                serverHandler.getPowerList() :
-                serverHandler.getPlayerDataList().stream().map(PlayerData::getPower).collect(Collectors.toList());
+        List<Power> powerList = serverHandler.getPowerList().isEmpty() ?
+                serverHandler.getPlayerDataList().stream().map(PlayerData::getPower).collect(Collectors.toList()) :
+                serverHandler.getPowerList();
 
         if (isNumeric(arguments[0])) {
             int i = Integer.parseInt(arguments[0]) - 1;
@@ -38,10 +38,10 @@ public class CommandDescription extends Command {
 
             power = powerList.get(i);
         } else {
-
             Optional<Power> optPower = powerList.stream()
                     .filter(p -> p.getName().equalsIgnoreCase(arguments[0]))
                     .findFirst();
+
             if (optPower.isEmpty()) {
                 return "Wrong power name";
             }

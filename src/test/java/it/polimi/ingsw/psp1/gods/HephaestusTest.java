@@ -5,6 +5,7 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Hephaestus;
+import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import org.junit.After;
 import org.junit.Before;
@@ -21,10 +22,13 @@ public class HephaestusTest {
     public void setup() {
         this.game = new Game(1,2);
         this.player = new Player("p1");
+        Player player2 = new Player("p2");
 
         game.addPlayer(player);
+        game.addPlayer(player2);
 
         player.setPower(new Hephaestus());
+        player2.setPower(new Mortal());
     }
 
     @After
@@ -75,7 +79,7 @@ public class HephaestusTest {
         game.getTurnState().selectSquare(player, new Point(1, 2));
         game.getTurnState().selectSquare(player, firstBuild);
 
-//        assertTrue(game.getTurnState() instanceof EndTurn);
+        assertNotSame(game.getCurrentPlayer(), player);
     }
 
     @Test

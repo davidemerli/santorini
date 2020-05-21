@@ -5,10 +5,12 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 public class ClientJoinGame implements Packet<ClientHandler> {
 
-    private final String gameRoomName;
+    private final int gameRoom;
+    private final int playerNumber;
 
-    public ClientJoinGame(String name) {
-        this.gameRoomName = name;
+    public ClientJoinGame(int playerNumber, int gameRoom) {
+        this.playerNumber = playerNumber;
+        this.gameRoom = gameRoom;
     }
 
     @Override
@@ -16,7 +18,11 @@ public class ClientJoinGame implements Packet<ClientHandler> {
         netHandler.handleJoinGame(this);
     }
 
-    public String getGameRoomName() {
-        return this.gameRoomName;
+    public int getPlayerNumber() {
+        return this.playerNumber;
+    }
+
+    public int getGameRoom() {
+        return this.gameRoom;
     }
 }

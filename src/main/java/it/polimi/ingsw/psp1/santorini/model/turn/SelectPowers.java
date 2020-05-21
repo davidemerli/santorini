@@ -26,7 +26,7 @@ public class SelectPowers extends TurnState {
 
     @Override
     public void selectGod(Game game, Player player, Power power) {
-        if(selectedPowers.contains(power)) {
+        if (selectedPowers.contains(power)) {
             throw new UnsupportedOperationException("Same player already chosen");
         }
 

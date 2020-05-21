@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class Observer<T> {
+public abstract class Observable<T> {
 
     private final List<T> observers = new ArrayList<>();
 
@@ -49,6 +49,5 @@ public abstract class Observer<T> {
             observers.clear();
         }
     }
-
 }
 

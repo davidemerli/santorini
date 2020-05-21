@@ -13,8 +13,8 @@ public class CommandSelectStartingPlayer extends Command {
     public CommandSelectStartingPlayer() {
         super("startingplayer",
                 "Selects the starting player",
-                "<player-name> / <player-id>",
-                "",
+                "<player-name>/<player-index>",
+                "(\\w+)|(\\d+)",
                 List.of("start", "begin"));
     }
 
@@ -37,13 +37,13 @@ public class CommandSelectStartingPlayer extends Command {
                 .filter(p -> p.getName().equalsIgnoreCase(arguments[0]))
                 .findFirst();
 
-        if (player.isPresent()) {
-            client.sendPacket(new ClientSelectStartingPlayer(player.get().getName()));
-
-            return String.format("Selected starting player: '%s'", player.get().getName());
+        if (player.isEmpty()) {
+            return "Invalid name";
         }
 
-        return "Invalid name";
+        client.sendPacket(new ClientSelectStartingPlayer(player.get().getName()));
+
+        return String.format("Selected starting player: '%s'", player.get().getName());
     }
 
     private boolean isNumeric(String string) {

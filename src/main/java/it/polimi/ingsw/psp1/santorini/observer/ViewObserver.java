@@ -3,7 +3,6 @@ package it.polimi.ingsw.psp1.santorini.observer;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
-import it.polimi.ingsw.psp1.santorini.view.RemoteView;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
 import java.util.List;
@@ -72,7 +71,7 @@ public interface ViewObserver {
     /**
      * Called when a player surrenders
      *
-     * @param view the view where the even is coming from
+     * @param view   the view where the even is coming from
      * @param player the player associated with the view
      */
     void playerSurrender(View view, Player player);

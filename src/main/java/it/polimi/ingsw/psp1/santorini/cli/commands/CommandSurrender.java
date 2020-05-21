@@ -12,7 +12,7 @@ public class CommandSurrender extends Command {
         super("surrender",
                 "Forfeits the current game",
                 "",
-                "",
+                "^$",
                 List.of("ff", "forfeit"));
     }
 

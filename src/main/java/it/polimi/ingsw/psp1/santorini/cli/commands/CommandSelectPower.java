@@ -14,8 +14,8 @@ public class CommandSelectPower extends Command {
     public CommandSelectPower() {
         super("selectpower",
                 "Selects a power from a given list",
-                "<power-name> / <power-id>",
-                "",
+                "<power-name>/<power-id>",
+                "(\\w+)|(\\d+)",
                 List.of("sp", "power"));
     }
 

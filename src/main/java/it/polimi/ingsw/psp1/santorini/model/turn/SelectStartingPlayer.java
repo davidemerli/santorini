@@ -12,8 +12,6 @@ import java.util.Optional;
 
 public class SelectStartingPlayer extends TurnState {
 
-    private final List<Power> selectedPowers = new ArrayList<>();
-
     public SelectStartingPlayer(Game game) {
         super(game);
     }

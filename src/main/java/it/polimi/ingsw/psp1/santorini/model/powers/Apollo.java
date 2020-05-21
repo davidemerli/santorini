@@ -24,15 +24,10 @@ public class Apollo extends Mortal {
             Point wPos = worker.getPosition();
             List<Point> neighbors = game.getMap().getNeighbors(wPos);
 
-            Predicate<Point> enemyWorkerCheck = p -> {
-                Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
-                return optionalPlayer.isPresent() && optionalPlayer.get() != player;
-            };
-
             return neighbors.stream()
                     .filter(getStandardDomeCheck(game))
                     .filter(getStandardMoveCheck(worker, game))
-                    .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck))
+                    .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck(game)))
                     .collect(Collectors.toList());
         } else {
             return super.getValidMoves(worker, game);
@@ -56,5 +51,20 @@ public class Apollo extends Mortal {
         }
 
         super.onMove(player, worker, where, game);//normal moving behaviour
+    }
+
+    /**
+     * Predicate that returns true if given position refers to a worker that's owned by an opponent
+     *
+     * @param game current game instance
+     * @return enemyWorker predicate
+     */
+    private Predicate<Point> enemyWorkerCheck(Game game) {
+        return p -> {
+            Optional<Worker> optWorker = game.getWorkerOn(p);
+            Optional<Player> optPlayer = optWorker.isPresent() ? game.getPlayerOf(optWorker.get()) : Optional.empty();
+
+            return optPlayer.isPresent() && optPlayer.get() != player;
+        };
     }
 }

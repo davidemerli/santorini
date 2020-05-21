@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
 import it.polimi.ingsw.psp1.santorini.model.powers.Poseidon;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import org.junit.After;
@@ -21,10 +22,13 @@ public class PoseidonTest {
     public void setup() {
         this.game = new Game(1,2);
         this.player = new Player("p1");
+        Player player2 = new Player("p2");
 
         game.addPlayer(player);
+        game.addPlayer(player2);
 
         player.setPower(new Poseidon());
+        player2.setPower(new Mortal());
     }
 
     @After
@@ -59,6 +63,7 @@ public class PoseidonTest {
         assertTrue(game.getTurnState() instanceof Build);
         assertTrue(game.getTurnState().shouldShowInteraction(player));
         assertTrue(player.isWorkerLocked());
+        assertTrue(player.getSelectedWorker().isPresent());
         assertEquals(player.getSelectedWorker().get(), w2);
 
         assertTrue(game.getTurnState().getValidMoves(player, w2).containsAll(game.getMap().getNeighbors(w2.getPosition())));
@@ -67,7 +72,7 @@ public class PoseidonTest {
         game.getTurnState().selectSquare(player, new Point(4, 3));
         game.getTurnState().selectSquare(player, new Point(4, 4));
 
-//        assertTrue(game.getTurnState() instanceof EndTurn);
+        assertNotSame(game.getCurrentPlayer(), player);
     }
 
     @Test
@@ -90,7 +95,7 @@ public class PoseidonTest {
         game.getTurnState().selectSquare(player, new Point(3, 4));
         game.getTurnState().toggleInteraction(player);
 
-//        assertTrue(game.getTurnState() instanceof EndTurn);
+        assertNotSame(game.getCurrentPlayer(), player);
     }
 
     @Test
@@ -110,6 +115,6 @@ public class PoseidonTest {
         game.getTurnState().selectSquare(player, new Point(3, 2));
         game.getTurnState().selectSquare(player, new Point(3, 3));
 
-//        assertTrue(game.getTurnState() instanceof EndTurn);
+        assertNotSame(game.getCurrentPlayer(), player);
     }
 }

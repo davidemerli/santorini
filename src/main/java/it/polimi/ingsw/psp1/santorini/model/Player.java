@@ -3,10 +3,7 @@ package it.polimi.ingsw.psp1.santorini.model;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Player {
 
@@ -101,11 +98,18 @@ public class Player {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != this.getClass()) {
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
 
-        return this.getName().equals(((Player) obj).getName());
+        Player player = (Player) o;
+        return Objects.equals(name, player.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

@@ -6,8 +6,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerAskRequest;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerInvalidPacket;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerKeepAlive;
 import it.polimi.ingsw.psp1.santorini.observer.ConnectionObserver;
-import it.polimi.ingsw.psp1.santorini.observer.Observer;
+import it.polimi.ingsw.psp1.santorini.observer.Observable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,7 +16,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Optional;
 
-public class ClientConnectionHandler extends Observer<ConnectionObserver> implements Runnable, ClientHandler {
+public class ClientConnectionHandler extends Observable<ConnectionObserver> implements Runnable, ClientHandler {
 
     private final Server server;
 
@@ -30,6 +31,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
     ClientConnectionHandler(Server server, Socket clientSocket) throws IOException {
         this.server = server;
         this.clientSocket = clientSocket;
+
         this.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
         sendPacket(new ServerAskRequest(EnumRequestType.SELECT_NAME));
@@ -52,6 +54,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
     @SuppressWarnings("unchecked")
     public void run() {
         try {
+            //TODO: Provare a spostare nel constructor
             this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
             while (!closed) {
@@ -67,12 +70,7 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
         player = new Player(packet.getName());
-
-        try {
-            server.addToWait(player, this);
-        } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            sendPacket(new ServerInvalidPacket(e.getMessage()));
-        }
+        //TODO: recheck if name is already present
     }
 
     @Override
@@ -86,7 +84,11 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
 
     @Override
     public void handleJoinGame(ClientJoinGame packet) {
-        //Maybe useless
+        if (packet.getGameRoom() != -1) {
+            server.joinGame(this, packet.getGameRoom());
+        } else {
+            server.joinQueue(this, packet.getPlayerNumber());
+        }
     }
 
     @Override
@@ -111,7 +113,14 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
 
     @Override
     public void handleKeepAlive(ClientKeepAlive clientKeepAlive) {
-        //TODO: send another keep alive
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                sendPacket(new ServerKeepAlive());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
@@ -131,8 +140,12 @@ public class ClientConnectionHandler extends Observer<ConnectionObserver> implem
 
     public void closeConnection() {
         closed = true;
-
         try {
+            if (objectInputStream != null) {
+                objectInputStream.close();
+            }
+
+            objectOutputStream.close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,12 +7,15 @@ import java.util.List;
 
 public abstract class Command {
 
-    private final String command, desc, usage, pattern;
+    private final String cmdName;
+    private final String desc;
+    private final String usage;
+    private final String pattern;
 
     private final List<String> aliases;
 
-    public Command(String command, String desc, String usage, String pattern, List<String> aliases) {
-        this.command = command;
+    public Command(String cmdName, String desc, String usage, String pattern, List<String> aliases) {
+        this.cmdName = cmdName;
         this.desc = desc;
         this.usage = usage;
         this.pattern = pattern;
@@ -27,7 +30,7 @@ public abstract class Command {
     }
 
     public String getName() {
-        return command;
+        return cmdName;
     }
 
     public String getDesc() {
@@ -39,10 +42,12 @@ public abstract class Command {
     }
 
     public String getPattern() {
+        //TODO: add a custom pattern for every command
         return pattern;
     }
 
     public String getHelp() {
+        //TODO
         return "";
     }
 }

@@ -15,6 +15,7 @@ import it.polimi.ingsw.psp1.santorini.observer.ConnectionObserver;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -131,12 +132,15 @@ public class RemoteView extends View {
      */
     @Override
     public void availableMovesUpdate(Player player, List<Point> validMoves, Map<Power, List<Point>> blockedMoves) {
+        //used to sort positions in clock wise order given a selected point
         BiFunction<Point, Point, Double> angle = (p, c) -> 180.0 / Math.PI * Math.atan2(p.y - c.y, p.x - c.x);
 
-        if (getPlayer().equals(player)) {
-            if (player.getSelectedWorker().isPresent()) {
-                Point center = player.getSelectedWorker().get().getPosition();
+        if (getPlayer().equals(player)) {//sends moves only to the current player
+            Optional<Worker> optWorker = player.getSelectedWorker();
 
+            if (optWorker.isPresent()) {
+                Point center = optWorker.get().getPosition();
+                //sorts with angle function
                 validMoves = validMoves.stream()
                         .sorted(Comparator.comparingDouble(p -> angle.apply(p, center)))
                         .collect(Collectors.toUnmodifiableList());
@@ -154,7 +158,9 @@ public class RemoteView extends View {
      */
     @Override
     public void requestToPlayer(Player player, EnumRequestType requestType) {
-        if (connection.getPlayer().isPresent() && connection.getPlayer().get().equals(player)) {
+        Optional<Player> optPlayer = connection.getPlayer();
+
+        if (optPlayer.isPresent() && optPlayer.get().equals(player)) {
             connection.sendPacket(new ServerAskRequest(requestType));
         }
     }

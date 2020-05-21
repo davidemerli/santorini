@@ -1,0 +1,22 @@
+.button {
+    -fx-background-image: url("/gui_assets/btn_coral.png");
+    -fx-background-color: transparent;
+    -fx-background-size: stretch;
+    -fx-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-font-size: 150%;
+}
+
+.button:pressed {
+    -fx-background-image: url("/gui_assets/btn_coral_pressed.png");
+    -fx-background-color: transparent;
+    -fx-background-size: stretch;
+    -fx-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-font-size: 150%;
+}
+
+.text {
+    -fx-background-image: url("/gui_assets/gameGodFrameName2.png");
+    -fx-background-size: stretch;
+}

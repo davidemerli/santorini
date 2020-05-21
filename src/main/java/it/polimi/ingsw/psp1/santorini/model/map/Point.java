@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.model.map;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Point implements Serializable {
 
@@ -28,7 +29,11 @@ public class Point implements Serializable {
             return false;
 
         Point point = (Point) o;
-
         return x == point.x && y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

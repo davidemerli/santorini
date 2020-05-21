@@ -11,8 +11,8 @@ public class CommandCreateGame extends Command {
     public CommandCreateGame() {
         super("creategame",
                 "Creates a new game",
-                "<game-name> <num-players>",
-                "",
+                "<num-players (2 or 3)>",
+                "[2-3]",
                 List.of("cg", "newgame"));
     }
 
@@ -21,7 +21,7 @@ public class CommandCreateGame extends Command {
         String name = arguments[0];
         int number = Integer.parseInt(arguments[1]);
 
-        client.sendPacket(new ClientCreateGame(name, number));
+        client.sendPacket(new ClientCreateGame(number));
 
         return String.format("Created new game '%s' with #players: '%d'", name, number);
     }

@@ -7,11 +7,8 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,61 +16,71 @@ import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
 
 public class PrintUtils {
 
-    public final static int MAX_LENGTH = 150;
-    public final static int size = 3;
-    public final static int spacing = 1;
+    public static final int MAX_LENGTH = 150;
+    public static final int SIZE = 3;
+    public static final int SPACING = 1;
 
-    private static final int mapX = 2;
-    private static final int mapY = 5;
+    private static final int MAP_X = 2;
+    private static final int MAP_Y = 5;
 
-    public static void stampMap(GameMap map, List<PlayerData> players, Map<String, Color> colorMap) {
+    private PrintUtils() {
+    }
+
+    private static void printMapBackground() {
+        StringBuilder bgLine = new StringBuilder();
+        IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))
+                .forEach(i -> bgLine.append(" "));
+
+        for (int i = 0; i < GameMap.SIDE_LENGTH * (SIZE + SPACING) + 1; i++) {
+            print(BG_GRASS2 + bgLine.toString(), MAP_X, MAP_Y + i, false);
+        }
+    }
+
+    public static void printWorkers(List<PlayerData> players, Map<String, Color> colorMap) {
+        for (PlayerData player : players) {
+            for (int i = 0; i < player.getWorkers().size(); i++) {
+                Worker w = player.getWorkers().get(i);
+
+                int x = MAP_X + 2 + w.getPosition().x * (SIZE * 2 + SPACING * 2 - 1);
+                int y = MAP_Y + 2 + w.getPosition().y * (SIZE + SPACING);
+
+                String string = colorMap.get(player.getName()) + "W" + (i + 1);
+
+                print(string, x, y, false);
+            }
+        }
+    }
+
+    public static void printMap(GameMap map) {
         if (map == null) {
             return;
         }
 
-        String s = String.format("%" + (size * 2 - 1) + "s", "");
+        printMapBackground();
 
-        StringBuilder bgLine = new StringBuilder();
-        IntStream.range(0, GameMap.SIDE_LENGTH * ((size * 2) + (spacing * 2 - 1)))
-                .forEach(i -> bgLine.append(" "));
-
-        for (int i = 0; i < GameMap.SIDE_LENGTH * (size + spacing) + 1; i++) {
-            print(BG_GRASS2 + bgLine.toString(), mapX, mapY + i, false);
-        }
+        String s = String.format("%" + (SIZE * 2 - 1) + "s", "");
 
         for (int i = 0; i < GameMap.SIDE_LENGTH; i++) {
             for (int j = 0; j < GameMap.SIDE_LENGTH; j++) {
                 Point point = new Point(i, j);
                 int level = map.getLevel(point) - (map.hasDome(point) ? 1 : 0);
-                int x = mapX + i * (size * 2) + i + spacing;
-                int y = mapY + j * size + j * spacing + spacing;
 
-                for (int k = 0; k < size; k++) {
+                int x = MAP_X + i * (SIZE * 2) + i + SPACING;
+                int y = MAP_Y + j * SIZE + j * SPACING + SPACING;
+
+                for (int k = 0; k < SIZE; k++) {
                     print(getColorFromLevel(level) + s, x, y + k, false);
                 }
 
-                print(BG_GRASS2 + BLACK.toString() + "L" + level, x + size * 2 - 3, y + size - 1, false);
+                print(BG_GRASS2 + BLACK.toString() + "L" + level, x + SIZE * 2 - 3, y + SIZE - 1, false);
 
                 if (map.hasDome(point)) {
-                    for (int k = 1; k < size - 1; k++) {
+                    for (int k = 1; k < SIZE - 1; k++) {
                         String string = BG_BRIGHT_BLUE + s.substring(4);
 
                         print(string, x + 2, y + k, false);
                     }
                 }
-            }
-        }
-
-        for (PlayerData player : players) {
-            for (int i = 0; i < player.getWorkers().size(); i++) {
-                Worker w = player.getWorkers().get(i);
-
-                int x = mapX + 2 + w.getPosition().x * (size * 2 + spacing * 2 - 1);
-                int y = mapY + 2 + w.getPosition().y * (size + spacing);
-
-                String string = colorMap.get(player.getName()) + "W" + (i + 1);
-
-                print(string, x, y, false);
             }
         }
     }
@@ -104,7 +111,7 @@ public class PrintUtils {
         print(c + "                                             ", 6, 16, false);
     }
 
-    public synchronized static void print(Object o) {
+    public static synchronized void print(Object o) {
         System.out.print(o);
         System.out.flush();
     }
@@ -159,19 +166,19 @@ public class PrintUtils {
     }
 
     public static Point getCommandCoords() {
-        return new Point(0, 4 + mapY + GameMap.SIDE_LENGTH * (size + spacing) - spacing);
+        return new Point(0, 4 + MAP_Y + GameMap.SIDE_LENGTH * (SIZE + SPACING) - SPACING);
     }
 
     private static int getOffset() {
-        return GameMap.SIDE_LENGTH * ((size + spacing) * 2 - 1) + 10;
+        return GameMap.SIDE_LENGTH * ((SIZE + SPACING) * 2 - 1) + 10;
     }
 
     public static void printPowerList(List<Power> list) {
         int row = 5;
 
-        print(list.size() > 0 ? "Power list:" : "", getOffset(), 4, true);
+        print(!list.isEmpty() ? "Power list:" : "", getOffset(), 4, true);
 
-        for (int i = mapY; i < getCommandCoords().y - 3; i++) {
+        for (int i = MAP_Y; i < getCommandCoords().y - 3; i++) {
             clearRow(getOffset(), i);
         }
 
@@ -191,7 +198,7 @@ public class PrintUtils {
     public static void printPlayerInfo(String clientPlayer, List<PlayerData> list, EnumTurnState state,
                                        Map<String, Color> colorMap, boolean interact) {
 
-        Function<String, String> name = (s) -> colorMap.get(s) + s +
+        UnaryOperator<String> name = s -> colorMap.get(s) + s +
                 (s.equals(clientPlayer) ? "(YOU)" : "") + RESET;
 
         clearRow(2, 1);
@@ -208,13 +215,6 @@ public class PrintUtils {
                     i * 20 + 2, 3, false);
         }
 
-//        if (list.size() > 0 && state != null) {
-//            print(String.format("Playing: '%s', Turn State: %s",
-//                    BLUE + list.get(0).getName() + RESET,
-//                    RED + state.toString()),
-//                    2, 3, true);
-//        }
-
         printCommand();
     }
 
@@ -227,8 +227,8 @@ public class PrintUtils {
 
             String s = String.valueOf(counter);
             print((isBlocked ? BG_DARK_RED : BG_BRIGHT_YELLOW) + "" + RED + s,
-                    mapX + point.x * (size * 2 - 1 + spacing * 2) + 1,
-                    mapY + point.y * (size + spacing) + 1,
+                    MAP_X + point.x * (SIZE * 2 - 1 + SPACING * 2) + 1,
+                    MAP_Y + point.y * (SIZE + SPACING) + 1,
                     false);
             counter++;
         }
@@ -265,14 +265,16 @@ public class PrintUtils {
     }
 
     private static List<String> reduceInLines(String longString, int width) {
-        Stack<StringBuilder> list = new Stack<>();
+        Deque<StringBuilder> list = new ArrayDeque<>();
 
         for (String s : longString.split(" ")) {
-            if (list.empty() || list.peek().length() + s.length() + 1 > width) {
+            if (list.isEmpty() || list.peek().length() + s.length() + 1 > width) {
                 list.push(new StringBuilder());
             }
 
-            list.peek().append(s).append(" ");
+            if (list.peek() != null) {
+                list.peek().append(s).append(" ");
+            }
         }
 
         return list.stream().map(StringBuilder::toString).collect(Collectors.toList());
