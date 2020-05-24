@@ -56,7 +56,7 @@ public class Server implements Runnable {
         try (ServerSocket serverSocket = new ServerSocket(socketPort)) {
             while (!serverSocket.isClosed()) {
                 Socket client = serverSocket.accept();
-                client.setSoTimeout(20000);
+//                client.setSoTimeout(20000);
 
                 System.out.println("Accepted client: " + client.getInetAddress());
                 //when a client connects it is put into a list of connected sockets and a ClientHandler is created

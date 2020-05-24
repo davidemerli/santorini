@@ -1,28 +1,23 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.*;
+import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
-import javafx.application.Platform;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiServerHandler extends ServerHandler {
 
-    private final GuiObserver guiObserver;
-
-    private final List<GuiController> controllers = new ArrayList<>();
 
     public GuiServerHandler(Client client) {
         super(client);
 
-        guiObserver = new GuiObserver(client, this);
-//        controllers.add(gameSceneController = new GameSceneController());
-        IpSelectionController.getInstance().addObserver(guiObserver);
+        GuiObserver guiObserver = new GuiObserver(client, this);
+
         ChooseGameSceneController.getInstance().addObserver(guiObserver);
-        //TODO: Add other observers
+        NameSelectionController.getInstance().addObserver(guiObserver);
+        IpSelectionController.getInstance().addObserver(guiObserver);
+        GameSceneController.getInstance().addObserver(guiObserver);
     }
 
     @Override
@@ -36,18 +31,23 @@ public class GuiServerHandler extends ServerHandler {
     public void handleRequest(ServerAskRequest packet) {
         super.handleRequest(packet);
 
+        //TODO: request types to decently written strings
+
+        GameSceneController.getInstance().showRequest(packet.getRequestType().toString());
     }
 
     @Override
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
 
+        GameSceneController.getInstance().showInteract(packet.shouldShowInteraction());
     }
 
     @Override
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
 
+        GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
     }
 
     @Override
@@ -56,7 +56,19 @@ public class GuiServerHandler extends ServerHandler {
     }
 
     @Override
-    public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
+    public void handlePlayerMove(ServerPlayerMove packet) {
+        switch (packet.getMoveType()) {
+            case MOVE:
+                ServerPlayerMove.PlayerMove move = (ServerPlayerMove.PlayerMove) packet.getMove();
+
+                GameSceneController.getInstance().moveWorker(move.getSrc(), move.getDest());
+                break;
+            case BUILD:
+                ServerPlayerMove.PlayerBuild build = (ServerPlayerMove.PlayerBuild) packet.getMove();
+
+                GameSceneController.getInstance().addBlockAt(build.getDest().x, build.getDest().y, build.forceDome());
+
+        }
     }
 
     @Override

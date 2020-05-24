@@ -23,7 +23,7 @@ public enum EnumScene {
     }
 
     public Parent load() throws IOException {
-        if(scene == null) {//TODO: check if new Scene or make scene in fxml
+        if(scene == null) {
             scene = FXMLLoader.load(getClass().getResource("/scenes/" + resource + ".fxml"));
         }
 

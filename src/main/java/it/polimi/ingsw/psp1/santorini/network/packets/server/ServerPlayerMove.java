@@ -37,7 +37,6 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
         return move;
     }
 
-
     private abstract static class PlayerTurn implements Serializable {
         private final Point where;
         private final Worker worker;
@@ -78,9 +77,15 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
 
     public static class PlayerBuild extends PlayerTurn {
 
-        public PlayerBuild(Worker worker, Point where) {
+        private final boolean forceDome;
+
+        public PlayerBuild(Worker worker, Point where, boolean forceDome) {
             super(worker, where);
+            this.forceDome = forceDome;
         }
 
+        public boolean forceDome() {
+            return forceDome;
+        }
     }
 }

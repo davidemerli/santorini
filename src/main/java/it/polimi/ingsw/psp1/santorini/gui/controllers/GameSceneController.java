@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import it.polimi.ingsw.psp1.santorini.gui.GuiObserver;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import javafx.animation.Animation;
@@ -9,18 +10,20 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
@@ -30,6 +33,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameSceneController extends GuiController implements Initializable {
+
+    private static GameSceneController instance;
 
     private final List<Node> validMoves = new ArrayList<>();
 
@@ -42,16 +47,41 @@ public class GameSceneController extends GuiController implements Initializable 
     private double anchorX, anchorY;
     private double anchorAngleX = 0;
     private double anchorAngleY = 0;
-    @FXML
-    private SubScene mainScene;
-
-    @FXML
-    private AnchorPane pane;
-
-    @FXML
-    private Button button;
 
     private Group board;
+
+    @FXML
+    private SubScene mainScene;
+    @FXML
+    private AnchorPane pane;
+    @FXML
+    private Button button;
+    @FXML
+    private Button interactButton;
+    @FXML
+    private Button undoButton;
+    @FXML
+    private ImageView requestBackground;
+    @FXML
+    private Text requestText;
+
+    public static GameSceneController getInstance() {
+        if (instance == null) {
+            instance = new GameSceneController();
+        }
+
+        return instance;
+    }
+
+    @FXML
+    private void interactPressed(ActionEvent event) {
+        notifyObservers(GuiObserver::interactPressed);
+    }
+
+    @FXML
+    private void undoPressed(ActionEvent event) {
+        notifyObservers(GuiObserver::undoPressed);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -80,14 +110,9 @@ public class GameSceneController extends GuiController implements Initializable 
 
         button.prefWidthProperty().bind(pane.widthProperty().divide(20));
         button.prefHeightProperty().bind(pane.widthProperty().divide(20));
-    }
 
-    private Point2D convert3DTo2D(double x, double z) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
-
-        Point3D point3D = new Point3D(x, 0, z).add(width / 2, 0, width / 2);
-
-        return new Point2D(point3D.getX() / width * 5, point3D.getZ() / width * 5);
+        getInstance().requestBackground = requestBackground;
+        getInstance().requestText = requestText;
     }
 
     private Point3D convert2DTo3D(double x, double y) {
@@ -124,17 +149,22 @@ public class GameSceneController extends GuiController implements Initializable 
             st.play();
 
             box.setOnMouseClicked(event -> {
-                if (event.isControlDown()) {
-                    addWorker(p.x, p.y, Color.GREEN, true);
-
+                notifyObservers(o -> o.onMoveSelected(p));
+                if (event.isShiftDown() && event.isControlDown()) {
+                    moveWorker(p, new Point(p.x + 1, p.y + 1));
                     return;
                 }
+                if (event.isControlDown()) {
+                    addWorker(p.x, p.y, Color.GREEN, true);
+                    return;
+                }
+
 
                 notifyObservers(o -> o.onMoveSelected(p));
 
                 int level = map.get(p) != null ? map.get(p).getChildren().size() + 1 : 1;
 
-                addBlockAt(p.x, p.y, event.isShiftDown() ? 4 : level);
+                addBlockAt(p.x, p.y, event.isShiftDown());
 
                 board.getChildren().removeAll(validMoves);
                 validMoves.clear();
@@ -165,8 +195,6 @@ public class GameSceneController extends GuiController implements Initializable 
 
         if (isOwn) {
             worker.setOnMouseClicked(event -> {
-                System.out.println("aaa");
-
                 notifyObservers(o -> o.onWorkerSelected(p));
             });
         }
@@ -175,7 +203,7 @@ public class GameSceneController extends GuiController implements Initializable 
         board.getChildren().add(worker);
     }
 
-    private void addBlockAt(int x, int y, int level) {
+    public void addBlockAt(int x, int y, boolean forceDome) {
         double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
 
         Point p = new Point(x, y);
@@ -186,7 +214,11 @@ public class GameSceneController extends GuiController implements Initializable 
             board.getChildren().add(g);
         }
 
-        Group block = loadModel("/mesh/level" + level + ".obj", "/textures/BuildingBlock0" + level + "_v001.png");
+        int level = forceDome ? 4 : (map.get(p).getChildren().size() + 1);
+
+        Group block = loadModel("/mesh/level" + level + ".obj",
+                "/textures/BuildingBlock0" + level + "_v001.png");
+
         block.getTransforms().add(new Translate(
                 -width / 2 + width / 10 + x * width / 5,
                 map.get(p).getChildren().size() > 0 ? -map.get(p).getLayoutBounds().getHeight() : 0,
@@ -199,6 +231,30 @@ public class GameSceneController extends GuiController implements Initializable 
         tt.setFromY(-20);
         tt.setToY(block.getLayoutY());
         tt.play();
+    }
+
+    public void moveWorker(Point from, Point to) {
+        Group worker = workers.get(from);
+        Point3D from3D = convert2DTo3D(from.x, from.y);
+        Point3D to3D = convert2DTo3D(to.x, to.y);
+
+        Point3D diff = to3D.subtract(from3D);
+
+        if (worker == null) {
+            throw new NoSuchElementException("Worker not found at given position");
+        }
+
+        double heightTo = map.get(to) != null ? -map.get(to).getLayoutBounds().getHeight() : 0;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(400), worker);
+        tt.setByX(diff.getX());
+        tt.setToY(heightTo);
+        tt.setByZ(diff.getZ());
+        tt.setInterpolator(Interpolator.TANGENT(Duration.millis(400), 2));
+        tt.play();
+
+        workers.remove(from);
+        workers.put(to, worker);
     }
 
     private Group loadModel(String obj, String texture) {
@@ -253,5 +309,30 @@ public class GameSceneController extends GuiController implements Initializable 
         });
     }
 
+    public void showInteract(boolean show) {
+        interactButton.setVisible(show);
+    }
 
+    public void showUndo(boolean show) {
+        undoButton.setVisible(show);
+    }
+
+    public void showRequest(String request) {
+        if(requestBackground == null || requestText == null) {
+            return;
+        }
+
+        requestBackground.setVisible(true);
+        requestText.setVisible(true);
+        requestText.setText(request);
+    }
+
+    public void hideRequest() {
+        if(requestBackground == null || requestText == null) {
+            return;
+        }
+
+        requestBackground.setVisible(false);
+        requestText.setVisible(false);
+    }
 }

@@ -40,7 +40,7 @@ public class Build extends TurnState {
 
         player.getPower().onBuild(player, optWorker.get(), position, game);
 
-        game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position));
+        game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position, game.getMap().hasDome(position)));
     }
 
     @Override

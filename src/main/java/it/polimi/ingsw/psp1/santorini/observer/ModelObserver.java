@@ -33,11 +33,12 @@ public interface ModelObserver {
     /**
      * Called when a player builds with a worker in the game
      *
-     * @param player the player making the build
-     * @param worker the worker that actually does build
-     * @param where  the position where the block is positioned
+     * @param player    the player making the build
+     * @param worker    the worker that actually does build
+     * @param where     the position where the block is positioned
+     * @param forceDome if player has forced dome build
      */
-    void playerBuild(Player player, Worker worker, Point where);
+    void playerBuild(Player player, Worker worker, Point where, boolean forceDome);
 
     /**
      * Called on a generic player update

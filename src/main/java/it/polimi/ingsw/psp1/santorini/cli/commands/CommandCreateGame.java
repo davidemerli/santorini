@@ -18,11 +18,10 @@ public class CommandCreateGame extends Command {
 
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
-        String name = arguments[0];
-        int number = Integer.parseInt(arguments[1]);
+        int number = Integer.parseInt(arguments[0]);
 
         client.sendPacket(new ClientCreateGame(number));
 
-        return String.format("Created new game '%s' with #players: '%d'", name, number);
+        return String.format("Created new game for '%d' players", number);
     }
 }

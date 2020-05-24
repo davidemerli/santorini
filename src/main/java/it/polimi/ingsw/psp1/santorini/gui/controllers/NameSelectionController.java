@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 
 public class NameSelectionController extends GuiController {
 
+    private static NameSelectionController instance;
+
     @FXML
     private TextField nameTextField;
 
@@ -22,4 +24,11 @@ public class NameSelectionController extends GuiController {
         notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
     }
 
+    public static NameSelectionController getInstance() {
+        if (instance == null) {
+            instance = new NameSelectionController();
+        }
+
+        return instance;
+    }
 }
