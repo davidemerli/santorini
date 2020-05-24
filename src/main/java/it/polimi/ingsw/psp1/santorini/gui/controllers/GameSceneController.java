@@ -75,12 +75,12 @@ public class GameSceneController extends GuiController implements Initializable 
 
     @FXML
     private void interactPressed(ActionEvent event) {
-        notifyObservers(GuiObserver::interactPressed);
+        getInstance().notifyObservers(GuiObserver::interactPressed);
     }
 
     @FXML
     private void undoPressed(ActionEvent event) {
-        notifyObservers(GuiObserver::undoPressed);
+        getInstance().notifyObservers(GuiObserver::undoPressed);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class GameSceneController extends GuiController implements Initializable 
                 }
 
 
-                notifyObservers(o -> o.onMoveSelected(p));
+                getInstance().notifyObservers(o -> o.onMoveSelected(p));
 
                 int level = map.get(p) != null ? map.get(p).getChildren().size() + 1 : 1;
 
@@ -195,7 +195,7 @@ public class GameSceneController extends GuiController implements Initializable 
 
         if (isOwn) {
             worker.setOnMouseClicked(event -> {
-                notifyObservers(o -> o.onWorkerSelected(p));
+                getInstance().notifyObservers(o -> o.onWorkerSelected(p));
             });
         }
 
@@ -318,7 +318,7 @@ public class GameSceneController extends GuiController implements Initializable 
     }
 
     public void showRequest(String request) {
-        if(requestBackground == null || requestText == null) {
+        if (requestBackground == null || requestText == null) {
             return;
         }
 
@@ -328,7 +328,7 @@ public class GameSceneController extends GuiController implements Initializable 
     }
 
     public void hideRequest() {
-        if(requestBackground == null || requestText == null) {
+        if (requestBackground == null || requestText == null) {
             return;
         }
 

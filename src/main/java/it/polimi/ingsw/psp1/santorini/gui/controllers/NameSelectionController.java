@@ -21,7 +21,7 @@ public class NameSelectionController extends GuiController {
     private void onButtonClick(ActionEvent event) {
         Gui.getInstance().changeSceneAsync(EnumScene.CREATE_JOIN, EnumTransition.UP);
 
-        notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
+        getInstance().notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
     }
 
     public static NameSelectionController getInstance() {

@@ -22,8 +22,6 @@ public class CommandManager {
     public String runCommand(Client client, CLIServerHandler serverHandler, String input) {
         String[] arguments = input.split(" ");
 
-        System.out.println(Arrays.toString(arguments));
-
         if (arguments.length > 0) {
             String cmd = arguments[0];
             Optional<Command> command = getCommand(cmd);

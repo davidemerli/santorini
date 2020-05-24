@@ -2,6 +2,7 @@ package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
 import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
 import it.polimi.ingsw.psp1.santorini.gui.Gui;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
@@ -11,6 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.List;
 
 public class IpSelectionController extends GuiController {
 
