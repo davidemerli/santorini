@@ -26,6 +26,9 @@ public class PrintUtils {
     private PrintUtils() {
     }
 
+    /**
+     * Prints map's background in console as soon as the game starts
+     */
     private static void printMapBackground() {
         StringBuilder bgLine = new StringBuilder();
         IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))
@@ -36,6 +39,12 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Prints workers in the correct position on map in console
+     *
+     * @param players  list of players from where to get workers for each player
+     * @param colorMap worker's color
+     */
     public static void printWorkers(List<PlayerData> players, Map<String, Color> colorMap) {
         for (PlayerData player : players) {
             for (int i = 0; i < player.getWorkers().size(); i++) {
@@ -51,6 +60,10 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Prints the current map in console whenever it changes
+     * @param map map that must be printed in console
+     */
     public static void printMap(GameMap map) {
         if (map == null) {
             return;
@@ -85,6 +98,9 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Prints the winning result at the end of the game
+     */
     public static void printWin() {
         String c = BG_BRIGHT_BLUE.toString() + BLUE.toString();
 
@@ -98,6 +114,9 @@ public class PrintUtils {
         print(c + "                                                     ", 6, 16, false);
     }
 
+    /**
+     * Prints the losing result at the end of the game
+     */
     public static void printLoser() {
         String c = BG_DARK_RED.toString() + RED.toString();
 
@@ -116,31 +135,57 @@ public class PrintUtils {
         System.out.flush();
     }
 
+    /**
+     * Used to clear console before using it
+     */
     public static void firstClear() {
         print("\033[H\033[3J\033[2J");
     }
 
+    /**
+     * Used to clear console while game is running
+     */
     public static void clear() {
         for (int i = 0; i < 150; i++) {
             clearRow(0, i);
         }
     }
 
+    /**
+     * Used to set cursor in a generic position in console
+     * @param x Column number
+     * @param y Row number
+     */
     public static void setCursor(int x, int y) {
         print(String.format("\033[%d;%dH", y, x));
     }
 
+    /**
+     * Used to set cursor in a standard position in console
+     */
     public static void resetCursor() {
         Point point = getCommandCoords();
         setCursor(point.x + 3, point.y);
     }
 
+    /**
+     * Used to clear a row in console
+     * @param x column number
+     * @param y row number
+     */
     public static void clearRow(int x, int y) {
         setCursor(x, y);
 
         print("\033[K");
     }
 
+    /**
+     * Used to print a string in console
+     * @param string string that must be printed in console
+     * @param x column number
+     * @param y row number
+     * @param toClean true if the row must be deleted before printing
+     */
     public static void print(String string, int x, int y, boolean toClean) {
         if (toClean) {
             clearRow(x, y);
@@ -160,6 +205,9 @@ public class PrintUtils {
         print(string, point.x + xOff, point.y + yOff, toClear);
     }
 
+    /**
+     * Used to print command zone in console
+     */
     public static void printCommand() {
         Point point = getCommandCoords();
         print("> ", point.x, point.y, true);
@@ -173,6 +221,11 @@ public class PrintUtils {
         return GameMap.SIDE_LENGTH * ((SIZE + SPACING) * 2 - 1) + 10;
     }
 
+    /**
+     * Used to print the list of gods in console
+     *
+     * @param list list that must be printed in console
+     */
     public static void printPowerList(List<Power> list) {
         int row = 5;
 
@@ -195,6 +248,15 @@ public class PrintUtils {
         resetCursor();
     }
 
+    /** ---------------
+     * Used to print players' info while gaming is running
+     *
+     * @param clientPlayer player name
+     * @param list
+     * @param state current state
+     * @param colorMap
+     * @param interact true if player can use the power of his god
+     */
     public static void printPlayerInfo(String clientPlayer, List<PlayerData> list, EnumTurnState state,
                                        Map<String, Color> colorMap, boolean interact) {
 
@@ -218,6 +280,12 @@ public class PrintUtils {
         printCommand();
     }
 
+    /**
+     * Used to print the valid moves on the map
+     *
+     * @param valid valid moves
+     * @param blocked blocked moves
+     */
     public static void printValidMoves(List<Point> valid, Map<Power, List<Point>> blocked) {
         int counter = 1;
 
@@ -234,6 +302,12 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Used to know which color must be used, because every level has different color
+     * 
+     * @param level block's level
+     * @return
+     */
     private static Color getColorFromLevel(int level) {
         switch (level) {
             case 1:

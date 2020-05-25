@@ -58,7 +58,7 @@ public class GameSceneController extends GuiController implements Initializable 
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
-        this.board = loadModel("/mesh/board.obj", "/textures/Cliff_v007.png");
+        this.board = loadModel("/mesh/Board.obj", "/textures/Cliff_v007.png");
         Group cliff = loadModel("/mesh/cliff.obj", "/textures/Cliff_v007.png");
         Group sea = loadModel("/mesh/sea.obj", "/textures/Sea_v006.png");
         Group islands = loadModel("/mesh/islands.obj", "/textures/Islands_v002.png");
