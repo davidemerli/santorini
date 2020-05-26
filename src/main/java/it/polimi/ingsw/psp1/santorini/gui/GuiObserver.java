@@ -62,4 +62,8 @@ public class GuiObserver {
     public static void undoPressed(GuiObserver guiObserver) {
         //TODO
     }
+
+    public void selectStartingPlayer(String playerName) {
+        client.sendPacket(new ClientSelectStartingPlayer(playerName));
+    }
 }
