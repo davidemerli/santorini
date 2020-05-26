@@ -3,6 +3,7 @@ package it.polimi.ingsw.psp1.santorini.gui;
 import it.polimi.ingsw.psp1.santorini.gui.controllers.*;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 import javafx.scene.paint.Color;
 
@@ -19,6 +20,7 @@ public class GuiServerHandler extends ServerHandler {
         IpSelectionController.getInstance().addObserver(guiObserver);
         GameSceneController.getInstance().addObserver(guiObserver);
         ChoosePowersController.getInstance().addObserver(guiObserver);
+        StartingPlayerController.getInstance().addObserver(guiObserver);
     }
 
     @Override
@@ -33,7 +35,12 @@ public class GuiServerHandler extends ServerHandler {
         super.handleRequest(packet);
 
         //TODO: request types to decently written strings
-
+        if (packet.getRequestType() == EnumRequestType.SELECT_STARTING_PLAYER) {
+            Gui.getInstance().changeSceneAsync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
+            for (PlayerData playerData : getPlayerDataList()) {
+                StartingPlayerController.getInstance().addPlayer(playerData.getName(), playerData.getPower());
+            }
+        }
         GameSceneController.getInstance().showRequest(packet.getRequestType().toString());
     }
 
@@ -48,7 +55,7 @@ public class GuiServerHandler extends ServerHandler {
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
 
-        if(isYourTurn()) {
+        if (isYourTurn()) {
             Gui.getInstance().changeSceneAsync(EnumScene.GAME, EnumTransition.DOWN);
 
             GameSceneController.getInstance().showValidMoves(packet.getValidMoves());

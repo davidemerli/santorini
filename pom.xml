@@ -109,7 +109,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>it.polimi.ingsw.psp1.santorini.gui.Gui</mainClass>
+              <mainClass>it.polimi.ingsw.psp1.santorini.cli.MainCli</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

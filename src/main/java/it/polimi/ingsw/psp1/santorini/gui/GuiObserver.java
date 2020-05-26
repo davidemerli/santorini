@@ -70,4 +70,8 @@ public class GuiObserver {
     public void interactPressed() {
         client.sendPacket(new ClientToggleInteraction());
     }
+
+    public void selectStartingPlayer(String playerName) {
+        client.sendPacket(new ClientSelectStartingPlayer(playerName));
+    }
 }
