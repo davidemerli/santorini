@@ -4,11 +4,12 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import org.w3c.dom.Text;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public class ChoosePowersController extends GuiController {
 
     private static ChoosePowersController instance;
-    private final List<Power> selectedPowers = new ArrayList<>();
+    private List<Power> selectedPowers;
 
     @FXML
     private AnchorPane descriptionPane;
@@ -37,33 +38,54 @@ public class ChoosePowersController extends GuiController {
         return instance;
     }
 
+    @FXML
+    private void initialize() {
+        String url = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
+
+        fullImage.setImage(new Image(url));
+        description.wrappingWidthProperty().bind(fullImage.fitWidthProperty());
+
+        getInstance().description = description;
+        getInstance().descriptionPane = descriptionPane;
+        getInstance().flowPane = flowPane;
+        getInstance().fullImage = fullImage;
+        getInstance().selectionBox = selectionBox;
+        getInstance().selectedPowers = new ArrayList<>();
+    }
+
     public void addGods(List<Power> powers, int selectSize) {
         Platform.runLater(() -> {
             for (Power power : powers) {
+                System.out.println(power);
                 String url = getClass().getResource("/gui_assets/god_cards/with_background/"
                         + power.getName() + ".png").toString();
 
                 ImageView image = new ImageView(url);
+                image.fitWidthProperty().bind(getInstance().flowPane.widthProperty().divide(3));
+                image.setPreserveRatio(true);
 
                 image.setOnMouseClicked(mouseEvent -> {
-                    description.setTextContent(power.getDescription());
-                    fullImage = new ImageView(image.getImage());
+                    getInstance().description.setText(power.getDescription());
+                    getInstance().fullImage.setImage(image.getImage());
 
-                    if (mouseEvent.isSecondaryButtonDown()) {//TODO: change this selection method
-                        if (selectSize > selectedPowers.size()) {
-                            selectionBox.getChildren().add(new ImageView(image.getImage()));
-                            selectedPowers.add(power);
+                    if (mouseEvent.isShiftDown()) {//TODO: change this selection method
+                        if (selectSize > getInstance().selectedPowers.size()) {
+                            ImageView selectedImage = new ImageView(image.getImage());
+                            selectedImage.fitWidthProperty().bind(image.fitWidthProperty().divide(1.5));
+                            selectedImage.setPreserveRatio(true);
+                            getInstance().selectionBox.getChildren().add(selectedImage);
+                            getInstance().selectedPowers.add(power);
                         }
                     }
                 });
 
-                flowPane.getChildren().add(image);
+                getInstance().flowPane.getChildren().add(image);
             }
         });
     }
 
     @FXML
     void clickConfirm(ActionEvent event) {
-        notifyObservers(o -> o.selectPowers(selectedPowers));
+        getInstance().notifyObservers(o -> o.selectPowers(getInstance().selectedPowers));
     }
 }

@@ -69,7 +69,7 @@ public class RemoteView extends View {
      */
     @Override
     public void playerMove(Player player, Worker worker, Point from, Point where) {
-        ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, where, from);
+        ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, from, where);
 
         ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumActionType.MOVE);
         connection.sendPacket(packet);
@@ -81,8 +81,8 @@ public class RemoteView extends View {
      * Sends a packet with action data
      */
     @Override
-    public void playerBuild(Player player, Worker worker, Point where) {
-        ServerPlayerMove.PlayerBuild move = new ServerPlayerMove.PlayerBuild(worker, where);
+    public void playerBuild(Player player, Worker worker, Point where, boolean forceDome) {
+        ServerPlayerMove.PlayerBuild move = new ServerPlayerMove.PlayerBuild(worker, where, forceDome);
 
         ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumActionType.BUILD);
         connection.sendPacket(packet);

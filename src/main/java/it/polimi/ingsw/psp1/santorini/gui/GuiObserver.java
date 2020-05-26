@@ -18,6 +18,10 @@ public class GuiObserver {
         this.serverHandler = serverHandler;
     }
 
+    public static void undoPressed(GuiObserver guiObserver) {
+        //TODO
+    }
+
     public void onMoveSelected(Point point) {
         client.sendPacket(new ClientSelectSquare(point));
     }
@@ -48,6 +52,7 @@ public class GuiObserver {
 
     public void onNameSelection(String name) {
         client.sendPacket(new ClientSetName(name));
+        serverHandler.setPlayerName(name);
     }
 
     public void createGame(int players) {
@@ -60,5 +65,9 @@ public class GuiObserver {
 
     public void selectPowers(List<Power> selectedPowers) {
         selectedPowers.forEach(p -> client.sendPacket(new ClientChoosePower(p)));
+    }
+
+    public void interactPressed() {
+        client.sendPacket(new ClientToggleInteraction());
     }
 }

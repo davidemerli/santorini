@@ -1,35 +1,41 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
-import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.gui.GuiObserver;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
-import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class GameSceneController extends GuiController implements Initializable {
+public class GameSceneController extends GuiController {
+
+    private static ExecutorService pool = Executors.newSingleThreadScheduledExecutor();
+
+    private static GameSceneController instance;
 
     private final List<Node> validMoves = new ArrayList<>();
 
@@ -42,23 +48,50 @@ public class GameSceneController extends GuiController implements Initializable 
     private double anchorX, anchorY;
     private double anchorAngleX = 0;
     private double anchorAngleY = 0;
-    @FXML
-    private SubScene mainScene;
 
-    @FXML
-    private AnchorPane pane;
-
-    @FXML
-    private Button button;
+    private boolean isAnimating;
 
     private Group board;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    private SubScene mainScene;
+    @FXML
+    private AnchorPane pane;
+    @FXML
+    private Button button;
+    @FXML
+    private Button interactButton;
+    @FXML
+    private Button undoButton;
+    @FXML
+    private ImageView requestBackground;
+    @FXML
+    private Text requestText;
+
+    public static GameSceneController getInstance() {
+        if (instance == null) {
+            instance = new GameSceneController();
+        }
+
+        return instance;
+    }
+
+    @FXML
+    private void interactPressed(ActionEvent event) {
+        getInstance().notifyObservers(GuiObserver::interactPressed);
+    }
+
+    @FXML
+    private void undoPressed(ActionEvent event) {
+        getInstance().notifyObservers(GuiObserver::undoPressed);
+    }
+
+    @FXML
+    public void initialize() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
-        this.board = loadModel("/mesh/Board.obj", "/textures/Cliff_v007.png");
+        this.board = loadModel("/mesh/board.obj", "/textures/Cliff_v007.png");
         Group cliff = loadModel("/mesh/cliff.obj", "/textures/Cliff_v007.png");
         Group sea = loadModel("/mesh/sea.obj", "/textures/Sea_v006.png");
         Group islands = loadModel("/mesh/islands.obj", "/textures/Islands_v002.png");
@@ -76,129 +109,160 @@ public class GameSceneController extends GuiController implements Initializable 
 
         initMouseControl(root, mainScene);
 
-        showValidMoves(List.of(new Point(0, 0), new Point(3, 2), new Point(4, 2)));
-
         button.prefWidthProperty().bind(pane.widthProperty().divide(20));
         button.prefHeightProperty().bind(pane.widthProperty().divide(20));
-    }
 
-    private Point2D convert3DTo2D(double x, double z) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
+        getInstance().requestBackground = requestBackground;
+        getInstance().requestText = requestText;
+        getInstance().interactButton = interactButton;
+        getInstance().undoButton = undoButton;
 
-        Point3D point3D = new Point3D(x, 0, z).add(width / 2, 0, width / 2);
-
-        return new Point2D(point3D.getX() / width * 5, point3D.getZ() / width * 5);
+        getInstance().board = board;
     }
 
     private Point3D convert2DTo3D(double x, double y) {
         double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
 
-        return new Point3D(x * width / 5, 0, y * width / 5)
+        return new Point3D(x * width / 5, 0, (4 - y) * width / 5)
                 .subtract(width / 2, 0, width / 2)
                 .add(width / 10, 0, width / 10);
     }
 
     public void showValidMoves(List<Point> moves) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
+        pool.submit(() -> {
+            Platform.runLater(() -> {
+                double width = getInstance().board.layoutBoundsProperty().getValue().getWidth() * 0.95;
 
-        board.getChildren().removeAll(validMoves);
-        validMoves.clear();
+                getInstance().board.getChildren().removeAll(getInstance().validMoves);
+                getInstance().validMoves.clear();
 
-        for (Point p : moves) {
-            Point3D p3D = convert2DTo3D(p.x, p.y);
-            Cylinder box = new Cylinder(width / 15, 0.1);
-            box.setTranslateX(p3D.getX());
-            box.setTranslateY(-3.5 - (map.get(p) == null ? 0 : map.get(p).getLayoutBounds().getHeight()));
-            box.setTranslateZ(p3D.getZ());
-            PhongMaterial m = new PhongMaterial(Color.valueOf("#3DABFF99"),
-                    null, null, null, null);
-            box.setMaterial(m);
+                for (Point p : moves) {
+                    Point3D p3D = convert2DTo3D(p.x, p.y);
+                    Cylinder box = new Cylinder(width / 15, 0.1);
+                    box.setTranslateX(p3D.getX());
+                    box.setTranslateY(-3.5 - (getInstance().map.get(p) == null ? 0 : getInstance().map.get(p).getLayoutBounds().getHeight()));
+                    box.setTranslateZ(p3D.getZ());
+                    PhongMaterial m = new PhongMaterial(Color.valueOf("#3DABFF99"),
+                            null, null, null, null);
+                    box.setMaterial(m);
 
-            ScaleTransition st = new ScaleTransition(Duration.millis(500), box);
-            st.setCycleCount(Animation.INDEFINITE);
-            st.setAutoReverse(true);
-            st.setFromX(0.8);
-            st.setFromZ(0.8);
-            st.setToX(1);
-            st.setToZ(1);
-            st.play();
+                    ScaleTransition st = new ScaleTransition(Duration.millis(500), box);
+                    st.setCycleCount(Animation.INDEFINITE);
+                    st.setAutoReverse(true);
+                    st.setFromX(0.8);
+                    st.setFromZ(0.8);
+                    st.setToX(1);
+                    st.setToZ(1);
+                    st.play();
 
-            box.setOnMouseClicked(event -> {
-                if (event.isControlDown()) {
-                    addWorker(p.x, p.y, Color.GREEN, true);
+                    box.setOnMouseClicked(event -> {
+                        getInstance().notifyObservers(o -> o.onMoveSelected(p));
 
-                    return;
+                        getInstance().board.getChildren().removeAll(getInstance().validMoves);
+                        getInstance().validMoves.clear();
+                    });
+
+                    getInstance().validMoves.add(box);
                 }
 
-                notifyObservers(o -> o.onMoveSelected(p));
-
-                int level = map.get(p) != null ? map.get(p).getChildren().size() + 1 : 1;
-
-                addBlockAt(p.x, p.y, event.isShiftDown() ? 4 : level);
-
-                board.getChildren().removeAll(validMoves);
-                validMoves.clear();
-
-                showValidMoves(new GameMap().getAllSquares().stream()
-                        .filter(pp -> !map.containsKey(pp) || map.get(pp).getChildren().size() != 4)
-                        .collect(Collectors.toList()));
+                getInstance().board.getChildren().addAll(validMoves);
             });
-
-            validMoves.add(box);
-        }
-
-        board.getChildren().addAll(validMoves);
+        });
     }
 
-    private void addWorker(int x, int y, Color color, boolean isOwn) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
-        Point p = new Point(x, y);
+    public void addWorker(int x, int y, Color color, boolean isOwn) {
+        Platform.runLater(() -> {
+            Point p = new Point(x, y);
+            Point3D p3D = convert2DTo3D(x, y);
 
-        Group worker = loadModel("/mesh/MaleBuilder_Blue.obj",
-                "/textures/MaleBuilder_Tan_v001.png",
-                color);
+            Group worker = loadModel("/mesh/MaleBuilder_Blue.obj",
+                    "/textures/MaleBuilder_Tan_v001.png",
+                    color);
 
-        worker.getTransforms().add(new Translate(
-                -width / 2 + width / 10 + x * width / 5,
-                0,
-                -width / 2 + width / 10 + y * width / 5));
+            worker.getTransforms().add(new Translate(p3D.getX(), p3D.getY(), p3D.getZ()));
 
-        if (isOwn) {
             worker.setOnMouseClicked(event -> {
-                System.out.println("aaa");
-
-                notifyObservers(o -> o.onWorkerSelected(p));
+                if (isOwn) {
+                    getInstance().notifyObservers(o -> o.onWorkerSelected(p));
+                } else {
+                    getInstance().notifyObservers(o -> o.onMoveSelected(p));
+                }
             });
-        }
 
-        workers.put(p, worker);
-        board.getChildren().add(worker);
+
+            getInstance().workers.put(p, worker);
+            getInstance().board.getChildren().add(worker);
+        });
     }
 
-    private void addBlockAt(int x, int y, int level) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
+    public void addBlockAt(int x, int y, boolean forceDome) {
+        Platform.runLater(() -> {
+            getInstance().isAnimating = true;
 
-        Point p = new Point(x, y);
+            Point p = new Point(x, y);
+            Point3D p3D = convert2DTo3D(x, y);
 
-        if (!map.containsKey(p)) {
-            Group g = new Group();
-            map.put(p, g);
-            board.getChildren().add(g);
-        }
+            if (!getInstance().map.containsKey(p)) {
+                Group g = new Group();
+                getInstance().map.put(p, g);
+                getInstance().board.getChildren().add(g);
+            }
 
-        Group block = loadModel("/mesh/level" + level + ".obj", "/textures/BuildingBlock0" + level + "_v001.png");
-        block.getTransforms().add(new Translate(
-                -width / 2 + width / 10 + x * width / 5,
-                map.get(p).getChildren().size() > 0 ? -map.get(p).getLayoutBounds().getHeight() : 0,
-                -width / 2 + width / 10 + y * width / 5));
+            int level = forceDome ? 4 : (getInstance().map.get(p).getChildren().size() + 1);
 
-        map.get(p).getChildren().add(block);
+            Group block = loadModel("/mesh/level" + level + ".obj",
+                    "/textures/BuildingBlock0" + level + "_v001.png");
 
-        TranslateTransition tt = new TranslateTransition(Duration.millis(400), block);
-        tt.setInterpolator(Interpolator.EASE_IN);
-        tt.setFromY(-20);
-        tt.setToY(block.getLayoutY());
-        tt.play();
+            block.getTransforms().add(new Translate(
+                    p3D.getX(),
+                    getInstance().map.get(p).getChildren().size() > 0 ? -getInstance().map.get(p).getLayoutBounds().getHeight() : 0,
+                    p3D.getZ()));
+
+            getInstance().map.get(p).getChildren().add(block);
+
+            TranslateTransition tt = new TranslateTransition(Duration.millis(200), block);
+            tt.setInterpolator(Interpolator.EASE_IN);
+            tt.setFromY(-20);
+            tt.setToY(block.getLayoutY());
+            tt.setOnFinished(event -> getInstance().isAnimating = false);
+
+            tt.play();
+        });
+    }
+
+    public void moveWorker(Point from, Point to) {
+        Platform.runLater(() -> {
+            pool.submit(() -> {
+                getInstance().isAnimating = true;
+
+                Group worker = getInstance().workers.get(from);
+                Point3D from3D = convert2DTo3D(from.x, from.y);
+                Point3D to3D = convert2DTo3D(to.x, to.y);
+
+                Point3D diff = to3D.subtract(from3D);
+
+                if (worker == null) {
+                    throw new NoSuchElementException("Worker not found at given position");
+                }
+
+                double heightTo = getInstance().map.get(to) != null ? -getInstance().map.get(to).getLayoutBounds().getHeight() : 0;
+
+                TranslateTransition tt = new TranslateTransition(Duration.millis(400), worker);
+                tt.setByX(diff.getX());
+                tt.setToY(heightTo);
+                tt.setByZ(diff.getZ());
+                tt.setInterpolator(Interpolator.TANGENT(Duration.millis(400), 2));
+                tt.setOnFinished(event -> getInstance().isAnimating = false);
+
+                tt.play();
+
+                getInstance().workers.put(to, worker);
+
+                worker.setOnMouseClicked(event -> {
+                    getInstance().notifyObservers(o -> o.onWorkerSelected(to));
+                });
+            });
+        });
     }
 
     private Group loadModel(String obj, String texture) {
@@ -215,7 +279,6 @@ public class GameSceneController extends GuiController implements Initializable 
             modelRoot.getChildren().add(view);
 
             Image im = new Image(getClass().getResourceAsStream(texture));
-
 
             PhongMaterial material = new PhongMaterial(color);
             material.setSelfIlluminationMap(im);
@@ -253,5 +316,42 @@ public class GameSceneController extends GuiController implements Initializable 
         });
     }
 
+    public void showInteract(boolean show) {
+        if (getInstance().interactButton == null) {
+            return;
+        }
 
+        Platform.runLater(() -> getInstance().interactButton.setVisible(show));
+    }
+
+    public void showUndo(boolean show) {
+        if (getInstance().undoButton == null) {
+            return;
+        }
+
+        Platform.runLater(() -> getInstance().undoButton.setVisible(show));
+    }
+
+    public void showRequest(String request) {
+        if (getInstance().requestBackground == null || getInstance().requestText == null) {
+            return;
+        }
+
+        Platform.runLater(() -> {
+            getInstance().requestBackground.setVisible(true);
+            getInstance().requestText.setVisible(true);
+            getInstance().requestText.setText(request);
+        });
+    }
+
+    public void hideRequest() {
+        if (getInstance().requestBackground == null || getInstance().requestText == null) {
+            return;
+        }
+
+        Platform.runLater(() -> {
+            getInstance().requestBackground.setVisible(false);
+            getInstance().requestText.setVisible(false);
+        });
+    }
 }

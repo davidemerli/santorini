@@ -46,7 +46,14 @@ public class Apollo extends Mortal {
 
             if (optWorker.isPresent()) {
                 Point oldPos = worker.getPosition();
-                optWorker.get().setPosition(oldPos);//switch
+
+                Optional<Player> opponent = game.getPlayerOf(optWorker.get());
+
+                if(opponent.isPresent()) {
+                    game.moveWorker(opponent.get(), optWorker.get(), oldPos);
+                } else {
+                    throw new IllegalStateException("Player of opponent worker not found");
+                }
             }
         }
 

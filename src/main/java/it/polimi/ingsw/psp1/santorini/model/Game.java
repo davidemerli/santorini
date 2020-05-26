@@ -41,7 +41,8 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public void startGame() {
-        shufflePlayers();
+//        shufflePlayers();
+//        shiftPlayers(-1);//TODO: remove since used for debug
         setTurnState(new SelectPowers(this));
 
         notifyObservers(o -> o.gameUpdate(this));
@@ -146,8 +147,9 @@ public class Game extends Observable<ModelObserver> {
             throw new UnsupportedOperationException("Player does not own given worker");
         }
 
-        optWorker.get().setPosition(newPosition);
+        notifyObservers(o -> o.playerMove(player, optWorker.get(), optWorker.get().getPosition(), newPosition));
 
+        optWorker.get().setPosition(newPosition);
         notifyObservers(o -> o.gameUpdate(this));
     }
 

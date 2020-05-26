@@ -1,5 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
+import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
+import it.polimi.ingsw.psp1.santorini.gui.Gui;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,40 +19,28 @@ public class ChooseGameSceneController extends GuiController {
 
     @FXML
     private AnchorPane rootPane;
-
     @FXML
     private Button createButton;
-
     @FXML
     private Button joinButton;
-
     @FXML
     private GridPane rightPane;
-
     @FXML
     private Button confirmCreate;
-
     @FXML
     private CheckBox joinCheckBox3;
-
     @FXML
     private CheckBox joinCheckBox2;
-
     @FXML
     private Button joinX;
-
     @FXML
     private GridPane leftPane;
-
     @FXML
     private Button confirmJoin;
-
     @FXML
     private CheckBox createCheckBox2;
-
     @FXML
     private CheckBox createCheckBox3;
-
     @FXML
     private Button createX;
 
@@ -69,7 +59,7 @@ public class ChooseGameSceneController extends GuiController {
     }
 
     @FXML
-    void ClickCreate(ActionEvent event) {
+    private void clickCreate(ActionEvent event) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(toggleLeft ? 200 : 300), leftPane);
         tt.setToX(toggleLeft ? 0 : leftPane.getBoundsInParent().getWidth());
         tt.play();
@@ -86,7 +76,7 @@ public class ChooseGameSceneController extends GuiController {
     }
 
     @FXML
-    void ClickJoin(ActionEvent event) {
+    private void clickJoin(ActionEvent event) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(toggleRight ? 200 : 300), rightPane);
         tt.setToX(toggleRight ? 0 : -rightPane.getBoundsInParent().getWidth());
         tt.play();
@@ -103,7 +93,7 @@ public class ChooseGameSceneController extends GuiController {
     }
 
     @FXML
-    void click(ActionEvent event) {
+    private void click(ActionEvent event) {
         if (event.getSource().equals(createCheckBox2)) {
             createCheckBox3.setSelected(false);
         }
@@ -122,22 +112,26 @@ public class ChooseGameSceneController extends GuiController {
     }
 
     @FXML
-    void clickX(ActionEvent event) {
+    private void clickX(ActionEvent event) {
         if (event.getSource().equals(createX)) {
-            ClickCreate(event);
+            clickCreate(event);
         }
         if (event.getSource().equals(joinX)) {
-            ClickJoin(event);
+            clickJoin(event);
         }
     }
 
     @FXML
-    void createGame(ActionEvent event) {
-        notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
+    private void createGame(ActionEvent event) {
+        getInstance().notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
+
+        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
 
     @FXML
-    void joinGame(ActionEvent event) {
-        notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
+    private void joinGame(ActionEvent event) {
+        getInstance().notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
+
+        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
 }

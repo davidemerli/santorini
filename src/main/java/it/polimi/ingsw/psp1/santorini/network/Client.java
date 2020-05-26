@@ -27,7 +27,17 @@ public class Client implements Runnable {
         this.ip = ip;
         this.port = port;
 
-        new Thread(this).start();
+        try {
+            synchronized (lock) {
+                server = new Socket(ip, port);
+                connected = true;
+                lock.notifyAll();
+            }
+
+            new Thread(this).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disconnect() {
@@ -62,17 +72,9 @@ public class Client implements Runnable {
     @Override
     @SuppressWarnings("unchecked")
     public void run() {
-        try (Socket serverSocket = new Socket(ip, port)) {
-            synchronized (lock) {
-                connected = true;
-                lock.notifyAll();
-            }
-
-            server = serverSocket;
-
+        try {
             ObjectInputStream objectInputStream = new ObjectInputStream(server.getInputStream());
             objectOutputStream = new ObjectOutputStream(server.getOutputStream());
-
 
             while (isConnected()) {
                 if (serverHandler != null) {
@@ -82,6 +84,7 @@ public class Client implements Runnable {
             }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             //TODO: cannot print like this (not good in GUI)
+            e.printStackTrace();
 
             PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
                     0, -1, true);
@@ -95,14 +98,8 @@ public class Client implements Runnable {
     }
 
     public boolean isConnected() {
-        try {
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (lock) {
+            return connected;
         }
-
-        return connected;
     }
 }

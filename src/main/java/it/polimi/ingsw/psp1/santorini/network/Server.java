@@ -3,6 +3,7 @@ package it.polimi.ingsw.psp1.santorini.network;
 import it.polimi.ingsw.psp1.santorini.controller.Controller;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerConnectedToGame;
 import it.polimi.ingsw.psp1.santorini.view.RemoteView;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
@@ -36,7 +37,7 @@ public class Server implements Runnable {
         this.twoPlayerGameQueue = new ConcurrentHashMap<>();
         this.threePlayerGameQueue = new ConcurrentHashMap<>();
 
-        this.games = Collections.synchronizedMap(new LinkedHashMap<>());
+        this.games = new ConcurrentHashMap<>();
 
         this.pool = Executors.newFixedThreadPool(128);
 
@@ -56,7 +57,7 @@ public class Server implements Runnable {
         try (ServerSocket serverSocket = new ServerSocket(socketPort)) {
             while (!serverSocket.isClosed()) {
                 Socket client = serverSocket.accept();
-                client.setSoTimeout(20000);
+//                client.setSoTimeout(20000);
 
                 System.out.println("Accepted client: " + client.getInetAddress());
                 //when a client connects it is put into a list of connected sockets and a ClientHandler is created
@@ -101,6 +102,14 @@ public class Server implements Runnable {
                         } else {
                             threePlayerGameQueue.remove(waitingClient.get().getKey());
                         }
+
+                        for (ClientConnectionHandler ch : gamePlayers.keySet()) {
+                            if (gamePlayers.get(ch).equals(waitingClient.get().getValue())) {
+                                gamePlayers.values().forEach(p -> ch.sendPacket(new ServerConnectedToGame(p.getName())));
+                            } else {
+                                ch.sendPacket(new ServerConnectedToGame(waitingClient.get().getValue().getName()));
+                            }
+                        }
                     }
                 }
 
@@ -122,6 +131,7 @@ public class Server implements Runnable {
                 }
             });
         }
+
     }
 
     /**
@@ -150,6 +160,8 @@ public class Server implements Runnable {
 
         //add a new game to the list of games
         games.put(newGame, new LinkedHashMap<>(Map.of(connectionHandler, optPlayer.get())));
+
+        connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName()));
     }
 
     public void disconnectClient(ClientConnectionHandler connectionHandler) {
@@ -185,7 +197,15 @@ public class Server implements Runnable {
             throw new IllegalStateException("You need to set a name first");
         }
 
-        games.get(toJoin.get()).put(connectionHandler, optPlayer.get());
+        Map<ClientConnectionHandler, Player> game = games.get(toJoin.get());
+        game.put(connectionHandler, optPlayer.get());
+        for (Player p : game.values()) {
+            if (p.equals(connectionHandler.getPlayer().orElse(null))) {
+                game.values().forEach(pp -> connectionHandler.sendPacket(new ServerConnectedToGame(pp.getName())));
+            } else {
+                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName()));
+            }
+        }
         clientsToRelocate.remove(connectionHandler);
     }
 
