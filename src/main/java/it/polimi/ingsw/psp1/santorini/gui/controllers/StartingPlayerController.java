@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.LinkedHashMap;
+
 public class StartingPlayerController extends GuiController {
 
     private static StartingPlayerController instance;
@@ -22,11 +24,6 @@ public class StartingPlayerController extends GuiController {
 
     @FXML
     private HBox playerBox;
-
-    @FXML
-    private void inizialize() {
-
-    }
 
     public static StartingPlayerController getInstance() {
         if (instance == null) {
@@ -40,6 +37,7 @@ public class StartingPlayerController extends GuiController {
     private void initialize() {
         getInstance().playerBox = playerBox;
     }
+
 
     public void addPlayer(String playerName, Power playerPower) {
         Platform.runLater(() -> {

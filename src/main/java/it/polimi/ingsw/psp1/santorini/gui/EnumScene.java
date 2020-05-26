@@ -12,9 +12,10 @@ public enum EnumScene {
     IP_SELECT("choose_ip"),
     CREATE_JOIN("create_join"),
     CHOOSE_POWERS("choose2"),
+    WAIT_GOD_SELECTION("wait_god_selection"),
+    STARTING_PLAYER("choose_starting_player"),
     GAME("game_scene"),
-    TEST("test"),
-    WAIT_GOD_SELECTION("wait_god_selection");
+    TEST("test");
 
     String resource;
     Parent scene;
