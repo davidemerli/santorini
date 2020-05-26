@@ -173,10 +173,18 @@ public class GameMap implements Serializable {
         return list;
     }
 
+    /**
+     * Used to copy a GameMap
+     * @return copied map
+     */
     public GameMap copy() {
         return new GameMap(this);
     }
 
+    /**
+     * Used to get all the squares of the map
+     * @return list with all squares of the map
+     */
     public List<Point> getAllSquares() {
         List<Point> list = new ArrayList<>();
 

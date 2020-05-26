@@ -19,6 +19,11 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         new Thread(this).start();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to run CLI
+     */
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -33,6 +38,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives information about game, players and players' state from server
+     *
+     * @param packet contains information about game
+     */
     @Override
     public void handleGameData(ServerGameData packet) {
         super.handleGameData(packet);
@@ -46,6 +58,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printCommand();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives a request from the server to be processed
+     *
+     * @param packet contains a server request
+     */
     @Override
     public void handleRequest(ServerAskRequest packet) {
         super.handleRequest(packet);
@@ -95,6 +114,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printCommand();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives information about current player, players's state and power activation
+     *
+     * @param packet contains information about current player
+     */
     @Override
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
@@ -122,6 +148,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives all valid moves of the current players
+     *
+     * @param packet contains valid moves and blocked moves
+     */
     @Override
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
@@ -131,6 +164,12 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printValidMoves(getValidMoves(), getBlockedMoves());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives an error from the server
+     * @param packet contains an error
+     */
     @Override
     public void handleError(ServerInvalidPacket packet) {
         PrintUtils.printFromCommand(Color.RED + packet.getError(), 0, 3, true);

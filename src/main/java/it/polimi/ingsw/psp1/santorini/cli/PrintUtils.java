@@ -62,6 +62,7 @@ public class PrintUtils {
 
     /**
      * Prints the current map in console whenever it changes
+     *
      * @param map map that must be printed in console
      */
     public static void printMap(GameMap map) {
@@ -153,6 +154,7 @@ public class PrintUtils {
 
     /**
      * Used to set cursor in a generic position in console
+     *
      * @param x Column number
      * @param y Row number
      */
@@ -170,6 +172,7 @@ public class PrintUtils {
 
     /**
      * Used to clear a row in console
+     *
      * @param x column number
      * @param y row number
      */
@@ -181,6 +184,7 @@ public class PrintUtils {
 
     /**
      * Used to print a string in console
+     *
      * @param string string that must be printed in console
      * @param x column number
      * @param y row number
@@ -200,6 +204,14 @@ public class PrintUtils {
         resetCursor();
     }
 
+    /**
+     *
+     *
+     * @param string
+     * @param xOff
+     * @param yOff
+     * @param toClear
+     */
     public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
         Point point = getCommandCoords();
         print(string, point.x + xOff, point.y + yOff, toClear);
@@ -213,6 +225,11 @@ public class PrintUtils {
         print("> ", point.x, point.y, true);
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public static Point getCommandCoords() {
         return new Point(0, 4 + MAP_Y + GameMap.SIDE_LENGTH * (SIZE + SPACING) - SPACING);
     }
@@ -321,6 +338,10 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Used to print
+     * @param power
+     */
     public static void printPowerInfo(Power power) {
         List<String> desc = reduceInLines(power.getDescription(), 50);
 

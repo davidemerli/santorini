@@ -20,6 +20,18 @@ public class Controller implements ViewObserver {
         this.model = model;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to select a square on the map
+     *
+     * @param view     the view where the even is coming from
+     * @param player   the player associated with the view
+     * @param location of the square
+     * @throws UnsupportedOperationException if operation is not valid
+     * @throws ArrayIndexOutOfBoundsException if point is out of map
+     * @throws IllegalArgumentException if at least one argument is not valid
+     */
     @Override
     public void selectSquare(View view, Player player, Point location) {
         try {
@@ -35,6 +47,19 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to select worker on the map
+     *
+     * @param view           the view where the even is coming from
+     * @param player         the player associated with the view
+     * @param workerPosition on the map
+     * @throws UnsupportedOperationException
+     * @throws ArrayIndexOutOfBoundsException
+     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
+     */
     @Override
     public void selectWorker(View view, Player player, Point workerPosition) {
         try {
@@ -62,6 +87,17 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to set the power activation button correctly
+     *
+     * @param view   the view where the even is coming from
+     * @param player the player associated with the view
+     * @throws UnsupportedOperationException
+     * @throws ArrayIndexOutOfBoundsException
+     * @throws IllegalArgumentException
+     */
     @Override
     public void toggleInteraction(View view, Player player) {
         try {
@@ -77,6 +113,16 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to select the gods
+     *
+     * @param view      the view where the even is coming from
+     * @param player    the player associated with the view
+     * @param powerList with the select powers (singletonList or 2 to 3 power list)
+     * @throws UnsupportedOperationException
+     */
     @Override
     public void selectPowers(View view, Player player, List<Power> powerList) {
         try {
@@ -91,6 +137,16 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used to select the starting player
+     * 
+     * @param view             the view where the even is coming from
+     * @param player           the player associated with the view
+     * @param chosenPlayerName starting player name
+     * @throws UnsupportedOperationException
+     */
     @Override
     public void selectStartingPlayer(View view, Player player, String chosenPlayerName) {
         try {
@@ -105,6 +161,15 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used if a player wants to cancel the move
+     *
+     * @param view   the view where the even is coming from
+     * @param player the player associated with the view
+     * @throws UnsupportedOperationException
+     */
     @Override
     public void undo(View view, Player player) {
         try {
@@ -119,6 +184,13 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     *
+     * @param view the view where the even is coming from
+     */
     @Override
     public void leaveGame(View view) {
         if (view.getPlayer().hasLost()) {
@@ -128,6 +200,15 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Used if a player wants to surrender
+     *
+     * @param view   the view where the even is coming from
+     * @param player the player associated with the view
+     * @throws  UnsupportedOperationException
+     */
     @Override
     public void playerSurrender(View view, Player player) {
         try {
