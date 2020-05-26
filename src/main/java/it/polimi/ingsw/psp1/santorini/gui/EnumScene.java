@@ -13,7 +13,8 @@ public enum EnumScene {
     CREATE_JOIN("create_join"),
     CHOOSE_POWERS("choose"),
     GAME("game_scene"),
-    TEST("test");
+    TEST("test"),
+    WAIT_GOD_SELECTION("wait_god_selection");
 
     String resource;
     Parent scene;
@@ -23,7 +24,7 @@ public enum EnumScene {
     }
 
     public Parent load() throws IOException {
-        if(scene == null) {//TODO: check if new Scene or make scene in fxml
+        if(scene == null) {
             scene = FXMLLoader.load(getClass().getResource("/scenes/" + resource + ".fxml"));
         }
 

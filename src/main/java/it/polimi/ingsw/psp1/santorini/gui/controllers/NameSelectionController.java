@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 
 public class NameSelectionController extends GuiController {
 
+    private static NameSelectionController instance;
+
     @FXML
     private TextField nameTextField;
 
@@ -19,7 +21,14 @@ public class NameSelectionController extends GuiController {
     private void onButtonClick(ActionEvent event) {
         Gui.getInstance().changeSceneAsync(EnumScene.CREATE_JOIN, EnumTransition.UP);
 
-        notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
+        getInstance().notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
     }
 
+    public static NameSelectionController getInstance() {
+        if (instance == null) {
+            instance = new NameSelectionController();
+        }
+
+        return instance;
+    }
 }

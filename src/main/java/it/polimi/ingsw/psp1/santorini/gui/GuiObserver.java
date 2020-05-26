@@ -54,4 +54,12 @@ public class GuiObserver {
     public void joinGame(int players) {
         client.sendPacket(new ClientJoinGame(players, -1));
     }
+
+    public void interactPressed() {
+        client.sendPacket(new ClientToggleInteraction());
+    }
+
+    public static void undoPressed(GuiObserver guiObserver) {
+        //TODO
+    }
 }

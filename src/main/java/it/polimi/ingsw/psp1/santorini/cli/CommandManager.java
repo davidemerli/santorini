@@ -20,7 +20,7 @@ public class CommandManager {
     }
 
     public String runCommand(Client client, CLIServerHandler serverHandler, String input) {
-        String[] arguments = input.strip().split(" ");
+        String[] arguments = input.split(" ");
 
         if (arguments.length > 0) {
             String cmd = arguments[0];
@@ -29,7 +29,7 @@ public class CommandManager {
             if (command.isPresent()) {
                 String[] subarray = Arrays.copyOfRange(arguments, 1, arguments.length);
 
-                if (input.substring(arguments[0].length()).matches(command.get().getPattern())) {
+                if (input.substring(arguments[0].length()).strip().matches(command.get().getPattern())) {
                     try {
                         return command.get().onCommand(client, serverHandler, input, subarray);
                     } catch (Exception ex) {
