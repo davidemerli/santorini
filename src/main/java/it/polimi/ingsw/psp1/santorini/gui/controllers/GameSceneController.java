@@ -8,6 +8,7 @@ import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
@@ -32,7 +33,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameSceneController extends GuiController implements Initializable {
+public class GameSceneController extends GuiController{
 
     private static GameSceneController instance;
 
@@ -83,8 +84,13 @@ public class GameSceneController extends GuiController implements Initializable 
         getInstance().notifyObservers(GuiObserver::undoPressed);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    public void initialize() {
+        getInstance().requestBackground = requestBackground;
+        getInstance().requestText = requestText;
+        getInstance().interactButton = interactButton;
+        getInstance().undoButton = undoButton;
+
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
@@ -110,9 +116,6 @@ public class GameSceneController extends GuiController implements Initializable 
 
         button.prefWidthProperty().bind(pane.widthProperty().divide(20));
         button.prefHeightProperty().bind(pane.widthProperty().divide(20));
-
-        getInstance().requestBackground = requestBackground;
-        getInstance().requestText = requestText;
     }
 
     private Point3D convert2DTo3D(double x, double y) {
@@ -180,7 +183,7 @@ public class GameSceneController extends GuiController implements Initializable 
         board.getChildren().addAll(validMoves);
     }
 
-    private void addWorker(int x, int y, Color color, boolean isOwn) {
+    public void addWorker(int x, int y, Color color, boolean isOwn) {
         double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
         Point p = new Point(x, y);
 
@@ -310,29 +313,41 @@ public class GameSceneController extends GuiController implements Initializable 
     }
 
     public void showInteract(boolean show) {
-        interactButton.setVisible(show);
+        if(getInstance().interactButton == null) {
+            return;
+        }
+
+        Platform.runLater(() -> getInstance().interactButton.setVisible(show));
     }
 
     public void showUndo(boolean show) {
-        undoButton.setVisible(show);
+        if(getInstance().undoButton == null) {
+            return;
+        }
+
+        Platform.runLater(() -> getInstance().undoButton.setVisible(show));
     }
 
     public void showRequest(String request) {
-        if (requestBackground == null || requestText == null) {
+        if (getInstance().requestBackground == null || getInstance().requestText == null) {
             return;
         }
 
-        requestBackground.setVisible(true);
-        requestText.setVisible(true);
-        requestText.setText(request);
+        Platform.runLater(() -> {
+            getInstance().requestBackground.setVisible(true);
+            getInstance().requestText.setVisible(true);
+            getInstance().requestText.setText(request);
+        });
     }
 
     public void hideRequest() {
-        if (requestBackground == null || requestText == null) {
+        if (getInstance().requestBackground == null || getInstance().requestText == null) {
             return;
         }
 
-        requestBackground.setVisible(false);
-        requestText.setVisible(false);
+        Platform.runLater(() -> {
+            getInstance().requestBackground.setVisible(false);
+            getInstance().requestText.setVisible(false);
+        });
     }
 }

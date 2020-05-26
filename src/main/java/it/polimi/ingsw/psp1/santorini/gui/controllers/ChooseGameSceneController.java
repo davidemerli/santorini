@@ -1,5 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
+import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
+import it.polimi.ingsw.psp1.santorini.gui.Gui;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -122,10 +124,14 @@ public class ChooseGameSceneController extends GuiController {
     @FXML
     private void createGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
+
+        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
 
     @FXML
     private void joinGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
+
+        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
 }

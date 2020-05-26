@@ -1,10 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.*;
-import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
+import javafx.scene.paint.Color;
 
 public class GuiServerHandler extends ServerHandler {
 
@@ -67,7 +67,14 @@ public class GuiServerHandler extends ServerHandler {
                 ServerPlayerMove.PlayerBuild build = (ServerPlayerMove.PlayerBuild) packet.getMove();
 
                 GameSceneController.getInstance().addBlockAt(build.getDest().x, build.getDest().y, build.forceDome());
+                break;
+            case PLACE_WORKER:
+                ServerPlayerMove.PlayerPlaceWorker worker = (ServerPlayerMove.PlayerPlaceWorker) packet.getMove();
 
+                GameSceneController.getInstance().addWorker(worker.getDest().x, worker.getDest().y,
+                        Color.RED, //TODO: make different colors, make ColorUtils for Colors and ANSI
+                        isYourTurn());
+                break;
         }
     }
 
@@ -78,8 +85,8 @@ public class GuiServerHandler extends ServerHandler {
     }
 
     @Override
-    public void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame) {
-
+    public void handlePlayerConnected(ServerConnectedToGame packet) {
+        WaitGodSelectionController.getInstance().addPlayer(packet.getName());
     }
 
 }

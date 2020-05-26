@@ -13,7 +13,8 @@ public enum EnumScene {
     CREATE_JOIN("create_join"),
     CHOOSE_POWERS("choose"),
     GAME("game_scene"),
-    TEST("test");
+    TEST("test"),
+    WAIT_GOD_SELECTION("wait_god_selection");
 
     String resource;
     Parent scene;
