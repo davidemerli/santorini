@@ -29,7 +29,7 @@ public class Gui extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Gui.primaryStage = primaryStage;
-        changeScene(EnumScene.GAME);
+        changeScene(EnumScene.IP_SELECT);
 
         primaryStage.setTitle("Santorini");
         primaryStage.show();

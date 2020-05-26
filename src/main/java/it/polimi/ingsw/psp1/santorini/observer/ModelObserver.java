@@ -76,6 +76,7 @@ public interface ModelObserver {
      * (used both for selecting all powers for the game or own personal power)
      *
      * @param availablePowers list with the god powers to show to the player
+     * @param toSelect how many powers to select
      */
-    void sendPowerList(List<Power> availablePowers);
+    void sendPowerList(List<Power> availablePowers, int toSelect);
 }

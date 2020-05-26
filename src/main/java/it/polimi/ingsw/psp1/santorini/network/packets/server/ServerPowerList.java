@@ -9,9 +9,11 @@ import java.util.List;
 public class ServerPowerList implements Packet<ServerHandler> {
 
     private final List<Power> availablePowers;
+    private final int toSelect;
 
-    public ServerPowerList(List<Power> availablePowers) {
+    public ServerPowerList(List<Power> availablePowers, int toSelect) {
         this.availablePowers = availablePowers;
+        this.toSelect = toSelect;
     }
 
     @Override
@@ -21,5 +23,9 @@ public class ServerPowerList implements Packet<ServerHandler> {
 
     public List<Power> getAvailablePowers() {
         return availablePowers;
+    }
+
+    public int getToSelect() {
+        return toSelect;
     }
 }

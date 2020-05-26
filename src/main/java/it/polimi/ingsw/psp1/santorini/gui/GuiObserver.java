@@ -2,8 +2,11 @@ package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.IpSelectionController;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
+
+import java.util.List;
 
 public class GuiObserver {
 
@@ -53,5 +56,9 @@ public class GuiObserver {
 
     public void joinGame(int players) {
         client.sendPacket(new ClientJoinGame(players, -1));
+    }
+
+    public void selectPowers(List<Power> selectedPowers) {
+        selectedPowers.forEach(p -> client.sendPacket(new ClientChoosePower(p)));
     }
 }

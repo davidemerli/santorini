@@ -17,77 +17,77 @@
                <children>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0000_god_and_hero_cards_0057_Human.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0000_god_and_hero_cards_0057_Human.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0014_god_and_hero_cards_0042_zeus.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0014_god_and_hero_cards_0042_zeus.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0053_god_and_hero_cards_0003_Atlas.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0053_god_and_hero_cards_0003_Atlas.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0052_god_and_hero_cards_0004_Athena.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0052_god_and_hero_cards_0004_Athena.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0043_god_and_hero_cards_0013_apollo.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0043_god_and_hero_cards_0013_apollo.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0054_god_and_hero_cards_0002_Artemis.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0054_god_and_hero_cards_0002_Artemis.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0050_god_and_hero_cards_0006_Demeter.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0050_god_and_hero_cards_0006_Demeter.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0009_god_and_hero_cards_0047_Hephaestus.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0009_god_and_hero_cards_0047_Hephaestus.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0008_god_and_hero_cards_0048_Minotaur.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0008_god_and_hero_cards_0048_Minotaur.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0046_god_and_hero_cards_0010_Pan.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0046_god_and_hero_cards_0010_Pan.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0004_god_and_hero_cards_0052_Prometheus.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0004_god_and_hero_cards_0052_Prometheus.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0027_god_and_hero_cards_0029_Chronus.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0027_god_and_hero_cards_0029_Chronus.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0017_god_and_hero_cards_0039_Hestia.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0017_god_and_hero_cards_0039_Hestia.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0045_god_and_hero_cards_0011_Poseidon.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0045_god_and_hero_cards_0011_Poseidon.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../gui_assets/god_cards/_0000s_0028_god_and_hero_cards_0028_triton.png" />
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0028_god_and_hero_cards_0028_triton.png" />
                      </image>
                   </ImageView>
                </children>

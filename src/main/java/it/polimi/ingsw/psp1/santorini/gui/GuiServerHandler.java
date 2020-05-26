@@ -60,9 +60,11 @@ public class GuiServerHandler extends ServerHandler {
     }
 
     @Override
-    public void handlePowerList(ServerPowerList serverPowerList) {
-        super.handlePowerList(serverPowerList);
+    public void handlePowerList(ServerPowerList packet) {
+        super.handlePowerList(packet);
 
+        ChoosePowersController.getInstance().addGods(packet.getAvailablePowers(), packet.getToSelect());
+        Gui.getInstance().changeSceneAsync(EnumScene.CHOOSE_POWERS, EnumTransition.UP);
     }
 
     @Override

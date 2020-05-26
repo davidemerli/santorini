@@ -11,7 +11,7 @@ public enum EnumScene {
     NAME_SELECT("choose_name"),
     IP_SELECT("choose_ip"),
     CREATE_JOIN("create_join"),
-    CHOOSE_POWERS("choose"),
+    CHOOSE_POWERS("choose2"),
     GAME("game_scene"),
     TEST("test");
 
