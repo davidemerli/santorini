@@ -42,4 +42,17 @@ public enum Color {
     public String toString() {
         return s;
     }
+
+    public javafx.scene.paint.Color getColor() {//TODO: optimize this and color generation
+        switch(this) {
+            case BG_WORKER_RED:
+                return new javafx.scene.paint.Color(214D/255, 40D/255, 40D/255, 1);
+            case BG_WORKER_BLUE:
+                return new javafx.scene.paint.Color(50D/255, 98D/255, 123D/255, 1);
+            case BG_WORKER_ORANGE:
+                return new javafx.scene.paint.Color(248D/255, 144D/255, 11D/255, 1);
+            default:
+                return new javafx.scene.paint.Color(0,0,0,0);
+        }
+    }
 }

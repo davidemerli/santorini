@@ -14,7 +14,7 @@ public class ChoosePlayerPower extends TurnState {
     @Override
     public void init() {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
-        game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers()));
+        game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), 1));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ChoosePlayerPower extends TurnState {
             game.notifyObservers(o -> o.playerUpdate(game, game.getCurrentPlayer()));
 
             game.getAvailablePowers().clear();
-            game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers()));
+            game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), 0));//TODO: check correctness
             game.setTurnState(new SelectStartingPlayer(game));
         } else {
             game.setTurnState(new ChoosePlayerPower(game));

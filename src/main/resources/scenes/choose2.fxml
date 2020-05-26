@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: url(/gui_assets/clp_bg2.png); -fx-background-size: 100% 100%;" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.psp1.santorini.gui.controllers.ChoosePowersController">
+   <children>
+      <FlowPane layoutX="433.0" layoutY="20.0" prefHeight="176.0" prefWidth="247.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0">
+         <children>
+            <ImageView fx:id="fullImage" fitHeight="322.0" fitWidth="252.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="description" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="99.7294921875">
+               <font>
+                  <Font size="19.0" />
+               </font>
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Text>
+         </children>
+      </FlowPane>
+      <ScrollPane prefHeight="338.0" prefWidth="315.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <content>
+            <FlowPane fx:id="flowPane" prefHeight="557.0" prefWidth="300.0" style="-fx-background-image: url(/gui_assets/bg_panelMid.png); -fx-background-size: 100% 100%;" />
+         </content>
+      </ScrollPane>
+      <Button layoutX="380.0" layoutY="323.0" mnemonicParsing="false" onAction="#clickConfirm" prefHeight="48.0" prefWidth="171.0" text="Confirm" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="49.0">
+         <font>
+            <Font name="Dyuthi Regular" size="30.0" />
+         </font>
+      </Button>
+      <HBox fx:id="selectionBox" layoutX="376.0" layoutY="471.0" prefHeight="100.0" prefWidth="254.0" />
+   </children>
+</AnchorPane>

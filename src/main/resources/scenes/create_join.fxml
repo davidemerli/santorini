@@ -27,7 +27,7 @@
          <children>
             <ImageView fitHeight="248.0" fitWidth="158.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <image>
-                  <Image url="@../gui_assets/god_cards/small/podium-characters-Athena.png" />
+                  <Image url="@../gui_assets/god_cards/without_background/podium-characters-Athena.png" />
                </image>
                <GridPane.margin>
                   <Insets bottom="300.0" />
@@ -69,7 +69,7 @@
                <children>
                   <ImageView fitHeight="248.0" fitWidth="179.0" layoutX="145.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="50.0">
                      <image>
-                        <Image url="@../gui_assets/god_cards/small/podium-characters-Aphrodite.png" />
+                        <Image url="@../gui_assets/god_cards/without_background/podium-characters-Aphrodite.png" />
                      </image>
                   </ImageView>
                   <Button fx:id="confirmJoin" disable="true" layoutY="-7.0" mnemonicParsing="false" onAction="#joinGame" prefHeight="61.0" prefWidth="145.0" text="CONFIRM" textFill="WHITE" AnchorPane.bottomAnchor="70.0">
@@ -122,7 +122,7 @@
                <children>
                   <ImageView fitHeight="186.0" fitWidth="151.0" layoutY="-36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="50.0">
                      <image>
-                        <Image url="@../gui_assets/god_cards/small/podium-characters-Odysseus.png" />
+                        <Image url="@../gui_assets/god_cards/without_background/podium-characters-Odysseus.png" />
                      </image>
                   </ImageView>
                   <Button fx:id="confirmCreate" disable="true" layoutX="163.0" layoutY="125.0" mnemonicParsing="false" onAction="#createGame" prefHeight="61.0" prefWidth="145.0" text="CONFIRM" textFill="WHITE" AnchorPane.bottomAnchor="50.0">

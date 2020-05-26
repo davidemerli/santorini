@@ -42,7 +42,7 @@ public class Move extends TurnState {
 
         game.getPlayerList().forEach(p -> p.getPower().onMove(player, optWorker.get(), position, game));
 
-        game.notifyObservers(o -> o.playerMove(player, optWorker.get(), old, position));
+//        game.notifyObservers(o -> o.playerMove(player, optWorker.get(), old, position));
     }
 
     @Override

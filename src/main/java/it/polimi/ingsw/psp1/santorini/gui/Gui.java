@@ -12,11 +12,14 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Gui extends Application {
 
     private static final Gui instance = new Gui();
     private static Stage primaryStage;
+
+    private EnumScene currentScene;
 
     public static void launch(String[] args) {
         Application.launch("");
@@ -28,8 +31,10 @@ public class Gui extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        EnumScene.GAME.load();
+
         Gui.primaryStage = primaryStage;
-        changeScene(EnumScene.GAME);
+        changeScene(EnumScene.IP_SELECT);
 
         primaryStage.setTitle("Santorini");
         primaryStage.show();
@@ -42,13 +47,18 @@ public class Gui extends Application {
     }
 
     public void changeScene(EnumScene scene) {
+        if(Objects.equals(currentScene, scene)) {
+            return;
+        }
+
         try {
             if (primaryStage.getScene() == null) {
                 primaryStage.setScene(new Scene(scene.load()));
-                return;
+            } else {
+                primaryStage.getScene().setRoot(scene.load());
             }
 
-            primaryStage.getScene().setRoot(scene.load());
+            currentScene = scene;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -61,6 +71,10 @@ public class Gui extends Application {
 
     public void changeSceneAsync(EnumScene scene, EnumTransition transition) {
         Platform.runLater(() -> {
+            if(Objects.equals(currentScene, scene)) {
+                return;
+            }
+
             try {
                 Parent toReplace = primaryStage.getScene().getRoot();
                 AnchorPane anchor = new AnchorPane(toReplace);
@@ -81,6 +95,8 @@ public class Gui extends Application {
 
                 Transition t = transition.getTransition(currentPane, pane);
                 t.play();
+
+                currentScene = scene;
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

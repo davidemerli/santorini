@@ -39,8 +39,7 @@ public class WaitGodSelectionController extends GuiController {
 
     public void addPlayer(String playerName) {
         Platform.runLater(() -> {
-            String random = getClass().getResource("/gui_assets/god_cards/" +
-                    "_0000s_0000_god_and_hero_cards_0057_Random.png").toString();
+            String random = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
 
             Text text = new Text(playerName);
             text.setFont(new Font("Segoe UI", 24));

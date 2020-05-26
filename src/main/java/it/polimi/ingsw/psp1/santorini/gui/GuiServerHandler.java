@@ -18,6 +18,7 @@ public class GuiServerHandler extends ServerHandler {
         NameSelectionController.getInstance().addObserver(guiObserver);
         IpSelectionController.getInstance().addObserver(guiObserver);
         GameSceneController.getInstance().addObserver(guiObserver);
+        ChoosePowersController.getInstance().addObserver(guiObserver);
     }
 
     @Override
@@ -47,7 +48,11 @@ public class GuiServerHandler extends ServerHandler {
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
 
-        GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
+        if(isYourTurn()) {
+            Gui.getInstance().changeSceneAsync(EnumScene.GAME, EnumTransition.DOWN);
+
+            GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
+        }
     }
 
     @Override
@@ -72,16 +77,20 @@ public class GuiServerHandler extends ServerHandler {
                 ServerPlayerMove.PlayerPlaceWorker worker = (ServerPlayerMove.PlayerPlaceWorker) packet.getMove();
 
                 GameSceneController.getInstance().addWorker(worker.getDest().x, worker.getDest().y,
-                        Color.RED, //TODO: make different colors, make ColorUtils for Colors and ANSI
+                        getPlayerColorMap().get(packet.getPlayerData().getName()).getColor().darker(),
                         isYourTurn());
                 break;
         }
     }
 
     @Override
-    public void handlePowerList(ServerPowerList serverPowerList) {
-        super.handlePowerList(serverPowerList);
+    public void handlePowerList(ServerPowerList packet) {
+        super.handlePowerList(packet);
 
+        if (isYourTurn()) {
+            Gui.getInstance().changeSceneAsync(EnumScene.CHOOSE_POWERS, EnumTransition.UP);
+            ChoosePowersController.getInstance().addGods(packet.getAvailablePowers(), packet.getToSelect());
+        }
     }
 
     @Override

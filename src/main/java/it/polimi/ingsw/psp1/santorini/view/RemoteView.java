@@ -69,7 +69,7 @@ public class RemoteView extends View {
      */
     @Override
     public void playerMove(Player player, Worker worker, Point from, Point where) {
-        ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, where, from);
+        ServerPlayerMove.PlayerMove move = new ServerPlayerMove.PlayerMove(worker, from, where);
 
         ServerPlayerMove packet = new ServerPlayerMove(toData(player), move, EnumActionType.MOVE);
         connection.sendPacket(packet);
@@ -171,10 +171,10 @@ public class RemoteView extends View {
      * Sends a packet with the god powers list
      */
     @Override
-    public void sendPowerList(List<Power> availablePowers) {
+    public void sendPowerList(List<Power> availablePowers, int toSelect) {
         List<Power> powers = availablePowers.stream()
                 .map(Power::copy).collect(Collectors.toList());
-        connection.sendPacket(new ServerPowerList(powers));
+        connection.sendPacket(new ServerPowerList(powers, toSelect));
     }
 
     /**
