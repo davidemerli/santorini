@@ -37,10 +37,10 @@ public class Build extends TurnState {
         if (!getValidMoves(player, optWorker.get()).contains(position)) {
             throw new IllegalArgumentException("Invalid build position");
         }
+        
+        game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position, game.getMap().hasDome(position)));
 
         player.getPower().onBuild(player, optWorker.get(), position, game);
-
-        game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position, game.getMap().hasDome(position)));
     }
 
     @Override

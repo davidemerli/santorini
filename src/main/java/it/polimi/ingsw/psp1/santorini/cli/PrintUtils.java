@@ -60,6 +60,13 @@ public class PrintUtils {
         }
     }
 
+    public static void printArrow(String arrow, Point where) {
+        int x = MAP_X + 2 + where.x * (SIZE * 2 + SPACING * 2 - 1);
+        int y = MAP_Y + 2 + where.y * (SIZE + SPACING);
+
+        print(arrow, x, y, false);
+    }
+
     /**
      * Prints the current map in console whenever it changes
      *

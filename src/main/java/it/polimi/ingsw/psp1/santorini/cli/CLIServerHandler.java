@@ -1,12 +1,15 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
+import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
 import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
 
 public class CLIServerHandler extends ServerHandler implements Runnable {
 
@@ -168,6 +171,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
      * {@inheritDoc}
      * <p>
      * Receives an error from the server
+     *
      * @param packet contains an error
      */
     @Override
@@ -178,8 +182,16 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     @Override
     public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
 //        PlayerData playerInfo = serverPlayerMove.getPlayerData();
-//        EnumActionType move = serverPlayerMove.getMoveType();
+        EnumActionType move = serverPlayerMove.getMoveType();
 //        String name = playerInfo.getName();
+
+        if (move == EnumActionType.MOVE) {
+            ServerPlayerMove.PlayerMove playerMove = (ServerPlayerMove.PlayerMove) serverPlayerMove.getMove();
+
+            Point vector = playerMove.getDest().subtract(playerMove.getSrc());
+
+//            PrintUtils.printWorkers();
+        }
 
         //TODO: add an arrow or something
     }

@@ -175,6 +175,7 @@ public class GameMap implements Serializable {
 
     /**
      * Used to copy a GameMap
+     *
      * @return copied map
      */
     public GameMap copy() {
@@ -183,13 +184,14 @@ public class GameMap implements Serializable {
 
     /**
      * Used to get all the squares of the map
+     *
      * @return list with all squares of the map
      */
     public List<Point> getAllSquares() {
         List<Point> list = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            for (int j = 0; j < SIDE_LENGTH; j++) {
                 list.add(new Point(j, i));
             }
         }

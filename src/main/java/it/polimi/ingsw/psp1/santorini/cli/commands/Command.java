@@ -42,7 +42,6 @@ public abstract class Command {
     }
 
     public String getPattern() {
-        //TODO: add a custom pattern for every command
         return pattern;
     }
 

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
+import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 
 public class MainCli {
@@ -29,5 +31,13 @@ public class MainCli {
                 Color.RED + "help" + Color.RESET));
 
         PrintUtils.printCommand();
+
+        GameMap map = new GameMap();
+        map.getNeighbors(new Point(1, 1)).stream()
+                .map(p -> p.subtract(new Point(1, 1)))
+                .forEach(p -> System.out.println(String.format("%s %s %s",
+                        EnumArrow.fromVector(p).getNormal(),
+                        EnumArrow.fromVector(p).getBidirectional(),
+                        EnumArrow.fromVector(p).toString())));
     }
 }

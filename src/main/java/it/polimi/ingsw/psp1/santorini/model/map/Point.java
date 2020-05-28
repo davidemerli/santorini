@@ -21,6 +21,14 @@ public class Point implements Serializable {
         return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
     }
 
+    public Point add(Point toAdd) {
+        return new Point(this.x + toAdd.x, this.y + toAdd.y);
+    }
+
+    public Point subtract(Point toSubtract) {
+        return new Point(this.x - toSubtract.x, this.y - toSubtract.y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -15,7 +15,7 @@ public class CommandConnect extends Command {
         super("connect",
                 "Connects to server, parameters not specified are inferred or saved from previous command calls",
                 "<server-ip> <port>/<server-ip>/<server-port>",
-                "([\\w\\d]+ \\d+)|([\\d\\w]+)|(^$)",
+                "([\\w\\\\.\\d]+ \\d+)|([\\d\\\\.\\w]+)|(^$)",
                 List.of("cn"));
     }
 
