@@ -19,4 +19,9 @@ public class ServerInvalidPacket implements Packet<ServerHandler> {
     public String getError() {
         return error;
     }
+
+    @Override
+    public String toString() {
+        return toString(error);
+    }
 }

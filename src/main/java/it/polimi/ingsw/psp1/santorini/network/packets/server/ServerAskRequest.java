@@ -20,4 +20,9 @@ public class ServerAskRequest implements Packet<ServerHandler> {
     public EnumRequestType getRequestType() {
         return requestType;
     }
+
+    @Override
+    public String toString() {
+        return toString(requestType);
+    }
 }

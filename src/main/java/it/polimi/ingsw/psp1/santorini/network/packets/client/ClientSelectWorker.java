@@ -20,4 +20,9 @@ public class ClientSelectWorker implements Packet<ClientHandler> {
     public Point getWorkerPosition() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return toString(position);
+    }
 }

@@ -2,9 +2,9 @@ package it.polimi.ingsw.psp1.santorini.gui;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public enum EnumScene {
 
@@ -17,6 +17,16 @@ public enum EnumScene {
     GAME("game_scene"),
     TEST("test");
 
+    static {
+        Arrays.stream(values()).forEach(enumScene -> {
+            try {
+                enumScene.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     String resource;
     Parent scene;
 
@@ -25,7 +35,7 @@ public enum EnumScene {
     }
 
     public Parent load() throws IOException {
-        if(scene == null) {
+        if (scene == null) {
             scene = FXMLLoader.load(getClass().getResource("/scenes/" + resource + ".fxml"));
         }
 

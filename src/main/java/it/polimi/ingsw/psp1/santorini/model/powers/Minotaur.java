@@ -24,7 +24,7 @@ public class Minotaur extends Mortal {
 
         Predicate<Point> enemyWorkerCheck = p -> {
             Optional<Player> optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());
-            return optionalPlayer.isPresent() && optionalPlayer.get() != player;
+            return optionalPlayer.isPresent() && !optionalPlayer.get().equals(player);
         };
 
         Predicate<Point> isValidPosition = p -> {
@@ -52,7 +52,13 @@ public class Minotaur extends Mortal {
             if (optWorker.isPresent()) {
                 Point pushPos = getPushLocation(worker.getPosition(), where);
 
-                optWorker.get().setPosition(pushPos);
+                Optional<Player> opponent = game.getPlayerOf(optWorker.get());
+
+                if (opponent.isPresent()) {
+                    game.moveWorker(opponent.get(), optWorker.get(), pushPos);
+                } else {
+                    throw new IllegalStateException("Player of opponent worker not found");
+                }
             }
         }
 

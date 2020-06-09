@@ -71,7 +71,7 @@ public class Apollo extends Mortal {
             Optional<Worker> optWorker = game.getWorkerOn(p);
             Optional<Player> optPlayer = optWorker.isPresent() ? game.getPlayerOf(optWorker.get()) : Optional.empty();
 
-            return optPlayer.isPresent() && optPlayer.get() != player;
+            return optPlayer.isPresent() && !optPlayer.get().equals(player);
         };
     }
 }

@@ -59,7 +59,7 @@ public class Demeter extends Mortal {
                 oldBuild = new Point(where);
                 hasBuilt = true;
 
-                game.setTurnState(new Build(game));
+                game.setTurnState(new Build());
             } else {
                 game.endTurn();
             }

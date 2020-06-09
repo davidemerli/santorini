@@ -52,8 +52,9 @@ public interface ModelObserver {
      * Called on a generic game update
      *
      * @param game current game object
+     * @param forced if the updated is to be shown forcefully instead of relying on move packets
      */
-    void gameUpdate(Game game);
+    void gameUpdate(Game game, boolean forced);
 
     /**
      * Called when new moves are available to the current player in his turn

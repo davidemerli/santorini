@@ -7,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientChoosePower implements Packet<ClientHandler> {
 
@@ -27,5 +28,10 @@ public class ClientChoosePower implements Packet<ClientHandler> {
 
     public List<Power> getPowers() {
         return this.powers;
+    }
+
+    @Override
+    public String toString() {
+        return toString(getPowers().stream().map(Power::getName).collect(Collectors.joining(",")));
     }
 }

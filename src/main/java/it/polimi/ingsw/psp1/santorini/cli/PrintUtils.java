@@ -29,7 +29,7 @@ public class PrintUtils {
     /**
      * Prints map's background in console as soon as the game starts
      */
-    private static void printMapBackground() {
+    static void printMapBackground() {
         StringBuilder bgLine = new StringBuilder();
         IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))
                 .forEach(i -> bgLine.append(" "));
@@ -60,11 +60,27 @@ public class PrintUtils {
         }
     }
 
-    public static void printArrow(String arrow, Point where) {
-        int x = MAP_X + 2 + where.x * (SIZE * 2 + SPACING * 2 - 1);
-        int y = MAP_Y + 2 + where.y * (SIZE + SPACING);
+    public static void printArrow(EnumArrow arrow, Point where) {
+        int x = MAP_X + where.x * (SIZE * 2 + SPACING * 2 - 1);
+        int y = MAP_Y + where.y * (SIZE + SPACING);
 
-        print(arrow, x, y, false);
+        //TODO: fix swap on UP (and/or other directions)
+
+        //TODO: Redo entirely
+
+        if (arrow.getVector().x == 1) {
+            x += SIZE * 2;
+        } else if (arrow.getVector().x == 0) {
+            x += SIZE;
+        }
+
+        if (arrow.getVector().y == 1) {
+            y += SIZE + 1;
+        } else if (arrow.getVector().y == 0) {
+            y += Math.ceil(SIZE / 2D);
+        }
+
+        print(arrow.toUnicode(), x, y, false);
     }
 
     /**
@@ -77,7 +93,7 @@ public class PrintUtils {
             return;
         }
 
-        printMapBackground();
+//        printMapBackground();
 
         String s = String.format("%" + (SIZE * 2 - 1) + "s", "");
 
@@ -192,9 +208,9 @@ public class PrintUtils {
     /**
      * Used to print a string in console
      *
-     * @param string string that must be printed in console
-     * @param x column number
-     * @param y row number
+     * @param string  string that must be printed in console
+     * @param x       column number
+     * @param y       row number
      * @param toClean true if the row must be deleted before printing
      */
     public static void print(String string, int x, int y, boolean toClean) {
@@ -212,8 +228,6 @@ public class PrintUtils {
     }
 
     /**
-     *
-     *
      * @param string
      * @param xOff
      * @param yOff
@@ -233,8 +247,6 @@ public class PrintUtils {
     }
 
     /**
-     *
-     *
      * @return
      */
     public static Point getCommandCoords() {
@@ -272,14 +284,15 @@ public class PrintUtils {
         resetCursor();
     }
 
-    /** ---------------
+    /**
+     * ---------------
      * Used to print players' info while gaming is running
      *
      * @param clientPlayer player name
      * @param list
-     * @param state current state
+     * @param state        current state
      * @param colorMap
-     * @param interact true if player can use the power of his god
+     * @param interact     true if player can use the power of his god
      */
     public static void printPlayerInfo(String clientPlayer, List<PlayerData> list, EnumTurnState state,
                                        Map<String, Color> colorMap, boolean interact) {
@@ -307,7 +320,7 @@ public class PrintUtils {
     /**
      * Used to print the valid moves on the map
      *
-     * @param valid valid moves
+     * @param valid   valid moves
      * @param blocked blocked moves
      */
     public static void printValidMoves(List<Point> valid, Map<Power, List<Point>> blocked) {
@@ -328,7 +341,7 @@ public class PrintUtils {
 
     /**
      * Used to know which color must be used, because every level has different color
-     * 
+     *
      * @param level block's level
      * @return
      */
@@ -347,6 +360,7 @@ public class PrintUtils {
 
     /**
      * Used to print
+     *
      * @param power
      */
     public static void printPowerInfo(Power power) {

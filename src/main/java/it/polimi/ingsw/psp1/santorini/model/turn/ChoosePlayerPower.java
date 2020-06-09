@@ -7,12 +7,8 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 public class ChoosePlayerPower extends TurnState {
 
-    public ChoosePlayerPower(Game game) {
-        super(game);
-    }
-
     @Override
-    public void init() {
+    public void init(Game game) {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
         game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), 1));
     }
@@ -38,9 +34,9 @@ public class ChoosePlayerPower extends TurnState {
 
             game.getAvailablePowers().clear();
             game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), 0));//TODO: check correctness
-            game.setTurnState(new SelectStartingPlayer(game));
+            game.setTurnState(new SelectStartingPlayer());
         } else {
-            game.setTurnState(new ChoosePlayerPower(game));
+            game.setTurnState(new ChoosePlayerPower());
         }
     }
 
@@ -48,7 +44,7 @@ public class ChoosePlayerPower extends TurnState {
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldShowInteraction(Player player) {
+    public boolean shouldShowInteraction(Game game, Player player) {
         return false;
     }
 }

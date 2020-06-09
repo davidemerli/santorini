@@ -3,7 +3,7 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Worker implements Serializable {
+public class Worker implements Serializable, Cloneable {
 
     private Point position;
 
@@ -17,6 +17,16 @@ public class Worker implements Serializable {
 
     public void setPosition(Point position) {
         this.position = position;
+    }
+
+    public Worker copy() {
+        try {
+            return (Worker) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -33,5 +43,10 @@ public class Worker implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(position);
+    }
+
+    @Override
+    public String toString() {
+        return "Worker @ " + position.toString();
     }
 }

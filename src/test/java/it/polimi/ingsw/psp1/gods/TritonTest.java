@@ -21,7 +21,7 @@ public class TritonTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1",2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -46,13 +46,13 @@ public class TritonTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        game.getTurnState().selectSquare(player, firstMove);
+        game.getTurnState().selectSquare(game, player, firstMove);
 
         assertTrue(game.getTurnState() instanceof Move);
 
-        game.getTurnState().selectSquare(player, startPosition);
+        game.getTurnState().selectSquare(game, player, startPosition);
 
         assertTrue(game.getTurnState() instanceof Build);
     }
@@ -67,17 +67,17 @@ public class TritonTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        assertFalse(game.getTurnState().shouldShowInteraction(player));
+        assertFalse(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getTurnState().selectSquare(player, firstMove);
+        game.getTurnState().selectSquare(game, player, firstMove);
 
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getTurnState().toggleInteraction(player);
+        game.getTurnState().toggleInteraction(game, player);
 
         assertTrue(game.getTurnState() instanceof Build);
-        assertFalse(game.getTurnState().shouldShowInteraction(player));
+        assertFalse(game.getTurnState().shouldShowInteraction(game, player));
     }
 }

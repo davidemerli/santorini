@@ -40,7 +40,7 @@ public class Poseidon extends Mortal {
             if (counter == 0) {
                 //Try to get the unmoved worker, the optional will be empty if only one worker is present on the map
                 Optional<Worker> otherWorker = player.getWorkers().stream()
-                        .filter(w -> w != worker)
+                        .filter(w -> !w.equals(worker))
                         .findFirst();
 
                 if (otherWorker.isPresent()) {
@@ -53,13 +53,13 @@ public class Poseidon extends Mortal {
                         player.lockWorker();
 
                         counter++;
-                        game.setTurnState(new Build(game));
+                        game.setTurnState(new Build());
                         return;
                     }
                 }
             } else if (counter < 3) {
                 //can build up to 3 times with the unmoved worker
-                game.setTurnState(new Build(game));
+                game.setTurnState(new Build());
                 counter++;
                 return;
             }

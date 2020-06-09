@@ -27,7 +27,7 @@ public class Mortal extends Power {
     @Override
     public void onBeginTurn(Player player, Game game) {
         if (player.equals(this.player)) {
-            game.setTurnState(new Move(game));
+            game.setTurnState(new Move());
 
             if (player.getWorkers().stream().allMatch(noValidMoves(game))) {
                 game.setLoser(player);
@@ -82,7 +82,7 @@ public class Mortal extends Power {
 
             player.lockWorker();
 
-            game.setTurnState(new Build(game));
+            game.setTurnState(new Build());
         }
     }
 
@@ -162,6 +162,8 @@ public class Mortal extends Power {
             throw new IllegalStateException("Turn validation should not be called here");
         }
 
+        //TODO
+
 //        List<Point> validMoves = getValidMoves(worker, game);
 //        List<Point> blockedMoves = game.getTurnState().getBlockedMoves(player, worker).values().stream()
 //                .flatMap(Collection::stream).collect(Collectors.toList());
@@ -202,14 +204,14 @@ public class Mortal extends Power {
     }
 
     protected Predicate<Worker> noValidMoves(Game game) {
-        Predicate<Worker> noValidMoves = w -> game.getTurnState().getValidMoves(player, w).size() == 0;
+        Predicate<Worker> noValidMoves = w -> game.getTurnState().getValidMoves(game, player, w).size() == 0;
 
         Predicate<Worker> allBlocked = w -> {
-            Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(player, w);
+            Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(game, player, w);
             List<Point> notAvailable = blockedMoves.values().stream()
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
-            return notAvailable.containsAll(game.getTurnState().getValidMoves(player, w));
+            return notAvailable.containsAll(game.getTurnState().getValidMoves(game, player, w));
         };
 
         return allBlocked.or(noValidMoves);

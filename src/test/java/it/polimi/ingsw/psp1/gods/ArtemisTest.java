@@ -21,7 +21,7 @@ public class ArtemisTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1", 2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -46,15 +46,15 @@ public class ArtemisTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        assertFalse(game.getTurnState().shouldShowInteraction(player));
+        assertFalse(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getTurnState().selectSquare(player, firstMove);
+        game.getTurnState().selectSquare(game, player, firstMove);
 
         assertTrue(game.getTurnState() instanceof Move);
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
-        assertFalse(game.getTurnState().getValidMoves(player, w).contains(startPosition));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
+        assertFalse(game.getTurnState().getValidMoves(game, player, w).contains(startPosition));
     }
 
     @Test
@@ -67,9 +67,9 @@ public class ArtemisTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
-        game.getTurnState().selectSquare(player, firstMove);
-        game.getTurnState().toggleInteraction(player);
+        game.getTurnState().selectWorker(game, player, w);
+        game.getTurnState().selectSquare(game, player, firstMove);
+        game.getTurnState().toggleInteraction(game, player);
 
         assertTrue(game.getTurnState() instanceof Build);
     }

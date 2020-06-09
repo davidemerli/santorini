@@ -61,4 +61,9 @@ public class StartingPlayerController extends GuiController {
             getInstance().playerBox.getChildren().add(vbox);
         });
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

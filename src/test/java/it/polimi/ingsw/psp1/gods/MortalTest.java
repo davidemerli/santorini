@@ -21,7 +21,7 @@ public class MortalTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1", 2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 
@@ -40,7 +40,7 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
+        game.getTurnState().selectWorker(game, player1, w);
 
         assertTrue(game.getTurnState() instanceof Move);
     }
@@ -75,9 +75,9 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
-        game.getTurnState().selectSquare(player1, new Point(1,2));
-        game.getTurnState().selectSquare(player1, newPosition);
+        game.getTurnState().selectWorker(game, player1, w);
+        game.getTurnState().selectSquare(game, player1, new Point(1, 2));
+        game.getTurnState().selectSquare(game, player1, newPosition);
 
         int newLevel = game.getMap().getLevel(newPosition);
 
@@ -94,8 +94,8 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
-        game.getTurnState().selectSquare(player1, newPosition);
+        game.getTurnState().selectWorker(game, player1, w);
+        game.getTurnState().selectSquare(game, player1, newPosition);
 
         assertEquals(w.getPosition(), newPosition);
         assertTrue(game.getTurnState() instanceof Build);
@@ -114,8 +114,8 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
-        game.getTurnState().selectSquare(player1, newPosition);
+        game.getTurnState().selectWorker(game, player1, w);
+        game.getTurnState().selectSquare(game, player1, newPosition);
 
         assertTrue(player1.hasWon());
     }
@@ -132,11 +132,11 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w1);
+        game.getTurnState().selectWorker(game, player1, w1);
 
         assertTrue(game.getTurnState() instanceof Move);
-        assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition()));
-        assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w3.getPosition()));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w1).contains(w2.getPosition()));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w1).contains(w3.getPosition()));
     }
 
     @Test
@@ -149,10 +149,10 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
+        game.getTurnState().selectWorker(game, player1, w);
 
         assertTrue(game.getTurnState() instanceof Move);
-        assertFalse(game.getTurnState().getValidMoves(player1, w).contains(position));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w).contains(position));
     }
 
     @Test
@@ -167,10 +167,10 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
+        game.getTurnState().selectWorker(game, player1, w);
 
         assertTrue(game.getTurnState() instanceof Move);
-        assertFalse(game.getTurnState().getValidMoves(player1, w).contains(newPosition));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w).contains(newPosition));
     }
 
     @Test
@@ -183,11 +183,11 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
-        game.getTurnState().selectSquare(player1, new Point(1, 2));
+        game.getTurnState().selectWorker(game, player1, w);
+        game.getTurnState().selectSquare(game, player1, new Point(1, 2));
 
         assertTrue(game.getTurnState() instanceof Build);
-        assertFalse(game.getTurnState().getValidMoves(player1, w).contains(position));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w).contains(position));
     }
 
     @Test
@@ -202,11 +202,11 @@ public class MortalTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w1);
-        game.getTurnState().selectSquare(player1, new Point(2, 1));
+        game.getTurnState().selectWorker(game, player1, w1);
+        game.getTurnState().selectSquare(game, player1, new Point(2, 1));
 
         assertTrue(game.getTurnState() instanceof Build);
-        assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w2.getPosition()));
-        assertFalse(game.getTurnState().getValidMoves(player1, w1).contains(w3.getPosition()));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w1).contains(w2.getPosition()));
+        assertFalse(game.getTurnState().getValidMoves(game, player1, w1).contains(w3.getPosition()));
     }
 }

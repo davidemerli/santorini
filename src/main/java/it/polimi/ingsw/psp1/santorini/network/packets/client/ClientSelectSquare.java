@@ -20,4 +20,9 @@ public class ClientSelectSquare implements Packet<ClientHandler> {
     public Point getSquare() {
         return this.selectedSquare;
     }
+
+    @Override
+    public String toString() {
+        return toString(selectedSquare);
+    }
 }

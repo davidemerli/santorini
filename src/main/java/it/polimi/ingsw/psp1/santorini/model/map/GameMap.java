@@ -2,6 +2,7 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameMap implements Serializable {
@@ -197,5 +198,18 @@ public class GameMap implements Serializable {
         }
 
         return list;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("\n");
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            for (int j = 0; j < SIDE_LENGTH; j++) {
+                sb.append(blockMatrix[j][i].getLevel());
+            }
+            sb.append("\n");
+        }
+
+        return "GameMap["+ sb.toString() + "]";
     }
 }

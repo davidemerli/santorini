@@ -134,4 +134,9 @@ public class ChooseGameSceneController extends GuiController {
 
         Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServerPowerList implements Packet<ServerHandler> {
 
@@ -27,5 +28,10 @@ public class ServerPowerList implements Packet<ServerHandler> {
 
     public int getToSelect() {
         return toSelect;
+    }
+
+    @Override
+    public String toString() {
+        return toString(availablePowers.stream().map(Power::getName).collect(Collectors.joining(", ")), toSelect);
     }
 }

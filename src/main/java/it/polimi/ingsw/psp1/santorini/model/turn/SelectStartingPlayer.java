@@ -12,13 +12,9 @@ import java.util.Optional;
 
 public class SelectStartingPlayer extends TurnState {
 
-    public SelectStartingPlayer(Game game) {
-        super(game);
-    }
-
     @Override
-    public void init() {
-        super.init();
+    public void init(Game game) {
+        super.init(game);
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_STARTING_PLAYER);
     }
@@ -39,14 +35,14 @@ public class SelectStartingPlayer extends TurnState {
         int playerIndex = game.getPlayerList().indexOf(chosenPlayer.get());
 
         game.shiftPlayers(-playerIndex);
-        game.setTurnState(new WorkerPlacing(game));
+        game.setTurnState(new WorkerPlacing());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldShowInteraction(Player player) {
+    public boolean shouldShowInteraction(Game game, Player player) {
         return false;
     }
 }

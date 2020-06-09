@@ -11,11 +11,17 @@ import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.observer.Observable;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Game extends Observable<ModelObserver> {
 
-    private final int gameID;
+    private final ScheduledExecutorService pool;
+
+    private final String gameID;
 
     private final int playerNumber;
     private final List<Power> availableGodList;
@@ -25,9 +31,16 @@ public class Game extends Observable<ModelObserver> {
 
     private GameMap map;
 
+    private boolean hasStarted;
     private boolean hasEnded;
 
-    public Game(int gameID, int playerNumber) {
+    private GameState savedState;
+
+    private ScheduledFuture<?> endTurnRoutine;
+
+    public Game(String gameID, int playerNumber) {
+        this.pool = Executors.newSingleThreadScheduledExecutor();
+
         this.gameID = gameID;
 
         this.playerNumber = playerNumber;
@@ -41,11 +54,15 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public void startGame() {
-//        shufflePlayers();
-//        shiftPlayers(-1);//TODO: remove since used for debug
-        setTurnState(new SelectPowers(this));
+        hasStarted = true;
 
-        notifyObservers(o -> o.gameUpdate(this));
+        shufflePlayers();
+
+        pool.schedule(() -> {
+            setTurnState(new SelectPowers());
+
+            notifyObservers(o -> o.gameUpdate(this, false));
+        }, 2, TimeUnit.SECONDS);
     }
 
     private Optional<Player> getWinner() {
@@ -85,6 +102,10 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public void addPlayer(Player player) {
+        if (playerList.contains(player)) {
+            throw new IllegalArgumentException("Player is already in game");
+        }
+
         playerList.add(player);
     }
 
@@ -98,7 +119,7 @@ public class Game extends Observable<ModelObserver> {
     public void buildBlock(Point position, boolean forceDome) {
         map.buildBlock(position, forceDome);
 
-        notifyObservers(o -> o.gameUpdate(this));
+        notifyObservers(o -> o.gameUpdate(this, false));
     }
 
     /**
@@ -143,14 +164,14 @@ public class Game extends Observable<ModelObserver> {
 
         Optional<Player> optPlayer = getPlayerOf(optWorker.get());
 
-        if (optPlayer.isEmpty() || optPlayer.get() != player) {
+        if (optPlayer.isEmpty() || !optPlayer.get().equals(player)) {
             throw new UnsupportedOperationException("Player does not own given worker");
         }
 
         notifyObservers(o -> o.playerMove(player, optWorker.get(), optWorker.get().getPosition(), newPosition));
 
-        optWorker.get().setPosition(newPosition);
-        notifyObservers(o -> o.gameUpdate(this));
+        optPlayer.get().moveWorker(optWorker.get(), newPosition);
+        notifyObservers(o -> o.gameUpdate(this, false));
     }
 
     public void startTurn() {
@@ -158,8 +179,8 @@ public class Game extends Observable<ModelObserver> {
             throw new UnsupportedOperationException("Player list is empty");
         }
 
-        notifyObservers(o -> o.gameUpdate(this));
-        getPlayerList().forEach(p -> p.getPower().onBeginTurn(this.getCurrentPlayer(), this));
+        notifyObservers(o -> o.gameUpdate(this, false));
+        getPlayerList().forEach(p -> p.getPower().onBeginTurn(getCurrentPlayer(), this));
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
 
         if (getCurrentPlayer().hasLost() && playerNumber == 3) {
@@ -172,6 +193,8 @@ public class Game extends Observable<ModelObserver> {
             getPlayerOpponents(optWinner.get()).forEach(this::setLoser);
             endGame();
         }
+
+        saveState();
     }
 
     public void nextTurn() {
@@ -181,19 +204,19 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public void endTurn() {
-        //TODO: wait X seconds before starting new turn
+        endTurnRoutine = pool.schedule(() -> {
+            getPlayerList().forEach(p -> p.getPower().onEndTurn(p, this));
+            getPlayerList().forEach(p -> p.setSelectedWorker(null));
+            getPlayerList().forEach(Player::unlockWorker);
 
-        getPlayerList().forEach(p -> p.getPower().onEndTurn(p, this));
-        getCurrentPlayer().setSelectedWorker(null);
-        getCurrentPlayer().unlockWorker();
-
-        nextTurn();
+            nextTurn();
+        }, 5, TimeUnit.SECONDS);
     }
 
     public void shiftPlayers(int distance) {
         Collections.rotate(playerList, distance);
 
-        notifyObservers(o -> o.gameUpdate(this));
+        notifyObservers(o -> o.gameUpdate(this, false));
     }
 
     public void shufflePlayers() {
@@ -205,7 +228,7 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public synchronized void endGame() {
-        this.hasEnded = true;
+        hasEnded = true;
         removeAllObservers();
     }
 
@@ -236,16 +259,16 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public List<Player> getPlayerOpponents(Player player) {
-        return playerList.stream().filter(p -> p != player).collect(Collectors.toUnmodifiableList());
+        return playerList.stream().filter(p -> !p.equals(player)).collect(Collectors.toUnmodifiableList());
     }
 
     public TurnState getTurnState() {
         return turnState;
     }
 
-    public void setTurnState(TurnState turnState) {
-        this.turnState = turnState;
-        this.turnState.init();
+    public void setTurnState(TurnState newTurn) {
+        turnState = newTurn;
+        turnState.init(this);
 
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
 
@@ -264,8 +287,10 @@ public class Game extends Observable<ModelObserver> {
         Optional<Worker> optWorker = getCurrentPlayer().getSelectedWorker();
 
         if (optWorker.isPresent()) {
-            List<Point> validMoves = getTurnState().getValidMoves(getCurrentPlayer(), optWorker.get());
-            Map<Power, List<Point>> blockedMoves = getTurnState().getBlockedMoves(getCurrentPlayer(), optWorker.get());
+            List<Point> validMoves = getTurnState()
+                    .getValidMoves(this, getCurrentPlayer(), optWorker.get());
+            Map<Power, List<Point>> blockedMoves = getTurnState()
+                    .getBlockedMoves(this, getCurrentPlayer(), optWorker.get());
 
             notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(), validMoves, blockedMoves));
         }
@@ -279,23 +304,19 @@ public class Game extends Observable<ModelObserver> {
         return map;
     }
 
-    public void setMap(GameMap map) {
-        this.map = map;
-    }
-
     public int getPlayerNumber() {
         return playerNumber;
     }
 
     public boolean hasStarted() {
-        return this.turnState != null;
+        return hasStarted;
     }
 
     public synchronized boolean hasEnded() {
-        return this.hasEnded;
+        return hasEnded;
     }
 
-    public int getGameID() {
+    public String getGameID() {
         return gameID;
     }
 
@@ -316,6 +337,33 @@ public class Game extends Observable<ModelObserver> {
         availableGodList.add(new Triton());
         availableGodList.add(new Zeus());
 
-        availableGodList.removeIf(power -> !power.getPlayableIn().contains(this.playerNumber));
+        availableGodList.removeIf(power -> !power.getPlayableIn().contains(playerNumber));
+    }
+
+    public void saveState() {
+        savedState = new GameState(map.copy(), turnState.copy(),
+                playerList.stream().map(Player::copy).collect(Collectors.toUnmodifiableList()));
+    }
+
+    public void restoreSavedState() {
+        if (savedState != null) {
+            if(endTurnRoutine != null) {
+                endTurnRoutine.cancel(false);
+            }
+
+            map = savedState.getPreviousMap();
+            playerList.clear();
+
+            for (Player player : savedState.getPreviousPlayersState()) {
+                addPlayer(player);
+            }
+
+            turnState = savedState.getPreviousTurnState();
+
+            notifyObservers(o -> o.gameUpdate(this, true));
+            turnState.init(this);
+
+            saveState();
+        }
     }
 }

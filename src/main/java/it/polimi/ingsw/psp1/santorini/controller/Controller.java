@@ -28,19 +28,21 @@ public class Controller implements ViewObserver {
      * @param view     the view where the even is coming from
      * @param player   the player associated with the view
      * @param location of the square
-     * @throws UnsupportedOperationException if operation is not valid
+     * @throws UnsupportedOperationException  if operation is not valid
      * @throws ArrayIndexOutOfBoundsException if point is out of map
-     * @throws IllegalArgumentException if at least one argument is not valid
+     * @throws IllegalArgumentException       if at least one argument is not valid
      */
     @Override
     public void selectSquare(View view, Player player, Point location) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
                 return;
             }
 
-            model.getTurnState().selectSquare(player, location);
+            model.getTurnState().selectSquare(model, player, location);
         } catch (UnsupportedOperationException | ArrayIndexOutOfBoundsException |
                 IllegalArgumentException ex) {
             view.notifyError(ex.getMessage());
@@ -62,6 +64,8 @@ public class Controller implements ViewObserver {
      */
     @Override
     public void selectWorker(View view, Player player, Point workerPosition) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
@@ -80,7 +84,7 @@ public class Controller implements ViewObserver {
                 return;
             }
 
-            model.getTurnState().selectWorker(player, worker.get());
+            model.getTurnState().selectWorker(model, player, worker.get());
         } catch (UnsupportedOperationException | ArrayIndexOutOfBoundsException |
                 IllegalArgumentException | NoSuchElementException ex) {
             view.notifyError(ex.getMessage());
@@ -100,13 +104,15 @@ public class Controller implements ViewObserver {
      */
     @Override
     public void toggleInteraction(View view, Player player) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
                 return;
             }
 
-            model.getTurnState().toggleInteraction(player);
+            model.getTurnState().toggleInteraction(model, player);
         } catch (UnsupportedOperationException | ArrayIndexOutOfBoundsException |
                 IllegalArgumentException ex) {
             view.notifyError(ex.getMessage());
@@ -125,13 +131,15 @@ public class Controller implements ViewObserver {
      */
     @Override
     public void selectPowers(View view, Player player, List<Power> powerList) {
+        Player playerInstance = getGamePlayerInstance(player);
+
         try {
-            if (!player.equals(model.getCurrentPlayer())) {
+            if (!playerInstance.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
                 return;
             }
 
-            powerList.forEach(p -> model.getTurnState().selectGod(model, player, p));
+            powerList.forEach(p -> model.getTurnState().selectGod(model, playerInstance, p));
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
         }
@@ -141,7 +149,7 @@ public class Controller implements ViewObserver {
      * {@inheritDoc}
      * <p>
      * Used to select the starting player
-     * 
+     *
      * @param view             the view where the even is coming from
      * @param player           the player associated with the view
      * @param chosenPlayerName starting player name
@@ -149,6 +157,8 @@ public class Controller implements ViewObserver {
      */
     @Override
     public void selectStartingPlayer(View view, Player player, String chosenPlayerName) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
@@ -172,13 +182,15 @@ public class Controller implements ViewObserver {
      */
     @Override
     public void undo(View view, Player player) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
                 return;
             }
 
-            model.getTurnState().undo(player);
+            model.getTurnState().undo(model, player);
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
         }
@@ -188,12 +200,13 @@ public class Controller implements ViewObserver {
      * {@inheritDoc}
      * <p>
      *
-     *
-     * @param view the view where the even is coming from
+     * @param view the view where the event is coming from
      */
     @Override
-    public void leaveGame(View view) {
-        if (view.getPlayer().hasLost()) {
+    public void leaveGame(View view, Player player) {
+        player = getGamePlayerInstance(player);
+
+        if (player.hasLost()) {
             model.removeObserver(view);
         } else if (!model.hasEnded() && model.hasStarted()) {
             model.forceEndGame();
@@ -207,10 +220,12 @@ public class Controller implements ViewObserver {
      *
      * @param view   the view where the even is coming from
      * @param player the player associated with the view
-     * @throws  UnsupportedOperationException
+     * @throws UnsupportedOperationException
      */
     @Override
     public void playerSurrender(View view, Player player) {
+        player = getGamePlayerInstance(player);
+
         try {
             if (!player.equals(model.getCurrentPlayer())) {
                 view.notifyError("Not your turn");
@@ -222,5 +237,16 @@ public class Controller implements ViewObserver {
         } catch (UnsupportedOperationException ex) {
             view.notifyError(ex.getMessage());
         }
+    }
+
+    private Player getGamePlayerInstance(Player player) {
+        Optional<Player> optPlayer = model.getPlayerList().stream()
+                .filter(p -> p.equals(player)).findFirst();
+
+        if(optPlayer.isEmpty()) {
+            throw new IllegalStateException("Given player not found in game");
+        }
+
+        return optPlayer.get();
     }
 }

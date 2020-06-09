@@ -6,22 +6,20 @@ import java.util.Arrays;
 
 public enum EnumArrow {
 
-    LEFT("\u2190", "\u2194", new Point(-1, 0)),
-    LEFT_UP("\u2196", "\u2921", new Point(-1, -1)),
-    UP("\u2191", "\u2195", new Point(0, -1)),
-    RIGHT_UP("\u2197", "\u2922", new Point(1, -1)),
-    RIGHT("\u2192", "\u2194", new Point(1, 0)),
-    RIGHT_DOWN("\u2198", "\u2921", new Point(1, 1)),
-    DOWN("\u2193", "\u2195", new Point(0, 1)),
-    LEFT_DOWN("\u2199", "\u2922", new Point(-1, 1));
+    LEFT("\u2190", new Point(-1, 0)),
+    LEFT_UP("\u2196", new Point(-1, -1)),
+    UP("\u2191", new Point(0, -1)),
+    RIGHT_UP("\u2197", new Point(1, -1)),
+    RIGHT("\u2192", new Point(1, 0)),
+    RIGHT_DOWN("\u2198", new Point(1, 1)),
+    DOWN("\u2193", new Point(0, 1)),
+    LEFT_DOWN("\u2199", new Point(-1, 1));
 
     private final String normal;
-    private final String bidirectional;
     private final Point vector;
 
-    EnumArrow(String normal, String bidirectional, Point vector) {
+    EnumArrow(String normal, Point vector) {
         this.normal = normal;
-        this.bidirectional = bidirectional;
         this.vector = vector;
     }
 
@@ -32,12 +30,8 @@ public enum EnumArrow {
                 .orElseThrow();
     }
 
-    public String getNormal() {
+    public String toUnicode() {
         return normal;
-    }
-
-    public String getBidirectional() {
-        return bidirectional;
     }
 
     public Point getVector() {

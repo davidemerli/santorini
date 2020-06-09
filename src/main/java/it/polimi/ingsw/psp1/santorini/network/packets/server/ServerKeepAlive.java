@@ -7,6 +7,7 @@ public class ServerKeepAlive implements Packet<ServerHandler> {
 
     @Override
     public void processPacket(ServerHandler netHandler) {
-        netHandler.handleKeepAlive(this);
+        netHandler.handleKeepAlive();
     }
+
 }

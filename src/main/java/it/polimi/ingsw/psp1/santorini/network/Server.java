@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.controller.Controller;
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerConnectedToGame;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerKeepAlive;
 import it.polimi.ingsw.psp1.santorini.view.RemoteView;
 import it.polimi.ingsw.psp1.santorini.view.View;
 
@@ -11,12 +12,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Server implements Runnable {
+
+    private final int GAME_ID_DIGITS = 4;
 
     private final Random rnd;
 
@@ -37,11 +40,17 @@ public class Server implements Runnable {
         this.twoPlayerGameQueue = new ConcurrentHashMap<>();
         this.threePlayerGameQueue = new ConcurrentHashMap<>();
 
-        this.games = new ConcurrentHashMap<>();
+        this.games = Collections.synchronizedMap(new LinkedHashMap<>());
 
         this.pool = Executors.newFixedThreadPool(128);
 
-        this.pool.execute(this::gameStarter);
+        ScheduledExecutorService gameStarterPool = Executors.newSingleThreadScheduledExecutor();
+
+        gameStarterPool.scheduleAtFixedRate(this::gameStarter,
+                0, //delay
+                500, TimeUnit.MILLISECONDS);//run every 500ms
+
+        //TODO: terminate gameStarterPool
 
         this.rnd = new Random();
     }
@@ -62,6 +71,9 @@ public class Server implements Runnable {
                 System.out.println("Accepted client: " + client.getInetAddress());
                 //when a client connects it is put into a list of connected sockets and a ClientHandler is created
                 ClientConnectionHandler clientHandler = new ClientConnectionHandler(this, client);
+                //sending a first keep alive packet so the client can send another backwards
+                clientHandler.sendPacket(new ServerKeepAlive());
+
                 pool.execute(clientHandler);
 
                 clientsToRelocate.add(clientHandler);
@@ -72,65 +84,76 @@ public class Server implements Runnable {
     }
 
     private void gameStarter() {
-        System.out.println("Game starter thread ready");
+        try {
+            synchronized (games) {
+                games.entrySet().stream()
+                        .filter(e -> e.getKey().hasEnded() || e.getValue().isEmpty())
+                        .peek(e -> e.getValue().keySet().forEach(ClientConnectionHandler::closeConnection))
+                        .map(Map.Entry::getKey)
+                        .forEach(games::remove);
 
-        while (true) {//TODO: make server stoppable
-            //Removes terminated games from the games map
-            games.entrySet().stream()
-                    .filter(e -> e.getKey().hasEnded())
-                    .peek(e -> e.getValue().keySet().forEach(ClientConnectionHandler::closeConnection))
-                    .map(Map.Entry::getKey)
-                    .forEach(games::remove);
+                games.keySet().stream().filter(g -> !g.hasStarted()).forEach(game -> {
+                    Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
-            games.keySet().stream().filter(g -> !g.hasStarted()).forEach(game -> {
-                Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
+                    boolean full = fillGame(game);
 
-                if (gamePlayers.size() < game.getPlayerNumber()) {
-                    Optional<Map.Entry<ClientConnectionHandler, Player>> waitingClient;
+                    if (full) {
+                        Controller controller = new Controller(game);
+                        List<View> views = new ArrayList<>();
+                        gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
 
-                    if (game.getPlayerNumber() == 2) {
-                        waitingClient = twoPlayerGameQueue.entrySet().stream().findFirst();
-                    } else {
-                        waitingClient = threePlayerGameQueue.entrySet().stream().findFirst();
+                        //views observe model
+                        views.forEach(game::addObserver);
+
+                        //controller observes views
+                        views.forEach(v -> v.addObserver(controller));
+
+                        //add players to the game
+                        views.forEach(v -> game.addPlayer(v.getPlayer()));
+
+                        game.startGame();
                     }
-
-                    if (waitingClient.isPresent()) {
-                        gamePlayers.put(waitingClient.get().getKey(), waitingClient.get().getValue());
-
-                        if (game.getPlayerNumber() == 2) {
-                            twoPlayerGameQueue.remove(waitingClient.get().getKey());
-                        } else {
-                            threePlayerGameQueue.remove(waitingClient.get().getKey());
-                        }
-
-                        for (ClientConnectionHandler ch : gamePlayers.keySet()) {
-                            if (gamePlayers.get(ch).equals(waitingClient.get().getValue())) {
-                                gamePlayers.values().forEach(p -> ch.sendPacket(new ServerConnectedToGame(p.getName())));
-                            } else {
-                                ch.sendPacket(new ServerConnectedToGame(waitingClient.get().getValue().getName()));
-                            }
-                        }
-                    }
-                }
-
-                if (gamePlayers.size() == game.getPlayerNumber()) {
-                    Controller controller = new Controller(game);
-                    List<View> views = new ArrayList<>();
-                    gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
-
-                    //views observe model
-                    views.forEach(game::addObserver);
-
-                    //controller observes views
-                    views.forEach(v -> v.addObserver(controller));
-
-                    //add players to the game
-                    views.forEach(v -> game.addPlayer(v.getPlayer()));
-
-                    game.startGame();
-                }
-            });
+                });
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+    }
+
+    private boolean fillGame(Game game) {
+        Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
+
+        if (gamePlayers.size() < game.getPlayerNumber()) {
+            Optional<Map.Entry<ClientConnectionHandler, Player>> waitingClient;
+
+            if (game.getPlayerNumber() == 2) {
+                waitingClient = twoPlayerGameQueue.entrySet().stream().findFirst();
+            } else {
+                waitingClient = threePlayerGameQueue.entrySet().stream().findFirst();
+            }
+
+            if (waitingClient.isPresent()) {
+                gamePlayers.put(waitingClient.get().getKey(), waitingClient.get().getValue());
+
+                if (game.getPlayerNumber() == 2) {
+                    twoPlayerGameQueue.remove(waitingClient.get().getKey());
+                } else {
+                    threePlayerGameQueue.remove(waitingClient.get().getKey());
+                }
+
+                for (ClientConnectionHandler ch : gamePlayers.keySet()) {
+                    if (gamePlayers.get(ch).equals(waitingClient.get().getValue())) {
+                        gamePlayers.values().forEach(p -> ch.sendPacket(new ServerConnectedToGame(
+                                p.getName(), game.getGameID())));
+                    } else {
+                        ch.sendPacket(new ServerConnectedToGame(
+                                waitingClient.get().getValue().getName(), game.getGameID()));
+                    }
+                }
+            }
+        }
+
+        return gamePlayers.size() == game.getPlayerNumber();
     }
 
     /**
@@ -154,13 +177,15 @@ public class Server implements Runnable {
             throw new IllegalStateException("You need to set a name first");
         }
 
-        //create a new game
-        Game newGame = new Game(generateValidID(), playerNumber);
+        synchronized (games) {
+            //create a new game
+            Game newGame = new Game(generateGameID(), playerNumber);
 
-        //add a new game to the list of games
-        games.put(newGame, new LinkedHashMap<>(Map.of(connectionHandler, optPlayer.get())));
+            //add a new game to the list of games
+            games.put(newGame, new LinkedHashMap<>(Map.of(connectionHandler, optPlayer.get())));
 
-        connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName()));
+            connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName(), newGame.getGameID()));
+        }
     }
 
     public void disconnectClient(ClientConnectionHandler connectionHandler) {
@@ -177,9 +202,9 @@ public class Server implements Runnable {
         }
     }
 
-    public void joinGame(ClientConnectionHandler connectionHandler, int gameRoom) {
+    public void joinGame(ClientConnectionHandler connectionHandler, String gameRoom) {
         Optional<Game> toJoin = games.keySet().stream()
-                .filter(game -> game.getGameID() == gameRoom)
+                .filter(game -> game.getGameID().equals(gameRoom))
                 .findFirst();
 
         if (toJoin.isEmpty()) {
@@ -198,13 +223,16 @@ public class Server implements Runnable {
 
         Map<ClientConnectionHandler, Player> game = games.get(toJoin.get());
         game.put(connectionHandler, optPlayer.get());
+
         for (Player p : game.values()) {
             if (p.equals(connectionHandler.getPlayer().orElse(null))) {
-                game.values().forEach(pp -> connectionHandler.sendPacket(new ServerConnectedToGame(pp.getName())));
+                game.values().forEach(pp -> connectionHandler.sendPacket(new ServerConnectedToGame(
+                        pp.getName(), toJoin.get().getGameID())));
             } else {
-                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName()));
+                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName(), toJoin.get().getGameID()));
             }
         }
+
         clientsToRelocate.remove(connectionHandler);
     }
 
@@ -226,16 +254,32 @@ public class Server implements Runnable {
         clientsToRelocate.remove(connectionHandler);
     }
 
-    private int generateValidID() {
-        Set<Integer> assignedIDs = games.keySet().stream()
+    public boolean isUsernameUnique(String username) {
+        Set<String> assignedPlayerUsernames = games.values().stream()
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .map(Player::getName)
+                .collect(Collectors.toSet());
+
+        Stream.concat(twoPlayerGameQueue.values().stream(), threePlayerGameQueue.values().stream())
+                .map(Player::getName).forEach(assignedPlayerUsernames::add);
+
+        return assignedPlayerUsernames.contains(username);
+    }
+
+    private String generateGameID() {
+        Set<String> assignedGameIDs = games.keySet().stream()
                 .map(Game::getGameID)
                 .collect(Collectors.toSet());
 
-        int gameID;
+        String gameID;
+        StringBuilder sb = new StringBuilder();
 
-        do {//generates a random number between 1000 and 9999
-            gameID = 1000 + rnd.nextInt(9000);
-        } while (assignedIDs.contains(gameID));
+        do {
+            IntStream.range(0, GAME_ID_DIGITS).forEach(i -> sb.append(rnd.nextInt(10)));
+            gameID = sb.toString();
+            sb.setLength(0);
+        } while (assignedGameIDs.contains(gameID));
 
         return gameID;
     }

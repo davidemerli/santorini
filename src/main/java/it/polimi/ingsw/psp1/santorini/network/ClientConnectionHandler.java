@@ -15,8 +15,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ClientConnectionHandler extends Observable<ConnectionObserver> implements Runnable, ClientHandler {
+
+    private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
     private final Server server;
 
@@ -38,16 +43,25 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     }
 
     public void sendPacket(Packet<ServerHandler> packet) {
+        sendPacket(packet, 0);
+    }
+
+    public void sendPacket(Packet<ServerHandler> packet, int delay) {
         if (closed) {
             return;
         }
 
-        try {
-            System.out.println("sent " + packet);
-            objectOutputStream.writeObject(packet);
-        } catch (IOException e) {
-            closeConnection();
-        }
+        pool.schedule(() -> {
+            try {
+                if (!(packet instanceof ServerKeepAlive)) {
+                    System.out.println("sent " + packet.toString());
+                }
+
+                objectOutputStream.writeObject(packet);
+            } catch (IOException e) {
+                closeConnection();
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -59,7 +73,11 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
             while (!closed) {
                 Object object = objectInputStream.readObject();
-                System.out.println("received " + object);
+
+                if (!(object instanceof ClientKeepAlive)) {
+                    System.out.println("received " + object.toString());
+                }
+
                 ((Packet<ClientHandler>) object).processPacket(this);
             }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
@@ -70,7 +88,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
         player = new Player(packet.getName());
-        //TODO: recheck if name is already present
     }
 
     @Override
@@ -84,58 +101,60 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
     @Override
     public void handleJoinGame(ClientJoinGame packet) {
-        if (packet.getGameRoom() != -1) {
-            server.joinGame(this, packet.getGameRoom());
-        } else {
-            server.joinQueue(this, packet.getPlayerNumber());
+        try {
+            if (packet.getGameRoom() != null) {
+                server.joinGame(this, packet.getGameRoom());
+            } else {
+                server.joinQueue(this, packet.getPlayerNumber());
+            }
+        } catch (IllegalStateException ex) {
+            sendPacket(new ServerInvalidPacket(ex.getMessage()));
         }
     }
 
     @Override
-    public void handlePowerChoosing(ClientChoosePower clientChoosePower) {
-        notifyObservers(o -> o.processPowerList(clientChoosePower.getPowers()));
+    public void handlePowerChoosing(ClientChoosePower packet) {
+        notifyObservers(o -> o.processPowerList(packet.getPowers()));
     }
 
     @Override
-    public void handleSquareSelect(ClientSelectSquare clientSelectSquare) {
-        notifyObservers(o -> o.processSquareSelection(clientSelectSquare.getSquare()));
+    public void handleSquareSelect(ClientSelectSquare packet) {
+        notifyObservers(o -> o.processSquareSelection(packet.getSquare()));
     }
 
     @Override
-    public void handleInteractionToggle(ClientToggleInteraction clientToggleInteraction) {
+    public void handleInteractionToggle() {
         notifyObservers(ConnectionObserver::processToggleInteraction);
     }
 
     @Override
-    public void handlePlayerForfeit(ClientForfeit clientForfeit) {
+    public void handlePlayerForfeit() {
         notifyObservers(ConnectionObserver::handlePlayerForfeit);
     }
 
     @Override
-    public void handleKeepAlive(ClientKeepAlive clientKeepAlive) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                sendPacket(new ServerKeepAlive());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public void handleKeepAlive() {
+        sendPacket(new ServerKeepAlive(), 1000);
     }
 
     @Override
-    public void handleRequestGameData(ClientRequestGameData clientRequestGameData) {
+    public void handleUndo() {
+        notifyObservers(ConnectionObserver::processUndo);
+    }
+
+    @Override
+    public void handleRequestGameData() {
         notifyObservers(ConnectionObserver::processRequestGameData);
     }
 
     @Override
-    public void handleWorkerSelection(ClientSelectWorker clientSelectWorker) {
-        notifyObservers(o -> o.processWorkerSelection(clientSelectWorker.getWorkerPosition()));
+    public void handleWorkerSelection(ClientSelectWorker packet) {
+        notifyObservers(o -> o.processWorkerSelection(packet.getWorkerPosition()));
     }
 
     @Override
-    public void handleSelectStartingPlayer(ClientSelectStartingPlayer clientSelectStartingPlayer) {
-        notifyObservers(o -> o.processStartingPlayerSelection(clientSelectStartingPlayer.getName()));
+    public void handleSelectStartingPlayer(ClientSelectStartingPlayer packet) {
+        notifyObservers(o -> o.processStartingPlayerSelection(packet.getName()));
     }
 
     public void closeConnection() {
@@ -145,7 +164,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
                 objectInputStream.close();
             }
 
-            objectOutputStream.close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

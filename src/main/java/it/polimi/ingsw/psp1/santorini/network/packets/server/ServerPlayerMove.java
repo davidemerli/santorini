@@ -37,6 +37,11 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
         return move;
     }
 
+    @Override
+    public String toString() {
+        return toString(moveType, move);
+    }
+
     private abstract static class PlayerTurn implements Serializable {
         private final Point where;
         private final Worker worker;
@@ -59,6 +64,11 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
         public PlayerPlaceWorker(Worker worker) {
             super(worker, worker.getPosition());
         }
+
+        @Override
+        public String toString() {
+            return "Place Worker [" + getWorker().toString() + "]";
+        }
     }
 
     public static class PlayerMove extends PlayerTurn {
@@ -73,6 +83,11 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
         public Point getSrc() {
             return from;
         }
+
+        @Override
+        public String toString() {
+            return "Move [" + getWorker().toString() + " - from: " + getSrc() + " - to: " + getDest() + "]";
+        }
     }
 
     public static class PlayerBuild extends PlayerTurn {
@@ -86,6 +101,11 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
 
         public boolean forceDome() {
             return forceDome;
+        }
+
+        @Override
+        public String toString() {
+            return "Build [" + getWorker().toString() + " - " + getDest() + "]";
         }
     }
 }

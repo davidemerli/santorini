@@ -18,7 +18,7 @@ public class PanTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1", 2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -47,8 +47,8 @@ public class PanTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
-        game.getTurnState().selectSquare(player, newPosition);
+        game.getTurnState().selectWorker(game, player, w);
+        game.getTurnState().selectSquare(game, player, newPosition);
 
         assertTrue(player.hasWon());
     }

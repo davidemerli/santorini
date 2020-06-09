@@ -7,12 +7,14 @@ import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.List;
 
 public class IpSelectionController extends GuiController {
@@ -76,5 +78,10 @@ public class IpSelectionController extends GuiController {
 
     public void changeToNameSelection() {
         Gui.getInstance().changeSceneAsync(EnumScene.NAME_SELECT, EnumTransition.DOWN);
+    }
+
+    @Override
+    public void reset() {
+
     }
 }

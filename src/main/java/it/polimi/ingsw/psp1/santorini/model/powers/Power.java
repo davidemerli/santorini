@@ -209,4 +209,9 @@ public abstract class Power implements Serializable, Cloneable {
     public List<Integer> getPlayableIn() {
         return Arrays.stream(playableIn).boxed().collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public String toString() {
+        return "Power: [" + getName() + "]";
+    }
 }

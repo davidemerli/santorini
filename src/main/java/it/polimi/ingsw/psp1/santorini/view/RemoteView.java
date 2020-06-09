@@ -96,7 +96,7 @@ public class RemoteView extends View {
     @Override
     public void playerUpdate(Game game, Player player) {
         EnumTurnState turnState = EnumTurnState.fromTurnState(game.getTurnState());
-        boolean interaction = game.getTurnState().shouldShowInteraction(player);
+        boolean interaction = game.getTurnState().shouldShowInteraction(game, player);
 
         PlayerData playerData = toData(player);
 
@@ -116,12 +116,12 @@ public class RemoteView extends View {
      * Sends a packet with the game current status
      */
     @Override
-    public void gameUpdate(Game game) {
+    public void gameUpdate(Game game, boolean forced) {
         List<PlayerData> players = game.getPlayerList().stream()
                 .map(this::toData).collect(Collectors.toList());
         EnumTurnState turnState = EnumTurnState.fromTurnState(game.getTurnState());
 
-        ServerGameData packet = new ServerGameData(game.getMap().copy(), players, turnState);
+        ServerGameData packet = new ServerGameData(game.getMap().copy(), players, turnState, forced);
         connection.sendPacket(packet);
     }
 
@@ -184,8 +184,10 @@ public class RemoteView extends View {
      * @return a PlayerData object
      */
     private PlayerData toData(Player player) {
-        return new PlayerData(player.getName(), player.getPower(),
-                player.getWorkers().stream().map(w -> new Worker(w.getPosition())).collect(Collectors.toList()));
+        List<Worker> workers = player.getWorkers().stream()
+                .map(w -> new Worker(w.getPosition())).collect(Collectors.toList());
+
+        return new PlayerData(player.getName(), player.getPower(), workers);
     }
 
     private class PacketReceiver implements ConnectionObserver {
@@ -267,8 +269,13 @@ public class RemoteView extends View {
          */
         @Override
         public void handleCloseConnection() {
-            notifyObservers(o -> o.leaveGame(RemoteView.this));
+            notifyObservers(o -> o.leaveGame(RemoteView.this, getPlayer()));
             removeAllObservers();
+        }
+
+        @Override
+        public void processUndo() {
+            notifyObservers(o -> o.undo(RemoteView.this, getPlayer()));
         }
     }
 }

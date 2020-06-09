@@ -20,10 +20,8 @@ public abstract class ServerHandler implements NetHandler {
     protected final Map<Power, List<Point>> blockedMoves;
     protected final List<Point> validMoves;
     protected final List<Power> powerList;
-    private final List<Color> colors = Arrays.asList(//TODO: Make server side colors
-            Color.BG_WORKER_BLUE,
-            Color.BG_WORKER_RED,
-            Color.BG_WORKER_ORANGE);
+    private final List<Color> colors = List.of(Color.BG_WORKER_BLUE, Color.BG_WORKER_RED, Color.BG_WORKER_ORANGE);
+
     protected String playerName;
     protected GameMap gameMap;
     protected boolean shouldShowInteraction;
@@ -45,7 +43,7 @@ public abstract class ServerHandler implements NetHandler {
         this.lastTurnState = null;
     }
 
-    public void handleKeepAlive(ServerKeepAlive packet) {
+    public void handleKeepAlive() {
         client.sendPacket(new ClientKeepAlive());
     }
 
@@ -53,21 +51,23 @@ public abstract class ServerHandler implements NetHandler {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayerData();
 
-        if (playerColorMap.size() != playerList.size()) {
-            playerColorMap.clear();
-            Collections.shuffle(colors);
+        playerDataList.clear();
+        playerDataList.addAll(playerList);
 
-            for (int i = 0; i < playerList.size(); i++) {
-                playerColorMap.put(playerList.get(i).getName(), colors.get(i));
+        if (playerColorMap.size() != playerList.size()) {
+            List<PlayerData> copy = new ArrayList<>(playerDataList);
+            copy.sort(Comparator.comparingInt(Objects::hashCode));
+
+            playerColorMap.clear();
+
+            for (int i = 0; i < copy.size(); i++) {
+                playerColorMap.put(copy.get(i).getName(), colors.get(i));
             }
         }
 
-        this.playerDataList.clear();
-        this.playerDataList.addAll(playerList);
+        gameMap = map;
 
-        this.gameMap = map;
-
-        this.lastTurnState = packet.getTurnState();
+        lastTurnState = packet.getTurnState();
     }
 
     public void handleRequest(ServerAskRequest packet) {
@@ -94,14 +94,16 @@ public abstract class ServerHandler implements NetHandler {
 
     public abstract void handleError(ServerInvalidPacket packet);
 
-    public abstract void handlePlayerMove(ServerPlayerMove serverPlayerMove);
+    public abstract void handlePlayerMove(ServerPlayerMove packet);
 
-    public void handlePowerList(ServerPowerList serverPowerList) {
+    public void handlePowerList(ServerPowerList packet) {
         getPowerList().clear();
-        getPowerList().addAll(serverPowerList.getAvailablePowers());
+        getPowerList().addAll(packet.getAvailablePowers());
     }
 
-    public abstract void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame);
+    public void handlePlayerConnected(ServerConnectedToGame packet) {
+        playerDataList.add(new PlayerData(packet.getName(), null, List.of()));
+    }
 
     public Optional<PlayerData> getPlayerData() {
         return playerDataList.stream()
@@ -150,19 +152,21 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     public boolean isYourTurn() {
-        return !getPlayerDataList().isEmpty() && getPlayerDataList().get(0).getName().equals(getPlayerName());
+        return !getPlayerDataList().isEmpty() && getPlayerDataList().get(0).getName().equals(playerName);
     }
 
     public void reset() {
-        this.playerDataList.clear();
-        this.blockedMoves.clear();
-        this.validMoves.clear();
-        this.powerList.clear();
-        this.playerColorMap.clear();
+        playerDataList.clear();
+        blockedMoves.clear();
+        validMoves.clear();
+        powerList.clear();
+        playerColorMap.clear();
 
-        this.shouldShowInteraction = false;
-        this.gameMap = new GameMap();
-        this.lastRequest = null;
-        this.lastTurnState = null;
+        shouldShowInteraction = false;
+        gameMap = new GameMap();
+        lastRequest = null;
+        lastTurnState = null;
     }
+
+    public abstract void onDisconnect();
 }

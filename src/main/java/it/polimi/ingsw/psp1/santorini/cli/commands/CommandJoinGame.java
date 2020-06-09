@@ -23,7 +23,7 @@ public class CommandJoinGame extends Command {
 
         boolean isID = number != 2 && number != 3;
 
-        client.sendPacket(new ClientJoinGame(isID ? -1 : number, isID ? number : -1));
+        client.sendPacket(new ClientJoinGame(isID ? -1 : number, isID ? arguments[0] : null));
 
         if(isID) {
             return String.format("Trying to join game with ID: %s", number);

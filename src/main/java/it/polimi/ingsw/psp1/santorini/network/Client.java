@@ -3,13 +3,19 @@ package it.polimi.ingsw.psp1.santorini.network;
 import it.polimi.ingsw.psp1.santorini.cli.Color;
 import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientKeepAlive;
+import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerKeepAlive;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Client implements Runnable {
+
+    private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
     private final Object lock = new Object();
 
@@ -17,15 +23,12 @@ public class Client implements Runnable {
     private ServerHandler serverHandler;
     private Socket server;
 
-    private String ip;
-    private int port;
     private boolean connected;
+
+    private boolean debug;
 
     public void connectToServer(String ip, int port) {
         disconnect();
-
-        this.ip = ip;
-        this.port = port;
 
         try {
             synchronized (lock) {
@@ -51,22 +54,31 @@ public class Client implements Runnable {
                 server.close();
                 server = null;
             }
+
+            serverHandler.onDisconnect();
+            serverHandler.reset();//TODO: check if fine on CLI
         } catch (IOException e) {
             System.out.println("Server connection closed wrongly");
         }
     }
 
     public void sendPacket(Packet<ClientHandler> packet) {
-        try {
-            objectOutputStream.writeObject(packet);
-            objectOutputStream.flush();
-        } catch (IOException e) {
-            //TODO: cannot print like this (not good in GUI)
-            PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
-                    0, -1, true);
+        pool.submit(() -> {
+            try {
+                objectOutputStream.writeObject(packet);
+                objectOutputStream.flush();
 
-            disconnect();
-        }
+                if(debug && !(packet instanceof ClientKeepAlive)) {
+                    System.out.println("sent: " + packet.toString());
+                }
+            } catch (IOException e) {
+                //TODO: cannot print like this (not good in GUI)
+                PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
+                        0, -1, true);
+
+                disconnect();
+            }
+        });
     }
 
     @Override
@@ -78,8 +90,12 @@ public class Client implements Runnable {
 
             while (isConnected()) {
                 if (serverHandler != null) {
-                    Object object = objectInputStream.readObject();
-                    ((Packet<ServerHandler>) object).processPacket(serverHandler);
+                    Packet<ServerHandler> packet = (Packet<ServerHandler>) objectInputStream.readObject();
+                    packet.processPacket(serverHandler);
+
+                    if(debug && !(packet instanceof ServerKeepAlive)) {
+                        System.out.println("received: " + packet.toString());
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
@@ -95,6 +111,10 @@ public class Client implements Runnable {
 
     public void setServerHandler(ServerHandler serverHandler) {
         this.serverHandler = serverHandler;
+    }
+
+    public void enableDebug() {
+        debug = true;
     }
 
     public boolean isConnected() {

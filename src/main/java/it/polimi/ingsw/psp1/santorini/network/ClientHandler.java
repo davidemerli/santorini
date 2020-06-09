@@ -10,19 +10,21 @@ public interface ClientHandler extends NetHandler {
 
     void handleJoinGame(ClientJoinGame packet);
 
-    void handlePowerChoosing(ClientChoosePower clientChoosePower);
+    void handlePowerChoosing(ClientChoosePower packet);
 
-    void handleSquareSelect(ClientSelectSquare clientSelectSquare);
+    void handleSquareSelect(ClientSelectSquare packet);
 
-    void handleInteractionToggle(ClientToggleInteraction clientToggleInteraction);
+    void handleWorkerSelection(ClientSelectWorker packet);
 
-    void handlePlayerForfeit(ClientForfeit clientForfeit);
+    void handleSelectStartingPlayer(ClientSelectStartingPlayer packet);
 
-    void handleKeepAlive(ClientKeepAlive clientKeepAlive);
+    void handleInteractionToggle();
 
-    void handleRequestGameData(ClientRequestGameData clientRequestGameData);
+    void handleRequestGameData();
 
-    void handleWorkerSelection(ClientSelectWorker clientSelectWorker);
+    void handlePlayerForfeit();
 
-    void handleSelectStartingPlayer(ClientSelectStartingPlayer clientSelectStartingPlayer);
+    void handleKeepAlive();
+
+    void handleUndo();
 }

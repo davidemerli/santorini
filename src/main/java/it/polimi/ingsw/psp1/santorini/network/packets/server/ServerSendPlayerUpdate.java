@@ -32,4 +32,9 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
     public boolean shouldShowInteraction() {
         return shouldShowInteraction;
     }
+
+    @Override
+    public String toString() {
+        return toString(playerData, playerState, shouldShowInteraction);
+    }
 }

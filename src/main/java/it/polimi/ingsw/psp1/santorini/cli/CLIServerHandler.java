@@ -9,6 +9,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class CLIServerHandler extends ServerHandler implements Runnable {
@@ -181,19 +182,17 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
     @Override
     public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
-//        PlayerData playerInfo = serverPlayerMove.getPlayerData();
         EnumActionType move = serverPlayerMove.getMoveType();
-//        String name = playerInfo.getName();
 
         if (move == EnumActionType.MOVE) {
             ServerPlayerMove.PlayerMove playerMove = (ServerPlayerMove.PlayerMove) serverPlayerMove.getMove();
 
             Point vector = playerMove.getDest().subtract(playerMove.getSrc());
 
-//            PrintUtils.printWorkers();
+            PrintUtils.printArrow(EnumArrow.fromVector(vector), playerMove.getSrc());
+        } else if (move == EnumActionType.BUILD) {
+            PrintUtils.printMapBackground();
         }
-
-        //TODO: add an arrow or something
     }
 
     @Override
@@ -204,8 +203,33 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     }
 
     @Override
-    public void handlePlayerConnected(ServerConnectedToGame serverConnectedToGame) {
-        //TODO: send to player info about the game he just joined
+    public void handlePlayerConnected(ServerConnectedToGame packet) {
+        super.handlePlayerConnected(packet);
+
+        if (packet.getName().equals(getPlayerName())) {
+            String string = String.format("You ('%s') joined a game! (game ID '%s')",
+                    Color.BLUE + "" + packet.getName() + Color.RESET,
+                    Color.RED + "" + packet.getGameID() + Color.RESET);
+
+            PrintUtils.printFromCommand(string, 0, -2, true);
+        } else {
+            String string = String.format("'%s' joined the game!",
+                    Color.BLUE + "" + packet.getName() + Color.RESET);
+
+            Optional<PlayerData> optPlayer = getPlayerDataList().stream()
+                    .filter(p -> p.getName().equals(packet.getName())).findFirst();
+
+            if (optPlayer.isPresent()) {
+                PrintUtils.printFromCommand(string, 0, -4 - getPlayerDataList().indexOf(optPlayer.get()), true);
+            } else {
+                throw new IllegalStateException("Invalid local username");
+            }
+        }
+    }
+
+    @Override
+    public void onDisconnect() {
+
     }
 
 

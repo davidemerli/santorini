@@ -46,7 +46,7 @@ public class Artemis extends Mortal {
      */
     @Override
     public void onToggleInteraction(Game game) {
-        game.setTurnState(new Build(game));
+        game.setTurnState(new Build());
     }
 
     /**
@@ -82,7 +82,7 @@ public class Artemis extends Mortal {
         if (player.equals(this.player) && !hasMoved) {
             hasMoved = true;
 
-            game.setTurnState(new Move(game));
+            game.setTurnState(new Move());
         }
     }
 }

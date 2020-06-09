@@ -19,7 +19,7 @@ public class ZeusTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1",2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -43,11 +43,11 @@ public class ZeusTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        game.getTurnState().selectSquare(player, new Point(2,2));
+        game.getTurnState().selectSquare(game, player, new Point(2,2));
 
         assertTrue(game.getTurnState() instanceof Build);
-        assertTrue(game.getTurnState().getValidMoves(player, w).contains(position));
+        assertTrue(game.getTurnState().getValidMoves(game, player, w).contains(position));
     }
 }

@@ -17,7 +17,7 @@ public class ChronusTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1",2);
         this.player = new Player("p1");
 
         game.addPlayer(player);

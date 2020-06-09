@@ -11,40 +11,36 @@ import java.util.Optional;
 
 public class Build extends TurnState {
 
-    public Build(Game game) {
-        super(game);
+    @Override
+    public void init(Game game) {
+        super.init(game);
+
+        genericMoveOrBuildRequest(game);
     }
 
     @Override
-    public void init() {
-        super.init();
-
-        genericMoveOrBuildRequest();
-    }
-
-    @Override
-    public void selectSquare(Player player, Point position) {
+    public void selectSquare(Game game, Player player, Point position) {
         Optional<Worker> optWorker = player.getSelectedWorker();
 
         if (optWorker.isEmpty()) {
             throw new UnsupportedOperationException("Tried to build with no selected worker");
         }
 
-        if (isPositionBlocked(getBlockedMoves(player, optWorker.get()), position)) {
+        if (isPositionBlocked(game, getBlockedMoves(game, player, optWorker.get()), position)) {
             throw new IllegalArgumentException("Given position is a forbidden build position by some power");
         }
 
-        if (!getValidMoves(player, optWorker.get()).contains(position)) {
+        if (!getValidMoves(game, player, optWorker.get()).contains(position)) {
             throw new IllegalArgumentException("Invalid build position");
         }
-        
+
         game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position, game.getMap().hasDome(position)));
 
         player.getPower().onBuild(player, optWorker.get(), position, game);
     }
 
     @Override
-    public void selectWorker(Player player, Worker worker) {
+    public void selectWorker(Game game, Player player, Worker worker) {
         //TODO: make abstract state that Move & Build will inherit from (also with generic MoveOrBuildRequest)
 
         if (!player.getWorkers().contains(worker)) {
@@ -58,18 +54,18 @@ public class Build extends TurnState {
         player.setSelectedWorker(worker);
 
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
-                getValidMoves(player, worker), getBlockedMoves(player, worker)));
+                getValidMoves(game, player, worker), getBlockedMoves(game, player, worker)));
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }
 
     @Override
-    public void toggleInteraction(Player player) {
+    public void toggleInteraction(Game game, Player player) {
         player.getPower().onToggleInteraction(game);
     }
 
     @Override
-    public boolean shouldShowInteraction(Player player) {
+    public boolean shouldShowInteraction(Game game, Player player) {
         return player.getPower().shouldShowInteraction(game);
     }
 }

@@ -1,10 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
-import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -18,7 +18,7 @@ public class WaitGodSelectionController extends GuiController {
 
     private static WaitGodSelectionController instance;
 
-    private Map<PlayerData, VBox> players;
+    private Map<String, VBox> players;
 
     @FXML
     private HBox imageBox;
@@ -50,7 +50,25 @@ public class WaitGodSelectionController extends GuiController {
             VBox vbox = new VBox(image, text);
             vbox.setAlignment(Pos.CENTER);
 
+            getInstance().players.put(playerName, vbox);
+
             getInstance().imageBox.getChildren().add(vbox);
         });
+    }
+
+    public void addPlayerPower(String playerName, Power power) {
+        Platform.runLater(() -> {
+            String powerURL = getClass().getResource(String.format("/gui_assets/god_cards/with_background/%s.png",
+                    power.getName())).toString();
+
+            ImageView image = (ImageView) getInstance().players.get(playerName).getChildren().get(0);
+            image.setImage(new Image(powerURL));
+        });
+    }
+
+    public void reset() {
+        if (getInstance().imageBox != null) {
+            Platform.runLater(() -> getInstance().imageBox.getChildren().clear());
+        }
     }
 }

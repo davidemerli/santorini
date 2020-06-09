@@ -10,23 +10,21 @@ import java.util.List;
 
 public class WorkerPlacing extends TurnState {
 
-    public WorkerPlacing(Game game) {
-        super(game);
-    }
-
     @Override
-    public void init() {
-        super.init();
+    public void init(Game game) {
+        super.init(game);
 
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(),
-                getValidMoves(game.getCurrentPlayer(), null),
-                getBlockedMoves(game.getCurrentPlayer(), null)));
+                getValidMoves(game, game.getCurrentPlayer(), null),
+                getBlockedMoves(game, game.getCurrentPlayer(), null)));
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.PLACE_WORKER);
+
+        game.saveState();
     }
 
     @Override
-    public boolean shouldShowInteraction(Player player) {
+    public boolean shouldShowInteraction(Game game, Player player) {
         return false;
     }
 
@@ -34,7 +32,7 @@ public class WorkerPlacing extends TurnState {
      * {@inheritDoc}
      */
     @Override
-    public void selectSquare(Player player, Point position) {
+    public void selectSquare(Game game, Player player, Point position) {
         if (game.getWorkerOn(position).isPresent()) {
             throw new IllegalArgumentException("Occupied square");
         }
@@ -53,11 +51,18 @@ public class WorkerPlacing extends TurnState {
             game.shiftPlayers(-1);
         }
 
-        game.setTurnState(new WorkerPlacing(game));
+        game.setTurnState(new WorkerPlacing());
     }
 
     @Override
-    public List<Point> getValidMoves(Player player, Worker worker) {
+    public List<Point> getValidMoves(Game game, Player player, Worker worker) {
         return player.getPower().getValidMoves(worker, game);
+    }
+
+    @Override
+    public void undo(Game game, Player player) {
+        game.restoreSavedState();
+
+        this.init(game);
     }
 }

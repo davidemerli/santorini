@@ -22,7 +22,7 @@ public class Prometheus extends Mortal {
         if (player.equals(this.player)) {
             firstBuild = true;
             hasBuiltBeforeMoving = false;
-            game.setTurnState(new Build(game));
+            game.setTurnState(new Build());
         }
     }
 
@@ -34,7 +34,7 @@ public class Prometheus extends Mortal {
     @Override
     public void onToggleInteraction(Game game) {
         firstBuild = false;
-        game.setTurnState(new Move(game));
+        game.setTurnState(new Move());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Prometheus extends Mortal {
 
                 firstBuild = false;
                 hasBuiltBeforeMoving = true;
-                game.setTurnState(new Move(game));
+                game.setTurnState(new Move());
             } else {
                 game.endTurn();
             }

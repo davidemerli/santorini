@@ -31,4 +31,9 @@ public class NameSelectionController extends GuiController {
 
         return instance;
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

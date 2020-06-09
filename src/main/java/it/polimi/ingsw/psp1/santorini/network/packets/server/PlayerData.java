@@ -5,6 +5,7 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayerData implements Serializable {
 
@@ -28,5 +29,15 @@ public class PlayerData implements Serializable {
 
     public List<Worker> getWorkers() {
         return workers;
+    }
+
+    @Override
+    public String toString() {
+        String workerList = workers.stream()
+                .map(Worker::getPosition)
+                .map(p -> String.format("[%d, %d]", p.x, p.y))
+                .collect(Collectors.joining(","));
+
+        return String.format("Player [%s, %s, workers: %s]", name, power, workerList);
     }
 }

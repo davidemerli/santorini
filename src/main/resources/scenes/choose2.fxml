@@ -30,7 +30,7 @@
             <FlowPane fx:id="flowPane" prefHeight="557.0" prefWidth="300.0" style="-fx-background-image: url(/gui_assets/bg_panelMid.png); -fx-background-size: 100% 100%;" />
          </content>
       </ScrollPane>
-      <Button layoutX="380.0" layoutY="323.0" mnemonicParsing="false" onAction="#clickConfirm" prefHeight="48.0" prefWidth="171.0" text="Confirm" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="49.0">
+      <Button fx:id="confirmButton" layoutX="380.0" layoutY="323.0" mnemonicParsing="false" onAction="#clickConfirm" prefHeight="48.0" prefWidth="171.0" text="Confirm" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="49.0">
          <font>
             <Font name="Dyuthi Regular" size="30.0" />
          </font>

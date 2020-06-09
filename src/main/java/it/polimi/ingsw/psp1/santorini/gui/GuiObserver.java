@@ -7,6 +7,9 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class GuiObserver {
 
@@ -18,8 +21,8 @@ public class GuiObserver {
         this.serverHandler = serverHandler;
     }
 
-    public static void undoPressed(GuiObserver guiObserver) {
-        //TODO
+    public void undoPressed() {
+        client.sendPacket(new ClientUndo());
     }
 
     public void onMoveSelected(Point point) {
@@ -33,13 +36,7 @@ public class GuiObserver {
     public void connectToServer(String ip, int port) {
         IpSelectionController.getInstance().startConnectionAnimation();
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             client.connectToServer(ip, port);
 
             if (client.isConnected()) {
@@ -47,7 +44,7 @@ public class GuiObserver {
             }
 
             IpSelectionController.getInstance().stopConnectionAnimation();
-        }).start();
+        }, 1000, TimeUnit.MILLISECONDS);
     }
 
     public void onNameSelection(String name) {
@@ -60,7 +57,7 @@ public class GuiObserver {
     }
 
     public void joinGame(int players) {
-        client.sendPacket(new ClientJoinGame(players, -1));
+        client.sendPacket(new ClientJoinGame(players, null));
     }
 
     public void selectPowers(List<Power> selectedPowers) {

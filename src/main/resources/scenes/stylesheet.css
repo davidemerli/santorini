@@ -20,3 +20,30 @@
     -fx-background-image: url("/gui_assets/gameGodFrameName2.png");
     -fx-background-size: stretch;
 }
+
+.text-area {
+	-fx-background-image: url("/gui_assets/gameGodFrameName2.png");
+    -fx-background-color: transparent;
+}
+
+.text-area *.text {
+    -fx-text-alignment: center;
+	-fx-alignment: center;
+}
+
+.text-area .scroll-pane .content .text {
+    -fx-text-alignment: center;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}

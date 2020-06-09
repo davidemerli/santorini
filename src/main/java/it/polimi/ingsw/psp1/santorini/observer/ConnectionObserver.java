@@ -55,4 +55,9 @@ public interface ConnectionObserver {
      * the connections times out
      */
     void handleCloseConnection();
+
+    /**
+     * Called when a client request to undo his latest moves
+     */
+    void processUndo();
 }

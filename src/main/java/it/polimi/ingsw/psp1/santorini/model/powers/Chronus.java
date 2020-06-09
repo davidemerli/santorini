@@ -10,7 +10,7 @@ public class Chronus extends Mortal {
     public void onBeginTurn(Player player, Game game) {
         if (player.equals(this.player) && customWinCondition(game)) {
             player.setWinner(true);
-            game.setTurnState(new Move(game));
+            game.setTurnState(new Move());
         } else {
             super.onBeginTurn(player, game);
         }

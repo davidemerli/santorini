@@ -27,7 +27,7 @@ public class Triton extends Mortal {
 
     @Override
     public void onToggleInteraction(Game game) {
-        game.setTurnState(new Build(game));
+        game.setTurnState(new Build());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Triton extends Mortal {
                 hasMoved = true;
             }
 
-            game.setTurnState(new Move(game));
+            game.setTurnState(new Move());
         }
     }
 }

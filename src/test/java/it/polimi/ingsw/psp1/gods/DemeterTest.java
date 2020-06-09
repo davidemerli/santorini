@@ -20,7 +20,7 @@ public class DemeterTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1",2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -45,16 +45,16 @@ public class DemeterTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
-        game.getTurnState().selectSquare(player, new Point(2, 1));
+        game.getTurnState().selectWorker(game, player, w);
+        game.getTurnState().selectSquare(game, player, new Point(2, 1));
 
-        assertFalse(game.getTurnState().shouldShowInteraction(player));
+        assertFalse(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getTurnState().selectSquare(player, firstBuild);
+        game.getTurnState().selectSquare(game, player, firstBuild);
 
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
         assertTrue(game.getTurnState() instanceof Build);
-        assertFalse(game.getTurnState().getValidMoves(player, w).contains(firstBuild));
+        assertFalse(game.getTurnState().getValidMoves(game, player, w).contains(firstBuild));
     }
 
     @Test
@@ -67,15 +67,15 @@ public class DemeterTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
-        game.getTurnState().selectSquare(player, new Point(2, 1));
-        game.getTurnState().selectSquare(player, firstBuild);
+        game.getTurnState().selectWorker(game, player, w);
+        game.getTurnState().selectSquare(game, player, new Point(2, 1));
+        game.getTurnState().selectSquare(game, player, firstBuild);
 
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
         assertTrue(game.getTurnState() instanceof Build);
-        assertFalse(game.getTurnState().getValidMoves(player, w).contains(firstBuild));
+        assertFalse(game.getTurnState().getValidMoves(game, player, w).contains(firstBuild));
 
-        game.getTurnState().toggleInteraction(player);
+        game.getTurnState().toggleInteraction(game, player);
 
 //        assertTrue(game.getTurnState() instanceof EndTurn);
     }

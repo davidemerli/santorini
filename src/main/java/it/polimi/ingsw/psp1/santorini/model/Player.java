@@ -1,14 +1,19 @@
 package it.polimi.ingsw.psp1.santorini.model;
 
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class Player {
+public class Player implements Cloneable {
 
     private final String name;
-    private final List<Worker> workerList;
+    private List<Worker> workerList;
     private Power power;
     private Worker selectedWorker;
     private boolean isWorkerLocked;
@@ -45,7 +50,9 @@ public class Player {
     }
 
     public List<Worker> getWorkers() {
-        return Collections.unmodifiableList(workerList);
+        return workerList.stream()
+                .map(Worker::copy)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Power getPower() {
@@ -97,6 +104,23 @@ public class Player {
         return name;
     }
 
+    public Player copy() {
+        try {
+            Player clone = (Player) super.clone();
+            clone.workerList = workerList.stream()
+                    .map(Worker::copy)
+                    .collect(Collectors.toList());
+
+            clone.power = power.copy();
+            clone.power.setPlayer(clone);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -111,5 +135,27 @@ public class Player {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    public void moveWorker(Worker worker, Point newPosition) {
+        Optional<Worker> optWorker = workerList.stream()
+                .filter(w -> w.equals(worker)).findFirst();
+
+        if (optWorker.isEmpty()) {
+            throw new IllegalArgumentException("Player does not own worker");
+        }
+
+        optWorker.get().setPosition(newPosition);
+        setSelectedWorker(optWorker.get());
+    }
+
+    @Override
+    public String toString() {
+        String workers = workerList.stream()
+                .map(Worker::getPosition)
+                .map(p -> String.format("[%d, %d]", p.x, p.y))
+                .collect(Collectors.joining(","));
+
+        return String.format("Player [%s, %s, workers: %s]", name, power, workers);
     }
 }

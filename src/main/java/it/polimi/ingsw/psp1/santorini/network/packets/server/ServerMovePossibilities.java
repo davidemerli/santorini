@@ -7,6 +7,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServerMovePossibilities implements Packet<ServerHandler> {
 
@@ -29,5 +30,20 @@ public class ServerMovePossibilities implements Packet<ServerHandler> {
 
     public Map<Power, List<Point>> getBlockedMoves() {
         return blockedMoves;
+    }
+
+    @Override
+    public String toString() {
+        String invalid = blockedMoves.entrySet().stream()
+                .map(entry -> entry.getKey().getName() + ": [" + pointsToString(entry.getValue()) + "]")
+                .collect(Collectors.joining(", "));
+
+        return toString(pointsToString(validMoves), invalid);
+    }
+
+    private String pointsToString(List<Point> points) {
+        return points.stream()
+                .map(p -> String.format("[%d, %d]", p.x, p.y))
+                .collect(Collectors.joining(", "));
     }
 }

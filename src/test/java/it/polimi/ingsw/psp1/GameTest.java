@@ -27,7 +27,7 @@ public class GameTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,3);
+        this.game = new Game("1", 3);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
         this.player3 = new Player("p3");
@@ -114,6 +114,8 @@ public class GameTest {
     public void preGameStates_normalBehaviour_shouldStartGame() {
         game.startGame();
 
+        while(game.getTurnState() == null);
+
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Athena());
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Minotaur());
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Triton());
@@ -137,7 +139,7 @@ public class GameTest {
         int[][] ints = {{0, 0}, {0, 1}, {1, 0}, {0, 2}, {2, 0}, {3, 3}};
 
         for (int i = 0; i < 6; i++) {
-            game.getTurnState().selectSquare(game.getPlayerList().get(0), new Point(ints[i][0], ints[i][1]));
+            game.getTurnState().selectSquare(game, game.getPlayerList().get(0), new Point(ints[i][0], ints[i][1]));
         }
 
         assertTrue(game.getTurnState() instanceof Move);

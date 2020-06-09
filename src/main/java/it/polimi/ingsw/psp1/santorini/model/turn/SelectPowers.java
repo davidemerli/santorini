@@ -12,13 +12,9 @@ public class SelectPowers extends TurnState {
 
     private final List<Power> selectedPowers = new ArrayList<>();
 
-    public SelectPowers(Game game) {
-        super(game);
-    }
-
     @Override
-    public void init() {
-        super.init();
+    public void init(Game game) {
+        super.init(game);
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
         game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), game.getPlayerNumber()));
@@ -42,14 +38,12 @@ public class SelectPowers extends TurnState {
             game.getAvailablePowers().addAll(selectedPowers);
 
             game.shiftPlayers(-1);
-            game.setTurnState(new ChoosePlayerPower(game));
-        } else {
-            game.askRequest(game.getCurrentPlayer(), EnumRequestType.CHOOSE_POWERS);
+            game.setTurnState(new ChoosePlayerPower());
         }
     }
 
     @Override
-    public void undo(Player player) {
+    public void undo(Game game, Player player) {
         if (selectedPowers.size() == 0) {
             throw new UnsupportedOperationException("Cannot undo, no gods selected");
         }
@@ -60,7 +54,7 @@ public class SelectPowers extends TurnState {
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldShowInteraction(Player player) {
+    public boolean shouldShowInteraction(Game game, Player player) {
         return false;
     }
 }

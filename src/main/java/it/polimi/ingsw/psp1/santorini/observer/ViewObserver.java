@@ -64,9 +64,10 @@ public interface ViewObserver {
     /**
      * Called when a view tries to close the connection / leave the game
      *
-     * @param view the view where the even is coming from
+     * @param view   the view where the even is coming from
+     * @param player the player associated with the view
      */
-    void leaveGame(View view);
+    void leaveGame(View view, Player player);
 
     /**
      * Called when a player surrenders

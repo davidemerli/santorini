@@ -19,7 +19,7 @@ public class AthenaTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1", 2);
         this.player1 = new Player("p1");
         this.player2 = new Player("p2");
 
@@ -55,15 +55,17 @@ public class AthenaTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w1);
-        game.getTurnState().selectSquare(player1, newPosition);
+        game.getTurnState().selectWorker(game, player1, w1);
+        game.getTurnState().selectSquare(game, player1, newPosition);
 
-        game.getTurnState().selectSquare(player1, new Point(0, 1));
+        game.getTurnState().selectSquare(game, player1, new Point(0, 1));
 
-        game.getTurnState().selectWorker(player2, w2);
+        while(!game.getCurrentPlayer().equals(player2));
 
-        assertTrue(game.getTurnState().isPositionBlocked(
-                game.getTurnState().getBlockedMoves(player2, player2.getSelectedWorker().get()),
+        game.getTurnState().selectWorker(game, player2, w2);
+
+        assertTrue(game.getTurnState().isPositionBlocked(game,
+                game.getTurnState().getBlockedMoves(game, player2, player2.getSelectedWorker().get()),
                 blockedPosition));
     }
 }

@@ -21,7 +21,7 @@ public class PrometheusTest {
 
     @Before
     public void setup() {
-        this.game = new Game(1,2);
+        this.game = new Game("1",2);
         this.player = new Player("p1");
 
         game.addPlayer(player);
@@ -45,11 +45,11 @@ public class PrometheusTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getTurnState().toggleInteraction(player);
+        game.getTurnState().toggleInteraction(game, player);
 
         assertTrue(game.getTurnState() instanceof Move);
     }
@@ -65,18 +65,18 @@ public class PrometheusTest {
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player, w);
+        game.getTurnState().selectWorker(game, player, w);
 
-        assertTrue(game.getTurnState().shouldShowInteraction(player));
+        assertTrue(game.getTurnState().shouldShowInteraction(game, player));
 
         game.getMap().buildBlock(blockedPosition, false);
 
         assertTrue(game.getTurnState() instanceof Build);
 
-        game.getTurnState().selectSquare(player, newPosition);
+        game.getTurnState().selectSquare(game, player, newPosition);
 
         assertTrue(game.getTurnState() instanceof Move);
 
-        assertFalse(game.getTurnState().getValidMoves(player, w).contains(blockedPosition));
+        assertFalse(game.getTurnState().getValidMoves(game, player, w).contains(blockedPosition));
     }
 }

@@ -19,4 +19,9 @@ public class ClientCreateGame implements Packet<ClientHandler> {
     public int getPlayerNumber() {
         return playerNumber;
     }
+
+    @Override
+    public String toString() {
+        return toString(playerNumber);
+    }
 }

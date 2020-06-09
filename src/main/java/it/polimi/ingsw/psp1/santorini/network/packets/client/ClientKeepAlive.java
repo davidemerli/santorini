@@ -6,6 +6,6 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 public class ClientKeepAlive implements Packet<ClientHandler> {
     @Override
     public void processPacket(ClientHandler netHandler) {
-        netHandler.handleKeepAlive(this);
+        netHandler.handleKeepAlive();
     }
 }

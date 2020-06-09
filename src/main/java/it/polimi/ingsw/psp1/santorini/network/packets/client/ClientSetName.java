@@ -19,4 +19,9 @@ public class ClientSetName implements Packet<ClientHandler> {
     public String getName() {
         return this.name;
     }
+
+    @Override
+    public String toString() {
+        return toString(name);
+    }
 }
