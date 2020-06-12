@@ -105,6 +105,7 @@ public class ChoosePowersController extends GuiController {
 
     @Override
     public void reset() {
+        getInstance().confirmButton.setDisable(true);
         getInstance().flowPane.getChildren().clear();
 
         getInstance().selectionBox.getChildren().clear();

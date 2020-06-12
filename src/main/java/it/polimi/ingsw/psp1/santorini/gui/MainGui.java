@@ -11,6 +11,8 @@ public class MainGui {
         client.setServerHandler(guiServerHandler);
 
         Gui.launch(args);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(client::disconnect));
     }
 
 }

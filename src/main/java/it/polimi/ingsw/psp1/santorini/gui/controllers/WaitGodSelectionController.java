@@ -68,7 +68,11 @@ public class WaitGodSelectionController extends GuiController {
 
     public void reset() {
         if (getInstance().imageBox != null) {
-            Platform.runLater(() -> getInstance().imageBox.getChildren().clear());
+            Platform.runLater(() -> {
+                getInstance().imageBox.getChildren().clear();
+                getInstance().players.forEach((key, value) -> value.getChildren().clear());
+                getInstance().players.clear();
+            });
         }
     }
 }

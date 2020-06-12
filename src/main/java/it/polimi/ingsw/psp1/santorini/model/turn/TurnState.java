@@ -146,7 +146,6 @@ public abstract class TurnState implements Cloneable {
         Map<Power, List<Point>> blockedMoves = getBlockedMoves(game, current, optWorker.orElse(null));
 
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(), validMoves, blockedMoves));
-
     }
 
     public TurnState copy() {

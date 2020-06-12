@@ -204,13 +204,15 @@ public class Game extends Observable<ModelObserver> {
     }
 
     public void endTurn() {
-        endTurnRoutine = pool.schedule(() -> {
-            getPlayerList().forEach(p -> p.getPower().onEndTurn(p, this));
-            getPlayerList().forEach(p -> p.setSelectedWorker(null));
-            getPlayerList().forEach(Player::unlockWorker);
+        if (endTurnRoutine == null || endTurnRoutine.isDone()) {
+            endTurnRoutine = pool.schedule(() -> {
+                getPlayerList().forEach(p -> p.getPower().onEndTurn(p, this));
+                getPlayerList().forEach(p -> p.setSelectedWorker(null));
+                getPlayerList().forEach(Player::unlockWorker);
 
-            nextTurn();
-        }, 5, TimeUnit.SECONDS);
+                nextTurn();
+            }, 5, TimeUnit.SECONDS);
+        }
     }
 
     public void shiftPlayers(int distance) {
@@ -292,7 +294,7 @@ public class Game extends Observable<ModelObserver> {
             Map<Power, List<Point>> blockedMoves = getTurnState()
                     .getBlockedMoves(this, getCurrentPlayer(), optWorker.get());
 
-            notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(), validMoves, blockedMoves));
+//            notifyObservers(o -> o.availableMovesUpdate(getCurrentPlayer(), validMoves, blockedMoves));
         }
     }
 
@@ -347,7 +349,7 @@ public class Game extends Observable<ModelObserver> {
 
     public void restoreSavedState() {
         if (savedState != null) {
-            if(endTurnRoutine != null) {
+            if (endTurnRoutine != null) {
                 endTurnRoutine.cancel(false);
             }
 
@@ -358,10 +360,9 @@ public class Game extends Observable<ModelObserver> {
                 addPlayer(player);
             }
 
-            turnState = savedState.getPreviousTurnState();
+            setTurnState(savedState.getPreviousTurnState());
 
             notifyObservers(o -> o.gameUpdate(this, true));
-            turnState.init(this);
 
             saveState();
         }

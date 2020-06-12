@@ -75,14 +75,24 @@ public class Artemis extends Mortal {
     public void onMove(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
             oldPosition = worker.getPosition();
-        }
 
-        super.onMove(player, worker, where, game);
+            int oldLevel = game.getMap().getLevel(worker.getPosition());
+            int newLevel = game.getMap().getLevel(where);
 
-        if (player.equals(this.player) && !hasMoved) {
-            hasMoved = true;
+            game.moveWorker(player, worker, where);
 
-            game.setTurnState(new Move());
+            if (newLevel == 3 && oldLevel == 2) {
+                player.setWinner(true);
+            }
+
+            player.lockWorker();
+
+            if (!hasMoved) {
+                hasMoved = true;
+                game.setTurnState(new Move());
+            } else {
+                game.setTurnState(new Build());
+            }
         }
     }
 }

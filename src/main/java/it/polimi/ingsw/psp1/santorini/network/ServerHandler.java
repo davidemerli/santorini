@@ -56,7 +56,7 @@ public abstract class ServerHandler implements NetHandler {
 
         if (playerColorMap.size() != playerList.size()) {
             List<PlayerData> copy = new ArrayList<>(playerDataList);
-            copy.sort(Comparator.comparingInt(Objects::hashCode));
+            copy.sort(Comparator.comparing(PlayerData::getName));
 
             playerColorMap.clear();
 

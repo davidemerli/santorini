@@ -47,7 +47,7 @@ public class Gui extends Application {
     }
 
     public void changeScene(EnumScene scene) {
-        if(Objects.equals(currentScene, scene)) {
+        if (Objects.equals(currentScene, scene)) {
             return;
         }
 
@@ -71,7 +71,7 @@ public class Gui extends Application {
 
     public void changeSceneAsync(EnumScene scene, EnumTransition transition) {
         Platform.runLater(() -> {
-            if(Objects.equals(currentScene, scene)) {
+            if (Objects.equals(currentScene, scene)) {
                 return;
             }
 

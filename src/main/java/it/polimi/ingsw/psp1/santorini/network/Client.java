@@ -28,7 +28,9 @@ public class Client implements Runnable {
     private boolean debug;
 
     public void connectToServer(String ip, int port) {
-        disconnect();
+        if(connected) {
+            disconnect();
+        }
 
         try {
             synchronized (lock) {

@@ -27,20 +27,23 @@
       <ImageView fitHeight="150.0" fitWidth="564.0" pickOnBounds="true" preserveRatio="true" styleClass="text" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
          <image>
             <Image url="@../gui_assets/gameGodFrameName2.png" />
-         </image></ImageView>
-      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Insert Name" textAlignment="CENTER" wrappingWidth="341.0625" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+         </image>
+         <GridPane.margin>
+            <Insets bottom="25.0" />
+         </GridPane.margin></ImageView>
+      <Text fill="WHITE" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Insert Name" textAlignment="CENTER" wrappingWidth="498.0625" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets />
          </GridPane.margin>
          <font>
-            <Font name="Javanese Text" size="64.0" />
+            <Font name="Diogenes" size="60.0" />
          </font>
       </Text>
-      <TextField fx:id="nameTextField" maxHeight="25.0" maxWidth="250.0" minHeight="25.0" minWidth="250.0" prefHeight="22.0" prefWidth="306.0" stylesheets="@stylesheet.css" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <TextField fx:id="nameTextField" alignment="CENTER" maxHeight="100.0" maxWidth="400.0" minHeight="25.0" minWidth="250.0" prefHeight="100.0" prefWidth="400.0" stylesheets="@stylesheet.css" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets left="150.0" right="150.0" />
          </GridPane.margin>
       </TextField>
-      <Button fx:id="button" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="54.0" prefWidth="232.0" text="Confirm" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+      <Button fx:id="button" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="75.0" prefWidth="250.0" text="Confirm" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
    </children>
 </GridPane>

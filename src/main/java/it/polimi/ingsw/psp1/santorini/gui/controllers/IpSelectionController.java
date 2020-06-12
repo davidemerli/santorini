@@ -2,20 +2,16 @@ package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
 import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
 import it.polimi.ingsw.psp1.santorini.gui.Gui;
-import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import java.io.IOException;
-import java.util.List;
 
 public class IpSelectionController extends GuiController {
 
@@ -55,20 +51,22 @@ public class IpSelectionController extends GuiController {
 
     @FXML
     private void buttonClick(ActionEvent event) {
-        String ip = ipTextField.getText();
-        int port = Integer.parseInt(portTextField.getText());
+        String ip = getInstance().ipTextField.getText();
+        int port = Integer.parseInt(getInstance().portTextField.getText());
 
         getInstance().notifyObservers(o -> o.connectToServer(ip, port));
     }
 
     public void startConnectionAnimation() {
-        getInstance().connectionIcon.setVisible(true);
-        getInstance().connectionText.setVisible(true);
+        Platform.runLater(() -> {
+            getInstance().connectionIcon.setVisible(true);
+            getInstance().connectionText.setVisible(true);
 
-        RotateTransition rt = new RotateTransition(Duration.millis(400), connectionIcon);
-        rt.setByAngle(360);
-        rt.setCycleCount(Animation.INDEFINITE);
-        rt.play();
+            RotateTransition rt = new RotateTransition(Duration.millis(400), getInstance().connectionIcon);
+            rt.setByAngle(360);
+            rt.setCycleCount(Animation.INDEFINITE);
+            rt.play();
+        });
     }
 
     public void stopConnectionAnimation() {
