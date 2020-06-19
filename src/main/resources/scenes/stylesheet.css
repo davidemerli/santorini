@@ -26,14 +26,36 @@
     -fx-smooth: true;
 }
 
+.scroll-pane .viewport  {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-image: url("/gui_assets/power_frame.png");
+    -fx-background-size: 100% 100%;
+    -fx-hbar-policy: never;
+    -fx-border-style: none;
+}
+
+.flow-pane {
+    /*-fx-background-image: url("/gui_assets/power_frame.png");*/
+    /*-fx-background-size: 100% 100%;*/
+    /*-fx-background-color: blue;*/
+    -fx-border-style: none;
+
+}
+
 .text-field {
+    -fx-highlight-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-highlight-fill: rgba(0, 0, 0, 0.5);
     -fx-background-image: url("/gui_assets/text_field.png");
     -fx-focus-color: transparent;
     -fx-border-color: transparent;
     -fx-border-style: none;
     -fx-background-color: transparent;
-    -fx-font-family: Diogenes;
-    -fx-font-smoothing-type: lcd;
+    -fx-font-family: "Mount Olympus";
+    -fx-spacing: 80;
+    -fx-font-smoothing-type: inherit;
     -fx-font-size: 35;
     -fx-smooth: true;
     -fx-background-position: center;
@@ -53,6 +75,28 @@
 .text-area {
     -fx-background-image: url("/gui_assets/gameGodFrameName2.png");
     -fx-background-color: transparent;
+}
+
+.check-box {
+    -fx-content-display: text-only;
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-smooth: true;
+    -fx-fill: black;
+    -fx-font-size: 25;
+}
+
+.check-box .box {
+    -fx-background-image: url("/gui_assets/checkbox.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 100%, 100%
+}
+
+.text-create-join {
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-smooth: true;
+    -fx-fill: #3f3f3f;
 }
 
 .text-area *.text {

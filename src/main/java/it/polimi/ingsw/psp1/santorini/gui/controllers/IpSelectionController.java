@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -75,7 +76,7 @@ public class IpSelectionController extends GuiController {
     }
 
     public void changeToNameSelection() {
-        Gui.getInstance().changeSceneAsync(EnumScene.NAME_SELECT, EnumTransition.DOWN);
+        Gui.getInstance().changeSceneSync(EnumScene.NAME_SELECT);
     }
 
     @Override

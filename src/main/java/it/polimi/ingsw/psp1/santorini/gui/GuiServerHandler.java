@@ -72,10 +72,10 @@ public class GuiServerHandler extends ServerHandler {
         switch (packet.getRequestType()) {
             case CHOOSE_POWERS:
             case SELECT_POWER:
-                Gui.getInstance().changeSceneAsync(EnumScene.CHOOSE_POWERS, EnumTransition.DOWN);
+                Gui.getInstance().changeSceneSync(EnumScene.CHOOSE_POWERS, EnumTransition.DOWN);
                 break;
             case SELECT_STARTING_PLAYER:
-                Gui.getInstance().changeSceneAsync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
+                Gui.getInstance().changeSceneSync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
 
                 for (PlayerData playerData : getPlayerDataList()) {
                     StartingPlayerController.getInstance().addPlayer(playerData.getName(), playerData.getPower());
@@ -100,7 +100,7 @@ public class GuiServerHandler extends ServerHandler {
         }
 
         if(packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
-            Gui.getInstance().changeSceneAsync(EnumScene.GAME, EnumTransition.DOWN);
+            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
         }
 
         GameSceneController.getInstance().showInteract(isYourTurn() && packet.shouldShowInteraction());
@@ -112,7 +112,7 @@ public class GuiServerHandler extends ServerHandler {
         super.handleReceivedMoves(packet);
 
         if (isYourTurn()) {
-            Gui.getInstance().changeSceneAsync(EnumScene.GAME, EnumTransition.DOWN);
+            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
 
             GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
         }
@@ -169,7 +169,7 @@ public class GuiServerHandler extends ServerHandler {
 
     @Override
     public void onDisconnect() {
-        Gui.getInstance().changeSceneAsync(EnumScene.IP_SELECT, EnumTransition.DOWN);
+        Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT, EnumTransition.DOWN);
         reset();
     }
 

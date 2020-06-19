@@ -25,10 +25,13 @@
             </Text>
          </children>
       </FlowPane>
-      <ScrollPane prefHeight="338.0" prefWidth="315.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+      <ScrollPane hbarPolicy="NEVER" layoutX="58.0" layoutY="57.0" pickOnBounds="false" prefHeight="506.0" prefWidth="360.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="54.0">
          <content>
-            <FlowPane fx:id="flowPane" prefHeight="557.0" prefWidth="300.0" style="-fx-background-image: url(/gui_assets/bg_panelMid.png); -fx-background-size: 100% 100%;" />
+            <FlowPane fx:id="flowPane" prefHeight="541.0" prefWidth="320.0" />
          </content>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
       </ScrollPane>
       <Button fx:id="confirmButton" layoutX="380.0" layoutY="323.0" mnemonicParsing="false" onAction="#clickConfirm" prefHeight="48.0" prefWidth="171.0" text="Confirm" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="49.0">
          <font>

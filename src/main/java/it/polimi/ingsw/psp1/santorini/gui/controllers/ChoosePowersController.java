@@ -69,7 +69,7 @@ public class ChoosePowersController extends GuiController {
                         + power.getName() + ".png").toString();
 
                 ImageView image = new ImageView(url);
-                image.fitWidthProperty().bind(getInstance().flowPane.widthProperty().divide(3));
+                image.fitWidthProperty().bind(getInstance().flowPane.widthProperty().subtract(2).divide(3));
                 image.setPreserveRatio(true);
 
                 image.setOnMouseClicked(mouseEvent -> {
@@ -100,7 +100,7 @@ public class ChoosePowersController extends GuiController {
     void clickConfirm(ActionEvent event) {
         getInstance().notifyObservers(o -> o.selectPowers(getInstance().selectedPowers));
 
-        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
     }
 
     @Override
