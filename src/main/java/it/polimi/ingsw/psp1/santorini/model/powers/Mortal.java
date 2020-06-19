@@ -15,13 +15,12 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-//TODO: handle losing condition whether you cannot build after any move
 public class Mortal extends Power {
 
     /**
-     * {@inheritDoc} <br>
+     * {@inheritDoc}
      * <p>
-     * Checks valid and blocked moves <br>
+     * Checks valid and blocked moves
      * If selected worker cannot make valid moves or all the moves are blocked, lose condition is set true
      */
     @Override
@@ -29,7 +28,7 @@ public class Mortal extends Power {
         if (player.equals(this.player)) {
             game.setTurnState(new Move());
 
-            if (player.getWorkers().stream().allMatch(noValidMoves(game))) {
+            if (player.getWorkers().stream().noneMatch(w -> canCompleteValidTurn(w, game))) {
                 game.setLoser(player);
             }
         }
@@ -47,7 +46,7 @@ public class Mortal extends Power {
     }
 
     /**
-     * {@inheritDoc} <br>
+     * {@inheritDoc}
      * <p>
      * Checks if you have to build a dome or not in the selected position
      */
@@ -63,7 +62,7 @@ public class Mortal extends Power {
     }
 
     /**
-     * {@inheritDoc} <br>
+     * {@inheritDoc}
      * <p>
      * If worker moved from level 2 to level 3, the player has won the game <br>
      * Locks the chosen worker for the next TurnState
@@ -87,7 +86,7 @@ public class Mortal extends Power {
     }
 
     /**
-     * {@inheritDoc} <br>
+     * {@inheritDoc}
      * By default the bottom is not shown
      *
      * @return boolean is set false, so the bottom is not shown
@@ -162,17 +161,7 @@ public class Mortal extends Power {
             throw new IllegalStateException("Turn validation should not be called here");
         }
 
-        //TODO
-
-//        List<Point> validMoves = getValidMoves(worker, game);
-//        List<Point> blockedMoves = game.getTurnState().getBlockedMoves(player, worker).values().stream()
-//                .flatMap(Collection::stream).collect(Collectors.toList());
-//
-//        validMoves.stream()
-//                .filter(m -> !blockedMoves.contains(m))
-//                .filter(m -> )
-
-        return true;
+        return getPerformableMoves(game, worker).size() > 0;
     }
 
     /**
@@ -215,6 +204,16 @@ public class Mortal extends Power {
         };
 
         return allBlocked.or(noValidMoves);
+    }
+
+    protected List<Point> getPerformableMoves(Game game, Worker worker) {
+        List<Point> validMoves = getValidMoves(worker, game);
+        List<Point> blockedMoves = game.getTurnState().getBlockedMoves(game, player, worker).values().stream()
+                .flatMap(Collection::stream).collect(Collectors.toList());
+
+        return validMoves.stream()
+                .filter(m -> !blockedMoves.contains(m))
+                .collect(Collectors.toList());
     }
 }
 
