@@ -42,7 +42,7 @@ public class WaitGodSelectionController extends GuiController {
             String random = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
 
             Text text = new Text(playerName);
-            text.setFont(new Font("Segoe UI", 24));
+            text.setFont(new Font("Mount Olympus", 24));
             text.setTranslateY(-30);
 
             ImageView image = new ImageView(random);

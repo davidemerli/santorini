@@ -100,7 +100,7 @@ public class ChoosePowersController extends GuiController {
     void clickConfirm(ActionEvent event) {
         getInstance().notifyObservers(o -> o.selectPowers(getInstance().selectedPowers));
 
-        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
     @Override

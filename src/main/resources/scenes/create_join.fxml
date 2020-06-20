@@ -132,7 +132,7 @@
                               <Image url="@../gui_assets/god_cards/without_background/podium-characters-Artemis.png" />
                            </image>
                         </ImageView>
-                        <Button fx:id="confirmCreate" disable="true" layoutX="150.0" layoutY="-7.0" mnemonicParsing="false" onAction="#joinGame" prefHeight="60.0" prefWidth="120.0" text="CONFIRM" textFill="WHITE" AnchorPane.bottomAnchor="70.0">
+                        <Button fx:id="confirmCreate" disable="true" layoutX="150.0" layoutY="-7.0" mnemonicParsing="false" onAction="#createGame" prefHeight="60.0" prefWidth="120.0" text="CONFIRM" textFill="WHITE" AnchorPane.bottomAnchor="70.0">
                            <font>
                               <Font name="Dyuthi Regular" size="22.0" />
                            </font>
@@ -166,7 +166,7 @@
                         </Text>
                      </children>
                   </AnchorPane>
-                  <Button fx:id="joinX1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" style="-fx-background-color: #d62d2d;" text="x" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                  <Button fx:id="createX" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" style="-fx-background-color: #d62d2d;" text="x" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets left="15.0" top="2.0" />
                      </GridPane.margin>

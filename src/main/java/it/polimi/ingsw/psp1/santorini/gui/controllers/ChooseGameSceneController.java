@@ -120,14 +120,14 @@ public class ChooseGameSceneController extends GuiController {
     private void createGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
 
-        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
     @FXML
     private void joinGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
 
-        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
     @Override
