@@ -5,7 +5,7 @@
     -fx-focus-color: transparent;
     -fx-font-family: Diogenes;
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 200%;
+    -fx-font-size: 180%;
     -fx-smooth: true;
     -fx-text-fill: #faebd7;
 }
@@ -22,7 +22,7 @@
     -fx-focus-color: transparent;
     -fx-font-family: Diogenes;
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 190%;
+    -fx-font-size: 170%;
     -fx-smooth: true;
 }
 

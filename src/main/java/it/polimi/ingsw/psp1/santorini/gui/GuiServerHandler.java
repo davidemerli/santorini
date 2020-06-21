@@ -8,6 +8,7 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientKeepAlive;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
+import javafx.application.Platform;
 import javafx.scene.paint.Color;
 
 import java.util.stream.IntStream;
@@ -169,7 +170,7 @@ public class GuiServerHandler extends ServerHandler {
 
     @Override
     public void onDisconnect() {
-        Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT, EnumTransition.DOWN);
+        Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
         reset();
     }
 

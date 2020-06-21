@@ -32,7 +32,7 @@
                   <Insets left="-100.0" />
                </GridPane.margin>
             </AnchorPane>
-            <Button fx:id="createButton" maxHeight="75.0" maxWidth="250.0" minHeight="75.0" minWidth="250.0" mnemonicParsing="false" onAction="#clickCreate" prefHeight="75.0" prefWidth="250.0" text="Create" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+            <Button fx:id="createButton" maxHeight="75.0" maxWidth="250.0" minHeight="75.0" minWidth="250.0" mnemonicParsing="false" onAction="#clickCreate" prefHeight="75.0" prefWidth="250.0" text="CREATE GAME" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                <font>
                   <Font name="Dyuthi Regular" size="30.0" />
                </font>
@@ -40,7 +40,7 @@
                   <Insets bottom="50.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="joinButton" maxHeight="75.0" maxWidth="250.0" minHeight="75.0" minWidth="250.0" mnemonicParsing="false" onAction="#clickJoin" prefHeight="75.0" prefWidth="250.0" text="Join" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+            <Button fx:id="joinButton" maxHeight="75.0" maxWidth="250.0" minHeight="75.0" minWidth="250.0" mnemonicParsing="false" onAction="#clickJoin" prefHeight="75.0" prefWidth="250.0" text="JOIN GAME" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                <font>
                   <Font name="Dyuthi Regular" size="30.0" />
                </font>

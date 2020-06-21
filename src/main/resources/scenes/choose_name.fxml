@@ -8,42 +8,45 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: url(/gui_assets/clp_bg2.png); -fx-background-size: 100% 100%;" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.psp1.santorini.gui.controllers.NameSelectionController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-  </rowConstraints>
+
+<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: url(/gui_assets/clp_bg2.png); -fx-background-size: 100% 100%;" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.psp1.santorini.gui.controllers.NameSelectionController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
    <children>
-      <ImageView fitHeight="150.0" fitWidth="564.0" pickOnBounds="true" preserveRatio="true" styleClass="text" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-         <image>
-            <Image url="@../gui_assets/gameGodFrameName2.png" />
-         </image>
-         <GridPane.margin>
-            <Insets bottom="25.0" />
-         </GridPane.margin></ImageView>
-      <Text fill="WHITE" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Insert Name" textAlignment="CENTER" wrappingWidth="498.0625" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <font>
-            <Font name="Diogenes" size="60.0" />
-         </font>
-      </Text>
-      <TextField fx:id="nameTextField" alignment="CENTER" maxHeight="100.0" maxWidth="400.0" minHeight="25.0" minWidth="250.0" prefHeight="100.0" prefWidth="400.0" stylesheets="@stylesheet.css" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets left="150.0" right="150.0" />
-         </GridPane.margin>
-      </TextField>
-      <Button fx:id="button" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="75.0" prefWidth="250.0" text="Confirm" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+      <VBox alignment="CENTER" prefHeight="600.0" prefWidth="307.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="564.0" pickOnBounds="true" preserveRatio="true" styleClass="text">
+               <image>
+                  <Image url="@../gui_assets/gameGodFrameName2.png" />
+               </image>
+            </ImageView>
+            <Text fill="WHITE" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Insert Name" textAlignment="CENTER" wrappingWidth="484.0625">
+               <font>
+                  <Font name="Diogenes" size="50.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="-130.0" />
+               </VBox.margin>
+            </Text>
+            <TextField fx:id="nameTextField" alignment="CENTER" cache="true" maxHeight="100.0" maxWidth="400.0" minHeight="25.0" minWidth="250.0" prefHeight="100.0" prefWidth="400.0" promptText="Username" stylesheets="@stylesheet.css">
+               <VBox.margin>
+                  <Insets top="100.0" />
+               </VBox.margin>
+            </TextField>
+            <Button fx:id="button" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="75.0" prefWidth="250.0" text="Confirm">
+               <VBox.margin>
+                  <Insets top="100.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
    </children>
 </GridPane>

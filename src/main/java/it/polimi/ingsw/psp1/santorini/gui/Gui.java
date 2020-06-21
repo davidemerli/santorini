@@ -6,9 +6,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -42,32 +40,36 @@ public class Gui extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        System.exit(0);
+    }
+
     public void changeSceneSync(EnumScene scene) {
         Platform.runLater(() -> {
             try {
                 Parent newScene = scene.load();
                 Parent oldScene = primaryStage.getScene().getRoot();
-                AnchorPane pane = new AnchorPane(oldScene);
-                AnchorPane.setTopAnchor(newScene, 0D);
-                AnchorPane.setBottomAnchor(newScene, 0D);
-                AnchorPane.setLeftAnchor(newScene, 0D);
-                AnchorPane.setRightAnchor(newScene, 0D);
-                AnchorPane.setTopAnchor(oldScene, 0D);
-                AnchorPane.setBottomAnchor(oldScene, 0D);
-                AnchorPane.setLeftAnchor(oldScene, 0D);
-                AnchorPane.setRightAnchor(oldScene, 0D);
 
-                pane.getChildren().add(newScene);
+                Parent newPane = new AnchorPane(newScene);
+                Parent oldPane = new AnchorPane(oldScene);
+                AnchorPane pane = new AnchorPane(oldPane);
+
+                setAnchors(newScene, oldScene, newPane, oldPane, pane);
+
+                pane.getChildren().add(newPane);
                 pane.setStyle("-fx-background-color: black");
 
                 primaryStage.getScene().setRoot(pane);
 
-                FadeTransition oldFt = new FadeTransition(Duration.millis(400), oldScene);
-                oldFt.setInterpolator(Interpolator.EASE_BOTH);
+                FadeTransition oldFt = new FadeTransition(Duration.millis(400), oldPane);
+                oldFt.setInterpolator(Interpolator.EASE_OUT);
                 oldFt.setFromValue(1);
                 oldFt.setToValue(0);
-                FadeTransition newFt = new FadeTransition(Duration.millis(400), newScene);
-                newFt.setInterpolator(Interpolator.EASE_BOTH);
+                FadeTransition newFt = new FadeTransition(Duration.millis(400), newPane);
+                newFt.setInterpolator(Interpolator.EASE_IN);
                 newFt.setFromValue(0);
                 newFt.setToValue(1);
                 newFt.setDelay(Duration.millis(300));
@@ -137,5 +139,14 @@ public class Gui extends Application {
                 ex.printStackTrace();
             }
         });
+    }
+
+    private void setAnchors(Parent... elements) {
+        for (Parent elem : elements) {
+            AnchorPane.setLeftAnchor(elem, 0D);
+            AnchorPane.setTopAnchor(elem, 0D);
+            AnchorPane.setRightAnchor(elem, 0D);
+            AnchorPane.setBottomAnchor(elem, 0D);
+        }
     }
 }

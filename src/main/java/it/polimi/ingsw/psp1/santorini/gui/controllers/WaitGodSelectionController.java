@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -39,15 +41,38 @@ public class WaitGodSelectionController extends GuiController {
 
     public void addPlayer(String playerName) {
         Platform.runLater(() -> {
-            String random = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
+            String framePath = getClass().getResource("/gui_assets/standard_power_frame.png").toString();
+            String labelPath = getClass().getResource("/gui_assets/power_label.png").toString();
+            String randomPath = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
 
             Text text = new Text(playerName);
-            text.setFont(new Font("Mount Olympus", 24));
-            text.setTranslateY(-30);
+            text.setFont(new Font("Mount Olympus", 30));
+            text.setFill(Color.valueOf("#3f3f3f"));
+            text.setTranslateY(-60);
 
-            ImageView image = new ImageView(random);
+            ImageView frame = new ImageView(framePath);
+            ImageView label = new ImageView(labelPath);
+            ImageView image = new ImageView(randomPath);
 
-            VBox vbox = new VBox(image, text);
+            frame.setPreserveRatio(true);
+            label.setPreserveRatio(true);
+            image.setPreserveRatio(true);
+
+            frame.setFitWidth(250);
+            label.setFitWidth(240);
+            image.setFitWidth(220);
+
+            AnchorPane pane = new AnchorPane(frame);
+            pane.getChildren().add(image);
+            pane.getChildren().add(label);
+
+            AnchorPane.setLeftAnchor(image, 15D);
+            AnchorPane.setTopAnchor(image, 15D);
+
+            AnchorPane.setLeftAnchor(label, 5D);
+            AnchorPane.setBottomAnchor(label, 5D);
+
+            VBox vbox = new VBox(pane, text);
             vbox.setAlignment(Pos.CENTER);
 
             getInstance().players.put(playerName, vbox);
