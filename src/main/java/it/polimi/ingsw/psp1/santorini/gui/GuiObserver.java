@@ -5,9 +5,9 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
+import javafx.application.Platform;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -22,15 +22,21 @@ public class GuiObserver {
     }
 
     public void undoPressed() {
-        client.sendPacket(new ClientUndo());
+        if (serverHandler.isYourTurn()) {
+            client.sendPacket(new ClientUndo());
+        }
     }
 
     public void onMoveSelected(Point point) {
-        client.sendPacket(new ClientSelectSquare(point));
+        if (serverHandler.isYourTurn()) {
+            client.sendPacket(new ClientSelectSquare(point));
+        }
     }
 
     public void onWorkerSelected(Point p) {
-        client.sendPacket(new ClientSelectWorker(p));
+        if (serverHandler.isYourTurn()) {
+            client.sendPacket(new ClientSelectWorker(p));
+        }
     }
 
     public void connectToServer(String ip, int port) {
@@ -39,11 +45,12 @@ public class GuiObserver {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             client.connectToServer(ip, port);
 
-            if (client.isConnected()) {
-                IpSelectionController.getInstance().changeToNameSelection();
-            }
-
-            IpSelectionController.getInstance().stopConnectionAnimation();
+            Platform.runLater(() -> {
+                if (client.isConnected()) {
+                    IpSelectionController.getInstance().changeToNameSelection();
+                }
+                IpSelectionController.getInstance().stopConnectionAnimation();
+            });
         }, 1000, TimeUnit.MILLISECONDS);
     }
 
@@ -65,7 +72,9 @@ public class GuiObserver {
     }
 
     public void interactPressed() {
-        client.sendPacket(new ClientToggleInteraction());
+        if (serverHandler.isYourTurn()) {
+            client.sendPacket(new ClientToggleInteraction());
+        }
     }
 
     public void selectStartingPlayer(String playerName) {

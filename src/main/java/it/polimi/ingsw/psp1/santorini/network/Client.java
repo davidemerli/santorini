@@ -35,7 +35,9 @@ public class Client implements Runnable {
      * @param port socket port
      */
     public void connectToServer(String ip, int port) {
-        disconnect();
+        if(connected) {
+            disconnect();
+        }
 
         try {
             synchronized (lock) {

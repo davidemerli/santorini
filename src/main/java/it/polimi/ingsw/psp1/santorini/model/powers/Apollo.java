@@ -6,6 +6,7 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -58,6 +59,39 @@ public class Apollo extends Mortal {
         }
 
         super.onMove(player, worker, where, game);//normal moving behaviour
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Checks if the only moves remaining are moves that swap workers, and the player then cannot build anywhere
+     */
+    @Override
+    public boolean canCompleteValidTurn(Worker worker, Game game) {
+        List<Point> performableMoves = getPerformableMoves(game, worker);
+
+        if(performableMoves.size() == 0) {
+            return false;
+        }
+
+        if(performableMoves.size() > 1) {
+            return true;
+        }
+
+        Optional<Worker> enemyWorker = game.getWorkerOn(performableMoves.get(0));
+
+        if(enemyWorker.isPresent()) {
+            Point enemyPos = enemyWorker.get().getPosition();
+
+            long performableBuilds = game.getMap().getNeighbors(enemyPos).stream()
+                    .filter(getStandardDomeCheck(game))
+                    .filter(getStandardWorkerCheck(game))
+                    .count();
+
+            return performableBuilds > 0;
+        } else {
+            return true;
+        }
     }
 
     /**
