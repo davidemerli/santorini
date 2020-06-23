@@ -42,10 +42,21 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         sendPacket(new ServerAskRequest(EnumRequestType.SELECT_NAME));
     }
 
+    /**
+     * Sends a packet without delay
+     *
+     * @param packet to send
+     */
     public void sendPacket(Packet<ServerHandler> packet) {
         sendPacket(packet, 0);
     }
 
+    /**
+     * Sends a packet with delay
+     *
+     * @param packet to send
+     * @param delay in milliseconds
+     */
     public void sendPacket(Packet<ServerHandler> packet, int delay) {
         if (closed) {
             return;
@@ -64,6 +75,16 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         }, delay, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Available at the reception of the packet from server
+     * Prints received packet from server
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws ClassCastException
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void run() {
@@ -85,11 +106,24 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
         player = new Player(packet.getName());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param packet to send
+     * @throws UnsupportedOperationException
+     */
     @Override
     public void handleCreateGame(ClientCreateGame packet) {
         try {
@@ -99,6 +133,14 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Joins game with name's room or joins the queue
+     *
+     * @param packet to send
+     * @throws IllegalStateException
+     */
     @Override
     public void handleJoinGame(ClientJoinGame packet) {
         try {
@@ -112,51 +154,118 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifies all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePowerChoosing(ClientChoosePower packet) {
         notifyObservers(o -> o.processPowerList(packet.getPowers()));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifies all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleSquareSelect(ClientSelectSquare packet) {
         notifyObservers(o -> o.processSquareSelection(packet.getSquare()));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifies all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleInteractionToggle() {
         notifyObservers(ConnectionObserver::processToggleInteraction);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifies all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePlayerForfeit() {
         notifyObservers(ConnectionObserver::handlePlayerForfeit);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param packet to send
+     */
     @Override
     public void handleKeepAlive() {
         sendPacket(new ServerKeepAlive(), 1000);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifies all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleUndo() {
         notifyObservers(ConnectionObserver::processUndo);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifes all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleRequestGameData() {
         notifyObservers(ConnectionObserver::processRequestGameData);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifes all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleWorkerSelection(ClientSelectWorker packet) {
         notifyObservers(o -> o.processWorkerSelection(packet.getWorkerPosition()));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Notifes all players
+     *
+     * @param packet to send
+     */
     @Override
     public void handleSelectStartingPlayer(ClientSelectStartingPlayer packet) {
         notifyObservers(o -> o.processStartingPlayerSelection(packet.getName()));
     }
 
+    /**
+     * Closes connection between client and server
+     *
+     * @throws IOException
+     */
     public void closeConnection() {
         closed = true;
         try {

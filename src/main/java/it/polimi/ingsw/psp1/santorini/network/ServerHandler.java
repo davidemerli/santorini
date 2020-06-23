@@ -43,10 +43,18 @@ public abstract class ServerHandler implements NetHandler {
         this.lastTurnState = null;
     }
 
+    /**
+     * Keep alive packet
+     */
     public void handleKeepAlive() {
         client.sendPacket(new ClientKeepAlive());
     }
 
+    /**
+     * Packet with updated game information
+     *
+     * @param packet to send
+     */
     public void handleGameData(ServerGameData packet) {
         GameMap map = packet.getGameMap();
         List<PlayerData> playerList = packet.getPlayerData();
@@ -70,10 +78,20 @@ public abstract class ServerHandler implements NetHandler {
         lastTurnState = packet.getTurnState();
     }
 
+    /**
+     * Packet with a type request to client
+     *
+     * @param packet to send
+     */
     public void handleRequest(ServerAskRequest packet) {
         this.lastRequest = packet.getRequestType();
     }
 
+    /**
+     * Packet with updated player information
+     *
+     * @param packet to send
+     */
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         Optional<PlayerData> updated = getPlayerDataList().stream()
                 .filter(p -> p.getName().equals(packet.getPlayerData().getName()))
@@ -84,6 +102,11 @@ public abstract class ServerHandler implements NetHandler {
         shouldShowInteraction = packet.shouldShowInteraction();
     }
 
+    /**
+     * Packet with possible moves
+     *
+     * @param packet to send
+     */
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         getValidMoves().clear();
         getValidMoves().addAll(packet.getValidMoves());
@@ -92,15 +115,35 @@ public abstract class ServerHandler implements NetHandler {
         getBlockedMoves().putAll(packet.getBlockedMoves());
     }
 
+    /**
+     * Packet with a message error
+     *
+     * @param packet to send
+     */
     public abstract void handleError(ServerInvalidPacket packet);
 
+    /**
+     * Packet with player's move
+     *
+     * @param packet to send
+     */
     public abstract void handlePlayerMove(ServerPlayerMove packet);
 
+    /**
+     * Packet with available gods to choose
+     *
+     * @param packet to send
+     */
     public void handlePowerList(ServerPowerList packet) {
         getPowerList().clear();
         getPowerList().addAll(packet.getAvailablePowers());
     }
 
+    /**
+     * Adds a player in the players list
+     *
+     * @param packet to send
+     */
     public void handlePlayerConnected(ServerConnectedToGame packet) {
         playerDataList.add(new PlayerData(packet.getName(), null, List.of()));
     }

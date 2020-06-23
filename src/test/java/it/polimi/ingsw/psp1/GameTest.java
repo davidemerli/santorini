@@ -114,8 +114,12 @@ public class GameTest {
     public void preGameStates_normalBehaviour_shouldStartGame() {
         game.startGame();
 
-        while(game.getTurnState() == null);
-
+//      while(game.getTurnState() == null);
+        try {
+            Thread.sleep(5000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Athena());
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Minotaur());
         game.getTurnState().selectGod(game, game.getCurrentPlayer(), new Triton());
