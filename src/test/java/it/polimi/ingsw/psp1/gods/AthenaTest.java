@@ -70,4 +70,4 @@ public class AthenaTest {
     }
 }
 
-
+//.stream().allMatch(p -> game.getTurnState().isPositionBlocked(game, blockedMoves, p
