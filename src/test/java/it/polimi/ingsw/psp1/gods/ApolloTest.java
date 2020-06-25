@@ -113,8 +113,6 @@ public class ApolloTest {
 
         List<Point> validMoves = game.getTurnState().getValidMoves(game, player1, w1);
 
-        System.out.println(game.getMap().toString());
-
         assertFalse(validMoves.isEmpty());
         assertTrue(player1.hasLost());
     }

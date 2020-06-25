@@ -5,8 +5,10 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientKeepAlive;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
+import javafx.application.Platform;
 import javafx.scene.paint.Color;
 
 import java.util.stream.IntStream;
@@ -41,10 +43,10 @@ public class GuiServerHandler extends ServerHandler {
                 boolean hasDome = packet.getGameMap().hasDome(p);
 
                 IntStream.range(0, hasDome ? level - 1 : level)
-                        .forEach(i -> GameSceneController.getInstance().addBlockAt(p.x, p.y, false));
+                        .forEach(i -> GameSceneController.getInstance().addBlockAt(p.x, p.y, false, false));
 
-                if(hasDome) {
-                    GameSceneController.getInstance().addBlockAt(p.x, p.y, true);
+                if (hasDome) {
+                    GameSceneController.getInstance().addBlockAt(p.x, p.y, true, false);
                 }
             }
 
@@ -54,7 +56,7 @@ public class GuiServerHandler extends ServerHandler {
 
                 player.getWorkers().stream()
                         .map(Worker::getPosition)
-                        .forEach(p -> GameSceneController.getInstance().addWorker(p.x, p.y, color, isOwn));
+                        .forEach(p -> GameSceneController.getInstance().addWorker(p.x, p.y, color, isOwn, false));
             }
         }
     }
@@ -71,10 +73,10 @@ public class GuiServerHandler extends ServerHandler {
         switch (packet.getRequestType()) {
             case CHOOSE_POWERS:
             case SELECT_POWER:
-                Gui.getInstance().changeSceneAsync(EnumScene.CHOOSE_POWERS, EnumTransition.DOWN);
+                Gui.getInstance().changeSceneSync(EnumScene.CHOOSE_POWERS, EnumTransition.DOWN);
                 break;
             case SELECT_STARTING_PLAYER:
-                Gui.getInstance().changeSceneAsync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
+                Gui.getInstance().changeSceneSync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
 
                 for (PlayerData playerData : getPlayerDataList()) {
                     StartingPlayerController.getInstance().addPlayer(playerData.getName(), playerData.getPower());
@@ -98,7 +100,12 @@ public class GuiServerHandler extends ServerHandler {
                     packet.getPlayerData().getPower());
         }
 
-        GameSceneController.getInstance().showInteract(packet.shouldShowInteraction());
+        if(packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
+            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
+        }
+
+        GameSceneController.getInstance().showInteract(isYourTurn() && packet.shouldShowInteraction());
+        GameSceneController.getInstance().showUndo(isYourTurn());
     }
 
     @Override
@@ -106,7 +113,7 @@ public class GuiServerHandler extends ServerHandler {
         super.handleReceivedMoves(packet);
 
         if (isYourTurn()) {
-            Gui.getInstance().changeSceneAsync(EnumScene.GAME, EnumTransition.DOWN);
+            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
 
             GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
         }
@@ -130,7 +137,7 @@ public class GuiServerHandler extends ServerHandler {
             case BUILD:
                 ServerPlayerMove.PlayerBuild build = (ServerPlayerMove.PlayerBuild) packet.getMove();
 
-                GameSceneController.getInstance().addBlockAt(build.getDest().x, build.getDest().y, build.forceDome());
+                GameSceneController.getInstance().addBlockAt(build.getDest().x, build.getDest().y, build.forceDome(), true);
 
                 break;
             case PLACE_WORKER:
@@ -140,7 +147,7 @@ public class GuiServerHandler extends ServerHandler {
 
                 GameSceneController.getInstance().addWorker(worker.getDest().x, worker.getDest().y,
                         packet.getPlayerData().getName().equals("masterrace") ? null : color,
-                        isYourTurn());
+                        isYourTurn(), true);
                 break;
         }
     }
@@ -163,16 +170,20 @@ public class GuiServerHandler extends ServerHandler {
 
     @Override
     public void onDisconnect() {
-        Gui.getInstance().changeSceneAsync(EnumScene.IP_SELECT, EnumTransition.DOWN);
+        Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
+        reset();
     }
-
 
     @Override
     public void reset() {
         super.reset();
 
+        ChooseGameSceneController.getInstance().reset();
+        ChoosePowersController.getInstance().reset();
         GameSceneController.getInstance().reset();
-
+        IpSelectionController.getInstance().reset();
+        NameSelectionController.getInstance().reset();
+        StartingPlayerController.getInstance().reset();
         WaitGodSelectionController.getInstance().reset();
     }
 }

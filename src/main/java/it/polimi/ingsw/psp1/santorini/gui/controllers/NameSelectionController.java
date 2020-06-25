@@ -19,7 +19,7 @@ public class NameSelectionController extends GuiController {
 
     @FXML
     private void onButtonClick(ActionEvent event) {
-        Gui.getInstance().changeSceneAsync(EnumScene.CREATE_JOIN, EnumTransition.UP);
+        Gui.getInstance().changeSceneSync(EnumScene.CREATE_JOIN);
 
         getInstance().notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
     }

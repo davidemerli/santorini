@@ -56,6 +56,8 @@ public class Server implements Runnable {
     }
 
     /**
+     * {@inheritDoc}
+     * <p>
      * Accepts new client connecting to the server and puts them in the relocation list
      * When a client has its player name set, it will be moved in the waitingForGame list
      */
@@ -83,6 +85,9 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * If the new game has been filled, it starts
+     */
     private void gameStarter() {
         try {
             synchronized (games) {
@@ -120,6 +125,12 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Checks if the game has been filled with the players (two or three)
+     *
+     * @param game New created game
+     * @return true if game contains all players needed (two or three)
+     */
     private boolean fillGame(Game game) {
         Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
@@ -160,6 +171,8 @@ public class Server implements Runnable {
      * Creates a new game instance with the player that created it as the first player
      *
      * @param connectionHandler with the player that created the game
+     * @throws UnsupportedOperationException if connection between player and server is already assigned
+     * @throws IllegalStateException if players has not set a name yet
      */
     public void createGame(ClientConnectionHandler connectionHandler, int playerNumber) {
         boolean isInGame = games.values().stream()
@@ -188,6 +201,11 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Disconnects player from the game
+     *
+     * @param connectionHandler with the players that joins the game
+     */
     public void disconnectClient(ClientConnectionHandler connectionHandler) {
         twoPlayerGameQueue.remove(connectionHandler);
         threePlayerGameQueue.remove(connectionHandler);
@@ -202,6 +220,15 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Connects players with the game and they joins it
+     *
+     * @param connectionHandler with the available players
+     * @param gameRoom room's name
+     * @throws IllegalArgumentException if room's name does not exists
+     * @throws IllegalStateException if game is already full
+     * @throws IllegalStateException if players has not set a name yet
+     */
     public void joinGame(ClientConnectionHandler connectionHandler, String gameRoom) {
         Optional<Game> toJoin = games.keySet().stream()
                 .filter(game -> game.getGameID().equals(gameRoom))
@@ -236,6 +263,14 @@ public class Server implements Runnable {
         clientsToRelocate.remove(connectionHandler);
     }
 
+    /**
+     * Puts available players in a queue, used to insert players into the game
+     *
+     * @param connectionHandler with the available players
+     * @param playerNumber number of players in a game
+     * @throws IllegalStateException if players has not set a name yet
+     * @throws IllegalArgumentException if number of players is not two or three
+     */
     public void joinQueue(ClientConnectionHandler connectionHandler, int playerNumber) {
         Optional<Player> optPlayer = connectionHandler.getPlayer();
 
@@ -254,6 +289,12 @@ public class Server implements Runnable {
         clientsToRelocate.remove(connectionHandler);
     }
 
+    /**
+     * Checks the uniqueness of the username
+     *
+     * @param username player's name
+     * @return true if username is unique
+     */
     public boolean isUsernameUnique(String username) {
         Set<String> assignedPlayerUsernames = games.values().stream()
                 .map(Map::values)
@@ -267,6 +308,11 @@ public class Server implements Runnable {
         return assignedPlayerUsernames.contains(username);
     }
 
+    /**
+     * Generates an unique game ID
+     *
+     * @return a new unique game ID
+     */
     private String generateGameID() {
         Set<String> assignedGameIDs = games.keySet().stream()
                 .map(Game::getGameID)

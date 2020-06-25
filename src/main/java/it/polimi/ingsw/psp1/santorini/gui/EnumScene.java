@@ -17,15 +17,15 @@ public enum EnumScene {
     GAME("game_scene"),
     TEST("test");
 
-    static {
-        Arrays.stream(values()).forEach(enumScene -> {
-            try {
-                enumScene.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+//    static {
+//        Arrays.stream(values()).forEach(enumScene -> {
+//            try {
+//                enumScene.load();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
 
     String resource;
     Parent scene;

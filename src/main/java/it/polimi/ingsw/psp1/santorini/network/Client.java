@@ -27,8 +27,17 @@ public class Client implements Runnable {
 
     private boolean debug;
 
+    /**
+     * Sets connection between client and server
+     * Creates a new thread for every player
+     *
+     * @param ip server ip
+     * @param port socket port
+     */
     public void connectToServer(String ip, int port) {
-        disconnect();
+        if(connected) {
+            disconnect();
+        }
 
         try {
             synchronized (lock) {
@@ -43,6 +52,9 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * Interrupts connection between client and server
+     */
     public void disconnect() {
         try {
             synchronized (lock) {
@@ -62,6 +74,11 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * Sends packet to server from client
+     *
+     * @param packet to send
+     */
     public void sendPacket(Packet<ClientHandler> packet) {
         pool.submit(() -> {
             try {
@@ -81,6 +98,12 @@ public class Client implements Runnable {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Available to receive packets from server
+     * Prints packets from server
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void run() {

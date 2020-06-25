@@ -1,15 +1,15 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.EnumTransition;
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -40,14 +40,52 @@ public class Gui extends Application {
         primaryStage.show();
     }
 
-    public void changeSceneAsync(EnumScene scene) {
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        System.exit(0);
+    }
+
+    public void changeSceneSync(EnumScene scene) {
         Platform.runLater(() -> {
-            changeScene(scene);
+            try {
+                Parent newScene = scene.load();
+                Parent oldScene = primaryStage.getScene().getRoot();
+
+                Parent newPane = new AnchorPane(newScene);
+                Parent oldPane = new AnchorPane(oldScene);
+                AnchorPane pane = new AnchorPane(oldPane);
+
+                setAnchors(newScene, oldScene, newPane, oldPane, pane);
+
+                pane.getChildren().add(newPane);
+                pane.setStyle("-fx-background-color: black");
+
+                primaryStage.getScene().setRoot(pane);
+
+                FadeTransition oldFt = new FadeTransition(Duration.millis(400), oldPane);
+                oldFt.setInterpolator(Interpolator.EASE_OUT);
+                oldFt.setFromValue(1);
+                oldFt.setToValue(0);
+                FadeTransition newFt = new FadeTransition(Duration.millis(400), newPane);
+                newFt.setInterpolator(Interpolator.EASE_IN);
+                newFt.setFromValue(0);
+                newFt.setToValue(1);
+                newFt.setDelay(Duration.millis(300));
+//                newFt.setOnFinished(e -> changeScene(scene));
+
+                ParallelTransition pt = new ParallelTransition(oldFt, newFt);
+                pt.play();
+//                pt.setOnFinished(e -> changeScene(scene));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
     public void changeScene(EnumScene scene) {
-        if(Objects.equals(currentScene, scene)) {
+        if (Objects.equals(currentScene, scene)) {
             return;
         }
 
@@ -69,9 +107,9 @@ public class Gui extends Application {
         primaryStage.setScene(newScene);
     }
 
-    public void changeSceneAsync(EnumScene scene, EnumTransition transition) {
+    public void changeSceneSync(EnumScene scene, EnumTransition transition) {
         Platform.runLater(() -> {
-            if(Objects.equals(currentScene, scene)) {
+            if (Objects.equals(currentScene, scene)) {
                 return;
             }
 
@@ -101,5 +139,14 @@ public class Gui extends Application {
                 ex.printStackTrace();
             }
         });
+    }
+
+    private void setAnchors(Parent... elements) {
+        for (Parent elem : elements) {
+            AnchorPane.setLeftAnchor(elem, 0D);
+            AnchorPane.setTopAnchor(elem, 0D);
+            AnchorPane.setRightAnchor(elem, 0D);
+            AnchorPane.setBottomAnchor(elem, 0D);
+        }
     }
 }

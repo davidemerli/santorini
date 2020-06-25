@@ -6,9 +6,13 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Athena;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
@@ -60,7 +64,7 @@ public class AthenaTest {
 
         game.getTurnState().selectSquare(game, player1, new Point(0, 1));
 
-        while(!game.getCurrentPlayer().equals(player2));
+        while (!game.getCurrentPlayer().equals(player2)) ;
 
         game.getTurnState().selectWorker(game, player2, w2);
 
@@ -68,6 +72,37 @@ public class AthenaTest {
                 game.getTurnState().getBlockedMoves(game, player2, player2.getSelectedWorker().get()),
                 blockedPosition));
     }
-}
 
-//.stream().allMatch(p -> game.getTurnState().isPositionBlocked(game, blockedMoves, p
+    @Test
+    public void onBeginTurn_normalBehaviour_shouldLose() {
+        Worker w1 = new Worker(new Point(2, 2));
+        Worker w2 = new Worker(new Point(0, 0));
+        Point newPosition = (new Point(2, 3));
+
+        game.getMap().buildBlock(new Point(1, 0), true);
+        game.getMap().buildBlock(new Point(1, 1), true);
+        game.getMap().buildBlock(new Point(0, 1), false);
+        game.getMap().buildBlock(newPosition, false);
+
+
+
+        player1.addWorker(w1);
+        player2.addWorker(w2);
+
+        game.startTurn();
+
+        game.getTurnState().selectWorker(game, player1, w1);
+        game.getTurnState().selectSquare(game, player1, newPosition);
+        game.getTurnState().selectSquare(game, player1, new Point (3,3));
+
+        while (!game.getCurrentPlayer().equals(player2)) ;
+
+        game.getTurnState().selectWorker(game, player2, w2);
+
+        List<Point> validMoves = game.getTurnState().getValidMoves(game, player2, w2);
+        Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(game, player2, w2);
+
+        assertTrue(validMoves.stream().allMatch(p -> game.getTurnState().isPositionBlocked(game, blockedMoves, p)));
+        assertTrue(player2.hasLost());
+    }
+}

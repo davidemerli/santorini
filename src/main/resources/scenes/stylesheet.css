@@ -2,9 +2,16 @@
     -fx-background-image: url("/gui_assets/btn_coral.png");
     -fx-background-color: transparent;
     -fx-background-size: stretch;
-    -fx-color: transparent;
     -fx-focus-color: transparent;
-    -fx-font-size: 150%;
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-font-size: 180%;
+    -fx-smooth: true;
+    -fx-text-fill: #faebd7;
+}
+
+.button .text {
+    -fx-translate-y: -5;
 }
 
 .button:pressed {
@@ -13,22 +20,88 @@
     -fx-background-size: stretch;
     -fx-color: transparent;
     -fx-focus-color: transparent;
-    -fx-font-size: 150%;
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-font-size: 170%;
+    -fx-smooth: true;
 }
 
-.text {
+.scroll-pane .viewport  {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-image: url("/gui_assets/power_frame.png");
+    -fx-background-size: 100% 100%;
+    -fx-hbar-policy: never;
+    -fx-border-style: none;
+}
+
+.flow-pane {
+    /*-fx-background-image: url("/gui_assets/power_frame.png");*/
+    /*-fx-background-size: 100% 100%;*/
+    /*-fx-background-color: blue;*/
+    -fx-border-style: none;
+
+}
+
+.text-field {
+    -fx-highlight-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-highlight-fill: rgba(0, 0, 0, 0.5);
+    -fx-background-image: url("/gui_assets/text_field.png");
+    -fx-focus-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-style: none;
+    -fx-background-color: transparent;
+    -fx-font-family: "Mount Olympus";
+    -fx-spacing: 80;
+    -fx-font-smoothing-type: inherit;
+    -fx-font-size: 35;
+    -fx-smooth: true;
+    -fx-background-position: center;
+    -fx-background-size: 100% 100%;
+}
+
+.text-name {
     -fx-background-image: url("/gui_assets/gameGodFrameName2.png");
-    -fx-background-size: stretch;
+    -fx-background-size: 100% 100%;
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-font-size: 400%;
+    -fx-fill: rgba(255, 255, 255, 0.6);
+    -fx-smooth: true;
 }
 
 .text-area {
-	-fx-background-image: url("/gui_assets/gameGodFrameName2.png");
+    -fx-background-image: url("/gui_assets/gameGodFrameName2.png");
     -fx-background-color: transparent;
+}
+
+.check-box {
+    -fx-content-display: text-only;
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-smooth: true;
+    -fx-fill: black;
+    -fx-font-size: 25;
+}
+
+.check-box .box {
+    -fx-background-image: url("/gui_assets/checkbox.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 100%, 100%
+}
+
+.text-create-join {
+    -fx-font-family: Diogenes;
+    -fx-font-smoothing-type: lcd;
+    -fx-smooth: true;
+    -fx-fill: #3f3f3f;
 }
 
 .text-area *.text {
     -fx-text-alignment: center;
-	-fx-alignment: center;
+    -fx-alignment: center;
 }
 
 .text-area .scroll-pane .content .text {
@@ -39,11 +112,10 @@
     -fx-background-color: transparent;
 }
 
-.text-area .scroll-pane .viewport{
+.text-area .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
 
-
-.text-area .scroll-pane .content{
+.text-area .scroll-pane .content {
     -fx-background-color: transparent;
 }

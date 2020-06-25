@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
@@ -18,13 +19,7 @@ public class ChooseGameSceneController extends GuiController {
     boolean toggleLeft;
 
     @FXML
-    private AnchorPane rootPane;
-    @FXML
-    private Button createButton;
-    @FXML
-    private Button joinButton;
-    @FXML
-    private GridPane rightPane;
+    private BorderPane rightPane;
     @FXML
     private Button confirmCreate;
     @FXML
@@ -34,7 +29,7 @@ public class ChooseGameSceneController extends GuiController {
     @FXML
     private Button joinX;
     @FXML
-    private GridPane leftPane;
+    private BorderPane leftPane;
     @FXML
     private Button confirmJoin;
     @FXML
@@ -125,14 +120,14 @@ public class ChooseGameSceneController extends GuiController {
     private void createGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
 
-        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
     @FXML
     private void joinGame(ActionEvent event) {
         getInstance().notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
 
-        Gui.getInstance().changeSceneAsync(EnumScene.WAIT_GOD_SELECTION, EnumTransition.LEFT);
+        Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
     @Override
