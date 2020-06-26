@@ -17,6 +17,12 @@ public class CommandSetName extends Command {
                 List.of("sn", "name"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Argument is the name of the player
+     * Sets the name of the player
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         client.sendPacket(new ClientSetName(arguments[0]));

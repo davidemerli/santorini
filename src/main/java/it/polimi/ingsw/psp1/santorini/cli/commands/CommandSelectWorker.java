@@ -22,6 +22,12 @@ public class CommandSelectWorker extends Command {
                 List.of("sw", "sworker"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Argument is the number of the worker or the coordinates of the worker
+     * Checks the successful of the selection
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         Optional<PlayerData> optPlayer = serverHandler.getPlayerData();

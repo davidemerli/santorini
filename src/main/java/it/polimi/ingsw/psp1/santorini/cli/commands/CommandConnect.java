@@ -19,6 +19,13 @@ public class CommandConnect extends Command {
                 List.of("cn"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The first argument is the ip
+     * The second argument is the port
+     * If an argument is missing it will be assigned automatically in order to allow the connection
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (client.isConnected()) {

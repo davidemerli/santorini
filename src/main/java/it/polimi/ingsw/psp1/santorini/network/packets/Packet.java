@@ -7,6 +7,11 @@ import java.util.Arrays;
 
 public interface Packet<T extends NetHandler> extends Serializable {
 
+    /**
+     * Process packets
+     *
+     * @param netHandler valid netHandler
+     */
     void processPacket(T netHandler);
 
     default String toString(Object... values) {

@@ -18,6 +18,12 @@ public class CommandPlaceWorker extends Command {
                 List.of("pw", "pworker"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Arguments are the new coordinates of the worker
+     * Checks if the move is valid
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (arguments.length == 1) {

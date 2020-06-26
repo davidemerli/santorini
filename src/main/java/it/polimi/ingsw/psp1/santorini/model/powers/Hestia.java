@@ -13,6 +13,11 @@ public class Hestia extends Mortal {
 
     private boolean hasBuilt;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reset state
+     */
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);
@@ -22,16 +27,31 @@ public class Hestia extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the worker has built the first time, show interaction bottom
+     *
+     * @return true if the worker has built the first time
+     */
     @Override
     public boolean shouldShowInteraction(Game game) {
         return hasBuilt;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onToggleInteraction(Game game) {
         game.endTurn();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * At the end of the turn, the worker can build another block but not in the perimeter
+     */
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
@@ -50,6 +70,11 @@ public class Hestia extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The second time, the worker can build another block but not in the perimeter
+     */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);

@@ -15,6 +15,11 @@ public class Prometheus extends Mortal {
     private boolean firstBuild;
     private boolean hasBuiltBeforeMoving;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reset state
+     */
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);
@@ -26,17 +31,31 @@ public class Prometheus extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @return true if worker has to build the first time
+     */
     @Override
     public boolean shouldShowInteraction(Game game) {
         return firstBuild;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onToggleInteraction(Game game) {
         firstBuild = false;
         game.setTurnState(new Move());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the worker has built before moving, he can build a second time after the move, but he can't move up
+     */
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
@@ -57,6 +76,11 @@ public class Prometheus extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the worker has built before moving, he can't move up
+     */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);

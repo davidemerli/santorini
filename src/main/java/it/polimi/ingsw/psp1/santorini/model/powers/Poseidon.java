@@ -12,6 +12,11 @@ public class Poseidon extends Mortal {
 
     private int counter;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reset turn
+     */
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);
@@ -21,16 +26,31 @@ public class Poseidon extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the worker is at the ground level at the end of the turn, show nteraction bottom
+     *
+     * @return true if the worker is at the ground level
+     */
     @Override
     public boolean shouldShowInteraction(Game game) {
         return game.getTurnState() instanceof Build && counter > 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onToggleInteraction(Game game) {
         game.endTurn();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * At the end of the turn, if the worker is at the ground level, he can build 3 times around him
+     */
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {

@@ -20,6 +20,12 @@ public class CommandSelect extends Command {
                 List.of("sel", "sos"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Arguments are the new coordinates of the worker
+     * Checks if the move is valid
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         Point move;

@@ -17,14 +17,31 @@ public class Point implements Serializable {
         this.y = toCopy.y;
     }
 
+    /**
+     * Calculates distance between two points
+     *
+     * @param other variable point
+     * @return distance between points
+     */
     public double distance(Point other) {
         return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
     }
 
+    /**
+     * Adds a value from the point's coordinates
+     *
+     * @param toAdd value to add
+     * @return new point
+     */
     public Point add(Point toAdd) {
         return new Point(this.x + toAdd.x, this.y + toAdd.y);
     }
 
+    /**
+     * Subtracts a value from the point's coordinates
+     * @param toSubtract value to subtract
+     * @return new point
+     */
     public Point subtract(Point toSubtract) {
         return new Point(this.x - toSubtract.x, this.y - toSubtract.y);
     }

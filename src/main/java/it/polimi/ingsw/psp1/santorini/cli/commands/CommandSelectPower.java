@@ -19,6 +19,12 @@ public class CommandSelectPower extends Command {
                 List.of("sp", "power"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Argument is the number of the god in the list or the name of the god
+     * Checks argument and select the corresponding god
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (!serverHandler.isYourTurn()) {
@@ -55,6 +61,11 @@ public class CommandSelectPower extends Command {
         return String.format("Selected power: '%s'", power.getClass().getSimpleName());
     }
 
+    /**
+     * Checks if the string is an integer value
+     * @param string to check
+     * @return true if the string is an integer value
+     */
     private boolean isNumeric(String string) {
         return string.matches("\\d+");
     }

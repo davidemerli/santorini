@@ -19,6 +19,14 @@ public class CommandManager {
         this.addCMDs();
     }
 
+    /**
+     * Analyzes command inserted by client and run it
+     *
+     * @param client        current client
+     * @param serverHandler current serverHandler
+     * @param input         client input
+     * @return command response
+     */
     public String runCommand(Client client, CLIServerHandler serverHandler, String input) {
         String[] arguments = input.split(" ");
 
@@ -52,6 +60,9 @@ public class CommandManager {
                 .findFirst();
     }
 
+    /**
+     * Adds all type of commands
+     */
     public void addCMDs() {
         commandList.add(new CommandConnect());
         commandList.add(new CommandCreateGame());
