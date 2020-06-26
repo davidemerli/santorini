@@ -6,9 +6,13 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -88,5 +92,28 @@ public class ApolloTest {
         game.getTurnState().selectWorker(game, player1, w1);
 
         assertFalse(game.getTurnState().getValidMoves(game, player1, w1).contains(w2.getPosition()));
+    }
+
+    @Test
+    public void onBeginTurn_normalBehaviour_shouldLose() {
+        Worker w1 = new Worker(new Point(0, 0));
+        Worker w2 = new Worker(new Point(1, 0));
+
+        game.getMap().buildBlock(new Point (2, 0), true);
+        game.getMap().buildBlock(new Point (0, 1), true);
+        game.getMap().buildBlock(new Point (1, 1), true);
+        game.getMap().buildBlock(new Point (2, 1), true);
+
+        player1.addWorker(w1);
+        player2.addWorker(w2);
+
+        game.startTurn();
+
+        game.getTurnState().selectWorker(game, player1, w1);
+
+        List<Point> validMoves = game.getTurnState().getValidMoves(game, player1, w1);
+
+        assertFalse(validMoves.isEmpty());
+        assertTrue(player1.hasLost());
     }
 }
