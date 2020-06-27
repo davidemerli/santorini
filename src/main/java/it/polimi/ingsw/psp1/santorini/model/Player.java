@@ -25,6 +25,13 @@ public class Player implements Cloneable {
         this.workerList = new ArrayList<>();
     }
 
+    /**
+     * Adds worker in worker list
+     *
+     * @param worker to add
+     * @throws IllegalArgumentException if worker is already present in the list
+     * @throws UnsupportedOperationException if worker list is full
+     */
     public void addWorker(Worker worker) {
         if (workerList.contains(worker)) {
             throw new IllegalArgumentException("Worker already present");
@@ -37,6 +44,12 @@ public class Player implements Cloneable {
         workerList.add(worker);
     }
 
+    /**
+     * Removes worker from worker list
+     *
+     * @param worker to remove
+     * @throws IllegalArgumentException if worker is not present
+     */
     public void removeWorker(Worker worker) {
         if (!workerList.contains(worker)) {
             throw new IllegalArgumentException("Worker is not present");
@@ -45,6 +58,9 @@ public class Player implements Cloneable {
         workerList.remove(worker);
     }
 
+    /**
+     * Removes all workers from list
+     */
     public void removeAllWorkers() {
         this.workerList.clear();
     }
@@ -104,6 +120,11 @@ public class Player implements Cloneable {
         return name;
     }
 
+    /**
+     * Copies worker list
+     *
+     * @return worker list copy
+     */
     public Player copy() {
         try {
             Player clone = (Player) super.clone();

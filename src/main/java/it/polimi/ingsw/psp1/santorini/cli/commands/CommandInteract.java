@@ -16,6 +16,12 @@ public class CommandInteract extends Command {
                 List.of("usepower", "power"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Command notifies server that the player wants to activates or deactivates his power
+     * Prints successful message or an error
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (serverHandler.getShowInteraction()) {

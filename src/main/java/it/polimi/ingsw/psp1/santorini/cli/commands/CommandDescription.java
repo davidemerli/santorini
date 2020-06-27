@@ -21,6 +21,12 @@ public class CommandDescription extends Command {
                 List.of("d", "desc"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Prints god's description
+     * Argument is the position of the god in the god list or the name of the god
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         Power power;
@@ -54,6 +60,11 @@ public class CommandDescription extends Command {
         return String.format("Requested info about '%s'", Color.RED + power.getName() + Color.RESET);
     }
 
+    /**
+     * Checks if the string is an integer value
+     * @param string to check
+     * @return true if the string is an integer value
+     */
     private boolean isNumeric(String string) {
         return string.matches("\\d+");
     }

@@ -9,6 +9,11 @@ import java.util.List;
 
 public class Zeus extends Mortal {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Adds one valid move, in fact the worker can build a block (not a dome) under himself
+     */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         List<Point> list = super.getValidMoves(worker, game);

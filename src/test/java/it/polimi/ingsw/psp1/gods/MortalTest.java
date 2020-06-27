@@ -5,11 +5,14 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -45,24 +48,26 @@ public class MortalTest {
         assertTrue(game.getTurnState() instanceof Move);
     }
 
-    /*@Test
+    @Test
     public void onBeginTurn_normalBehaviour_shouldLose() {
-        Worker w = new Worker(new Point(1, 1));
-
+        Worker w = new Worker(new Point(0, 0));
+        
+        game.getMap().buildBlock(new Point (0, 1), true);
+        game.getMap().buildBlock(new Point (1, 0), true);
+        game.getMap().buildBlock(new Point (1, 1), true);
+        
         player1.addWorker(w);
 
         game.startTurn();
 
-        game.getTurnState().selectWorker(player1, w);
+        game.getTurnState().selectWorker(game, player1, w);
 
-        List<Point> validMoves = game.getTurnState().getValidMoves(player1, w);
-        Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(player1, w);
+        List<Point> validMoves = game.getTurnState().getValidMoves(game, player1, w);
 
-        if (validMoves.isEmpty() || blockedMoves.containsAll(validMoves)) {
-            assertTrue(player1.hasLost());
-        }
+        assertTrue(validMoves.isEmpty());
+        assertTrue(player1.hasLost());
     }
-     */
+    
 
     @Test
     public void onYourBuild_normalBehaviour_shouldBuild() {

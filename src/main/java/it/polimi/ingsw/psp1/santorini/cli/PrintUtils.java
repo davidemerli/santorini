@@ -228,10 +228,10 @@ public class PrintUtils {
     }
 
     /**
-     * @param string
-     * @param xOff
-     * @param yOff
-     * @param toClear
+     * @param string  string to print
+     * @param xOff    x offset
+     * @param yOff    y offset
+     * @param toClear true if the console needs to be cleaned
      */
     public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
         Point point = getCommandCoords();
@@ -247,7 +247,7 @@ public class PrintUtils {
     }
 
     /**
-     * @return
+     * @return command's coordinates
      */
     public static Point getCommandCoords() {
         return new Point(0, 4 + MAP_Y + GameMap.SIDE_LENGTH * (SIZE + SPACING) - SPACING);
@@ -285,13 +285,12 @@ public class PrintUtils {
     }
 
     /**
-     * ---------------
      * Used to print players' info while gaming is running
      *
      * @param clientPlayer player name
-     * @param list
+     * @param list         players list
      * @param state        current state
-     * @param colorMap
+     * @param colorMap     map color
      * @param interact     true if player can use the power of his god
      */
     public static void printPlayerInfo(String clientPlayer, List<PlayerData> list, EnumTurnState state,
@@ -343,7 +342,7 @@ public class PrintUtils {
      * Used to know which color must be used, because every level has different color
      *
      * @param level block's level
-     * @return
+     * @return the color of the level
      */
     private static Color getColorFromLevel(int level) {
         switch (level) {
@@ -359,9 +358,9 @@ public class PrintUtils {
     }
 
     /**
-     * Used to print
+     * Used to print gods description
      *
-     * @param power
+     * @param power power to print
      */
     public static void printPowerInfo(Power power) {
         List<String> desc = reduceInLines(power.getDescription(), 50);

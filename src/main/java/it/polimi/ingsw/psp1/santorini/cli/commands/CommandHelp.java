@@ -15,6 +15,11 @@ public class CommandHelp extends Command {
                 List.of("h", "getcommands"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Prints helps
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         return "";

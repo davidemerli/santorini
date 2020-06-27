@@ -180,6 +180,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printFromCommand(Color.RED + packet.getError(), 0, 3, true);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives player move from the server
+     *
+     * @param serverPlayerMove contains player move
+     */
     @Override
     public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
         EnumActionType move = serverPlayerMove.getMoveType();
@@ -195,6 +202,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives the list of available gods from the server
+     *
+     * @param serverPowerList contains all available gods
+     */
     @Override
     public void handlePowerList(ServerPowerList serverPowerList) {
         super.handlePowerList(serverPowerList);
@@ -202,6 +216,13 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printPowerList(getPowerList());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Receives successful connection packet from the server
+     *
+     * @param packet contains an error
+     */
     @Override
     public void handlePlayerConnected(ServerConnectedToGame packet) {
         super.handlePlayerConnected(packet);

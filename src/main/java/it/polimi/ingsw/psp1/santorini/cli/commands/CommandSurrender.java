@@ -16,6 +16,11 @@ public class CommandSurrender extends Command {
                 List.of("ff", "forfeit"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a surrender packet to server and notifies the player with a message
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         client.sendPacket(new ClientForfeit());

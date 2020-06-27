@@ -14,6 +14,11 @@ import java.util.stream.Collectors;
 
 public class Minotaur extends Mortal {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Adds worker's opponent position as valid moves
+     */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         if (!(game.getTurnState() instanceof Move) || worker == null) {
@@ -44,6 +49,12 @@ public class Minotaur extends Mortal {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The worker can move into an opponent worker's space, if this one can be forced
+     * one space straight backwards to an unoccupied space, at any level
+     */
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
@@ -65,6 +76,13 @@ public class Minotaur extends Mortal {
         super.onMove(player, worker, where, game);
     }
 
+    /**
+     * Calculates the new position of the worker's opponent
+     *
+     * @param position current position
+     * @param opponent worker's opponent position
+     * @return new position of the worker's opponent
+     */
     private Point getPushLocation(Point position, Point opponent) {
         int[] diff = new int[]{position.x - opponent.x, position.y - opponent.y};
 

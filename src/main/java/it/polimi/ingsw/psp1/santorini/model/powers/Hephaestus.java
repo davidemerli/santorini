@@ -14,6 +14,11 @@ public class Hephaestus extends Mortal {
     private boolean hasBuilt;
     private Point oldBuild;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reset state
+     */
     @Override
     public void onBeginTurn(Player player, Game game) {
         super.onBeginTurn(player, game);
@@ -24,16 +29,31 @@ public class Hephaestus extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the worker has make the first build, show the interaction bottom
+     *
+     * @return true if has make the first build
+     */
     @Override
     public boolean shouldShowInteraction(Game game) {
         return hasBuilt;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onToggleInteraction(Game game) {
         game.endTurn();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * At the end of the turn the worker can build a block (not dome) again on the same position
+     */
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
@@ -52,6 +72,11 @@ public class Hephaestus extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The second time, the worker can build another block only above the previous
+     */
     @Override
     public void onEndTurn(Player player, Game game) {
         super.onEndTurn(player, game);

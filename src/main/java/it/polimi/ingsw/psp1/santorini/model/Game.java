@@ -55,6 +55,10 @@ public class Game extends Observable<ModelObserver> {
         this.addPowers();
     }
 
+    /**
+     * Starts the game and shuffle the order of the players
+     * Notifies all clients
+     */
     public void startGame() {
         hasStarted = true;
 
@@ -67,6 +71,12 @@ public class Game extends Observable<ModelObserver> {
         }, 2, TimeUnit.SECONDS);
     }
 
+    /**
+     * Used to get a Optional containing a player who has won, if present
+     *
+     * @return optional with the winner if present
+     * @throws IllegalStateException if all players have lost
+     */
     private Optional<Player> getWinner() {
         Optional<Player> fulfilledWinCond = playerList.stream().filter(Player::hasWon).findFirst();
 
@@ -86,6 +96,13 @@ public class Game extends Observable<ModelObserver> {
         return Optional.empty();
     }
 
+    /**
+     * Sets winner
+     * Notifies all clients
+     *
+     * @param player the players who has won
+     * @throws NoSuchElementException if player does not exist
+     */
     public void setWinner(Player player) {
         if (!playerList.contains(player)) {
             throw new NoSuchElementException("Given player is not in this game");
@@ -95,6 +112,10 @@ public class Game extends Observable<ModelObserver> {
         notifyObservers(o -> o.playerUpdate(this, player));
     }
 
+    /**
+     * Removes a player from the game if has lost
+     * Notifies all clients
+     */
     private void removeLoser() {
         getCurrentPlayer().removeAllWorkers();
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
@@ -103,6 +124,12 @@ public class Game extends Observable<ModelObserver> {
         nextTurn();
     }
 
+    /**
+     * Adds player in the game
+     *
+     * @param player the player to be added
+     * @throws IllegalArgumentException if player is already in game
+     */
     public void addPlayer(Player player) {
         if (playerList.contains(player)) {
             throw new IllegalArgumentException("Player is already in game");
@@ -111,6 +138,13 @@ public class Game extends Observable<ModelObserver> {
         playerList.add(player);
     }
 
+    /**
+     * Adds worker on the map
+     * Notifies alla clients
+     *
+     * @param player   the owner of the worker to be added
+     * @param position the new worker position on the map
+     */
     public void addWorker(Player player, Point position) {
         Worker worker = new Worker(position);
         player.addWorker(worker);
@@ -120,6 +154,13 @@ public class Game extends Observable<ModelObserver> {
         changedFromLastSave = true;
     }
 
+    /**
+     * Builds a block in the map
+     * Notifies all clients
+     *
+     * @param position  where the block must be built
+     * @param forceDome true if must be built a dome in a level different from the last one
+     */
     public void buildBlock(Point position, boolean forceDome) {
         map.buildBlock(position, forceDome);
 
@@ -182,6 +223,13 @@ public class Game extends Observable<ModelObserver> {
         changedFromLastSave = true;
     }
 
+    /**
+     * At the beginning of the turn checks if there is a winner or a player who has lost to be removed
+     * Starts player turn
+     * Notifies all clients
+     *
+     * @throws UnsupportedOperationException if player list is empty
+     */
     public void startTurn() {
         if (playerList.isEmpty()) {
             throw new UnsupportedOperationException("Player list is empty");
@@ -205,12 +253,19 @@ public class Game extends Observable<ModelObserver> {
         saveState();
     }
 
+    /**
+     * Goes to next turn, so the player list is shifted
+     */
     public void nextTurn() {
         shiftPlayers(-1);
 
         startTurn();
     }
 
+    /**
+     * Checks if player has finished his turn
+     * Waits five seconds before change turn in case of undo
+     */
     public void endTurn() {
         getPlayerList().forEach(p -> p.getPower().onEndTurn(getCurrentPlayer(), this));
 
@@ -224,30 +279,58 @@ public class Game extends Observable<ModelObserver> {
         }
     }
 
+    /**
+     * Shifts player list in order to bring the current player in the first position
+     * Notifies all clients
+     *
+     * @param distance number of shifting
+     */
     public void shiftPlayers(int distance) {
         Collections.rotate(playerList, distance);
 
         notifyObservers(o -> o.gameUpdate(this, false));
     }
 
+    /**
+     * Shuffles player list
+     */
     public void shufflePlayers() {
         Collections.shuffle(playerList);
     }
 
+    /**
+     * Sends request to a player
+     *
+     * @param player      the players who has to receive the request
+     * @param requestType type of the sending request
+     */
     public void askRequest(Player player, EnumRequestType requestType) {
         notifyObservers(o -> o.requestToPlayer(player, requestType));
     }
 
+    /**
+     * Ends the game and remove all clients
+     */
     public synchronized void endGame() {
         hasEnded = true;
         removeAllObservers();
     }
 
+    /**
+     * Forces the end of the game and remove all clients
+     */
     public void forceEndGame() {
         playerList.forEach(p -> askRequest(p, EnumRequestType.DISCONNECT));
         endGame();
     }
 
+    /**
+     * Sets player has loser
+     * Notifies all clients
+     *
+     * @param player the player who has lost
+     * @throws NoSuchElementException if player is not in the game
+     */
     public void setLoser(Player player) {
         if (!playerList.contains(player)) {
             throw new NoSuchElementException("Given player is not in this game");
@@ -277,6 +360,13 @@ public class Game extends Observable<ModelObserver> {
         return turnState;
     }
 
+    /**
+     * Checks if a player has won ora if a player has lost
+     * Sets the new player turn
+     * Notifies all clients
+     *
+     * @param newTurn new player turn
+     */
     public void setTurnState(TurnState newTurn) {
         turnState = newTurn;
         turnState.init(this);
@@ -319,6 +409,9 @@ public class Game extends Observable<ModelObserver> {
         return gameID;
     }
 
+    /**
+     * Adds all available gods
+     */
     public void addPowers() {
         availableGodList.add(new Mortal());
         availableGodList.add(new Apollo());
@@ -339,12 +432,18 @@ public class Game extends Observable<ModelObserver> {
         availableGodList.removeIf(power -> !power.getPlayableIn().contains(playerNumber));
     }
 
+    /**
+     * Saves a generic state in order to use it in case of undo
+     */
     public void saveState() {
         savedState = new GameState(map.copy(), turnState.copy(),
                 playerList.stream().map(Player::copy).collect(Collectors.toUnmodifiableList()));
         changedFromLastSave = false;
     }
 
+    /**
+     * Restores the saved state
+     */
     public void restoreSavedState() {
         if (savedState != null && changedFromLastSave) {
             if (endTurnRoutine != null) {

@@ -16,6 +16,11 @@ public class CommandReload extends Command {
                 List.of("r", "clear"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sends a game data request
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         client.sendPacket(new ClientRequestGameData());

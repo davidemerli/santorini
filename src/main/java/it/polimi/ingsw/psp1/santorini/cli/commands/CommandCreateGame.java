@@ -16,6 +16,11 @@ public class CommandCreateGame extends Command {
                 List.of("cg", "newgame"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The argument is the number of player of the game that will be created
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         int number = Integer.parseInt(arguments[0]);

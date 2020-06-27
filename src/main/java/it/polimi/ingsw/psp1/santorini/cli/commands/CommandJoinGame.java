@@ -17,6 +17,12 @@ public class CommandJoinGame extends Command {
                 List.of("j", "joingame"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Checks if the argument is ID or number of player of the game
+     * Prints message of connection attempt
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         int number = Integer.parseInt(arguments[0]);

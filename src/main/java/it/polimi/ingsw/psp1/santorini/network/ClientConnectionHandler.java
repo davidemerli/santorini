@@ -80,10 +80,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * <p>
      * Available at the reception of the packet from server
      * Prints received packet from server
-     *
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws ClassCastException
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -108,9 +104,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
     /**
      * {@inheritDoc}
-     * <p>
-     *
-     * @param packet to send
      */
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
@@ -125,10 +118,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
     /**
      * {@inheritDoc}
-     * <p>
-     *
-     * @param packet to send
-     * @throws UnsupportedOperationException
      */
     @Override
     public void handleCreateGame(ClientCreateGame packet) {
@@ -144,9 +133,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Joins game with name's room or joins the queue
-     *
-     * @param packet to send
-     * @throws IllegalStateException
      */
     @Override
     public void handleJoinGame(ClientJoinGame packet) {
@@ -165,8 +151,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Notifies all players
-     *
-     * @param packet to send
      */
     @Override
     public void handlePowerChoosing(ClientChoosePower packet) {
@@ -177,8 +161,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Notifies all players
-     *
-     * @param packet to send
      */
     @Override
     public void handleSquareSelect(ClientSelectSquare packet) {
@@ -189,8 +171,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Notifies all players
-     *
-     * @param packet to send
      */
     @Override
     public void handleInteractionToggle() {
@@ -201,8 +181,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Notifies all players
-     *
-     * @param packet to send
      */
     @Override
     public void handlePlayerForfeit() {
@@ -211,9 +189,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
     /**
      * {@inheritDoc}
-     * <p>
-     *
-     * @param packet to send
      */
     @Override
     public void handleKeepAlive() {
@@ -224,8 +199,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * {@inheritDoc}
      * <p>
      * Notifies all players
-     *
-     * @param packet to send
      */
     @Override
     public void handleUndo() {
@@ -235,9 +208,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     /**
      * {@inheritDoc}
      * <p>
-     * Notifes all players
-     *
-     * @param packet to send
+     * Notifies all players
      */
     @Override
     public void handleRequestGameData() {
@@ -247,9 +218,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     /**
      * {@inheritDoc}
      * <p>
-     * Notifes all players
-     *
-     * @param packet to send
+     * Notifies all players
      */
     @Override
     public void handleWorkerSelection(ClientSelectWorker packet) {
@@ -259,9 +228,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     /**
      * {@inheritDoc}
      * <p>
-     * Notifes all players
-     *
-     * @param packet to send
+     * Notifies all players
      */
     @Override
     public void handleSelectStartingPlayer(ClientSelectStartingPlayer packet) {
@@ -270,8 +237,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
     /**
      * Closes connection between client and server
-     *
-     * @throws IOException
      */
     public void closeConnection() {
         closed = true;

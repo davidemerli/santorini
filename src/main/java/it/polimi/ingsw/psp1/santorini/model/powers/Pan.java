@@ -7,6 +7,11 @@ import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 
 public class Pan extends Mortal {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Checks if workers goes down al least two level
+     */
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {

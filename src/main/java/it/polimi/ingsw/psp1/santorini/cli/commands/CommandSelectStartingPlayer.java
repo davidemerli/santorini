@@ -18,6 +18,11 @@ public class CommandSelectStartingPlayer extends Command {
                 List.of("start", "begin"));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Argument is the name of the player who will start the game
+     */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (isNumeric(arguments[0])) {
@@ -46,6 +51,11 @@ public class CommandSelectStartingPlayer extends Command {
         return String.format("Selected starting player: '%s'", player.get().getName());
     }
 
+    /**
+     * Checks if the string is an integer value
+     * @param string to check
+     * @return true if the string is an integer value
+     */
     private boolean isNumeric(String string) {
         return string.matches("\\d+");
     }

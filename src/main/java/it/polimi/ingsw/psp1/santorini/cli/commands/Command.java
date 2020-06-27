@@ -22,6 +22,16 @@ public abstract class Command {
         this.aliases = aliases;
     }
 
+    /**
+     * Analyzes client input and return a response
+     *
+     * @param client        current client
+     * @param serverHandler current serverHandler
+     * @param input         client input
+     * @param arguments     input arguments
+     * @return command response
+     * @throws Exception
+     */
     public abstract String onCommand(Client client, CLIServerHandler serverHandler,
                                      String input, String[] arguments) throws Exception;
 
