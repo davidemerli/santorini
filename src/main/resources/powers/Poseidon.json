@@ -2,7 +2,8 @@
   "name": "Poseidon",
   "alias": "God of the Sea",
   "description": "End of Your Turn: If your unmoved Worker is on the ground level, it may build up to three times.",
-  "interaction": "End Turn",
+  "interaction": ["Skip Build"],
+  "interactButton": "gp_skipbuild",
   "isSimple": false,
   "playableIn": [
     2,

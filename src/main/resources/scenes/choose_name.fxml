@@ -2,16 +2,17 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
 
 <GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: url(/gui_assets/clp_bg2.png); -fx-background-size: 100% 100%;" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.psp1.santorini.gui.controllers.NameSelectionController">
    <columnConstraints>
@@ -25,7 +26,7 @@
          <children>
             <ImageView fitHeight="150.0" fitWidth="564.0" pickOnBounds="true" preserveRatio="true" styleClass="text">
                <image>
-                  <Image url="@../gui_assets/gameGodFrameName2.png" />
+                  <Image url="@../gui_assets/gameGodFrameName1.png" />
                </image>
             </ImageView>
             <Text fill="WHITE" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Insert Name" textAlignment="CENTER" wrappingWidth="484.0625">
@@ -41,9 +42,26 @@
                   <Insets top="100.0" />
                </VBox.margin>
             </TextField>
-            <Button fx:id="button" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="75.0" prefWidth="250.0" text="Confirm">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fx:id="whirlpool" fitHeight="60.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image url="@../gui_assets/whirlpool.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="message" textFill="#000000b2" visible="false">
+                     <font>
+                        <Font name="Mount Olympus" size="30.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onButtonClick" prefHeight="75.0" prefWidth="250.0" styleClass="button-blue" text="CONFIRM">
                <VBox.margin>
-                  <Insets top="100.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Button>
          </children>

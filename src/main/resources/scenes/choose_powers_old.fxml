@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane prefHeight="338.0" prefWidth="315.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <content>
+            <FlowPane prefHeight="720.0" prefWidth="300.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0000_god_and_hero_cards_0057_Human.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0014_god_and_hero_cards_0042_zeus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0053_god_and_hero_cards_0003_Atlas.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0052_god_and_hero_cards_0004_Athena.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0043_god_and_hero_cards_0013_apollo.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0054_god_and_hero_cards_0002_Artemis.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0050_god_and_hero_cards_0006_Demeter.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0009_god_and_hero_cards_0047_Hephaestus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0008_god_and_hero_cards_0048_Minotaur.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0046_god_and_hero_cards_0010_Pan.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0004_god_and_hero_cards_0052_Prometheus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0027_god_and_hero_cards_0029_Chronus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0017_god_and_hero_cards_0039_Hestia.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0045_god_and_hero_cards_0011_Poseidon.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../gui_assets/god_cards/with_background/_0000s_0028_god_and_hero_cards_0028_triton.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </FlowPane>
+         </content>
+      </ScrollPane>
+      <Button layoutX="380.0" layoutY="323.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="171.0" style="-fx-background-image: url(gui_assets/btn_green.png); -fx-background-size: 100% 100%;" text="Select" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="49.0">
+         <font>
+            <Font name="Dyuthi Regular" size="22.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

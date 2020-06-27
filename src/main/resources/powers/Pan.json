@@ -2,7 +2,8 @@
   "name": "Pan",
   "alias": "God of the Wild",
   "description": "Win Condition: You also win if your Worker moves down two or more levels.",
-  "interaction": "",
+  "interaction": [""],
+  "interactButton": "",
   "isSimple": true,
   "playableIn": [
     2,

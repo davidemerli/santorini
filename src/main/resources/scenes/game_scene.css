@@ -1,0 +1,32 @@
+.button {
+    -fx-background-image: url("/gui_assets/btn_blue.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 100% 100%;
+    -fx-focus-color: transparent;
+    -fx-font-family: "Mount Olympus";
+    -fx-font-smoothing-type: lcd;
+    -fx-font-size: 180%;
+    -fx-smooth: true;
+    -fx-text-fill: #faebd7;
+}
+
+.button .text {
+    -fx-translate-y: -5;
+    -fx-fit-to-height: true;
+    -fx-spacing: 0;
+}
+
+.button:pressed {
+    -fx-background-image: url("/gui_assets/btn_blue_pressed.png");
+    -fx-opacity: 0.5;
+    -fx-background-size: stretch;
+    -fx-color: transparent;
+    -fx-font-family: "Mount Olympus";
+    -fx-font-smoothing-type: lcd;
+    -fx-font-size: 170%;
+    -fx-smooth: true;
+}
+
+.undo-button {
+    -fx-background-image: url("/gui_assets/god_cards/interactions/gp_leave.png");
+}

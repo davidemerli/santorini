@@ -44,10 +44,7 @@ public class SelectPowers extends TurnState {
 
     @Override
     public void undo(Game game, Player player) {
-        if (selectedPowers.size() == 0) {
-            throw new UnsupportedOperationException("Cannot undo, no gods selected");
-        }
-        //TODO: undo
+        throw new UnsupportedOperationException("Cannot undo in power selection");
     }
 
     /**

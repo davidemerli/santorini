@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.EnumTransition;
+import it.polimi.ingsw.psp1.santorini.gui.controllers.GameSceneController;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,14 +31,18 @@ public class Gui extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
-        EnumScene.GAME.load();
+    public void start(Stage primaryStage) {
+        try {
+            EnumScene.GAME.load();
 
-        Gui.primaryStage = primaryStage;
-        changeScene(EnumScene.IP_SELECT);
+            Gui.primaryStage = primaryStage;
+            changeScene(EnumScene.IP_SELECT);
 
-        primaryStage.setTitle("Santorini");
-        primaryStage.show();
+            primaryStage.setTitle("Santorini");
+            primaryStage.show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -49,6 +54,10 @@ public class Gui extends Application {
 
     public void changeSceneSync(EnumScene scene) {
         Platform.runLater(() -> {
+            if(scene.equals(currentScene)) {
+                return;
+            }
+
             try {
                 Parent newScene = scene.load();
                 Parent oldScene = primaryStage.getScene().getRoot();
@@ -78,6 +87,8 @@ public class Gui extends Application {
                 ParallelTransition pt = new ParallelTransition(oldFt, newFt);
                 pt.play();
 //                pt.setOnFinished(e -> changeScene(scene));
+
+                currentScene = scene;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -139,6 +150,10 @@ public class Gui extends Application {
                 ex.printStackTrace();
             }
         });
+    }
+
+    public EnumScene getCurrentScene() {
+        return currentScene;
     }
 
     private void setAnchors(Parent... elements) {

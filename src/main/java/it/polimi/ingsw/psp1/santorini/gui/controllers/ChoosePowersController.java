@@ -10,17 +10,18 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Glow;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChoosePowersController extends GuiController {
 
@@ -32,11 +33,21 @@ public class ChoosePowersController extends GuiController {
     @FXML
     private FlowPane flowPane;
     @FXML
+    private Label powerName;
+    @FXML
     private Text description;
     @FXML
-    private HBox selectionBox;
-    @FXML
     private Button confirmButton;
+    @FXML
+    private Button selectButton;
+    @FXML
+    private ImageView powerImageLabel;
+
+    private Power hovered;
+
+    private Map<Power, ImageView[]> frames;
+
+    private int selectSize;
 
     public static ChoosePowersController getInstance() {
         if (instance == null) {
@@ -48,20 +59,27 @@ public class ChoosePowersController extends GuiController {
 
     @FXML
     private void initialize() {
-        String url = getClass().getResource("/gui_assets/god_cards/with_background/Random.png").toString();
+        getInstance().selectSize = -1;
 
+        getInstance().selectButton = selectButton;
         getInstance().confirmButton = confirmButton;
+        getInstance().powerName = powerName;
         getInstance().description = description;
         getInstance().descriptionPane = descriptionPane;
         getInstance().flowPane = flowPane;
-        getInstance().selectionBox = selectionBox;
+        getInstance().powerImageLabel = powerImageLabel;
         getInstance().selectedPowers = new ArrayList<>();
+        getInstance().frames = new HashMap<>();
+
+        getInstance().confirmButton.setDisable(true);
     }
 
     public void addGods(List<Power> powers, int selectSize) {
-        getInstance().confirmButton.setDisable(getInstance().selectedPowers.size() > selectSize);
+        getInstance().selectSize = selectSize;
 
         Platform.runLater(() -> {
+            getInstance().confirmButton.setDisable(!canStartGame());
+
             for (Power power : powers) {
                 System.out.println(power);
                 String framePath = getClass().getResource("/gui_assets/clp_frame_white.png").toString();
@@ -75,6 +93,7 @@ public class ChoosePowersController extends GuiController {
                 ImageView selectedFrame = new ImageView(selectedFramePath);
 
                 ImageView image = new ImageView(powerPath);
+                image.setSmooth(true);
 
                 frame.fitWidthProperty().bind(getInstance().flowPane.widthProperty().subtract(2).divide(3));
                 frame.setPreserveRatio(true);
@@ -83,32 +102,52 @@ public class ChoosePowersController extends GuiController {
                 image.fitWidthProperty().bind(getInstance().flowPane.widthProperty().subtract(2).divide(3).subtract(10));
                 image.setPreserveRatio(true);
 
-                AnchorPane pane = new AnchorPane(image, frame);
+                AnchorPane pane = new AnchorPane(image, frame, selectedFrame);
                 AnchorPane.setTopAnchor(image, 5D);
                 AnchorPane.setLeftAnchor(image, 5D);
 
+                FadeTransition ft = new FadeTransition(Duration.millis(400), selectedFrame);
+                ft.setFromValue(0);
+                ft.setToValue(1);
+                ft.setInterpolator(Interpolator.EASE_BOTH);
+                ft.setAutoReverse(true);
+                ft.setCycleCount(Animation.INDEFINITE);
+                ft.play();
+
+                selectedFrame.setVisible(false);
+
+                getInstance().frames.put(power, new ImageView[]{frame, selectedFrame});
+
                 pane.setOnMouseClicked(mouseEvent -> {
+
+                    getInstance().hovered = power;
+
+                    getInstance().selectButton.setText(selectedPowers.contains(power) ? "UNSELECT POWER" : "SELECT POWER");
+
+                    selectButton.setDisable(canStartGame() && !selectedPowers.contains(power));
+
+                    getInstance().frames.forEach((p, frames) -> {
+                        frames[0].setVisible(true);
+                        frames[1].setVisible(selectedPowers.contains(p));
+                    });
+
+                    frame.setVisible(false);
+                    selectedFrame.setVisible(true);
+
+                    String iconPath = getClass().getResource("/gui_assets/god_cards/power_icon/"
+                            + power.getName().toLowerCase() + "_icon.png").toString();
+
+                    getInstance().powerName.setText(power.getName().toUpperCase());
                     getInstance().description.setText(power.getDescription());
-
-                    frame.setImage(selectedFrame.getImage());
-
-                    FadeTransition ft = new FadeTransition(Duration.millis(400), frame);
-                    ft.setInterpolator(Interpolator.EASE_BOTH);
-                    ft.setAutoReverse(true);
-                    ft.setCycleCount(Animation.INDEFINITE);
-                    ft.play();
+                    getInstance().powerImageLabel.setImage(new Image(iconPath));
 
                     if (mouseEvent.isShiftDown()) {//TODO: change this selection method
                         if (getInstance().selectedPowers.size() < selectSize) {
-                            ImageView selectedImage = new ImageView(image.getImage());
-                            selectedImage.fitWidthProperty().bind(image.fitWidthProperty().divide(1.5));
-                            selectedImage.setPreserveRatio(true);
-                            getInstance().selectionBox.getChildren().add(selectedImage);
                             getInstance().selectedPowers.add(power);
                         }
                     }
 
-                    getInstance().confirmButton.setDisable(getInstance().selectedPowers.size() > selectSize);
+                    getInstance().confirmButton.setDisable(!canStartGame());
                 });
 
                 getInstance().flowPane.getChildren().add(pane);
@@ -123,14 +162,42 @@ public class ChoosePowersController extends GuiController {
         Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
+    @FXML
+    void clickSelect(ActionEvent event) {
+        if (getInstance().hovered != null && getInstance().selectSize != -1) {
+            if (!getInstance().selectedPowers.contains(getInstance().hovered)) {
+                getInstance().selectedPowers.add(getInstance().hovered);
+                getInstance().selectButton.setText("UNSELECT POWER");
+
+                String selectedFramePath = getClass().getResource("/gui_assets/clp_frame_red.png").toString();
+                getInstance().frames.get(getInstance().hovered)[1].setImage(new Image(selectedFramePath));
+
+                getInstance().confirmButton.setDisable(!canStartGame());
+            } else {
+                String selectedFramePath = getClass().getResource("/gui_assets/clp_frame_blue.png").toString();
+                getInstance().frames.get(getInstance().hovered)[1].setImage(new Image(selectedFramePath));
+
+                getInstance().selectedPowers.remove(getInstance().hovered);
+                getInstance().selectButton.setText("SELECT POWER");
+            }
+        }
+    }
+
     @Override
     public void reset() {
-        getInstance().confirmButton.setDisable(true);
-        getInstance().flowPane.getChildren().clear();
-
-        getInstance().selectionBox.getChildren().clear();
-        getInstance().selectedPowers.clear();
-
-        getInstance().description.setText("");
+        Platform.runLater(() -> {
+            getInstance().powerImageLabel.setImage(null);
+            getInstance().confirmButton.setDisable(true);
+            getInstance().flowPane.getChildren().clear();
+            getInstance().selectedPowers.clear();
+            getInstance().description.setText("");
+            getInstance().selectButton.setText("SELECT POWER");
+            getInstance().selectButton.setDisable(true);
+        });
     }
+
+    private boolean canStartGame() {
+        return getInstance().selectedPowers.size() >= getInstance().selectSize;
+    }
+
 }

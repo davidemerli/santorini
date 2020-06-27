@@ -2,6 +2,8 @@ package it.polimi.ingsw.psp1.santorini.network.packets;
 
 public enum EnumRequestType {
     SELECT_NAME,
+    RESELECT_NAME,
+    CHOOSE_GAME,
     CHOOSE_POWERS,
     SELECT_POWER,
     SELECT_STARTING_PLAYER,

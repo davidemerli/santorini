@@ -42,7 +42,9 @@ public class Mortal extends Power {
      */
     @Override
     public void onEndTurn(Player player, Game game) {
-        //basic implementation does not need to do anything on turn end
+        if (player.equals(this.player)) {
+            game.notifyObservers(o -> o.playerEndTurn(game, player));
+        }
     }
 
     /**

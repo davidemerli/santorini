@@ -112,6 +112,11 @@ public class Controller implements ViewObserver {
                 return;
             }
 
+            if (!model.getTurnState().shouldShowInteraction(model, player)) {
+                view.notifyError("You cannot interact now");
+                return;
+            }
+
             model.getTurnState().toggleInteraction(model, player);
         } catch (UnsupportedOperationException | ArrayIndexOutOfBoundsException |
                 IllegalArgumentException ex) {

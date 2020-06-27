@@ -32,14 +32,27 @@ public class Triton extends Mortal {
 
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
-        super.onMove(player, worker, where, game);
+        if (player.equals(this.player)) {
+            int oldLevel = game.getMap().getLevel(worker.getPosition());
+            int newLevel = game.getMap().getLevel(where);
 
-        if (player.equals(this.player) && game.getMap().isPerimeter(where)) {
-            if (!hasMoved) {
-                hasMoved = true;
+            game.moveWorker(player, worker, where);
+
+            if (newLevel == 3 && oldLevel == 2) {
+                player.setWinner(true);
             }
 
-            game.setTurnState(new Move());
+            player.lockWorker();
+
+            if (game.getMap().isPerimeter(where)) {
+                if (!hasMoved) {
+                    hasMoved = true;
+                }
+
+                game.setTurnState(new Move());
+            } else {
+                game.setTurnState(new Build());
+            }
         }
     }
 }

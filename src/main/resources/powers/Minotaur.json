@@ -2,7 +2,8 @@
   "name": "Minotaur",
   "alias": "Bull-headed Monster",
   "description": "Your Move: Your Worker may move into an opponent Worker's space, if their Worker can be forced one space straight backwards to an unoccupied space at any level.",
-  "interaction": "",
+  "interaction": [""],
+  "interactButton": "",
   "isSimple": true,
   "playableIn": [
     2,

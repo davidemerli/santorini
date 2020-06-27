@@ -65,8 +65,6 @@ public class Poseidon extends Mortal {
             }
 
             game.endTurn();
-        } else {
-            super.onBuild(player, worker, where, game);
         }
     }
 }

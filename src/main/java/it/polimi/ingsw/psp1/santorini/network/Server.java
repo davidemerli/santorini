@@ -68,7 +68,7 @@ public class Server implements Runnable {
         try (ServerSocket serverSocket = new ServerSocket(socketPort)) {
             while (!serverSocket.isClosed()) {
                 Socket client = serverSocket.accept();
-//                client.setSoTimeout(20000);
+                client.setSoTimeout(20000);
 
                 System.out.println("Accepted client: " + client.getInetAddress());
                 //when a client connects it is put into a list of connected sockets and a ClientHandler is created
@@ -97,7 +97,9 @@ public class Server implements Runnable {
                         .map(Map.Entry::getKey)
                         .forEach(games::remove);
 
-                games.keySet().stream().filter(g -> !g.hasStarted()).forEach(game -> {
+                games.keySet().stream()
+                        .filter(g -> !g.hasStarted())
+                        .forEach(game -> {
                     Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
                     boolean full = fillGame(game);
@@ -153,12 +155,13 @@ public class Server implements Runnable {
                 }
 
                 for (ClientConnectionHandler ch : gamePlayers.keySet()) {
+                    //TODO: recheck
                     if (gamePlayers.get(ch).equals(waitingClient.get().getValue())) {
                         gamePlayers.values().forEach(p -> ch.sendPacket(new ServerConnectedToGame(
-                                p.getName(), game.getGameID())));
+                                p.getName(), game.getGameID(), game.getPlayerNumber())));
                     } else {
                         ch.sendPacket(new ServerConnectedToGame(
-                                waitingClient.get().getValue().getName(), game.getGameID()));
+                                waitingClient.get().getValue().getName(), game.getGameID(), game.getPlayerNumber()));
                     }
                 }
             }
@@ -197,7 +200,8 @@ public class Server implements Runnable {
             //add a new game to the list of games
             games.put(newGame, new LinkedHashMap<>(Map.of(connectionHandler, optPlayer.get())));
 
-            connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName(), newGame.getGameID()));
+            connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName(),
+                    newGame.getGameID(), playerNumber));
         }
     }
 
@@ -254,9 +258,10 @@ public class Server implements Runnable {
         for (Player p : game.values()) {
             if (p.equals(connectionHandler.getPlayer().orElse(null))) {
                 game.values().forEach(pp -> connectionHandler.sendPacket(new ServerConnectedToGame(
-                        pp.getName(), toJoin.get().getGameID())));
+                        pp.getName(), toJoin.get().getGameID(), toJoin.get().getPlayerNumber())));
             } else {
-                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName(), toJoin.get().getGameID()));
+                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName(),
+                        toJoin.get().getGameID(), toJoin.get().getPlayerNumber()));
             }
         }
 
@@ -295,6 +300,10 @@ public class Server implements Runnable {
      * @param username player's name
      * @return true if username is unique
      */
+    public boolean isUsernameValid(String username) {
+        return username.trim().matches("(.)+");
+    }
+
     public boolean isUsernameUnique(String username) {
         Set<String> assignedPlayerUsernames = games.values().stream()
                 .map(Map::values)
@@ -302,10 +311,15 @@ public class Server implements Runnable {
                 .map(Player::getName)
                 .collect(Collectors.toSet());
 
-        Stream.concat(twoPlayerGameQueue.values().stream(), threePlayerGameQueue.values().stream())
+        Stream.concat(twoPlayerGameQueue.values().stream(),
+                threePlayerGameQueue.values().stream())
                 .map(Player::getName).forEach(assignedPlayerUsernames::add);
 
-        return assignedPlayerUsernames.contains(username);
+        clientsToRelocate.stream()
+                .filter(cch -> cch.getPlayer().isPresent())
+                .forEach(cch -> assignedPlayerUsernames.add(cch.getPlayer().get().getName()));
+
+        return !assignedPlayerUsernames.contains(username);
     }
 
     /**

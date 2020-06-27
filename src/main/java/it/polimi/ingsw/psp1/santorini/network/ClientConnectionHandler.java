@@ -65,7 +65,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         pool.schedule(() -> {
             try {
                 if (!(packet instanceof ServerKeepAlive)) {
-                    System.out.println("sent " + packet.toString());
+                    System.out.println("sent to '" + getPlayer().orElse(new Player("N/A")).getName() + "' :" + packet.toString());
                 }
 
                 objectOutputStream.writeObject(packet);
@@ -114,7 +114,13 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      */
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
-        player = new Player(packet.getName());
+        if (server.isUsernameValid(packet.getName()) && server.isUsernameUnique(packet.getName())) {
+            player = new Player(packet.getName());
+
+            sendPacket(new ServerAskRequest(EnumRequestType.CHOOSE_GAME));
+        } else {
+            sendPacket(new ServerAskRequest(EnumRequestType.RESELECT_NAME));
+        }
     }
 
     /**
@@ -128,7 +134,8 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     public void handleCreateGame(ClientCreateGame packet) {
         try {
             server.createGame(this, packet.getPlayerNumber());
-        } catch (UnsupportedOperationException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             sendPacket(new ServerInvalidPacket(e.getMessage()));
         }
     }
@@ -149,7 +156,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
             } else {
                 server.joinQueue(this, packet.getPlayerNumber());
             }
-        } catch (IllegalStateException ex) {
+        } catch (IllegalStateException | IllegalArgumentException ex) {
             sendPacket(new ServerInvalidPacket(ex.getMessage()));
         }
     }

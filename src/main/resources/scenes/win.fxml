@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@game_scene.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.psp1.santorini.gui.controllers.WinLoseController">
+   <children>
+      <ImageView fx:id="rightTrumpetWin" fitHeight="278.0" fitWidth="250.0" layoutX="525.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../gui_assets/endgame/endgame_victorytrumpets.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="leftTrumpetWin" fitHeight="278.0" fitWidth="250.0" layoutX="125.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+         <image>
+            <Image url="@../gui_assets/endgame/endgame_victorytrumpets.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="428.0" fitWidth="400.0" layoutX="250.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../gui_assets/endgame/endgame_victorywin.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="leftCloudWin" fitHeight="133.0" fitWidth="200.0" layoutX="205.0" layoutY="327.0">
+         <image>
+            <Image url="@../gui_assets/endgame/endgame_victorycloudleft.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="rightCloudWin" fitHeight="113.0" fitWidth="200.0" layoutX="484.0" layoutY="371.0">
+         <image>
+            <Image url="@../gui_assets/endgame/endgame_victorycloudright.png" />
+         </image>
+      </ImageView>
+      <VBox alignment="CENTER" layoutX="288.0" layoutY="97.0">
+         <children>
+            <ImageView fitHeight="107.0" fitWidth="324.0">
+               <image>
+                  <Image url="@../gui_assets/gameGodFrameName1.png" />
+               </image>
+            </ImageView>
+            <Label text="WINNER!" textFill="#00000080">
+               <padding>
+                  <Insets top="-135.0" />
+               </padding>
+               <font>
+                  <Font name="Diogenes" size="36.0" />
+               </font>
+            </Label>
+            <Label fx:id="playerNameWin" text="PLAYER_NAME" textFill="WHITE">
+               <font>
+                  <Font name="Mount Olympus" size="24.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="-30.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+      <Button layoutX="350.0" layoutY="316.0" mnemonicParsing="false" onAction="#clickMainMenu" prefHeight="55.0" prefWidth="200.0" text="MAIN MENU" />
+   </children>
+</AnchorPane>

@@ -1,20 +1,26 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.*;
+import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
-import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientKeepAlive;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
-import javafx.application.Platform;
 import javafx.scene.paint.Color;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GuiServerHandler extends ServerHandler {
 
+    private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
     public GuiServerHandler(Client client) {
         super(client);
@@ -28,7 +34,7 @@ public class GuiServerHandler extends ServerHandler {
         IpSelectionController.getInstance().addObserver(guiObserver);
         GameSceneController.getInstance().addObserver(guiObserver);
         ChoosePowersController.getInstance().addObserver(guiObserver);
-        StartingPlayerController.getInstance().addObserver(guiObserver);
+        WaitGodSelectionController.getInstance().addObserver(guiObserver);
     }
 
     @Override
@@ -36,28 +42,30 @@ public class GuiServerHandler extends ServerHandler {
         super.handleGameData(packet);
 
         if (packet.isForced()) {
-            GameSceneController.getInstance().reset();
+            pool.execute(() -> {
+                GameSceneController.getInstance().reset();
 
-            for (Point p : packet.getGameMap().getAllSquares()) {
-                int level = packet.getGameMap().getLevel(p);
-                boolean hasDome = packet.getGameMap().hasDome(p);
+                for (Point p : packet.getGameMap().getAllSquares()) {
+                    int level = packet.getGameMap().getLevel(p);
+                    boolean hasDome = packet.getGameMap().hasDome(p);
 
-                IntStream.range(0, hasDome ? level - 1 : level)
-                        .forEach(i -> GameSceneController.getInstance().addBlockAt(p.x, p.y, false, false));
+                    IntStream.range(0, hasDome ? level - 1 : level)
+                            .forEach(i -> GameSceneController.getInstance().addBlockAt(p.x, p.y, false, false));
 
-                if (hasDome) {
-                    GameSceneController.getInstance().addBlockAt(p.x, p.y, true, false);
+                    if (hasDome) {
+                        GameSceneController.getInstance().addBlockAt(p.x, p.y, true, false);
+                    }
                 }
-            }
 
-            for (PlayerData player : packet.getPlayerData()) {
-                boolean isOwn = player.getName().equals(playerName);
-                Color color = getPlayerColorMap().get(player.getName()).getColor();
+                for (PlayerData player : packet.getPlayerData()) {
+                    boolean isOwn = player.getName().equals(playerName);
+                    Color color = getPlayerColorMap().get(player.getName()).getColor();
 
-                player.getWorkers().stream()
-                        .map(Worker::getPosition)
-                        .forEach(p -> GameSceneController.getInstance().addWorker(p.x, p.y, color, isOwn, false));
-            }
+                    player.getWorkers().stream()
+                            .map(Worker::getPosition)
+                            .forEach(p -> GameSceneController.getInstance().addWorker(p.x, p.y, color, isOwn, false));
+                }
+            });
         }
     }
 
@@ -65,46 +73,105 @@ public class GuiServerHandler extends ServerHandler {
     public void handleRequest(ServerAskRequest packet) {
         super.handleRequest(packet);
 
-        for (int i = 0; i < 100; i++) {
-            client.sendPacket(new ClientKeepAlive());
-        }
+        String request = null;
 
-        //TODO: request types to decently written strings
         switch (packet.getRequestType()) {
+            case RESELECT_NAME:
+                pool.schedule(() -> NameSelectionController.getInstance().showError(), 1, TimeUnit.SECONDS);
+                break;
+            case CHOOSE_GAME:
+                pool.schedule(() -> Gui.getInstance().changeSceneSync(EnumScene.CREATE_JOIN), 2, TimeUnit.SECONDS);
+                break;
             case CHOOSE_POWERS:
+                pool.schedule(() -> Gui.getInstance().changeSceneSync(EnumScene.CHOOSE_POWERS), 2, TimeUnit.SECONDS);
+                break;
             case SELECT_POWER:
-                Gui.getInstance().changeSceneSync(EnumScene.CHOOSE_POWERS, EnumTransition.DOWN);
+                pool.schedule(() -> Gui.getInstance().changeSceneSync(EnumScene.CHOOSE_POWERS), 1, TimeUnit.SECONDS);
                 break;
             case SELECT_STARTING_PLAYER:
-                Gui.getInstance().changeSceneSync(EnumScene.STARTING_PLAYER, EnumTransition.DOWN);
+                pool.schedule(() -> {
+                    WaitGodSelectionController.getInstance().setStateMessage("Click to select the starting player!");
 
-                for (PlayerData playerData : getPlayerDataList()) {
-                    StartingPlayerController.getInstance().addPlayer(playerData.getName(), playerData.getPower());
-                }
+                    for (PlayerData playerData : getPlayerDataList()) {
+                        StartingPlayerController.getInstance().addPlayer(playerData.getName(), playerData.getPower());
+                        WaitGodSelectionController.getInstance().setPlayerPower(playerData.getName(), playerData.getPower());
+                    }
+
+                    WaitGodSelectionController.getInstance().setupForStartingPlayerChoice();
+
+                    Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
+                }, 1, TimeUnit.SECONDS);
+                break;
+
+            case PLACE_WORKER:
+                request = "Place a Worker!";
+                break;
+            case SELECT_WORKER:
+                request = "Select a Worker!";
+                break;
+            case SELECT_SQUARE:
+                request = lastTurnState == EnumTurnState.MOVE ? "Move a Worker!" : "Build a block!";
                 break;
         }
 
-        GameSceneController.getInstance().showRequest(packet.getRequestType().toString());
+        if (request != null) {
+            GameSceneController.getInstance().showRequest(request);
+        }
     }
 
     @Override
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
-        int index = getPlayerDataList().indexOf(packet.getPlayerData());
-
-        boolean updatePowerImage = index != -1 && getPlayerDataList().get(index).getPower() == null;
-
         super.handlePlayerUpdate(packet);
 
-        if (updatePowerImage) {
-            WaitGodSelectionController.getInstance().addPlayerPower(packet.getPlayerData().getName(),
+        boolean yourUpdate = packet.getPlayerData().getName().equals(playerName);
+
+        if (!yourUpdate) {
+            GameSceneController.getInstance().hideRequest();
+        }
+
+        if (packet.getPlayerData().getPower() != null) {
+            WaitGodSelectionController.getInstance().setPlayerPower(packet.getPlayerData().getName(),
                     packet.getPlayerData().getPower());
         }
 
-        if(packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
-            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
+        if (packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
+            Gui.getInstance().changeSceneSync(EnumScene.GAME);
         }
 
-        GameSceneController.getInstance().showInteract(isYourTurn() && packet.shouldShowInteraction());
+        if (!yourUpdate && packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
+            String state = packet.getPlayerData().getName() + " is choosing powers for this game...";
+
+            pool.schedule(() -> WaitGodSelectionController.getInstance().setStateMessage(state), 2, TimeUnit.SECONDS);
+        }
+
+        if (!yourUpdate && packet.getPlayerState() == EnumTurnState.CHOOSE_OWN_POWER
+                && packet.getPlayerData().getPower() == null) {
+            String state = packet.getPlayerData().getName() + " is choosing his powers...";
+
+            pool.schedule(() -> WaitGodSelectionController.getInstance().setStateMessage(state), 1, TimeUnit.SECONDS);
+        }
+
+        if (!yourUpdate && packet.getPlayerState() == EnumTurnState.SELECT_STARTING_PLAYER) {
+            String state = packet.getPlayerData().getName() + " is choosing the starting player...";
+
+            WaitGodSelectionController.getInstance().setStateMessage(state);
+        }
+
+        if (yourUpdate && shouldShowInteraction) {
+            GameSceneController.getInstance().setInteractButtonTexture(packet.getPlayerData().getPower());
+            GameSceneController.getInstance().showInteract(true);
+        } else {
+            GameSceneController.getInstance().showInteract(false);
+        }
+
+        if(yourUpdate && packet.getPlayerState() == EnumTurnState.WIN) {
+            GameSceneController.getInstance().showEndGame(playerName, true);
+        }
+
+        if(yourUpdate && packet.getPlayerState() == EnumTurnState.LOSE) {
+            GameSceneController.getInstance().showEndGame(playerName, false);
+        }
+
         GameSceneController.getInstance().showUndo(isYourTurn());
     }
 
@@ -112,11 +179,15 @@ public class GuiServerHandler extends ServerHandler {
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
 
-        if (isYourTurn()) {
-            Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
+        List<Point> blockedMoves = getBlockedMoves().values().stream()
+                .flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
 
-            GameSceneController.getInstance().showValidMoves(packet.getValidMoves());
+        if (isYourTurn()) {
+            pool.schedule(() -> GameSceneController.getInstance().showValidMoves(getValidMoves(), blockedMoves, lastTurnState),
+                    300, TimeUnit.MILLISECONDS);
         }
+
+        Gui.getInstance().changeSceneSync(EnumScene.GAME);
     }
 
     @Override
@@ -165,13 +236,32 @@ public class GuiServerHandler extends ServerHandler {
     public void handlePlayerConnected(ServerConnectedToGame packet) {
         super.handlePlayerConnected(packet);
 
-        WaitGodSelectionController.getInstance().addPlayer(packet.getName());
+        pool.schedule(() -> {
+            String message = getPlayerName().equals(packet.getUsername()) ? "You joined a game!" :
+                    packet.getUsername() + " joined the game!";
+
+            if (packet.getPlayerNumber() == WaitGodSelectionController.getInstance().getConnectedPlayersCount()) {
+                message += " Game is starting...";
+            }
+
+            WaitGodSelectionController.getInstance().setStateMessage(message);
+            WaitGodSelectionController.getInstance().showRoomID(packet.getGameID());
+        }, 2000, TimeUnit.MILLISECONDS);
+
+        pool.schedule(() -> WaitGodSelectionController.getInstance().addPlayer(packet.getUsername()),
+                2500, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void onDisconnect() {
-        Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
-        reset();
+        pool.schedule(() -> {
+            if(!GameSceneController.getInstance().hasGameEnded()) {
+                Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
+                GameSceneController.getInstance().reset();
+            }
+
+            reset();
+        }, 1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -180,10 +270,10 @@ public class GuiServerHandler extends ServerHandler {
 
         ChooseGameSceneController.getInstance().reset();
         ChoosePowersController.getInstance().reset();
-        GameSceneController.getInstance().reset();
         IpSelectionController.getInstance().reset();
         NameSelectionController.getInstance().reset();
         StartingPlayerController.getInstance().reset();
         WaitGodSelectionController.getInstance().reset();
+        WinLoseController.getInstance().reset();
     }
 }

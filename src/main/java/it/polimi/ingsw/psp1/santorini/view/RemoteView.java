@@ -113,6 +113,22 @@ public class RemoteView extends View {
     /**
      * {@inheritDoc}
      * <p>
+     * Sends a packet with updated interaction status and EndTurn state
+     */
+    @Override
+    public void playerEndTurn(Game game, Player player) {
+        PlayerData playerData = toData(player);
+
+        ServerSendPlayerUpdate packet = new ServerSendPlayerUpdate(playerData, EnumTurnState.END_TURN, false);
+        connection.sendPacket(packet);
+
+        ServerMovePossibilities movesPacket = new ServerMovePossibilities(List.of(), Map.of());
+        connection.sendPacket(movesPacket);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Sends a packet with the game current status
      */
     @Override

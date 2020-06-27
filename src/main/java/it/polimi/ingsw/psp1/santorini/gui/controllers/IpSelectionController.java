@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -44,10 +45,29 @@ public class IpSelectionController extends GuiController {
     @FXML
     private void initialize() {
         getInstance().ipTextField = ipTextField;
-        getInstance().connectButton = connectButton;
         getInstance().portTextField = portTextField;
+        getInstance().connectButton = connectButton;
         getInstance().connectionIcon = connectionIcon;
         getInstance().connectionText = connectionText;
+
+
+
+        getInstance().ipTextField.setTextFormatter(getTextFormatter());
+        getInstance().portTextField.setTextFormatter(getTextFormatter());
+    }
+
+    private TextFormatter<String> getTextFormatter() {
+        return new TextFormatter<>(change -> {
+            if (!change.isContentChange()) {
+                return change;
+            }
+
+            if (!change.getControlNewText().matches("[\\w\\d !#@$%*&()\\-_+=;:'\",<.>?/]*")) {
+                return null;
+            }
+
+            return change;
+        });
     }
 
     @FXML

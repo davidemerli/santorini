@@ -49,6 +49,14 @@ public interface ModelObserver {
     void playerUpdate(Game game, Player player);
 
     /**
+     * Called on a player turn end
+     *
+     * @param game   current game object
+     * @param player that ended his turn
+     */
+    void playerEndTurn(Game game, Player player);
+
+    /**
      * Called on a generic game update
      *
      * @param game current game object

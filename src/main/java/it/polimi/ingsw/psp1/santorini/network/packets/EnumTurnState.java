@@ -9,6 +9,7 @@ public enum EnumTurnState {
     MOVE,
     BUILD,
     WORKER_PLACING,
+    END_TURN,
     WIN,
     LOSE,
     END_GAME;

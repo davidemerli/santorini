@@ -118,16 +118,26 @@ public class ChooseGameSceneController extends GuiController {
 
     @FXML
     private void createGame(ActionEvent event) {
-        getInstance().notifyObservers(o -> o.createGame(createCheckBox2.isSelected() ? 2 : 3));
+        int number = createCheckBox2.isSelected() ? 2 : 3;
+
+        getInstance().notifyObservers(o -> o.createGame(number));
 
         Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
+        String message = String.format("Created a new Game for %d players! Waiting others to connect...", number);
+
+        WaitGodSelectionController.getInstance().setStateMessage(message);
     }
 
     @FXML
     private void joinGame(ActionEvent event) {
+        int number = joinCheckBox2.isSelected() ? 2 : 3;
+
         getInstance().notifyObservers(o -> o.joinGame(joinCheckBox2.isSelected() ? 2 : 3));
 
         Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
+        String message = String.format("Joined queue for a %d players game! Waiting for a room...", number);
+
+        WaitGodSelectionController.getInstance().setStateMessage(message);
     }
 
     @Override

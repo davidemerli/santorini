@@ -2,7 +2,8 @@
   "name": "Atlas",
   "alias": "Titan Shouldering the Heavens",
   "description": "Your Build: Your Worker may build a dome at any level.",
-  "interaction": "Build Dome",
+  "interaction": ["Build Dome", "Cancel"],
+  "interactButton": "gp_builddome",
   "isSimple": true,
   "playableIn": [
     2,

@@ -2,7 +2,8 @@
   "name": "Hephaestus",
   "alias": "God of Blacksmiths",
   "description": "Your Build: Your Worker may build one additional block (not dome) on top of your first block.",
-  "interaction": "End Turn",
+  "interaction": ["Skip Build"],
+  "interactButton": "gp_skipbuild",
   "isSimple": true,
   "playableIn": [
     2,

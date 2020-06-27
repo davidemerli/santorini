@@ -11,8 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PrometheusTest {
 
@@ -37,7 +36,7 @@ public class PrometheusTest {
     }
 
     @Test
-    public void onYourBuild_normalBehaviour_shouldEndBuild() {
+    public void onYourMove_toggleInteraction_shouldGoBuild() {
         Point position = new Point(1, 1);
         Worker w = new Worker(position);
 
@@ -51,7 +50,7 @@ public class PrometheusTest {
 
         game.getTurnState().toggleInteraction(game, player);
 
-        assertTrue(game.getTurnState() instanceof Move);
+        assertTrue(game.getTurnState() instanceof Build);
     }
 
     @Test
@@ -60,6 +59,7 @@ public class PrometheusTest {
         Point newPosition = new Point(2, 2);
         Point blockedPosition = new Point(2, 1);
         Worker w = new Worker(oldPosition);
+        game.getMap().buildBlock(blockedPosition, false);
 
         player.addWorker(w);
 
@@ -69,7 +69,7 @@ public class PrometheusTest {
 
         assertTrue(game.getTurnState().shouldShowInteraction(game, player));
 
-        game.getMap().buildBlock(blockedPosition, false);
+        game.getTurnState().toggleInteraction(game, player);
 
         assertTrue(game.getTurnState() instanceof Build);
 
@@ -78,5 +78,13 @@ public class PrometheusTest {
         assertTrue(game.getTurnState() instanceof Move);
 
         assertFalse(game.getTurnState().getValidMoves(game, player, w).contains(blockedPosition));
+
+        game.getTurnState().selectSquare(game, player, new Point(0, 0));
+
+        assertTrue(game.getTurnState() instanceof Build);
+
+        game.getTurnState().selectSquare(game, player, oldPosition);
+
+        assertEquals(1, game.getMap().getLevel(oldPosition));
     }
 }

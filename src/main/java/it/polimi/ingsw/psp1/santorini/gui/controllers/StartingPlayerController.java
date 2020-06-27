@@ -47,7 +47,7 @@ public class StartingPlayerController extends GuiController {
 
             image.setOnMouseClicked(mouseEvent -> {
                 getInstance().notifyObservers(o -> o.selectStartingPlayer(playerName));
-                Gui.getInstance().changeSceneSync(EnumScene.GAME, EnumTransition.DOWN);
+                Gui.getInstance().changeSceneSync(EnumScene.GAME);
             });
 
             VBox vbox = new VBox(image, text);
@@ -59,6 +59,8 @@ public class StartingPlayerController extends GuiController {
 
     @Override
     public void reset() {
-
+        Platform.runLater(() -> {
+            getInstance().playerBox.getChildren().clear();
+        });
     }
 }

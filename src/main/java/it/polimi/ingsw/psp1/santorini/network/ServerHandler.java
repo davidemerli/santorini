@@ -44,14 +44,14 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     /**
-     * Keep alive packet
+     * Handles Keep alive packet
      */
     public void handleKeepAlive() {
         client.sendPacket(new ClientKeepAlive());
     }
 
     /**
-     * Packet with updated game information
+     * Handles Packet with updated game information
      *
      * @param packet to send
      */
@@ -79,7 +79,7 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     /**
-     * Packet with a type request to client
+     * Handles Packet with a type request to client
      *
      * @param packet to send
      */
@@ -88,7 +88,7 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     /**
-     * Packet with updated player information
+     * Handles Packet with updated player information
      *
      * @param packet to send
      */
@@ -100,10 +100,11 @@ public abstract class ServerHandler implements NetHandler {
         updated.ifPresent(playerData -> playerDataList.set(playerDataList.indexOf(playerData), packet.getPlayerData()));
 
         shouldShowInteraction = packet.shouldShowInteraction();
+        lastTurnState = packet.getPlayerState();
     }
 
     /**
-     * Packet with possible moves
+     * Handles Packet with possible moves
      *
      * @param packet to send
      */
@@ -116,21 +117,21 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     /**
-     * Packet with a message error
+     * Handles Packet with a message error
      *
      * @param packet to send
      */
     public abstract void handleError(ServerInvalidPacket packet);
 
     /**
-     * Packet with player's move
+     * Handles Packet with player's move
      *
      * @param packet to send
      */
     public abstract void handlePlayerMove(ServerPlayerMove packet);
 
     /**
-     * Packet with available gods to choose
+     * Handles Packet with available gods to choose
      *
      * @param packet to send
      */
@@ -145,7 +146,7 @@ public abstract class ServerHandler implements NetHandler {
      * @param packet to send
      */
     public void handlePlayerConnected(ServerConnectedToGame packet) {
-        playerDataList.add(new PlayerData(packet.getName(), null, List.of()));
+        playerDataList.add(new PlayerData(packet.getUsername(), null, List.of()));
     }
 
     public Optional<PlayerData> getPlayerData() {
@@ -198,6 +199,11 @@ public abstract class ServerHandler implements NetHandler {
         return !getPlayerDataList().isEmpty() && getPlayerDataList().get(0).getName().equals(playerName);
     }
 
+    /**
+     * Resets all data received from the server
+     *
+     * Used on disconnections or on a new game
+     */
     public void reset() {
         playerDataList.clear();
         blockedMoves.clear();

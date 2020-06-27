@@ -2,7 +2,8 @@
   "name": "Hestia",
   "alias": "Goddess of Hear th and Home",
   "description": "Your Build: Your Worker may build one additional time, but this cannot be on a perimeter space.",
-  "interaction": "End Turn",
+  "interaction": ["Skip Build"],
+  "interactButton": "gp_skipbuild",
   "isSimple": false,
   "playableIn": [
     2,

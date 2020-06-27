@@ -2,7 +2,8 @@
   "name": "Prometheus",
   "alias": "Titan Benefactor of Mankind",
   "description": "Your Turn: If your Worker does not move up, it may build both before and after moving.",
-  "interaction": "End Build",
+  "interaction": ["Build Before Move", "Cancel"],
+  "interactButton": "gp_buildbeforemove",
   "isSimple": true,
   "playableIn": [
     2,

@@ -26,7 +26,8 @@ public abstract class Power implements Serializable, Cloneable {
     private String alias;
     private String description;
 
-    private String interaction;
+    private String[] interaction;
+    private String interactButton;
 
     private boolean simple;
 
@@ -43,7 +44,8 @@ public abstract class Power implements Serializable, Cloneable {
             this.name = jObject.get("name").getAsString();
             this.alias = jObject.get("alias").getAsString();
             this.description = jObject.get("description").getAsString();
-            this.interaction = jObject.get("interaction").getAsString();
+            this.interaction = gson.fromJson(jObject.get("interaction").getAsJsonArray(), String[].class);
+            this.interactButton = jObject.get("interactButton").getAsString();
             this.simple = jObject.get("isSimple").getAsBoolean();
             this.playableIn = gson.fromJson(jObject.get("playableIn").getAsJsonArray(), int[].class);
         } catch (FileNotFoundException e) {
@@ -198,8 +200,12 @@ public abstract class Power implements Serializable, Cloneable {
         return description;
     }
 
-    public String getInteraction() {
-        return interaction;
+    public List<String> getInteraction() {
+        return Arrays.stream(interaction).collect(Collectors.toUnmodifiableList());
+    }
+
+    public String getInteractButton() {
+        return interactButton;
     }
 
     public boolean isSimple() {

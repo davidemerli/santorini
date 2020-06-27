@@ -1,29 +1,33 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
-import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
 import it.polimi.ingsw.psp1.santorini.gui.GuiObserver;
+import it.polimi.ingsw.psp1.santorini.gui.RenderUtils;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,13 +38,9 @@ public class GameSceneController extends GuiController {
     private static final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
     private static GameSceneController instance;
     private final List<Node> validMoves = new ArrayList<>();
-    private final DoubleProperty angleX = new SimpleDoubleProperty(40 * 4);
-    private final DoubleProperty angleY = new SimpleDoubleProperty(0);
+
     public Map<Point, Group> map = new HashMap<>();
     public Map<Group, Point> workers = new HashMap<>();
-    private double anchorX, anchorY;
-    private double anchorAngleX = 0;
-    private double anchorAngleY = 0;
 
     private Group board;
 
@@ -49,7 +49,7 @@ public class GameSceneController extends GuiController {
     @FXML
     private AnchorPane pane;
     @FXML
-    private Button button;
+    private Button menuButton;
     @FXML
     private Button interactButton;
     @FXML
@@ -58,6 +58,10 @@ public class GameSceneController extends GuiController {
     private ImageView requestBackground;
     @FXML
     private Label requestText;
+    @FXML
+    private GridPane menu;
+
+    private boolean hasGameEnded;
 
     public static GameSceneController getInstance() {
         if (instance == null) {
@@ -68,24 +72,14 @@ public class GameSceneController extends GuiController {
     }
 
     @FXML
-    private void interactPressed(ActionEvent event) {
-        getInstance().notifyObservers(GuiObserver::interactPressed);
-    }
-
-    @FXML
-    private void undoPressed(ActionEvent event) {
-        getInstance().notifyObservers(GuiObserver::undoPressed);
-    }
-
-    @FXML
     public void initialize() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
-        board = loadModel("/mesh/board.obj", "/textures/Cliff_v007.png");
-        Group cliff = loadModel("/mesh/cliff.obj", "/textures/Cliff_v007.png");
-        Group sea = loadModel("/mesh/sea.obj", "/textures/Sea_v006.png");
-        Group islands = loadModel("/mesh/islands.obj", "/textures/Islands_v002.png");
+        board = RenderUtils.loadModel("/mesh/board.obj", "/textures/Cliff_v007.png");
+        Group cliff = RenderUtils.loadModel("/mesh/cliff.obj", "/textures/Cliff_v007.png");
+        Group sea = RenderUtils.loadModel("/mesh/sea.obj", "/textures/Sea_v006.png");
+        Group islands = RenderUtils.loadModel("/mesh/islands.obj", "/textures/Islands_v002.png");
         sea.setTranslateY(2);
         islands.setTranslateY(2);
 
@@ -94,49 +88,77 @@ public class GameSceneController extends GuiController {
         mainScene = new SubScene(root, -1, -1, true, SceneAntialiasing.BALANCED);
         mainScene.setRoot(root);
         mainScene.setCamera(camera);
+        mainScene.setFill(Color.valueOf("#33B7F0"));
         mainScene.widthProperty().bind(pane.widthProperty());
         mainScene.heightProperty().bind(pane.heightProperty());
-        pane.getChildren().add(1, mainScene);
+        pane.getChildren().add(0, mainScene);
 
-        initMouseControl(root, mainScene);
+        RenderUtils.initMouseControl(root, mainScene);
 
-        button.prefWidthProperty().bind(pane.widthProperty().divide(20));
-        button.prefHeightProperty().bind(pane.widthProperty().divide(20));
-
-        getInstance().requestBackground = requestBackground;
-        getInstance().requestText = requestText;
-        getInstance().interactButton = interactButton;
-        getInstance().undoButton = undoButton;
-
-        getInstance().board = board;
+        instance.requestBackground = requestBackground;
+        instance.requestText = requestText;
+        instance.interactButton = interactButton;
+        instance.undoButton = undoButton;
+        instance.menu = menu;
+        instance.menuButton = menuButton;
+        instance.mainScene = mainScene;
+        instance.pane = pane;
+        instance.board = board;
     }
 
-    private Point3D convert2DTo3D(double x, double y) {
-        double width = board.layoutBoundsProperty().getValue().getWidth() * 0.95;
-
-        return new Point3D(x * width / 5, 0, (4 - y) * width / 5)
-                .subtract(width / 2, 0, width / 2)
-                .add(width / 10, 0, width / 10);
-    }
-
-    public void showValidMoves(List<Point> moves) {
+    public void showValidMoves(List<Point> moves, List<Point> blockedMoves, EnumTurnState state) {
         runMapChange(() -> {
-            double width = getInstance().board.layoutBoundsProperty().getValue().getWidth() * 0.95;
-
-            getInstance().board.getChildren().removeAll(getInstance().validMoves);
-            getInstance().validMoves.clear();
+            instance.board.getChildren().removeAll(instance.validMoves);
+            instance.validMoves.clear();
 
             for (Point p : moves) {
-                Point3D p3D = convert2DTo3D(p.x, p.y);
-                Cylinder box = new Cylinder(width / 15, 0.1);
+                boolean isBlocked = blockedMoves.contains(p);
+
+                Point3D p3D = RenderUtils.convert2DTo3D(instance.board, p.x, p.y);
+                Cylinder box = new Cylinder(1.15, 0.1);
+
+                double y = -3.5 - (instance.map.get(p) == null ? 0 : instance.map.get(p).getLayoutBounds().getHeight());
+
                 box.setTranslateX(p3D.getX());
-                box.setTranslateY(-3.5 - (getInstance().map.get(p) == null ? 0 : getInstance().map.get(p).getLayoutBounds().getHeight()));
+                box.setTranslateY(y);
                 box.setTranslateZ(p3D.getZ());
-                PhongMaterial m = new PhongMaterial(Color.valueOf("#3DABFF99"),
+
+                Color color;
+                if (state == EnumTurnState.BUILD) {
+                    color = Color.valueOf("#ffe10099");
+                } else {
+                    color = Color.valueOf("#00bbff99");
+                }
+
+                PhongMaterial m = new PhongMaterial(isBlocked ? Color.valueOf("#57171799") : color,
                         null, null, null, null);
                 box.setMaterial(m);
 
-                ScaleTransition st = new ScaleTransition(Duration.millis(500), box);
+                Group move;
+
+                if (isBlocked) {
+                    Box block1 = new Box(1, 0.2, 0.5);
+                    Box block2 = new Box(1, 0.2, 0.5);
+                    block1.setRotationAxis(Rotate.Y_AXIS);
+                    block1.setRotate(45);
+                    block2.setRotationAxis(Rotate.Y_AXIS);
+                    block2.setRotate(135);
+
+                    block1.setTranslateX(p3D.getX());
+                    block1.setTranslateY(y - 0.2);
+                    block1.setTranslateZ(p3D.getZ());
+                    block2.setTranslateX(p3D.getX());
+                    block2.setTranslateY(y - 0.2);
+                    block2.setTranslateZ(p3D.getZ());
+
+                    block1.setMaterial(m);
+                    block2.setMaterial(m);
+                    move = new Group(box, block1, block2);
+                } else {
+                    move = new Group(box);
+                }
+
+                ScaleTransition st = new ScaleTransition(Duration.millis(500), move);
                 st.setCycleCount(Animation.INDEFINITE);
                 st.setAutoReverse(true);
                 st.setFromX(0.8);
@@ -145,17 +167,19 @@ public class GameSceneController extends GuiController {
                 st.setToZ(1);
                 st.play();
 
-                box.setOnMouseClicked(event -> {
-                    getInstance().notifyObservers(o -> o.onMoveSelected(p));
+                if (!isBlocked) {
+                    box.setOnMouseClicked(event -> {
+                        instance.notifyObservers(o -> o.onMoveSelected(p));
 
-                    getInstance().board.getChildren().removeAll(getInstance().validMoves);
-                    getInstance().validMoves.clear();
-                });
+                        instance.board.getChildren().removeAll(instance.validMoves);
+                        instance.validMoves.clear();
+                    });
+                }
 
-                getInstance().validMoves.add(box);
+                instance.validMoves.add(move);
             }
 
-            getInstance().board.getChildren().addAll(validMoves);
+            instance.board.getChildren().addAll(validMoves);
         }, Duration.millis(200));
     }
 
@@ -168,9 +192,9 @@ public class GameSceneController extends GuiController {
             if (workers.containsValue(p))
                 return;
 
-            Point3D p3D = convert2DTo3D(x, y);
+            Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);
 
-            Group worker = loadModel("/mesh/MaleBuilder_Blue.obj",
+            Group worker = RenderUtils.loadModel("/mesh/MaleBuilder_Blue.obj",
                     "/textures/MaleBuilder_Tan_v001.png",
                     color);
 
@@ -180,68 +204,82 @@ public class GameSceneController extends GuiController {
             worker.getTransforms().add(new Translate(p3D.getX(), height, p3D.getZ()));
             worker.getTransforms().add(new Rotate(new Random().nextInt(360), Rotate.Y_AXIS));
             addWorkerClickAction(worker, p, isOwn);
-            getInstance().board.getChildren().add(worker);
+            instance.board.getChildren().add(worker);
 
-            TranslateTransition tt = new TranslateTransition(duration, worker);
-            tt.setInterpolator(Interpolator.EASE_BOTH);
-            tt.setFromY(-20);
-            tt.setToY(worker.getLayoutY());
-            tt.setOnFinished(event -> {
-                getInstance().workers.put(worker, p);
-            });
-            tt.play();
-        }, animate ? duration : Duration.ZERO);
+            if (animate) {
+                TranslateTransition tt = new TranslateTransition(duration, worker);
+                tt.setInterpolator(Interpolator.EASE_BOTH);
+                tt.setFromY(-20);
+                tt.setToY(worker.getLayoutY());
+                tt.setOnFinished(event -> {
+                    instance.workers.put(worker, p);
+                });
+                tt.play();
+            } else {
+                instance.workers.put(worker, p);
+            }
+        }, animate ? duration : Duration.millis(10));
     }
 
     public void addBlockAt(int x, int y, boolean forceDome, boolean animate) {
         runMapChange(() -> {
             Point p = new Point(x, y);
-            Point3D p3D = convert2DTo3D(x, y);
+            Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);
 
-            if (!getInstance().map.containsKey(p)) {
+            if (!instance.map.containsKey(p)) {
                 Group g = new Group();
-                getInstance().map.put(p, g);
-                getInstance().board.getChildren().add(g);
+                instance.map.put(p, g);
+                instance.board.getChildren().add(g);
             }
 
-            Group group = getInstance().map.get(p);
+            Group group = instance.map.get(p);
             int level = forceDome ? 4 : (group.getChildren().size() + 1);
 
-            Group block = loadModel("/mesh/level" + level + ".obj", "/textures/BuildingBlock0" + level + "_v001.png");
+            Group block = RenderUtils.loadModel("/mesh/level" + level + ".obj",
+                    "/textures/BuildingBlock0" + level + "_v001.png");
             double height = group.getChildren().size() > 0 ? -group.getLayoutBounds().getHeight() : 0;
 
             block.getTransforms().add(new Translate(p3D.getX(), height, p3D.getZ()));
 
-            getInstance().map.get(p).getChildren().add(block);
+            instance.map.get(p).getChildren().add(block);
 
             if (workers.containsValue(p)) {
                 Group w = workers.keySet().stream().filter(g -> workers.get(g).equals(p)).findFirst().get();
 
-                TranslateTransition tt = new TranslateTransition(Duration.millis(100), w);
-                tt.setByY(-block.getLayoutBounds().getHeight());
-                tt.setInterpolator(Interpolator.EASE_OUT);
+                if (animate) {
+                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), w);
+                    tt.setByY(-block.getLayoutBounds().getHeight());
+                    tt.setInterpolator(Interpolator.EASE_OUT);
 
-                FadeTransition ft = new FadeTransition(Duration.millis(400), block);
-                ft.setFromValue(0);
-                ft.setToValue(1);
+                    FadeTransition ft = new FadeTransition(Duration.millis(400), block);
+                    ft.setFromValue(0);
+                    ft.setToValue(1);
 
-                new ParallelTransition(tt, ft).play();
+                    new SequentialTransition(tt, ft).play();
+                }
             } else {
-                TranslateTransition tt = new TranslateTransition(Duration.millis(200), block);
-                tt.setInterpolator(Interpolator.EASE_IN);
-                tt.setFromY(-20);
-                tt.setToY(block.getLayoutY());
-                tt.play();
+                if (animate) {
+                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), block);
+                    tt.setInterpolator(Interpolator.EASE_IN);
+                    tt.setFromY(-10);
+                    tt.setToY(block.getLayoutY());
+
+                    FadeTransition ft = new FadeTransition(Duration.millis(200), block);
+                    ft.setFromValue(0);
+                    ft.setToValue(1);
+
+                    new ParallelTransition(tt, ft).play();
+                }
             }
-        }, animate ? Duration.millis(400) : Duration.ZERO);
+        }, animate ? Duration.millis(400) : Duration.millis(50));
     }
 
     public void moveWorker(Point from, Point to, boolean isOwn) {
         runMapChange(() -> {
             Group worker = workers.keySet().stream().filter(g -> workers.get(g).equals(from)).findFirst().get();
 
-            Point3D from3D = convert2DTo3D(from.x, from.y);
-            Point3D to3D = convert2DTo3D(to.x, to.y);
+            Point3D from3D = RenderUtils.convert2DTo3D(instance.board, from.x, from.y);
+            Point3D to3D = RenderUtils.convert2DTo3D(instance.board, to.x, to.y);
 
             Point3D diff = to3D.subtract(from3D);
 
@@ -249,134 +287,63 @@ public class GameSceneController extends GuiController {
                 throw new NoSuchElementException("Worker not found at given position");
             }
 
-            double heightTo = getInstance().map.get(to) != null ? -getInstance().map.get(to).getLayoutBounds().getHeight() : 0;
+            double heightFrom = instance.map.get(from) != null ? instance.map.get(from).getLayoutBounds().getHeight() : 0;
+            double heightTo = instance.map.get(to) != null ? instance.map.get(to).getLayoutBounds().getHeight() : 0;
+            double heightDiff = heightFrom - heightTo;
 
-            TranslateTransition tt = new TranslateTransition(Duration.millis(400), worker);
+            TranslateTransition tt = new TranslateTransition(Duration.millis(heightDiff < 0 ? 400 : 250), worker);
             tt.setByX(diff.getX());
-            tt.setToY(heightTo);
             tt.setByZ(diff.getZ());
-            tt.setInterpolator(Interpolator.TANGENT(Duration.millis(400), 2));
-            tt.setOnFinished(event -> workers.replace(worker, to));
-            tt.play();
+            tt.setInterpolator(Interpolator.EASE_BOTH);
+
+            TranslateTransition ttY = new TranslateTransition(Duration.millis(Math.abs(heightDiff) * (heightDiff < 0 ? 150 : 300)), worker);
+            ttY.setByY(heightDiff);
+            ttY.setInterpolator(Interpolator.EASE_BOTH);
+
+            ParallelTransition pt = new ParallelTransition(tt, ttY);
+            pt.setOnFinished(event -> workers.replace(worker, to));
+            pt.play();
 
             addWorkerClickAction(worker, to, isOwn);
         }, Duration.millis(400));
     }
 
-    private Group loadModel(String obj, String texture) {
-        return loadModel(obj, texture, Color.BLACK);
-    }
-
-    private Group loadModel(String obj, String texture, Color color) {
-        Group modelRoot = new Group();
-
-        ObjModelImporter importer = new ObjModelImporter();
-        importer.read(getClass().getResource(obj));
-
-        for (MeshView view : importer.getImport()) {
-            modelRoot.getChildren().add(view);
-
-            Image im = new Image(getClass().getResourceAsStream(texture));
-
-            PhongMaterial material = new PhongMaterial(color);
-
-            if (color == null) {
-                Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
-                    try {
-                        Color rainbowColor = makeColorGradient(System.currentTimeMillis() / 50, 0.3, 0, 2, 4, -1, -1)
-                                .darker();
-                        material.setDiffuseColor(rainbowColor);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }, 0, 100, TimeUnit.MILLISECONDS);
-            }
-
-            material.setSelfIlluminationMap(im);
-            view.setMaterial(material);
-        }
-
-        return modelRoot;
-    }
-
-    private Color makeColorGradient(long value, double freq, double p1, double p2, double p3, int center, int width) {
-        if (center == -1)
-            center = 128;
-        if (width == -1)
-            width = 127;
-
-        int r = (int) (Math.sin(freq * value + p1) * width) + center;
-        int g = (int) (Math.sin(freq * value + p2) * width) + center;
-        int b = (int) (Math.sin(freq * value + p3) * width) + center;
-
-        return Color.rgb(r, g, b);
-    }
-
-    private void initMouseControl(Group group, SubScene scene) {
-        Rotate rotateX = new Rotate(40 * 4, Rotate.X_AXIS);
-        Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
-
-        group.getTransforms().addAll(rotateX, rotateY);
-        rotateX.angleProperty().bind(angleX.divide(4));
-        rotateY.angleProperty().bind(angleY.divide(4));
-
-        scene.setOnMousePressed(event -> {
-            anchorX = event.getSceneX();
-            anchorY = event.getSceneY();
-            anchorAngleX = angleX.get();
-            anchorAngleY = angleY.get();
-        });
-
-        scene.setOnMouseDragged(event -> {
-            angleX.set(anchorAngleX - anchorY + event.getSceneY());
-            angleY.set(anchorAngleY + anchorX - event.getSceneX());
-
-            if (angleX.get() > 90 * 4) {
-                angleX.set(90 * 4);
-            }
-
-            if (angleX.get() < 40 * 4) {
-                angleX.set(40 * 4);
-            }
-        });
-    }
-
     public void showInteract(boolean show) {
-        if (getInstance().interactButton == null) {
+        if (instance.interactButton == null) {
             return;
         }
 
-        Platform.runLater(() -> getInstance().interactButton.setVisible(show));
+        Platform.runLater(() -> instance.interactButton.setVisible(show));
     }
 
     public void showUndo(boolean show) {
-        if (getInstance().undoButton == null) {
+        if (instance.undoButton == null) {
             return;
         }
 
-        Platform.runLater(() -> getInstance().undoButton.setVisible(show));
+        Platform.runLater(() -> instance.undoButton.setVisible(show));
     }
 
     public void showRequest(String request) {
-        if (getInstance().requestBackground == null || getInstance().requestText == null) {
+        if (instance.requestBackground == null || instance.requestText == null) {
             return;
         }
 
         Platform.runLater(() -> {
-            getInstance().requestBackground.setVisible(true);
-            getInstance().requestText.setVisible(true);
-            getInstance().requestText.setText(request);
+            instance.requestBackground.setVisible(true);
+            instance.requestText.setVisible(true);
+            instance.requestText.setText(request);
         });
     }
 
     public void hideRequest() {
-        if (getInstance().requestBackground == null || getInstance().requestText == null) {
+        if (instance.requestBackground == null || instance.requestText == null) {
             return;
         }
 
         Platform.runLater(() -> {
-            getInstance().requestBackground.setVisible(false);
-            getInstance().requestText.setVisible(false);
+            instance.requestBackground.setVisible(false);
+            instance.requestText.setVisible(false);
         });
     }
 
@@ -394,6 +361,33 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    public void showEndGame(String username, boolean hasWon) {
+        instance.hasGameEnded = true;
+
+        pool.schedule(() -> {
+            Platform.runLater(() -> {
+                try {
+                    Parent pane = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();
+                    WinLoseController.getInstance().setPlayerName(username);
+
+                    instance.pane.setEffect(new GaussianBlur(22));
+
+                    ScaleTransition st = new ScaleTransition(Duration.seconds(1), pane);
+                    st.setFromX(0D);
+                    st.setFromY(0D);
+                    st.setFromZ(0D);
+                    st.setToX(1D);
+                    st.setToY(1D);
+                    st.setToZ(1D);
+                    st.play();
+                    ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }, 1, TimeUnit.SECONDS);
+    }
+
     private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
         Duration duration = Duration.millis(100);
 
@@ -406,22 +400,76 @@ public class GameSceneController extends GuiController {
                     selectAnimation.setCycleCount(4);
                     selectAnimation.setAutoReverse(true);
 
-                    getInstance().notifyObservers(o -> o.onWorkerSelected(positionToSend));
+                    instance.notifyObservers(o -> o.onWorkerSelected(positionToSend));
                 } else {
-                    getInstance().notifyObservers(o -> o.onMoveSelected(positionToSend));
+                    instance.notifyObservers(o -> o.onMoveSelected(positionToSend));
                 }
             }, duration);
         });
     }
 
+    public void setInteractButtonTexture(Power power) {
+        Platform.runLater(() -> {
+            String texture = "/gui_assets/god_cards/interactions/" + power.getInteractButton() + ".png";
+            String defaultMessage = power.getInteraction().get(0).replaceAll(" ", "\n");
+            int index = power.getInteraction().size() > 1 && instance.interactButton.getText().equals(defaultMessage)
+                    ? 1 : 0;
+
+            instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
+
+            instance.interactButton.setOnMouseClicked(event -> {
+                if (power.getInteraction().size() > 1) {
+                    instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
+                }
+            });
+
+            instance.interactButton.setStyle("-fx-background-size: 100% 100%;" +
+                    "-fx-background-color: transparent;" +
+                    String.format("-fx-background-image: url(%s);", texture));
+        });
+    }
+
+    @FXML
+    private void clickMenu(ActionEvent event) {
+        instance.pane.setEffect(new GaussianBlur(22));
+        instance.menu.setVisible(true);
+    }
+
+    @FXML
+    private void clickResume(ActionEvent event) {
+        instance.pane.setEffect(null);
+        instance.menu.setVisible(false);
+    }
+
+    @FXML
+    private void interactPressed(ActionEvent event) {
+        instance.notifyObservers(GuiObserver::interactPressed);
+    }
+
+    @FXML
+    private void undoPressed(ActionEvent event) {
+        instance.notifyObservers(GuiObserver::undoPressed);
+    }
+
+    public boolean hasGameEnded() {
+        return instance.hasGameEnded;
+    }
+
     @Override
     public void reset() {
         Platform.runLater(() -> {
-            getInstance().workers.forEach((g, p) -> getInstance().board.getChildren().remove(g));
-            getInstance().workers.clear();
+            instance.workers.forEach((g, p) -> instance.board.getChildren().remove(g));
+            instance.workers.clear();
 
-            getInstance().map.forEach((point, group) -> getInstance().board.getChildren().remove(group));
-            getInstance().map.clear();
+            instance.map.forEach((point, group) -> instance.board.getChildren().remove(group));
+            instance.map.clear();
+
+            if (hasGameEnded) {
+                Pane rootPane = ((AnchorPane) instance.pane.getParent());
+                rootPane.getChildren().remove(rootPane.getChildren().size() - 1);
+            }
+
+            hasGameEnded = false;
         });
     }
 }

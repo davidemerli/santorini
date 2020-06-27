@@ -5,12 +5,14 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 public class ServerConnectedToGame implements Packet<ServerHandler> {
 
-    private final String name;
+    private final String username;
     private final String gameID;
+    private final int playerNumber;
 
-    public ServerConnectedToGame(String name, String gameID) {
-        this.name = name;
+    public ServerConnectedToGame(String username, String gameID, int playerNumber) {
+        this.username = username;
         this.gameID = gameID;
+        this.playerNumber = playerNumber;
     }
 
     @Override
@@ -18,16 +20,20 @@ public class ServerConnectedToGame implements Packet<ServerHandler> {
         netHandler.handlePlayerConnected(this);
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getGameID() {
         return gameID;
     }
 
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
     @Override
     public String toString() {
-        return toString(name, gameID);
+        return toString(username, gameID, playerNumber);
     }
 }

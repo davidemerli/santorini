@@ -5,13 +5,14 @@
     -fx-focus-color: transparent;
     -fx-font-family: Diogenes;
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 180%;
+    -fx-font-size: 200%;
     -fx-smooth: true;
-    -fx-text-fill: #faebd7;
+    -fx-text-fill: #eeeeee;
 }
 
 .button .text {
     -fx-translate-y: -5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 0, 0, 2, 2);
 }
 
 .button:pressed {
@@ -22,17 +23,26 @@
     -fx-focus-color: transparent;
     -fx-font-family: Diogenes;
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 170%;
+    -fx-font-size: 190%;
     -fx-smooth: true;
 }
 
-.scroll-pane .viewport  {
+.button-blue {
+    -fx-background-image: url("/gui_assets/btn_blue.png");
+}
+
+.button-blue:pressed {
+    -fx-background-image: url("/gui_assets/btn_blue_pressed.png");
+}
+
+.scroll-pane .viewport {
     -fx-background-color: transparent;
 }
 
 .scroll-pane {
     -fx-background-image: url("/gui_assets/power_frame.png");
     -fx-background-size: 100% 100%;
+    -fx-border-color: transparent;
     -fx-hbar-policy: never;
     -fx-border-style: none;
 }
@@ -45,16 +55,23 @@
 
 }
 
+.text-field .text {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 0, 0, 2, 2);
+}
+
 .text-field {
-    -fx-highlight-text-fill: rgba(255, 255, 255, 0.5);
-    -fx-highlight-fill: rgba(0, 0, 0, 0.5);
     -fx-background-image: url("/gui_assets/text_field.png");
+    -fx-padding: 0 50 10 50;
+    -fx-highlight-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-highlight-fill: rgba(0, 0, 0, 0.4);
+    -fx-text-fill: rgb(232, 232, 232);
+    -fx-alignment: inherit;
     -fx-focus-color: transparent;
     -fx-border-color: transparent;
     -fx-border-style: none;
     -fx-background-color: transparent;
     -fx-font-family: "Mount Olympus";
-    -fx-spacing: 80;
     -fx-font-smoothing-type: inherit;
     -fx-font-size: 35;
     -fx-smooth: true;

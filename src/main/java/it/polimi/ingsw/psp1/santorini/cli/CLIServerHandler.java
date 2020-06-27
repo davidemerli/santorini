@@ -132,7 +132,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         if (shouldShowInteraction && isYourTurn()) {
             PrintUtils.printFromCommand(String.format("You can use command '%s' to '%s'",
                     Color.RED + "interact" + Color.RESET,
-                    Color.BLUE + packet.getPlayerData().getPower().getInteraction() + Color.RESET),
+                    Color.BLUE + packet.getPlayerData().getPower().getInteraction().get(0) + Color.RESET),
                     0, -1, true);
         } else {
             PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y - 1);
@@ -206,18 +206,18 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handlePlayerConnected(ServerConnectedToGame packet) {
         super.handlePlayerConnected(packet);
 
-        if (packet.getName().equals(getPlayerName())) {
+        if (packet.getUsername().equals(getPlayerName())) {
             String string = String.format("You ('%s') joined a game! (game ID '%s')",
-                    Color.BLUE + "" + packet.getName() + Color.RESET,
+                    Color.BLUE + "" + packet.getUsername() + Color.RESET,
                     Color.RED + "" + packet.getGameID() + Color.RESET);
 
             PrintUtils.printFromCommand(string, 0, -2, true);
         } else {
             String string = String.format("'%s' joined the game!",
-                    Color.BLUE + "" + packet.getName() + Color.RESET);
+                    Color.BLUE + "" + packet.getUsername() + Color.RESET);
 
             Optional<PlayerData> optPlayer = getPlayerDataList().stream()
-                    .filter(p -> p.getName().equals(packet.getName())).findFirst();
+                    .filter(p -> p.getName().equals(packet.getUsername())).findFirst();
 
             if (optPlayer.isPresent()) {
                 PrintUtils.printFromCommand(string, 0, -4 - getPlayerDataList().indexOf(optPlayer.get()), true);

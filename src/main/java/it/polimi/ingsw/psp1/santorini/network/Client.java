@@ -43,11 +43,12 @@ public class Client implements Runnable {
             synchronized (lock) {
                 server = new Socket(ip, port);
                 connected = true;
-                lock.notifyAll();
             }
 
-            new Thread(this).start();
+            new Thread(this).start(); //TODO: maybe use pool
         } catch (IOException e) {
+            lock.notifyAll();
+
             e.printStackTrace();
         }
     }

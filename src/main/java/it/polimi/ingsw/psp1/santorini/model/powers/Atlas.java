@@ -50,9 +50,7 @@ public class Atlas extends Mortal {
     @Override
     public void onBuild(Player player, Worker worker, Point where, Game game) {
         if (player.equals(this.player)) {
-            boolean shouldBuildDome = game.getMap().getLevel(where) == 3;
-
-            game.buildBlock(where, shouldBuildDome || abilityToggled);
+            game.buildBlock(where, abilityToggled);
 
             game.endTurn();
         } else {

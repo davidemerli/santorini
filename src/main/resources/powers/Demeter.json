@@ -2,7 +2,8 @@
   "name": "Demeter",
   "alias": "Goddess of the Harvest",
   "description": "Your Build: Your Worker may build one additional time, but not on the same space.",
-  "interaction": "End Turn",
+  "interaction": ["Skip Build"],
+  "interactButton": "gp_skipbuild",
   "isSimple": true,
   "playableIn": [
     2,
