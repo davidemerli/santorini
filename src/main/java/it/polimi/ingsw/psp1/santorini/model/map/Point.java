@@ -39,6 +39,7 @@ public class Point implements Serializable {
 
     /**
      * Subtracts a value from the point's coordinates
+     *
      * @param toSubtract value to subtract
      * @return new point
      */
