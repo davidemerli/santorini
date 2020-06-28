@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Manages the game and the progress of the turns of the various clients
+ */
 public class Server implements Runnable {
 
     private final int GAME_ID_DIGITS = 4;
@@ -34,6 +37,14 @@ public class Server implements Runnable {
 
     private final ExecutorService pool;
 
+    /**
+     * Generic constructor using socket port
+     * Creates queues for the players
+     * Creates list with all clients who needs to be relocate
+     * Creates a thread pool and starts it
+     *
+     * @param socketPort used port
+     */
     public Server(int socketPort) {
         this.socketPort = socketPort;
         this.clientsToRelocate = Collections.synchronizedList(new ArrayList<>());
@@ -174,6 +185,7 @@ public class Server implements Runnable {
      * Creates a new game instance with the player that created it as the first player
      *
      * @param connectionHandler with the player that created the game
+     * @param playerNumber number of players
      * @throws UnsupportedOperationException if connection between player and server is already assigned
      * @throws IllegalStateException if players has not set a name yet
      */
@@ -304,6 +316,12 @@ public class Server implements Runnable {
         return username.trim().matches("(.)+");
     }
 
+    /**
+     * Checks if an username is unique
+     *
+     * @param username to check
+     * @return true if the username is unique
+     */
     public boolean isUsernameUnique(String username) {
         Set<String> assignedPlayerUsernames = games.values().stream()
                 .map(Map::values)

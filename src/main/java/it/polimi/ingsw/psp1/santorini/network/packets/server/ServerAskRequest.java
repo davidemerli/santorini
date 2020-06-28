@@ -8,6 +8,10 @@ public class ServerAskRequest implements Packet<ServerHandler> {
 
     private final EnumRequestType requestType;
 
+    /**
+     * Generic constructor using a type request
+     * @param requestType type of the request
+     */
     public ServerAskRequest(EnumRequestType requestType) {
         this.requestType = requestType;
     }

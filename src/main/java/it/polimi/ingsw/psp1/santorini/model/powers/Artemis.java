@@ -9,6 +9,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
 import java.util.List;
 
+/**
+ * Power: Artemis can move one additional time, but not back to its initial space
+ */
 public class Artemis extends Mortal {
 
     private boolean hasMoved;

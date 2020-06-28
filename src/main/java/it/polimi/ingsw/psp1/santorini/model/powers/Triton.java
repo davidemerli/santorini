@@ -7,6 +7,9 @@ import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
+/**
+ * Power: Triton can move again if he's in a perimeter block
+ */
 public class Triton extends Mortal {
 
     private boolean hasMoved;

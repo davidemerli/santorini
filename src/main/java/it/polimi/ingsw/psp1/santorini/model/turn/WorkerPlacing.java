@@ -8,6 +8,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
 import java.util.List;
 
+/**
+ * Defines the state where a player must choose the initial placing of his workers
+ */
 public class WorkerPlacing extends TurnState {
 
     @Override

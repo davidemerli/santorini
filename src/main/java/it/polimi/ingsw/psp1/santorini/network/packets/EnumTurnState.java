@@ -2,6 +2,9 @@ package it.polimi.ingsw.psp1.santorini.network.packets;
 
 import it.polimi.ingsw.psp1.santorini.model.turn.*;
 
+/**
+ * Defines all states
+ */
 public enum EnumTurnState {
     SELECT_POWERS,
     CHOOSE_OWN_POWER,
@@ -14,6 +17,12 @@ public enum EnumTurnState {
     LOSE,
     END_GAME;
 
+    /**
+     * Checks the type of a generic state
+     *
+     * @param state generic state
+     * @return type of the state
+     */
     public static EnumTurnState fromTurnState(TurnState state) {
         if (state instanceof Build) {
             return BUILD;

@@ -4,6 +4,9 @@ import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
+/**
+ * Power: Chronus wins when there are at least five complete tower on the board
+ */
 public class Chronus extends Mortal {
 
     /**

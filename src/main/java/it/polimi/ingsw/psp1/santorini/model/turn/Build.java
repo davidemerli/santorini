@@ -9,6 +9,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Defines the build state
+ */
 public class Build extends TurnState {
 
     @Override

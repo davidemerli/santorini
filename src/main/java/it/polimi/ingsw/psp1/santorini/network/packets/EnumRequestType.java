@@ -1,5 +1,8 @@
 package it.polimi.ingsw.psp1.santorini.network.packets;
 
+/**
+ * Defines all type requests
+ */
 public enum EnumRequestType {
     SELECT_NAME,
     RESELECT_NAME,

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Defines the state where a player must choose the first player
+ */
 public class SelectStartingPlayer extends TurnState {
 
     @Override

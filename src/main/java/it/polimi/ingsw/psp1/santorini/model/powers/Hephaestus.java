@@ -9,6 +9,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Power: Hephaestus can build one additional block (not dome) on top of his first block.
+ */
 public class Hephaestus extends Mortal {
 
     private boolean hasBuilt;

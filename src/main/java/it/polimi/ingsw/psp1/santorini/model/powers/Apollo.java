@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Power: Apollo can move into an opponent worker's space by forcing their worker to the space your just vacated
+ */
 public class Apollo extends Mortal {
 
     /**

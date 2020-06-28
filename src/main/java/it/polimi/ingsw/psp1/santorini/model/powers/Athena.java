@@ -9,6 +9,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Power: If Athena moved up on her last turn, opponent workers can not move up this turn.
+ */
 public class Athena extends Mortal {
 
     private boolean hasMovedUpwards;

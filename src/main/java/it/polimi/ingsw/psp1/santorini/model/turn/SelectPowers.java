@@ -8,6 +8,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines the state where a player must choose the gods who will play the game
+ */
 public class SelectPowers extends TurnState {
 
     private final List<Power> selectedPowers = new ArrayList<>();

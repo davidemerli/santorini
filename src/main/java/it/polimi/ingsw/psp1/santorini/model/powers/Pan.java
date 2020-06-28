@@ -5,6 +5,9 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 
+/**
+ * Power: Pan wins if moves down at least two levels
+ */
 public class Pan extends Mortal {
 
     /**

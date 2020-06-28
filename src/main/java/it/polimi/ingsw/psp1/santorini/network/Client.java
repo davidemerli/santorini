@@ -13,6 +13,10 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * Defines the functions of a generic client who can run in parallel with other ones
+ * Client can connect to serve using a port and a ip address
+ */
 public class Client implements Runnable {
 
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
@@ -137,6 +141,9 @@ public class Client implements Runnable {
         this.serverHandler = serverHandler;
     }
 
+    /**
+     * Debug function
+     */
     public void enableDebug() {
         debug = true;
     }

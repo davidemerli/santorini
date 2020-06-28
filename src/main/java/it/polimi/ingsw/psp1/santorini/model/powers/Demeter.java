@@ -8,6 +8,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 
 import java.util.List;
 
+/**
+ * Power: Demeter can build one additional time but not on the same space
+ */
 public class Demeter extends Mortal {
 
     private boolean hasBuilt;

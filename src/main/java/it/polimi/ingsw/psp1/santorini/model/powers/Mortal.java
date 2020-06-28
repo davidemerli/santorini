@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * This class describe the natural behaviours of workers during a match.
+ * The Mortal has no power
+ */
 public class Mortal extends Power {
 
     /**

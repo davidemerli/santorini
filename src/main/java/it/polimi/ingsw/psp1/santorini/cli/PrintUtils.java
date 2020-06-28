@@ -14,6 +14,10 @@ import java.util.stream.IntStream;
 
 import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
 
+/**
+ * Support class for the CLI
+ * The functions allow to stamp all correctly
+ */
 public class PrintUtils {
 
     public static final int MAX_LENGTH = 150;

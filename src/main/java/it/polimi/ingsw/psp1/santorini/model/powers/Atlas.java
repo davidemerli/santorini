@@ -6,6 +6,9 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 
+/**
+ * Power: Atlas can build a dome at any level
+ */
 public class Atlas extends Mortal {
 
     private boolean abilityToggled;
