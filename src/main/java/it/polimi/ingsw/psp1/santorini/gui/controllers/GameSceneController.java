@@ -11,14 +11,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -29,13 +28,13 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class GameSceneController extends GuiController {
 
     private static final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
+    private static final ExecutorService undoThreadPool = Executors.newSingleThreadExecutor();
+
     private static GameSceneController instance;
     private final List<Node> validMoves = new ArrayList<>();
 
@@ -59,9 +58,17 @@ public class GameSceneController extends GuiController {
     @FXML
     private Label requestText;
     @FXML
+    private Label undoLabel;
+    @FXML
     private GridPane menu;
+    @FXML
+    private VBox playerIcons;
+
+    private Map<String, ScaleTransition> playerPanes;
 
     private boolean hasGameEnded;
+    private RotateTransition undoRotate;
+    private Future<?> changeUndoLabel;
 
     public static GameSceneController getInstance() {
         if (instance == null) {
@@ -104,6 +111,15 @@ public class GameSceneController extends GuiController {
         instance.mainScene = mainScene;
         instance.pane = pane;
         instance.board = board;
+        instance.undoLabel = undoLabel;
+        instance.playerIcons = playerIcons;
+        instance.playerPanes = new HashMap<>();
+
+        instance.undoRotate = new RotateTransition(Duration.millis(1000), instance.undoButton);
+        instance.undoRotate.setByAngle(180);
+        instance.undoRotate.setInterpolator(Interpolator.EASE_BOTH);
+        instance.undoRotate.setAutoReverse(true);
+        instance.undoRotate.setCycleCount(5);
     }
 
     public void showValidMoves(List<Point> moves, List<Point> blockedMoves, EnumTurnState state) {
@@ -308,6 +324,7 @@ public class GameSceneController extends GuiController {
         }, Duration.millis(400));
     }
 
+
     public void showInteract(boolean show) {
         if (instance.interactButton == null) {
             return;
@@ -321,7 +338,7 @@ public class GameSceneController extends GuiController {
             return;
         }
 
-        Platform.runLater(() -> instance.undoButton.setVisible(show));
+        Platform.runLater(() -> instance.undoButton.setDisable(!show));
     }
 
     public void showRequest(String request) {
@@ -348,11 +365,11 @@ public class GameSceneController extends GuiController {
     }
 
     private void runMapChange(Runnable toRun, Duration duration) {
-        pool.submit(() -> {
+        pool.execute(() -> {
             Platform.runLater(toRun);
         });
 
-        pool.submit(() -> {
+        pool.execute(() -> {
             try {
                 Thread.sleep((long) duration.toMillis());
             } catch (InterruptedException e) {
@@ -367,7 +384,13 @@ public class GameSceneController extends GuiController {
         pool.schedule(() -> {
             Platform.runLater(() -> {
                 try {
-                    Parent pane = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();
+                    Parent winOrLose = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();
+                    BorderPane pane = new BorderPane(winOrLose);
+                    AnchorPane.setTopAnchor(pane, 0D);
+                    AnchorPane.setBottomAnchor(pane, 0D);
+                    AnchorPane.setLeftAnchor(pane, 0D);
+                    AnchorPane.setRightAnchor(pane, 0D);
+
                     WinLoseController.getInstance().setPlayerName(username);
 
                     instance.pane.setEffect(new GaussianBlur(22));
@@ -381,11 +404,12 @@ public class GameSceneController extends GuiController {
                     st.setToZ(1D);
                     st.play();
                     ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-        }, 1, TimeUnit.SECONDS);
+        }, 300, TimeUnit.MILLISECONDS);
     }
 
     private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
@@ -441,6 +465,30 @@ public class GameSceneController extends GuiController {
         instance.menu.setVisible(false);
     }
 
+    public void setupUndoTimer() {
+        Platform.runLater(() -> {
+            instance.undoRotate.playFromStart();
+        });
+
+        instance.changeUndoLabel = undoThreadPool.submit(() -> {
+            try {
+//                TimeUnit.MILLISECONDS.sleep(340);
+//                instance.undoRotate.stop();
+
+                for (int i = 0; i < 5; i++) {
+                    int value = 5 - i;
+                    Platform.runLater(() -> instance.undoLabel.setText("" + value));
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                Platform.runLater(() -> instance.undoLabel.setText("0"));
+                TimeUnit.MILLISECONDS.sleep(200);
+
+                Platform.runLater(() -> instance.undoLabel.setText(""));
+            } catch (InterruptedException ignored) {
+            }
+        });
+    }
+
     @FXML
     private void interactPressed(ActionEvent event) {
         instance.notifyObservers(GuiObserver::interactPressed);
@@ -448,28 +496,108 @@ public class GameSceneController extends GuiController {
 
     @FXML
     private void undoPressed(ActionEvent event) {
+        instance.undoLabel.setText("");
         instance.notifyObservers(GuiObserver::undoPressed);
+
+        if (instance.changeUndoLabel != null) {
+            instance.changeUndoLabel.cancel(true);
+            instance.undoRotate.jumpTo(Duration.seconds(5));
+        }
     }
 
     public boolean hasGameEnded() {
         return instance.hasGameEnded;
     }
 
-    @Override
-    public void reset() {
+    public void addPlayer(String player, Power power) {
+        Platform.runLater(() -> {
+            if (instance.playerPanes.containsKey(player)) {
+                return;
+            }
+
+            String powerIcon = getClass().getResource("/gui_assets/god_cards/with_background/"
+                    + power.getName() + ".png").toString();
+            String frameIcon = getClass().getResource("/gui_assets/ingame_frame.png").toString();
+
+            AnchorPane pane = new AnchorPane();
+            ImageView icon = new ImageView(powerIcon);
+            ImageView frame = new ImageView(frameIcon);
+
+            Label name = new Label(player);
+            name.setStyle("-fx-font-family: 'Mount Olympus';" +
+                    "-fx-font-size: 25;");
+
+            HBox nameBox = new HBox(name);
+            nameBox.setAlignment(Pos.CENTER);
+
+            frame.setPreserveRatio(true);
+            frame.setFitWidth(120);
+            icon.setPreserveRatio(true);
+            nameBox.minWidthProperty().bind(frame.fitWidthProperty());
+            icon.fitWidthProperty().bind(frame.fitWidthProperty().multiply(0.9));
+
+            AnchorPane.setTopAnchor(nameBox, 3D);
+            AnchorPane.setTopAnchor(icon, 5D);
+            AnchorPane.setLeftAnchor(icon, 5D);
+
+            pane.getChildren().addAll(icon, frame, nameBox);
+
+            instance.playerIcons.getChildren().add(pane);
+
+            ScaleTransition st = new ScaleTransition(Duration.millis(400), pane);
+            st.setToX(1.1);
+            st.setToY(1.1);
+
+            instance.playerPanes.put(player, st);
+        });
+    }
+
+    public void resetMap() {
         Platform.runLater(() -> {
             instance.workers.forEach((g, p) -> instance.board.getChildren().remove(g));
             instance.workers.clear();
 
             instance.map.forEach((point, group) -> instance.board.getChildren().remove(group));
             instance.map.clear();
+        });
+    }
+
+    @Override
+    public void reset() {
+        resetMap();
+
+        Platform.runLater(() -> {
+            instance.playerPanes.clear();
+            instance.playerIcons.getChildren().clear();
 
             if (hasGameEnded) {
                 Pane rootPane = ((AnchorPane) instance.pane.getParent());
                 rootPane.getChildren().remove(rootPane.getChildren().size() - 1);
+                pane.setEffect(null);
             }
 
+            showValidMoves(List.of(), List.of(), EnumTurnState.END_GAME);
+
             hasGameEnded = false;
+        });
+    }
+
+    public void highlightCurrentPlayer(String name) {
+        Platform.runLater(() -> {
+            if(instance.playerPanes.containsKey(name)) {
+                for (ScaleTransition value : instance.playerPanes.values()) {
+                    value.getNode().setViewOrder(-1);
+                    value.setToX(1);
+                    value.setToY(1);
+                    value.play();
+                }
+
+                ScaleTransition selected = instance.playerPanes.get(name);
+                selected.getNode().setViewOrder(0);
+                selected.setToX(1.2);
+                selected.setToY(1.2);
+                selected.play();
+            }
         });
     }
 }

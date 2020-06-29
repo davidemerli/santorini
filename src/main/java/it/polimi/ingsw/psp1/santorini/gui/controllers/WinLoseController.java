@@ -62,8 +62,13 @@ public class WinLoseController extends GuiController {
         initComponents(rightTrumpetWin, leftTrumpetWin, rightCloudWin, leftCloudWin);
         initComponents(rightTrumpetLose, leftTrumpetLose, rightCloudLose, leftCloudLose);
 
-        getInstance().playerNameWin = playerNameWin;
-        getInstance().playerNameLose = playerNameLose;
+        if(playerNameWin != null) {
+            getInstance().playerNameWin = playerNameWin;
+        }
+
+        if(playerNameLose != null) {
+            getInstance().playerNameLose = playerNameLose;
+        }
     }
 
     public void setPlayerName(String username) {
@@ -121,6 +126,7 @@ public class WinLoseController extends GuiController {
     void clickMainMenu(ActionEvent event) {
         Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
         GameSceneController.getInstance().reset();
+        WinLoseController.getInstance().reset();
     }
 
     @Override

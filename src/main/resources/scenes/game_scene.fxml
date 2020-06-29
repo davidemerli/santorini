@@ -16,26 +16,15 @@
   <children>
       <AnchorPane fx:id="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" style="-fx-background-color: red;" text="X" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" style="-fx-background-color: red;" text="X" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <padding>
                   <Insets right="2.0" top="10.0" />
                </padding>
             </Button>
-            <Button fx:id="interactButton" alignment="CENTER" graphicTextGap="2.0" layoutX="700.0" layoutY="416.0" mnemonicParsing="false" onAction="#interactPressed" prefHeight="70.0" prefWidth="150.0" text="Button" wrapText="true" AnchorPane.bottomAnchor="115.0" AnchorPane.rightAnchor="50.0">
+            <Button fx:id="interactButton" alignment="CENTER" graphicTextGap="2.0" layoutX="712.0" layoutY="374.0" mnemonicParsing="false" onAction="#interactPressed" prefHeight="70.0" prefWidth="150.0" text="Button" wrapText="true" AnchorPane.bottomAnchor="190.0" AnchorPane.rightAnchor="50.0">
                <font>
                   <Font name="Mount Olympus" size="22.0" />
                </font>
-               <padding>
-                  <Insets left="65.0" />
-               </padding>
-            </Button>
-            <Button fx:id="undoButton" alignment="CENTER" contentDisplay="CENTER" layoutX="700.0" layoutY="495.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#undoPressed" prefHeight="70.0" prefWidth="150.0" styleClass="undo-button" text="Undo" textAlignment="CENTER" AnchorPane.bottomAnchor="35.0" AnchorPane.rightAnchor="50.0">
-               <font>
-                  <Font name="Mount Olympus" size="22.0" />
-               </font>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
                <padding>
                   <Insets left="65.0" />
                </padding>
@@ -58,6 +47,29 @@
                   </Label>
                </children>
             </VBox>
+            <VBox alignment="CENTER" layoutX="50.0" layoutY="425.0" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="50.0">
+               <children>
+                  <Button fx:id="undoButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#undoPressed" prefHeight="125.0" prefWidth="85.0" styleClass="undo-button" textAlignment="CENTER">
+                     <font>
+                        <Font name="Mount Olympus" size="22.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Button>
+                  <Label fx:id="undoLabel" mouseTransparent="true" pickOnBounds="false" styleClass="undo-label">
+                     <font>
+                        <Font name="Diogenes" size="64.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets top="-130.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
       <GridPane fx:id="menu" alignment="CENTER" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #00000099;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -76,5 +88,6 @@
             </VBox>
          </children>
       </GridPane>
+      <VBox fx:id="playerIcons" alignment="CENTER" prefHeight="600.0" prefWidth="150.0" AnchorPane.bottomAnchor="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="300.0" />
   </children>
 </AnchorPane>

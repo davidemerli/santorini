@@ -27,6 +27,17 @@
     -fx-smooth: true;
 }
 
+.undo-label .text {
+    -fx-fill: ghostwhite;
+    -fx-stroke: #010101;
+    -fx-stroke-width: 2.5;
+}
+
 .undo-button {
-    -fx-background-image: url("/gui_assets/god_cards/interactions/gp_leave.png");
+    -fx-background-image: url("/gui_assets/hourglass.png");
+    -fx-text-fill: #dddddd;
+}
+
+.undo-button:pressed {
+    -fx-background-image: url("/gui_assets/hourglass.png");
 }

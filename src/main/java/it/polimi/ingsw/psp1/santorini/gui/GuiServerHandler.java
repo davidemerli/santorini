@@ -39,11 +39,17 @@ public class GuiServerHandler extends ServerHandler {
 
     @Override
     public void handleGameData(ServerGameData packet) {
+        String first = playerDataList.get(0).getName();
+
         super.handleGameData(packet);
+
+        if(!packet.getPlayerData().get(0).getName().equals(first)) {
+            GameSceneController.getInstance().highlightCurrentPlayer(packet.getPlayerData().get(0).getName());
+        }
 
         if (packet.isForced()) {
             pool.execute(() -> {
-                GameSceneController.getInstance().reset();
+                GameSceneController.getInstance().resetMap();
 
                 for (Point p : packet.getGameMap().getAllSquares()) {
                     int level = packet.getGameMap().getLevel(p);
@@ -132,6 +138,9 @@ public class GuiServerHandler extends ServerHandler {
         if (packet.getPlayerData().getPower() != null) {
             WaitGodSelectionController.getInstance().setPlayerPower(packet.getPlayerData().getName(),
                     packet.getPlayerData().getPower());
+
+            GameSceneController.getInstance().addPlayer(packet.getPlayerData().getName(),
+                    packet.getPlayerData().getPower());
         }
 
         if (packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
@@ -170,6 +179,10 @@ public class GuiServerHandler extends ServerHandler {
 
         if(yourUpdate && packet.getPlayerState() == EnumTurnState.LOSE) {
             GameSceneController.getInstance().showEndGame(playerName, false);
+        }
+
+        if(yourUpdate && packet.getPlayerState() == EnumTurnState.END_TURN) {
+            GameSceneController.getInstance().setupUndoTimer();
         }
 
         GameSceneController.getInstance().showUndo(isYourTurn());
@@ -274,6 +287,5 @@ public class GuiServerHandler extends ServerHandler {
         NameSelectionController.getInstance().reset();
         StartingPlayerController.getInstance().reset();
         WaitGodSelectionController.getInstance().reset();
-        WinLoseController.getInstance().reset();
     }
 }
