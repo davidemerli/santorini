@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -33,11 +34,13 @@ public class Gui extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            Font.loadFont(getClass().getResourceAsStream("/fonts/Diogenes.ttf"), 20);
+            Font.loadFont(getClass().getResourceAsStream("/fonts/Mount Olympus.otf"), 20);
+
             EnumScene.GAME.load();
 
             Gui.primaryStage = primaryStage;
             changeScene(EnumScene.IP_SELECT);
-
             primaryStage.setTitle("Santorini");
             primaryStage.show();
         } catch (Exception ex) {

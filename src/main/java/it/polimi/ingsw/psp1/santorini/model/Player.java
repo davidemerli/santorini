@@ -10,6 +10,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Defines a generic player
+ */
 public class Player implements Cloneable {
 
     private final String name;
@@ -20,6 +23,12 @@ public class Player implements Cloneable {
     private boolean hasWon;
     private boolean hasLost;
 
+    /**
+     * Generic constructor using the name of the player
+     * Creates a new worker list
+     *
+     * @param name of the player
+     */
     public Player(String name) {
         this.name = name;
         this.workerList = new ArrayList<>();
@@ -92,14 +101,25 @@ public class Player implements Cloneable {
         return isWorkerLocked;
     }
 
+    /**
+     * Used to lock a worker in game
+     */
     public void lockWorker() {
         isWorkerLocked = true;
     }
 
+    /**
+     * Used to unlock a worker in game
+     */
     public void unlockWorker() {
         isWorkerLocked = false;
     }
 
+    /**
+     * Used to know if a player has won
+     *
+     * @return true if the player has won
+     */
     public boolean hasWon() {
         return hasWon;
     }
@@ -108,6 +128,10 @@ public class Player implements Cloneable {
         this.hasWon = hasWon;
     }
 
+    /**
+     * Used to know if a player has lost
+     * @return true if the player has lost
+     */
     public boolean hasLost() {
         return hasLost;
     }
@@ -158,6 +182,12 @@ public class Player implements Cloneable {
         return Objects.hash(name);
     }
 
+    /**
+     * Used to move a worker into a new position on the map
+     *
+     * @param worker      current worker
+     * @param newPosition new position in the board
+     */
     public void moveWorker(Worker worker, Point newPosition) {
         Optional<Worker> optWorker = workerList.stream()
                 .filter(w -> w.equals(worker)).findFirst();

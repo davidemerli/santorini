@@ -9,14 +9,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Client selects his god that will play
+ */
 public class ClientChoosePower implements Packet<ClientHandler> {
 
     private final List<Power> powers;
 
+    /**
+     * Generic constructor giving a list of powers
+     *
+     * @param chosenPowers list with all chosen gods
+     */
     public ClientChoosePower(List<Power> chosenPowers) {
         this.powers = new ArrayList<>(chosenPowers);
     }
 
+    /**
+     * Generic constructor using a single god
+     *
+     * @param power chosen god
+     */
     public ClientChoosePower(Power power) {
         this(Collections.singletonList(power));
     }

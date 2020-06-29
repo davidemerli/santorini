@@ -11,7 +11,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-
+/**
+ * Power: Minotaur can move into an opponent worker's space, if their worker can be
+ *        forced one space straight backwards to an unoccupied space at any level
+ */
 public class Minotaur extends Mortal {
 
     /**

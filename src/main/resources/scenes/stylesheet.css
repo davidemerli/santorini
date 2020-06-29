@@ -45,6 +45,7 @@
     -fx-border-color: transparent;
     -fx-hbar-policy: never;
     -fx-border-style: none;
+    -fx-border-color: transparent;
 }
 
 .flow-pane {

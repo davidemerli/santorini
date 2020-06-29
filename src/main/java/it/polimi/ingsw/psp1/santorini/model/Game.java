@@ -17,6 +17,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Defines all functions that can modify the status of the game
+ */
 public class Game extends Observable<ModelObserver> {
 
     private final ScheduledExecutorService pool;
@@ -40,6 +43,13 @@ public class Game extends Observable<ModelObserver> {
 
     private boolean changedFromLastSave;
 
+    /**
+     * Generic constructor
+     * Creates a new map, a new player list and the list of all available gods
+     *
+     * @param gameID       unique ID game
+     * @param playerNumber number of the player
+     */
     public Game(String gameID, int playerNumber) {
         this.pool = Executors.newSingleThreadScheduledExecutor();
 
@@ -183,6 +193,12 @@ public class Game extends Observable<ModelObserver> {
                 .findFirst();
     }
 
+    /**
+     * Used to get a Optional containing a plauer giving the worker
+     *
+     * @param worker used to obtaining his player
+     * @return optional with player if present
+     */
     public Optional<Player> getPlayerOf(Worker worker) {
         return playerList.stream()
                 .filter(p -> p.getWorkers().contains(worker))
@@ -352,6 +368,12 @@ public class Game extends Observable<ModelObserver> {
         return Collections.unmodifiableList(playerList);
     }
 
+    /**
+     * Used to get all opponents players giving a generic player
+     *
+     * @param player genenric player
+     * @return list with all opponents players
+     */
     public List<Player> getPlayerOpponents(Player player) {
         return playerList.stream().filter(p -> !p.equals(player)).collect(Collectors.toUnmodifiableList());
     }
@@ -397,10 +419,18 @@ public class Game extends Observable<ModelObserver> {
         return playerNumber;
     }
 
+    /**
+     * Used to know if the game has started
+     * @return true if the game has started
+     */
     public boolean hasStarted() {
         return hasStarted;
     }
 
+    /**
+     * Used to know if the game has ended
+     * @return true if the game has ended
+     */
     public synchronized boolean hasEnded() {
         return hasEnded;
     }

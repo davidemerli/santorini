@@ -8,6 +8,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 
 import java.util.Optional;
 
+/**
+ * Power: If unmoved worker is on ground level, Poseidon can build three times
+ */
 public class Poseidon extends Mortal {
 
     private int counter;

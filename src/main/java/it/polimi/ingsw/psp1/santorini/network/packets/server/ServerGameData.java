@@ -20,6 +20,13 @@ public class ServerGameData implements Packet<ServerHandler> {
     private final List<PlayerData> players;
     private final boolean forced;
 
+    /**
+     * Generic constructor using map, players and game state
+     * @param gameMap   current gamemap
+     * @param players   list of players
+     * @param gameState current gamestate
+     * @param forced    true if must be forced
+     */
     public ServerGameData(GameMap gameMap, List<PlayerData> players, EnumTurnState gameState, boolean forced) {
         this.gameMap = gameMap;
         this.players = players;

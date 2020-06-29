@@ -12,8 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Used to connect the different state with the game
+ */
 public abstract class TurnState implements Cloneable {
 
+    /**
+     * Notifies all clients
+     *
+     * @param game current game
+     */
     public void init(Game game) {
         game.notifyObservers(o -> o.gameUpdate(game, false));
     }
@@ -43,6 +51,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Called when a square is selected by the player
      *
+     * @param game     current game
      * @param player   current player
      * @param position of the selected square
      */
@@ -53,6 +62,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Called when a worker is selected by the player
      *
+     * @param game   current game
      * @param player current player
      * @param worker selected by the player
      */
@@ -63,6 +73,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Checks if the custom interaction button should be shown in the current state of the turn
      *
+     * @param game   current game
      * @param player current player
      * @return true if the player can activate/deactivate powers
      */
@@ -77,6 +88,7 @@ public abstract class TurnState implements Cloneable {
      * <p>
      * Every power is handled differently but uses the same button
      *
+     * @param game   current game
      * @param player current player
      */
     public void toggleInteraction(Game game, Player player) {
@@ -86,6 +98,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Checks what squares near the selected worker are unavailable for the current action
      *
+     * @param game   current game
      * @param player current player
      * @param worker selected worker
      * @return the list of unavailable squares
@@ -101,6 +114,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Checks what squares near the selected worker are available for the current action
      *
+     * @param game   current game
      * @param player current player
      * @param worker selectedWorker
      * @return the list of available squares
@@ -112,6 +126,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Returns to the previous state of the map, deleting the last action made
      *
+     * @param game   current game
      * @param player current player
      */
     public void undo(Game game, Player player) {
@@ -121,6 +136,7 @@ public abstract class TurnState implements Cloneable {
     /**
      * Utility check for blocked positions
      *
+     * @param game  current game
      * @param map   with blocked moves and by which power
      * @param point to be checked
      * @return true if given position is blocked by some power
@@ -131,6 +147,8 @@ public abstract class TurnState implements Cloneable {
 
     /**
      * Sends a request to select a worker or a square if the worker has already been selected
+     *
+     * @param game current game
      */
     protected void genericMoveOrBuildRequest(Game game) {
         Player current = game.getCurrentPlayer();
@@ -148,6 +166,11 @@ public abstract class TurnState implements Cloneable {
         game.notifyObservers(o -> o.availableMovesUpdate(game.getCurrentPlayer(), validMoves, blockedMoves));
     }
 
+    /**
+     * Gets a copy a state
+     *
+     * @return a state copy
+     */
     public TurnState copy() {
         try {
             return (TurnState) super.clone();

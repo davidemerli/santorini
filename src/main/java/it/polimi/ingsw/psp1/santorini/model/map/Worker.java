@@ -3,10 +3,18 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Defines player's worker
+ */
 public class Worker implements Serializable, Cloneable {
 
     private Point position;
 
+    /**
+     * Generic constructor using the position of the worker
+     *
+     * @param position of the worker
+     */
     public Worker(Point position) {
         this.position = position;
     }
@@ -19,6 +27,11 @@ public class Worker implements Serializable, Cloneable {
         this.position = position;
     }
 
+    /**
+     * Used to obtain a copy of the worker
+     *
+     * @return a copy of the worker
+     */
     public Worker copy() {
         try {
             return (Worker) super.clone();

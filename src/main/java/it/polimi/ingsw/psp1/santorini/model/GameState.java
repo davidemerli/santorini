@@ -13,6 +13,13 @@ public class GameState {
     private final TurnState previousTurnState;
     private final List<Player> playersCopy;
 
+    /**
+     * Generic constructor
+     *
+     * @param previousMap       previous map
+     * @param previousTurnState previous turn state
+     * @param playersCopy       a copy of all players
+     */
     public GameState(GameMap previousMap, TurnState previousTurnState,
                      List<Player> playersCopy) {
         this.previousMap = previousMap;

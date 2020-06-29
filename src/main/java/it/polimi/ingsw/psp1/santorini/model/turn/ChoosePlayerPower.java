@@ -5,6 +5,9 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 
+/**
+ * Defines the state where a player must choose his god
+ */
 public class ChoosePlayerPower extends TurnState {
 
     @Override

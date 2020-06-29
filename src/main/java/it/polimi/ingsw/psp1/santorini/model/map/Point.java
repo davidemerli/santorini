@@ -3,15 +3,30 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Defines a position on the map
+ * The functions relate different points
+ */
 public class Point implements Serializable {
 
     public final int x, y;
 
+    /**
+     * Generic constructor using coordinates
+     *
+     * @param x horizontal coordinate
+     * @param y vertical coordinate
+     */
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Generic constructor using point
+     *
+     * @param toCopy point to copy
+     */
     public Point(Point toCopy) {
         this.x = toCopy.x;
         this.y = toCopy.y;

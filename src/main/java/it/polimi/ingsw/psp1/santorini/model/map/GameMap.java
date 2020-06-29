@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Defines the main functions in order to obtain information about it or modify it
+ */
 public class GameMap implements Serializable {
 
+    /**
+     * Defines the size of the map
+     */
     public static final int SIDE_LENGTH = 5;
 
     private final SquareData[][] blockMatrix;

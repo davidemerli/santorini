@@ -7,6 +7,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 
 import java.util.List;
 
+/**
+ * Power: Zeus can build under himself
+ */
 public class Zeus extends Mortal {
 
     /**

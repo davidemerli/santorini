@@ -9,6 +9,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.Build;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Power: Hestia can build one additional time but non in the perimeter zone
+ */
 public class Hestia extends Mortal {
 
     private boolean hasBuilt;

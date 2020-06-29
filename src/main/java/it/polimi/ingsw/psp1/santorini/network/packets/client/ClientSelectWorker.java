@@ -4,10 +4,17 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
+/**
+ * Client selects a worker
+ */
 public class ClientSelectWorker implements Packet<ClientHandler> {
 
     private final Point position;
 
+    /**
+     * Generic constructor using a worker position
+     * @param position of the worker
+     */
     public ClientSelectWorker(Point position) {
         this.position = position;
     }

@@ -11,6 +11,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Power: If worker does not move up, Prometheus can build both before and after moving
+ */
 public class Prometheus extends Mortal {
 
     private boolean hasMoved;

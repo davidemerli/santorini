@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Used to connect the behaviour of the gods with the game
+ */
 public abstract class Power implements Serializable, Cloneable {
 
     protected transient Player player;
@@ -30,6 +33,9 @@ public abstract class Power implements Serializable, Cloneable {
 
     private int[] playableIn;
 
+    /**
+     * Gets the general informations of the god using a .json
+     */
     public Power() {
         InputStream stream = getClass().getResourceAsStream("/powers/" + getClass().getSimpleName() + ".json");
 
@@ -55,7 +61,8 @@ public abstract class Power implements Serializable, Cloneable {
     /**
      * Called when you want to set the final state
      *
-     * @param game current game
+     * @param player current player
+     * @param game   current game
      */
     public abstract void onEndTurn(Player player, Game game);
 
@@ -116,7 +123,8 @@ public abstract class Power implements Serializable, Cloneable {
     /**
      * Called when the player decides to show the bottom for interaction or not
      *
-     * @param game current game
+     * @param worker current worker
+     * @param game   current game
      * @return true if the GUI needs to enable the bottom for interaction
      */
     public abstract boolean canCompleteValidTurn(Worker worker, Game game);
