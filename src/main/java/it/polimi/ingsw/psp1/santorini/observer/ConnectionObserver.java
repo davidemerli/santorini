@@ -5,6 +5,9 @@ import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 
 import java.util.List;
 
+/**
+ * Process all type of packets
+ */
 public interface ConnectionObserver {
 
     /**

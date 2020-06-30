@@ -6,8 +6,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientRequestGameDa
 
 import java.util.List;
 
+/**
+ * Used to reload the game map and information about players
+ */
 public class CommandReload extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandReload() {
         super("reload",
                 "Sends the current map and all available info to the player",

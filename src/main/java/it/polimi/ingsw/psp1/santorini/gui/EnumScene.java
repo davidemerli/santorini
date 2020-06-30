@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Defines all possible scenes
+ */
 public enum EnumScene {
 
     NAME_SELECT("choose_name"),

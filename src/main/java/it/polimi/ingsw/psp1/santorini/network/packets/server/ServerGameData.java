@@ -34,6 +34,9 @@ public class ServerGameData implements Packet<ServerHandler> {
         this.forced = forced;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ServerHandler netHandler) {
         netHandler.handleGameData(this);

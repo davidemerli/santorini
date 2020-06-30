@@ -15,6 +15,9 @@ import javafx.util.Duration;
 
 import java.util.stream.Stream;
 
+/**
+ * Manages the end game screen
+ */
 public class WinLoseController extends GuiController {
 
     private static WinLoseController instance;

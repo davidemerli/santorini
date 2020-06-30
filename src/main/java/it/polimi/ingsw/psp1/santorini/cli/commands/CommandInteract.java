@@ -6,8 +6,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientToggleInterac
 
 import java.util.List;
 
+/**
+ * Used to activate or deactivate the god power
+ */
 public class CommandInteract extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandInteract() {
         super("interact",
                 "Activates your God's power, if possible",

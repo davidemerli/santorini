@@ -21,6 +21,9 @@ public class ClientJoinGame implements Packet<ClientHandler> {
         this.gameRoom = gameRoom;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleJoinGame(this);

@@ -34,6 +34,9 @@ public class ClientChoosePower implements Packet<ClientHandler> {
         this(Collections.singletonList(power));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handlePowerChoosing(this);

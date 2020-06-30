@@ -18,6 +18,9 @@ public class ClientSetName implements Packet<ClientHandler> {
         this.name = name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handlePlayerSetName(this);

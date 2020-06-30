@@ -19,6 +19,9 @@ public class ClientSelectWorker implements Packet<ClientHandler> {
         this.position = position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleWorkerSelection(this);

@@ -7,6 +7,9 @@ import it.polimi.ingsw.psp1.santorini.view.View;
 
 import java.util.List;
 
+/**
+ * Manages view actions
+ */
 public interface ViewObserver {
 
     /**

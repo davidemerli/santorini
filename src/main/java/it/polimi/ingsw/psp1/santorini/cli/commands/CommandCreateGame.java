@@ -6,8 +6,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientCreateGame;
 
 import java.util.List;
 
+/**
+ * Used to create the game
+ */
 public class CommandCreateGame extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandCreateGame() {
         super("creategame",
                 "Creates a new game",

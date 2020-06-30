@@ -5,6 +5,9 @@ import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.scene.layout.Pane;
 
+/**
+ * Defines all possible transitions
+ */
 public enum EnumTransition {
     UP(new int[]{0, 1}),
     DOWN(new int[]{0, -1}),

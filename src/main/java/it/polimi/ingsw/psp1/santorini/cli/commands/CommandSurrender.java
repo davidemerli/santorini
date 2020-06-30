@@ -6,8 +6,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientForfeit;
 
 import java.util.List;
 
+/**
+ * Used to forfeit the game
+ */
 public class CommandSurrender extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSurrender() {
         super("surrender",
                 "Forfeits the current game",

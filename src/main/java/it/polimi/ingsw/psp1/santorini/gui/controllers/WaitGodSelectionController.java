@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Manages the wait screen during the selection of gods
+ */
 public class WaitGodSelectionController extends GuiController {
 
     private static WaitGodSelectionController instance;
@@ -65,6 +68,11 @@ public class WaitGodSelectionController extends GuiController {
         rt.play();
     }
 
+    /**
+     * Adds player on screen
+     *
+     * @param playerName name of the player
+     */
     public void addPlayer(String playerName) {
         Platform.runLater(() -> {
             String framePath = getClass().getResource("/gui_assets/standard_power_frame.png").toString();
@@ -121,6 +129,12 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    /**
+     * Sets player power and his image
+     *
+     * @param player current player
+     * @param power  power choosen by player
+     */
     public void setPlayerPower(String player, Power power) {
         if (getInstance().playerPanes.containsKey(player) && !playerPanes.get(player).updated) {
             Platform.runLater(() -> {
@@ -132,6 +146,9 @@ public class WaitGodSelectionController extends GuiController {
         }
     }
 
+    /**
+     * Manages the starting player scene
+     */
     public void setupForStartingPlayerChoice() {
         Platform.runLater(() -> {
             getInstance().playerPanes.forEach((player, playerPane) -> {
@@ -177,6 +194,10 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    /**
+     * Shows room ID
+     * @param ID room ID
+     */
     public void showRoomID(String ID) {
         Platform.runLater(() -> {
             getInstance().gameRoom.setText("Game ID: " + ID);

@@ -12,6 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Manages the starting player scene
+ */
 public class StartingPlayerController extends GuiController {
 
     private static StartingPlayerController instance;
@@ -33,7 +36,11 @@ public class StartingPlayerController extends GuiController {
         getInstance().playerBox = playerBox;
     }
 
-
+    /**
+     * Adds player on screen
+     * @param playerName  name of the player
+     * @param playerPower player power
+     */
     public void addPlayer(String playerName, Power playerPower) {
         Platform.runLater(() -> {
             String powerPath = getClass().getResource("/gui_assets/god_cards/with_background/"
