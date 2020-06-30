@@ -64,11 +64,11 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
         pool.schedule(() -> {
             try {
+                objectOutputStream.writeObject(packet);
+
                 if (!(packet instanceof ServerKeepAlive)) {
                     System.out.println("sent to '" + getPlayer().orElse(new Player("N/A")).getName() + "' :" + packet.toString());
                 }
-
-                objectOutputStream.writeObject(packet);
             } catch (IOException e) {
                 closeConnection();
             }

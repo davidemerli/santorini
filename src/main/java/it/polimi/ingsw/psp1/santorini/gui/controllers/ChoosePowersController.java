@@ -172,14 +172,16 @@ public class ChoosePowersController extends GuiController {
                 String selectedFramePath = getClass().getResource("/gui_assets/clp_frame_red.png").toString();
                 getInstance().frames.get(getInstance().hovered)[1].setImage(new Image(selectedFramePath));
 
-                getInstance().confirmButton.setDisable(!canStartGame());
             } else {
                 String selectedFramePath = getClass().getResource("/gui_assets/clp_frame_blue.png").toString();
                 getInstance().frames.get(getInstance().hovered)[1].setImage(new Image(selectedFramePath));
 
                 getInstance().selectedPowers.remove(getInstance().hovered);
                 getInstance().selectButton.setText("SELECT POWER");
+
             }
+
+            getInstance().confirmButton.setDisable(!canStartGame());
         }
     }
 

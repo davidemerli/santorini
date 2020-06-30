@@ -85,7 +85,6 @@ public class AthenaTest {
         game.getMap().buildBlock(newPosition, false);
 
 
-
         player1.addWorker(w1);
         player2.addWorker(w2);
 
@@ -95,7 +94,7 @@ public class AthenaTest {
         game.getTurnState().selectSquare(game, player1, newPosition);
         game.getTurnState().selectSquare(game, player1, new Point (3,3));
 
-        while (!game.getCurrentPlayer().equals(player2)) ;
+        while (!game.getCurrentPlayer().equals(player2));
 
         game.getTurnState().selectWorker(game, player2, w2);
 

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.*;
-import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
@@ -139,7 +139,9 @@ public class GuiServerHandler extends ServerHandler {
             WaitGodSelectionController.getInstance().setPlayerPower(packet.getPlayerData().getName(),
                     packet.getPlayerData().getPower());
 
-            GameSceneController.getInstance().addPlayer(packet.getPlayerData().getName(),
+            Color color = getPlayerColorMap().get(packet.getPlayerData().getName()).getColor();
+
+            GameSceneController.getInstance().addPlayer(packet.getPlayerData().getName(), color,
                     packet.getPlayerData().getPower());
         }
 
@@ -168,9 +170,9 @@ public class GuiServerHandler extends ServerHandler {
 
         if (yourUpdate && shouldShowInteraction) {
             GameSceneController.getInstance().setInteractButtonTexture(packet.getPlayerData().getPower());
-            GameSceneController.getInstance().showInteract(true);
+            GameSceneController.getInstance().showInteract(packet.getPlayerData().getPower(), true);
         } else {
-            GameSceneController.getInstance().showInteract(false);
+            GameSceneController.getInstance().showInteract(packet.getPlayerData().getPower(), false);
         }
 
         if(yourUpdate && packet.getPlayerState() == EnumTurnState.WIN) {
@@ -275,6 +277,8 @@ public class GuiServerHandler extends ServerHandler {
 
             reset();
         }, 1, TimeUnit.SECONDS);
+
+        System.out.println("Connection lost, please reconnect.");
     }
 
     @Override

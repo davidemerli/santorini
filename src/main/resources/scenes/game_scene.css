@@ -5,9 +5,9 @@
     -fx-focus-color: transparent;
     -fx-font-family: "Mount Olympus";
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 180%;
+    -fx-font-size: 150%;
     -fx-smooth: true;
-    -fx-text-fill: #faebd7;
+    -fx-text-fill: antiquewhite;
 }
 
 .button .text {
@@ -23,7 +23,7 @@
     -fx-color: transparent;
     -fx-font-family: "Mount Olympus";
     -fx-font-smoothing-type: lcd;
-    -fx-font-size: 170%;
+    -fx-font-size: 140%;
     -fx-smooth: true;
 }
 
@@ -40,4 +40,8 @@
 
 .undo-button:pressed {
     -fx-background-image: url("/gui_assets/hourglass.png");
+}
+
+.button-exit {
+    -fx-background-image: none;
 }

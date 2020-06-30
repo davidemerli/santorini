@@ -16,6 +16,7 @@ import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -64,7 +65,9 @@ public class GameSceneController extends GuiController {
     @FXML
     private VBox playerIcons;
 
-    private Map<String, ScaleTransition> playerPanes;
+    private String oldInteractLabel;
+
+    private Map<String, TranslateTransition> playerPanes;
 
     private boolean hasGameEnded;
     private RotateTransition undoRotate;
@@ -325,12 +328,16 @@ public class GameSceneController extends GuiController {
     }
 
 
-    public void showInteract(boolean show) {
-        if (instance.interactButton == null) {
+    public void showInteract(Power power, boolean show) {
+        if (instance.interactButton == null && power == null) {
             return;
         }
 
-        Platform.runLater(() -> instance.interactButton.setVisible(show));
+        Platform.runLater(() -> {
+            instance.interactButton.setText(power.getInteraction().get(0));
+            instance.interactButton.setVisible(show);
+            instance.interactButton.setEffect(null);
+        });
     }
 
     public void showUndo(boolean show) {
@@ -404,7 +411,6 @@ public class GameSceneController extends GuiController {
                     st.setToZ(1D);
                     st.play();
                     ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -435,17 +441,17 @@ public class GameSceneController extends GuiController {
     public void setInteractButtonTexture(Power power) {
         Platform.runLater(() -> {
             String texture = "/gui_assets/god_cards/interactions/" + power.getInteractButton() + ".png";
-            String defaultMessage = power.getInteraction().get(0).replaceAll(" ", "\n");
-            int index = power.getInteraction().size() > 1 && instance.interactButton.getText().equals(defaultMessage)
-                    ? 1 : 0;
+//            String defaultMessage = power.getInteraction().get(0).replaceAll(" ", "\n");
+//            int index = power.getInteraction().size() > 1 && instance.interactButton.getText().equals(defaultMessage)
+//                    ? 1 : 0;
+//
+//            instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
 
-            instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
-
-            instance.interactButton.setOnMouseClicked(event -> {
-                if (power.getInteraction().size() > 1) {
-                    instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
-                }
-            });
+//            instance.interactButton.setOnMouseClicked(event -> {
+//                if (power.getInteraction().size() > 1) {
+//                    instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
+//                }
+//            });
 
             instance.interactButton.setStyle("-fx-background-size: 100% 100%;" +
                     "-fx-background-color: transparent;" +
@@ -472,9 +478,6 @@ public class GameSceneController extends GuiController {
 
         instance.changeUndoLabel = undoThreadPool.submit(() -> {
             try {
-//                TimeUnit.MILLISECONDS.sleep(340);
-//                instance.undoRotate.stop();
-
                 for (int i = 0; i < 5; i++) {
                     int value = 5 - i;
                     Platform.runLater(() -> instance.undoLabel.setText("" + value));
@@ -492,6 +495,20 @@ public class GameSceneController extends GuiController {
     @FXML
     private void interactPressed(ActionEvent event) {
         instance.notifyObservers(GuiObserver::interactPressed);
+
+        if(!instance.interactButton.getText().equals("Cancel")) {
+            instance.oldInteractLabel = instance.interactButton.getText();
+            instance.interactButton.setText("Cancel");
+            instance.interactButton.setEffect(new Glow());
+        } else {
+            instance.interactButton.setText(instance.oldInteractLabel);
+            instance.interactButton.setEffect(null);
+        }
+    }
+
+    @FXML
+    private void quitPressed(ActionEvent event) {
+        instance.notifyObservers(GuiObserver::disconnect);
     }
 
     @FXML
@@ -509,7 +526,7 @@ public class GameSceneController extends GuiController {
         return instance.hasGameEnded;
     }
 
-    public void addPlayer(String player, Power power) {
+    public void addPlayer(String player, Color color, Power power) {
         Platform.runLater(() -> {
             if (instance.playerPanes.containsKey(player)) {
                 return;
@@ -524,29 +541,30 @@ public class GameSceneController extends GuiController {
             ImageView frame = new ImageView(frameIcon);
 
             Label name = new Label(player);
-            name.setStyle("-fx-font-family: 'Mount Olympus';" +
-                    "-fx-font-size: 25;");
+
+            name.setStyle("-fx-font-family: 'Mount Olympus'; -fx-font-size: 25;");
+            name.setTextFill(color);
 
             HBox nameBox = new HBox(name);
             nameBox.setAlignment(Pos.CENTER);
 
+            frame.setTranslateX(-20);
             frame.setPreserveRatio(true);
             frame.setFitWidth(120);
             icon.setPreserveRatio(true);
-            nameBox.minWidthProperty().bind(frame.fitWidthProperty());
-            icon.fitWidthProperty().bind(frame.fitWidthProperty().multiply(0.9));
+            nameBox.minWidthProperty().bind(frame.fitWidthProperty().subtract(20));
+            icon.fitWidthProperty().bind(frame.fitWidthProperty().subtract(20).multiply(0.9));
 
-            AnchorPane.setTopAnchor(nameBox, 3D);
-            AnchorPane.setTopAnchor(icon, 5D);
-            AnchorPane.setLeftAnchor(icon, 5D);
+            AnchorPane.setTopAnchor(nameBox, 2.5D);
+            AnchorPane.setTopAnchor(icon, 6D);
+            AnchorPane.setLeftAnchor(icon, 3D);
 
             pane.getChildren().addAll(icon, frame, nameBox);
 
             instance.playerIcons.getChildren().add(pane);
 
-            ScaleTransition st = new ScaleTransition(Duration.millis(400), pane);
-            st.setToX(1.1);
-            st.setToY(1.1);
+            TranslateTransition st = new TranslateTransition(Duration.millis(400), pane);
+            st.setToX(20);
 
             instance.playerPanes.put(player, st);
         });
@@ -559,6 +577,23 @@ public class GameSceneController extends GuiController {
 
             instance.map.forEach((point, group) -> instance.board.getChildren().remove(group));
             instance.map.clear();
+        });
+    }
+
+    public void highlightCurrentPlayer(String name) {
+        Platform.runLater(() -> {
+            if(instance.playerPanes.containsKey(name)) {
+                for (TranslateTransition value : instance.playerPanes.values()) {
+                    value.getNode().setViewOrder(-1);
+                    value.setToX(0);
+                    value.playFromStart();
+                }
+
+                TranslateTransition selected = instance.playerPanes.get(name);
+                selected.setToX(20);
+                selected.getNode().setViewOrder(0);
+                selected.playFromStart();
+            }
         });
     }
 
@@ -579,25 +614,6 @@ public class GameSceneController extends GuiController {
             showValidMoves(List.of(), List.of(), EnumTurnState.END_GAME);
 
             hasGameEnded = false;
-        });
-    }
-
-    public void highlightCurrentPlayer(String name) {
-        Platform.runLater(() -> {
-            if(instance.playerPanes.containsKey(name)) {
-                for (ScaleTransition value : instance.playerPanes.values()) {
-                    value.getNode().setViewOrder(-1);
-                    value.setToX(1);
-                    value.setToY(1);
-                    value.play();
-                }
-
-                ScaleTransition selected = instance.playerPanes.get(name);
-                selected.getNode().setViewOrder(0);
-                selected.setToX(1.2);
-                selected.setToY(1.2);
-                selected.play();
-            }
         });
     }
 }

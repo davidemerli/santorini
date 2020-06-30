@@ -8,8 +8,10 @@ import it.polimi.ingsw.psp1.santorini.model.Player;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -39,15 +41,29 @@ public abstract class Power implements Serializable, Cloneable {
     public Power() {
         InputStream stream = getClass().getResourceAsStream("/powers/" + getClass().getSimpleName() + ".json");
 
-        Gson gson = new Gson();
-        JsonObject jObject = gson.fromJson(new InputStreamReader(stream), JsonObject.class);
-        this.name = jObject.get("name").getAsString();
-        this.alias = jObject.get("alias").getAsString();
-        this.description = jObject.get("description").getAsString();
-        this.interaction = gson.fromJson(jObject.get("interaction").getAsJsonArray(), String[].class);
-        this.interactButton = jObject.get("interactButton").getAsString();
-        this.simple = jObject.get("isSimple").getAsBoolean();
-        this.playableIn = gson.fromJson(jObject.get("playableIn").getAsJsonArray(), int[].class);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+
+        try {
+            StringBuilder json = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                json.append(line);
+            }
+
+            Gson gson = new Gson();
+            JsonObject jObject = JsonParser.parseString(json.toString()).getAsJsonObject();
+            this.name = jObject.get("name").getAsString();
+            this.alias = jObject.get("alias").getAsString();
+            this.description = jObject.get("description").getAsString();
+            this.interaction = gson.fromJson(jObject.get("interaction").getAsJsonArray(), String[].class);
+            this.interactButton = jObject.get("interactButton").getAsString();
+            this.simple = jObject.get("isSimple").getAsBoolean();
+            this.playableIn = gson.fromJson(jObject.get("playableIn").getAsJsonArray(), int[].class);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

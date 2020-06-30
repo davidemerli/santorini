@@ -272,8 +272,6 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
     @Override
     public void onDisconnect() {
-
+        PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect", 0, -1, true);
     }
-
-
 }

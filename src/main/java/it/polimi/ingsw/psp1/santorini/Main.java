@@ -32,27 +32,25 @@ public class Main {
                 int port = 34567;
 
                 if (arguments.contains("--port")) {
-                    port = Integer.parseInt(arguments.get(arguments.indexOf("--port")));
+                    port = Integer.parseInt(arguments.get(arguments.indexOf("--port") + 1));
                 } else if (arguments.contains("-P")) {
-                    port = Integer.parseInt(arguments.get(arguments.indexOf("-P")));
+                    port = Integer.parseInt(arguments.get(arguments.indexOf("-P") + 1));
                 }
 
                 Server server = new Server(port);
                 new Thread(server).start();
-            } else {
-                Client client = new Client();
-                ServerHandler clientServerHandler;
-
-                if (arguments.contains("--cli") || arguments.contains("-C")) {
-                    clientServerHandler = new CLIServerHandler(client);
-                } else {
-                    clientServerHandler = new GuiServerHandler(client);
-                    Gui.launch(args);
-                    Runtime.getRuntime().addShutdownHook(new Thread(client::disconnect));
-                }
-
-                client.setServerHandler(clientServerHandler);
+                return;
             }
+
+            Client client = new Client();
+
+            if (arguments.contains("--cli") || arguments.contains("-C")) {
+                client.setServerHandler(new CLIServerHandler(client));
+            } else {
+                client.setServerHandler(new GuiServerHandler(client));
+                Gui.launch(args);
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread(client::disconnect));
         } catch (Exception ex) {
             System.out.println("There were errors parsing arguments. Launch with --help for more info.");
         }

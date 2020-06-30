@@ -137,3 +137,7 @@
 .text-area .scroll-pane .content {
     -fx-background-color: transparent;
 }
+
+.button-exit {
+    -fx-background-image: none;
+}

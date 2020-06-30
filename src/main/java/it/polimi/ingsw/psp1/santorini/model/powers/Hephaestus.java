@@ -85,6 +85,11 @@ public class Hephaestus extends Mortal {
         super.onEndTurn(player, game);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * If the player has built once, it can build again on the same spot
+     */
     @Override
     public List<Point> getValidMoves(Worker worker, Game game) {
         if (game.getTurnState() instanceof Build && worker != null && hasBuilt) {

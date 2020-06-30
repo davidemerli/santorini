@@ -16,21 +16,21 @@
   <children>
       <AnchorPane fx:id="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" style="-fx-background-color: red;" text="X" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" style="-fx-background-color: #ff000099;" styleClass="button-exit" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <padding>
                   <Insets right="2.0" top="10.0" />
                </padding>
             </Button>
-            <Button fx:id="interactButton" alignment="CENTER" graphicTextGap="2.0" layoutX="712.0" layoutY="374.0" mnemonicParsing="false" onAction="#interactPressed" prefHeight="70.0" prefWidth="150.0" text="Button" wrapText="true" AnchorPane.bottomAnchor="190.0" AnchorPane.rightAnchor="50.0">
+            <Button fx:id="interactButton" alignment="CENTER" graphicTextGap="2.0" layoutX="712.0" layoutY="374.0" mnemonicParsing="false" onAction="#interactPressed" prefHeight="70.0" prefWidth="150.0" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="190.0" AnchorPane.rightAnchor="50.0">
                <font>
-                  <Font name="Mount Olympus" size="22.0" />
+                  <Font name="Mount Olympus" size="18.0" />
                </font>
                <padding>
-                  <Insets left="65.0" />
+                  <Insets left="75.0" right="4.0" />
                </padding>
             </Button>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" />
-            <VBox alignment="CENTER" pickOnBounds="false" prefHeight="77.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <VBox alignment="CENTER" layoutX="-1.0" pickOnBounds="false" prefHeight="119.0" prefWidth="863.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0">
                <children>
                   <ImageView fx:id="requestBackground" fitHeight="119.0" fitWidth="409.0">
                      <image>
@@ -82,8 +82,8 @@
          <children>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#clickResume" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: blue;" text="RESUME" />
-                  <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="FORFEIT" />
+                  <Button mnemonicParsing="false" onAction="#clickResume" prefHeight="50.0" prefWidth="200.0" text="RESUME" />
+                  <Button fx:id="quitPressed" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="QUIT" />
                </children>
             </VBox>
          </children>

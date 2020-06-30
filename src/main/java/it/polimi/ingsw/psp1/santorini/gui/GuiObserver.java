@@ -80,4 +80,8 @@ public class GuiObserver {
     public void selectStartingPlayer(String playerName) {
         client.sendPacket(new ClientSelectStartingPlayer(playerName));
     }
+
+    public void disconnect() {
+        client.disconnect();
+    }
 }

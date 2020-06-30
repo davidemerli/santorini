@@ -74,11 +74,9 @@ public class Game extends Observable<ModelObserver> {
 
         shufflePlayers();
 
-        pool.schedule(() -> {
-            setTurnState(new SelectPowers());
+        setTurnState(new SelectPowers());
 
-            notifyObservers(o -> o.gameUpdate(this, false));
-        }, 2, TimeUnit.SECONDS);
+        notifyObservers(o -> o.gameUpdate(this, false));
     }
 
     /**

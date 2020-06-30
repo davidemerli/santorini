@@ -21,8 +21,6 @@ public class Client implements Runnable {
 
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
-    private final Object lock = new Object();
-
     private ObjectOutputStream objectOutputStream;
     private ServerHandler serverHandler;
     private Socket server;
@@ -35,24 +33,20 @@ public class Client implements Runnable {
      * Sets connection between client and server
      * Creates a new thread for every player
      *
-     * @param ip server ip
+     * @param ip   server ip
      * @param port socket port
      */
     public void connectToServer(String ip, int port) {
-        if(connected) {
+        if (connected) {
             disconnect();
         }
 
         try {
-            synchronized (lock) {
-                server = new Socket(ip, port);
-                connected = true;
-            }
+            server = new Socket(ip, port);
+            connected = true;
 
             new Thread(this).start(); //TODO: maybe use pool
         } catch (IOException e) {
-            lock.notifyAll();
-
             e.printStackTrace();
         }
     }
@@ -62,10 +56,7 @@ public class Client implements Runnable {
      */
     public void disconnect() {
         try {
-            synchronized (lock) {
-                connected = false;
-                lock.notifyAll();
-            }
+            connected = false;
 
             if (server != null) {
                 server.close();
@@ -90,14 +81,11 @@ public class Client implements Runnable {
                 objectOutputStream.writeObject(packet);
                 objectOutputStream.flush();
 
-                if(debug && !(packet instanceof ClientKeepAlive)) {
+                if (debug && !(packet instanceof ClientKeepAlive)) {
                     System.out.println("sent: " + packet.toString());
                 }
             } catch (IOException e) {
-                //TODO: cannot print like this (not good in GUI)
-                PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
-                        0, -1, true);
-
+                e.printStackTrace();
                 disconnect();
             }
         });
@@ -121,18 +109,12 @@ public class Client implements Runnable {
                     Packet<ServerHandler> packet = (Packet<ServerHandler>) objectInputStream.readObject();
                     packet.processPacket(serverHandler);
 
-                    if(debug && !(packet instanceof ServerKeepAlive)) {
+                    if (debug && !(packet instanceof ServerKeepAlive)) {
                         System.out.println("received: " + packet.toString());
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException | ClassCastException e) {
-            //TODO: cannot print like this (not good in GUI)
-            e.printStackTrace();
-
-            PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect",
-                    0, -1, true);
-
+        } catch (Exception e) {
             disconnect();
         }
     }
@@ -149,8 +131,6 @@ public class Client implements Runnable {
     }
 
     public boolean isConnected() {
-        synchronized (lock) {
-            return connected;
-        }
+        return connected;
     }
 }

@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -35,7 +38,7 @@ public class Server implements Runnable {
 
     private final Map<Game, Map<ClientConnectionHandler, Player>> games;
 
-    private final ExecutorService pool;
+    private final ScheduledExecutorService pool;
 
     /**
      * Generic constructor using socket port
@@ -53,7 +56,7 @@ public class Server implements Runnable {
 
         this.games = Collections.synchronizedMap(new LinkedHashMap<>());
 
-        this.pool = Executors.newFixedThreadPool(128);
+        this.pool = Executors.newScheduledThreadPool(128);
 
         ScheduledExecutorService gameStarterPool = Executors.newSingleThreadScheduledExecutor();
 
@@ -111,27 +114,27 @@ public class Server implements Runnable {
                 games.keySet().stream()
                         .filter(g -> !g.hasStarted())
                         .forEach(game -> {
-                    Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
+                            Map<ClientConnectionHandler, Player> gamePlayers = games.get(game);
 
-                    boolean full = fillGame(game);
+                            boolean full = fillGame(game);
 
-                    if (full) {
-                        Controller controller = new Controller(game);
-                        List<View> views = new ArrayList<>();
-                        gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
+                            if (full) {
+                                Controller controller = new Controller(game);
+                                List<View> views = new ArrayList<>();
+                                gamePlayers.forEach((cch, p) -> views.add(new RemoteView(p, cch)));
 
-                        //views observe model
-                        views.forEach(game::addObserver);
+                                //views observe model
+                                views.forEach(game::addObserver);
 
-                        //controller observes views
-                        views.forEach(v -> v.addObserver(controller));
+                                //controller observes views
+                                views.forEach(v -> v.addObserver(controller));
 
-                        //add players to the game
-                        views.forEach(v -> game.addPlayer(v.getPlayer()));
+                                //add players to the game
+                                views.forEach(v -> game.addPlayer(v.getPlayer()));
 
-                        game.startGame();
-                    }
-                });
+                                game.startGame();
+                            }
+                        });
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -185,9 +188,9 @@ public class Server implements Runnable {
      * Creates a new game instance with the player that created it as the first player
      *
      * @param connectionHandler with the player that created the game
-     * @param playerNumber number of players
+     * @param playerNumber      number of players
      * @throws UnsupportedOperationException if connection between player and server is already assigned
-     * @throws IllegalStateException if players has not set a name yet
+     * @throws IllegalStateException         if players has not set a name yet
      */
     public void createGame(ClientConnectionHandler connectionHandler, int playerNumber) {
         boolean isInGame = games.values().stream()
@@ -240,10 +243,10 @@ public class Server implements Runnable {
      * Connects players with the game and they joins it
      *
      * @param connectionHandler with the available players
-     * @param gameRoom room's name
+     * @param gameRoom          room's name
      * @throws IllegalArgumentException if room's name does not exists
-     * @throws IllegalStateException if game is already full
-     * @throws IllegalStateException if players has not set a name yet
+     * @throws IllegalStateException    if game is already full
+     * @throws IllegalStateException    if players has not set a name yet
      */
     public void joinGame(ClientConnectionHandler connectionHandler, String gameRoom) {
         Optional<Game> toJoin = games.keySet().stream()
@@ -284,8 +287,8 @@ public class Server implements Runnable {
      * Puts available players in a queue, used to insert players into the game
      *
      * @param connectionHandler with the available players
-     * @param playerNumber number of players in a game
-     * @throws IllegalStateException if players has not set a name yet
+     * @param playerNumber      number of players in a game
+     * @throws IllegalStateException    if players has not set a name yet
      * @throws IllegalArgumentException if number of players is not two or three
      */
     public void joinQueue(ClientConnectionHandler connectionHandler, int playerNumber) {

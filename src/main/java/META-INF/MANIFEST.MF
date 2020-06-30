@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Main-Class: it.polimi.ingsw.psp1.santorini.Main
+Class-Path: javafx-graphics-11.0.2.jar javafx-graphics-11.0.2-win.jar ja
+ vafx-obj-importer-1.0.jar javafx-fxml-11.0.2-win.jar javafx-base-11.0.2
+ .jar javafx-base-11.0.2-win.jar javafx-fxml-11.0.2.jar gson-2.8.6.jar j
+ avafx-controls-11.0.2-win.jar javafx-controls-11.0.2.jar
+
