@@ -58,6 +58,9 @@ public class ServerGameData implements Packet<ServerHandler> {
         return forced;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String workers = players.stream().map(PlayerData::toString).collect(Collectors.joining(","));

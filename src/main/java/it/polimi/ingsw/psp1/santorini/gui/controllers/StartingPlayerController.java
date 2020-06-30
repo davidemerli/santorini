@@ -13,7 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
- * Manages the starting player scene
+ * Scene used to choose the starting player
  */
 public class StartingPlayerController extends GuiController {
 

@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client selects the first player who will play
+ * Client packet containing the first player who will play
  */
 public class ClientSelectStartingPlayer implements Packet<ClientHandler> {
 
@@ -30,6 +30,9 @@ public class ClientSelectStartingPlayer implements Packet<ClientHandler> {
         return this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(name);

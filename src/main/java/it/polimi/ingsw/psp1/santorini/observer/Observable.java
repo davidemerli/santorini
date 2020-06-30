@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * //TODO
+ * @param <T>
+ */
 public abstract class Observable<T> {
 
     private final List<T> observers = new ArrayList<>();

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Packet containing list with all available gods
+ * Server packet containing list with all available gods
  */
 public class ServerPowerList implements Packet<ServerHandler> {
 
@@ -42,6 +42,9 @@ public class ServerPowerList implements Packet<ServerHandler> {
         return toSelect;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(availablePowers.stream().map(Power::getName).collect(Collectors.joining(", ")), toSelect);

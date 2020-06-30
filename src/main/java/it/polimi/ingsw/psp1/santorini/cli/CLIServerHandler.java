@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 /**
- * Manages
+ * Manages all server packets
  */
 public class CLIServerHandler extends ServerHandler implements Runnable {
 

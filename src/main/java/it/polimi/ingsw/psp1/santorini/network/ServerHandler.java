@@ -225,5 +225,8 @@ public abstract class ServerHandler implements NetHandler {
         lastTurnState = null;
     }
 
+    /**
+     * Disconnect
+     */
     public abstract void onDisconnect();
 }

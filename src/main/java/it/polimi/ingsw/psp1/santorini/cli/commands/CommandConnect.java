@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Used to established a connection
+ * Used to established a connection with the server
  */
 public class CommandConnect extends Command {
 

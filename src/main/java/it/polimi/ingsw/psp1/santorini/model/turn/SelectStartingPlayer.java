@@ -15,6 +15,9 @@ import java.util.Optional;
  */
 public class SelectStartingPlayer extends TurnState {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Game game) {
         super.init(game);
@@ -24,6 +27,12 @@ public class SelectStartingPlayer extends TurnState {
 
     /**
      * {@inheritDoc}
+     * <p>
+     *
+     * @param game             current game
+     * @param player           current player
+     * @param chosenPlayerName player chosen to start the game
+     * @throws NoSuchElementException if given player is not in the game
      */
     @Override
     public void selectStartingPlayer(Game game, Player player, String chosenPlayerName) {

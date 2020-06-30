@@ -5,7 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Packet containing a generic request
+ * Server packet containing a generic request
  */
 public class ServerAskRequest implements Packet<ServerHandler> {
 
@@ -32,6 +32,9 @@ public class ServerAskRequest implements Packet<ServerHandler> {
         return requestType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(requestType);

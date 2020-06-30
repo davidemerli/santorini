@@ -4,6 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
+ * Client packet containing
  * Client decided to retire from the game
  */
 public class ClientForfeit implements Packet<ClientHandler> {
@@ -15,6 +16,9 @@ public class ClientForfeit implements Packet<ClientHandler> {
         netHandler.handlePlayerForfeit();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString("");

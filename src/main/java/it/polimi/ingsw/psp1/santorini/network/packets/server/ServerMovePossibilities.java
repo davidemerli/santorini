@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Packet containing all possible movement
+ * Server packet containing all possible movements
  */
 public class ServerMovePossibilities implements Packet<ServerHandler> {
 
@@ -44,6 +44,9 @@ public class ServerMovePossibilities implements Packet<ServerHandler> {
         return blockedMoves;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String invalid = blockedMoves.entrySet().stream()

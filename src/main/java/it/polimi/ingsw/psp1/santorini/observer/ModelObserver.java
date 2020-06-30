@@ -10,6 +10,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Manages all model changes
+ */
 public interface ModelObserver {
 
     /**

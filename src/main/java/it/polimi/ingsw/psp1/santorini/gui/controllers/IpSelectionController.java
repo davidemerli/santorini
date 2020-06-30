@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
- * Manages the ip and port selection scene
+ * Scene used to select ip address and port
  */
 public class IpSelectionController extends GuiController {
 

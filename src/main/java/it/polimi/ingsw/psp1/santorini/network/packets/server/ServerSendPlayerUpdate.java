@@ -5,7 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Packet containing players information
+ * Server packet containing players information
  */
 public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
 
@@ -51,6 +51,9 @@ public class ServerSendPlayerUpdate implements Packet<ServerHandler> {
         return shouldShowInteraction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(playerData, playerState, shouldShowInteraction);

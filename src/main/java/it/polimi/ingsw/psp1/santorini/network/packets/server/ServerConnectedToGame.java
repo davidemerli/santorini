@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Packet used to connect with the game
+ * Server packet used to connect with the game
  */
 public class ServerConnectedToGame implements Packet<ServerHandler> {
 
@@ -45,6 +45,9 @@ public class ServerConnectedToGame implements Packet<ServerHandler> {
         return playerNumber;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(username, gameID, playerNumber);

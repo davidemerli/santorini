@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Manages the communication between client and server
+ * Manages the client behaviour during the communication between client and server
  */
 public class ClientConnectionHandler extends Observable<ConnectionObserver> implements Runnable, ClientHandler {
 

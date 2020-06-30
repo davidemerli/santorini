@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client sets a name
+ * Client packet containing a name
  */
 public class ClientSetName implements Packet<ClientHandler> {
 
@@ -30,6 +30,9 @@ public class ClientSetName implements Packet<ClientHandler> {
         return this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(name);

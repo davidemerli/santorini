@@ -5,7 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client selects a worker
+ * Client packet containing selected worker
  */
 public class ClientSelectWorker implements Packet<ClientHandler> {
 
@@ -31,6 +31,9 @@ public class ClientSelectWorker implements Packet<ClientHandler> {
         return position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(position);

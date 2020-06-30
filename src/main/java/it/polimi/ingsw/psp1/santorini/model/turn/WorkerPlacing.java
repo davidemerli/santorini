@@ -26,6 +26,9 @@ public class WorkerPlacing extends TurnState {
         game.saveState();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldShowInteraction(Game game, Player player) {
         return false;
@@ -33,6 +36,12 @@ public class WorkerPlacing extends TurnState {
 
     /**
      * {@inheritDoc}
+     * <p>
+     *
+     * @param game     current game
+     * @param player   current player
+     * @param position of the selected square
+     * @throws IllegalArgumentException if the square is occupied
      */
     @Override
     public void selectSquare(Game game, Player player, Point position) {
@@ -57,11 +66,17 @@ public class WorkerPlacing extends TurnState {
         game.setTurnState(new WorkerPlacing());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Point> getValidMoves(Game game, Player player, Worker worker) {
         return player.getPower().getValidMoves(worker, game);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void undo(Game game, Player player) {
         game.restoreSavedState();

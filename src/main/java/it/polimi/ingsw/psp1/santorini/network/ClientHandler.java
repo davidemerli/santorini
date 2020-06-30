@@ -3,7 +3,7 @@ package it.polimi.ingsw.psp1.santorini.network;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
 
 /**
- * Manages client actions
+ * Manages all packets received from client
  */
 public interface ClientHandler extends NetHandler {
 

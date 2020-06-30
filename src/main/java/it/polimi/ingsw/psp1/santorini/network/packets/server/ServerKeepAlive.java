@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Packet continaing a kepp alive message
+ * Server packet containing a keep alive message
  */
 public class ServerKeepAlive implements Packet<ServerHandler> {
 

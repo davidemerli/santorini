@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Manages the main information about player
+ * Manages the main information about players
  */
 public class PlayerData implements Serializable {
 
@@ -41,6 +41,9 @@ public class PlayerData implements Serializable {
         return workers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String workerList = workers.stream()

@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client creates a game specifying the name of the players
+ * Client packet containing the number of player in order to create a game
  */
 public class ClientCreateGame implements Packet<ClientHandler> {
 
@@ -31,6 +31,9 @@ public class ClientCreateGame implements Packet<ClientHandler> {
         return playerNumber;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(playerNumber);

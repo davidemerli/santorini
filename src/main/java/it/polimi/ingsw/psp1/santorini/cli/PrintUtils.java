@@ -20,9 +20,9 @@ import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
  */
 public class PrintUtils {
 
-    public static final int MAX_LENGTH = 150;
-    public static final int SIZE = 3;
-    public static final int SPACING = 1;
+    private static final int MAX_LENGTH = 150;
+    private static final int SIZE = 3;
+    private static final int SPACING = 1;
 
     private static final int MAP_X = 2;
     private static final int MAP_Y = 5;
@@ -64,6 +64,12 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * When a worker moves into another place, prints a valid arrow to underline his movement
+     *
+     * @param arrow type
+     * @param where to print arrow
+     */
     public static void printArrow(EnumArrow arrow, Point where) {
         int x = MAP_X + where.x * (SIZE * 2 + SPACING * 2 - 1);
         int y = MAP_Y + where.y * (SIZE + SPACING);
@@ -158,6 +164,11 @@ public class PrintUtils {
         print(c + "                                                                  ", 6, 16, false);
     }
 
+    /**
+     * Prints an object
+     *
+     * @param o generic object
+     */
     public static synchronized void print(Object o) {
         System.out.print(o);
         System.out.flush();

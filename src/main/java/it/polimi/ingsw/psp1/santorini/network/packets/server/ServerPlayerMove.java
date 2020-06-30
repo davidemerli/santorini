@@ -9,7 +9,7 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 import java.io.Serializable;
 
 /**
- * Packet containing the player action
+ * Server packet containing the player action
  * Could be move, place worker or build
  */
 public class ServerPlayerMove implements Packet<ServerHandler> {
@@ -159,6 +159,9 @@ public class ServerPlayerMove implements Packet<ServerHandler> {
             return forceDome;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return "Build [" + getWorker().toString() + " - " + getDest() + "]";

@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Packet containing an error message
+ * Server packet containing an error message
  */
 public class ServerInvalidPacket implements Packet<ServerHandler> {
 
@@ -31,6 +31,9 @@ public class ServerInvalidPacket implements Packet<ServerHandler> {
         return error;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(error);

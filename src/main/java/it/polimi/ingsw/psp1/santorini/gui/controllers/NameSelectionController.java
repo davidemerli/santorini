@@ -14,7 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 /**
- * Manages the name selection scene
+ * Scene used to select the player name
  */
 public class NameSelectionController extends GuiController {
 

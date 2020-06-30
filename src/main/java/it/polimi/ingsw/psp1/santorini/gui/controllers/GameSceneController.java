@@ -41,8 +41,8 @@ public class GameSceneController extends GuiController {
     private static GameSceneController instance;
     private final List<Node> validMoves = new ArrayList<>();
 
-    public Map<Point, Group> map = new HashMap<>();
-    public Map<Group, Point> workers = new HashMap<>();
+    private Map<Point, Group> map = new HashMap<>();
+    private Map<Group, Point> workers = new HashMap<>();
 
     private Group board;
 
@@ -661,6 +661,11 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Shows the current player
+     *
+     * @param name of the player
+     */
     public void highlightCurrentPlayer(String name) {
         Platform.runLater(() -> {
             if(instance.playerPanes.containsKey(name)) {

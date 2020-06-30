@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client decides to restart his turn
+ * Client packet with undo command
  */
 public class ClientUndo implements Packet<ClientHandler> {
     /**
@@ -15,6 +15,9 @@ public class ClientUndo implements Packet<ClientHandler> {
         netHandler.handleUndo();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString("");

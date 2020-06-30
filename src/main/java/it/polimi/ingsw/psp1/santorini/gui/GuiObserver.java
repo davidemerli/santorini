@@ -11,11 +11,20 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Turns gui information into packets
+ */
 public class GuiObserver {
 
     private final Client client;
     private final GuiServerHandler serverHandler;
 
+    /**
+     * Generic constructor using client and server handler
+     *
+     * @param client        current client
+     * @param serverHandler valid server handler
+     */
     public GuiObserver(Client client, GuiServerHandler serverHandler) {
         this.client = client;
         this.serverHandler = serverHandler;

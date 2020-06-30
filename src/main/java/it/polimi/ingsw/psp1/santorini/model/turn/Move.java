@@ -14,6 +14,9 @@ import java.util.Optional;
  */
 public class Move extends TurnState {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Game game) {
         super.init(game);
@@ -21,6 +24,17 @@ public class Move extends TurnState {
         genericMoveOrBuildRequest(game);
     }
 
+    /**
+     * {@inheritDoc}
+     * </p>
+     *
+     * @param game     current game
+     * @param player   current player
+     * @param position of the selected square
+     * @throws UnsupportedOperationException if try to move with no selected worker
+     * @throws IllegalArgumentException if given position is a forbidden move position by some power
+     * @throws IllegalArgumentException if is an invalid move
+     */
     @Override
     public void selectSquare(Game game, Player player, Point position) {
         Optional<Worker> optWorker = player.getSelectedWorker();
@@ -40,6 +54,16 @@ public class Move extends TurnState {
         game.getPlayerList().forEach(p -> p.getPower().onMove(player, optWorker.get(), position, game));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param game   current game
+     * @param player current player
+     * @param worker selected by the player
+     * @throws NoSuchElementException if player does not own this worker
+     * @throws UnsupportedOperationException if worker is locked from previous turn
+     */
     @Override
     public void selectWorker(Game game, Player player, Worker worker) {
         if (!player.getWorkers().contains(worker)) {
@@ -57,11 +81,17 @@ public class Move extends TurnState {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void toggleInteraction(Game game, Player player) {
         player.getPower().onToggleInteraction(game);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldShowInteraction(Game game, Player player) {
         return player.getPower().shouldShowInteraction(game);
