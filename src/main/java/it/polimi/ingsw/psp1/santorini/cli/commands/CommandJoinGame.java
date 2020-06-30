@@ -7,8 +7,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientJoinGame;
 
 import java.util.List;
 
+/**
+ * Used to join a game
+ */
 public class CommandJoinGame extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandJoinGame() {
         super("join",
                 "Joins a game",

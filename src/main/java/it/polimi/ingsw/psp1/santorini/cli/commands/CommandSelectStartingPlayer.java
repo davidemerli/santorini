@@ -8,8 +8,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Used to select the starting player
+ */
 public class CommandSelectStartingPlayer extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSelectStartingPlayer() {
         super("startingplayer",
                 "Selects the starting player",

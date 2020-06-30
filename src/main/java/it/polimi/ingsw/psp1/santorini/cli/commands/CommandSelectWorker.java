@@ -12,8 +12,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Used to select worker
+ */
 public class CommandSelectWorker extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSelectWorker() {
         super("selectworker",
                 "Chooses the worker you want to use in this turn",

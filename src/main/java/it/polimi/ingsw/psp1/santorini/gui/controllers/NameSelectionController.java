@@ -13,6 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
+/**
+ * Manages the name selection scene
+ */
 public class NameSelectionController extends GuiController {
 
     private static NameSelectionController instance;
@@ -56,6 +59,9 @@ public class NameSelectionController extends GuiController {
         return instance;
     }
 
+    /**
+     * If the username is not valid, shows error
+     */
     public void showError() {
         Platform.runLater(() -> {
             getInstance().whirlpool.setVisible(false);

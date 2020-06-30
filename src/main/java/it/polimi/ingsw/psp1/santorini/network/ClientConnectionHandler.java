@@ -19,6 +19,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages the communication between client and server
+ */
 public class ClientConnectionHandler extends Observable<ConnectionObserver> implements Runnable, ClientHandler {
 
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
@@ -55,7 +58,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * Sends a packet with delay
      *
      * @param packet to send
-     * @param delay in milliseconds
+     * @param delay  in milliseconds
      */
     public void sendPacket(Packet<ServerHandler> packet, int delay) {
         if (closed) {

@@ -15,6 +15,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Manages the ip and port selection scene
+ */
 public class IpSelectionController extends GuiController {
 
     private static IpSelectionController instance;
@@ -78,6 +81,9 @@ public class IpSelectionController extends GuiController {
         getInstance().notifyObservers(o -> o.connectToServer(ip, port));
     }
 
+    /**
+     * Starts the connection animation
+     */
     public void startConnectionAnimation() {
         Platform.runLater(() -> {
             getInstance().connectionIcon.setVisible(true);
@@ -90,11 +96,17 @@ public class IpSelectionController extends GuiController {
         });
     }
 
+    /**
+     * Stops the connection animation
+     */
     public void stopConnectionAnimation() {
         getInstance().connectionIcon.setVisible(false);
         getInstance().connectionText.setVisible(false);
     }
 
+    /**
+     * Changes scene
+     */
     public void changeToNameSelection() {
         Gui.getInstance().changeSceneSync(EnumScene.NAME_SELECT);
     }

@@ -5,6 +5,10 @@ import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.observer.Observable;
 import it.polimi.ingsw.psp1.santorini.observer.ViewObserver;
 
+/**
+ * Shows changing of the game
+ * Communicates with controller
+ */
 public abstract class View extends Observable<ViewObserver> implements ModelObserver {
 
     private final Player player;

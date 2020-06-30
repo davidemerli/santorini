@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Scene used to select gods
+ */
 public class ChoosePowersController extends GuiController {
 
     private static ChoosePowersController instance;
@@ -57,6 +60,9 @@ public class ChoosePowersController extends GuiController {
         return instance;
     }
 
+    /**
+     * Generic instance
+     */
     @FXML
     private void initialize() {
         getInstance().selectSize = -1;
@@ -74,6 +80,12 @@ public class ChoosePowersController extends GuiController {
         getInstance().confirmButton.setDisable(true);
     }
 
+    /**
+     * Adds the gods to the screen
+     *
+     * @param powers     power list
+     * @param selectSize size
+     */
     public void addGods(List<Power> powers, int selectSize) {
         getInstance().selectSize = selectSize;
 

@@ -12,10 +12,18 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Manages the communication between model and view
+ */
 public class Controller implements ViewObserver {
 
     private final Game model;
 
+    /**
+     * Generic constructor using model
+     *
+     * @param model current model
+     */
     public Controller(Game model) {
         this.model = model;
     }

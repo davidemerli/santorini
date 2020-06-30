@@ -19,6 +19,9 @@ public class ClientCreateGame implements Packet<ClientHandler> {
         this.playerNumber = playerNumber;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleCreateGame(this);

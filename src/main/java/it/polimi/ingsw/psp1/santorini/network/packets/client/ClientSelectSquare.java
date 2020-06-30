@@ -19,6 +19,9 @@ public class ClientSelectSquare implements Packet<ClientHandler> {
         this.selectedSquare = selectedSquare;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleSquareSelect(this);

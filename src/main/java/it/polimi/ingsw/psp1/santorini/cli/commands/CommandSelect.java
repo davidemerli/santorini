@@ -10,8 +10,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Used to move or build in the selected square
+ */
 public class CommandSelect extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSelect() {
         super("select",
                 "Moves/Build in the selected square",

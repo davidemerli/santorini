@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Manages the game 3D scene
+ */
 public class GameSceneController extends GuiController {
 
     private static final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
@@ -78,6 +81,10 @@ public class GameSceneController extends GuiController {
         return instance;
     }
 
+    /**
+     * Loads the board and all textures
+     * Makes possible the rotation of the stage
+     */
     @FXML
     public void initialize() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -122,6 +129,13 @@ public class GameSceneController extends GuiController {
         instance.undoRotate.setCycleCount(5);
     }
 
+    /**
+     * Converts all 2D points in 3D points and shows all valid moves for the selected worker
+     *
+     * @param moves        valid moves list
+     * @param blockedMoves blocked moves list
+     * @param state        current state
+     */
     public void showValidMoves(List<Point> moves, List<Point> blockedMoves, EnumTurnState state) {
         runMapChange(() -> {
             instance.board.getChildren().removeAll(instance.validMoves);
@@ -199,6 +213,15 @@ public class GameSceneController extends GuiController {
         }, Duration.millis(200));
     }
 
+    /**
+     * Adds a worker on the map
+     *
+     * @param x       x coordinate
+     * @param y       y coordinate
+     * @param color   worker color
+     * @param isOwn   true if is one of my worker
+     * @param animate true if must use the animation
+     */
     public void addWorker(int x, int y, Color color, boolean isOwn, boolean animate) {
         Duration duration = Duration.millis(200);
 
@@ -237,6 +260,13 @@ public class GameSceneController extends GuiController {
         }, animate ? duration : Duration.millis(10));
     }
 
+    /**
+     *
+     * @param x         x coordinate
+     * @param y         y coordinate
+     * @param forceDome true if a dome must be built
+     * @param animate   true if must use the animation
+     */
     public void addBlockAt(int x, int y, boolean forceDome, boolean animate) {
         runMapChange(() -> {
             Point p = new Point(x, y);
@@ -290,6 +320,14 @@ public class GameSceneController extends GuiController {
         }, animate ? Duration.millis(400) : Duration.millis(50));
     }
 
+    /**
+     * Moves a worker on the map
+     *
+     * @param from  initial position
+     * @param to    final position
+     * @param isOwn true if is one of my worker
+     * @throws NoSuchElementException if there is not worker at given position
+     */
     public void moveWorker(Point from, Point to, boolean isOwn) {
         runMapChange(() -> {
             Group worker = workers.keySet().stream().filter(g -> workers.get(g).equals(from)).findFirst().get();
@@ -324,7 +362,11 @@ public class GameSceneController extends GuiController {
         }, Duration.millis(400));
     }
 
-
+    /**
+     * Manages the interaction button
+     *
+     * @param show true if the interaction button must be shown
+     */
     public void showInteract(boolean show) {
         if (instance.interactButton == null) {
             return;
@@ -333,6 +375,11 @@ public class GameSceneController extends GuiController {
         Platform.runLater(() -> instance.interactButton.setVisible(show));
     }
 
+    /**
+     * Manages the undo button
+     *
+     * @param show true if the undo button must be shown
+     */
     public void showUndo(boolean show) {
         if (instance.undoButton == null) {
             return;
@@ -341,6 +388,11 @@ public class GameSceneController extends GuiController {
         Platform.runLater(() -> instance.undoButton.setDisable(!show));
     }
 
+    /**
+     * Manages the requests on screen
+     *
+     * @param request to be shown
+     */
     public void showRequest(String request) {
         if (instance.requestBackground == null || instance.requestText == null) {
             return;
@@ -353,6 +405,9 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Hides the request banner
+     */
     public void hideRequest() {
         if (instance.requestBackground == null || instance.requestText == null) {
             return;
@@ -378,6 +433,12 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * If the game has ended, shows the end game screen
+     *
+     * @param username player username
+     * @param hasWon   true if the player has won
+     */
     public void showEndGame(String username, boolean hasWon) {
         instance.hasGameEnded = true;
 
@@ -465,6 +526,10 @@ public class GameSceneController extends GuiController {
         instance.menu.setVisible(false);
     }
 
+    /**
+     * Manages the undo time
+     * Player can use the undo function within 5 seconds
+     */
     public void setupUndoTimer() {
         Platform.runLater(() -> {
             instance.undoRotate.playFromStart();
@@ -505,10 +570,21 @@ public class GameSceneController extends GuiController {
         }
     }
 
+    /**
+     * Manages the end of the game
+     *
+     * @return true if the game has ended
+     */
     public boolean hasGameEnded() {
         return instance.hasGameEnded;
     }
 
+    /**
+     * Adds player on screen
+     *
+     * @param player to be added
+     * @param power  player power
+     */
     public void addPlayer(String player, Power power) {
         Platform.runLater(() -> {
             if (instance.playerPanes.containsKey(player)) {
@@ -552,6 +628,9 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Used to reset map
+     */
     public void resetMap() {
         Platform.runLater(() -> {
             instance.workers.forEach((g, p) -> instance.board.getChildren().remove(g));

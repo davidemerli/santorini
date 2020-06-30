@@ -30,7 +30,7 @@ public abstract class Command {
      * @param input         client input
      * @param arguments     input arguments
      * @return command response
-     * @throws Exception
+     * @throws Exception    exception
      */
     public abstract String onCommand(Client client, CLIServerHandler serverHandler,
                                      String input, String[] arguments) throws Exception;

@@ -7,6 +7,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
  * Client toggles the interaction buttom
  */
 public class ClientToggleInteraction implements Packet<ClientHandler> {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleInteractionToggle();

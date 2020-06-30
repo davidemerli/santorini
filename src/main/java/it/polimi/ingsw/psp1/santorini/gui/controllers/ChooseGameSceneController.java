@@ -12,6 +12,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
+/**
+ * Scene used for create or join a game
+ */
 public class ChooseGameSceneController extends GuiController {
     private static ChooseGameSceneController instance;
 
@@ -47,6 +50,9 @@ public class ChooseGameSceneController extends GuiController {
         return instance;
     }
 
+    /**
+     * Generic initialize
+     */
     @FXML
     public void initialize() {
 //        leftPane.setTranslateX(-leftPane.getBoundsInParent().getWidth());
