@@ -54,7 +54,7 @@ public class Server implements Runnable {
         this.twoPlayerGameQueue = new ConcurrentHashMap<>();
         this.threePlayerGameQueue = new ConcurrentHashMap<>();
 
-        this.games = Collections.synchronizedMap(new LinkedHashMap<>());
+        this.games = Collections.synchronizedMap(new ConcurrentHashMap<>());
 
         this.pool = Executors.newScheduledThreadPool(128);
 
@@ -235,7 +235,8 @@ public class Server implements Runnable {
                 .map(Map.Entry::getKey).findFirst();
 
         if (optGame.isPresent() && !optGame.get().hasStarted()) {
-            games.get(optGame.get()).remove(connectionHandler);
+            games.get(optGame.get()).keySet().forEach(ClientConnectionHandler::closeConnection);
+            games.remove(optGame.get());
         }
     }
 

@@ -88,7 +88,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
     @SuppressWarnings("unchecked")
     public void run() {
         try {
-            //TODO: Provare a spostare nel constructor
             this.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
             while (!closed) {
@@ -100,9 +99,10 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
 
                 ((Packet<ClientHandler>) object).processPacket(this);
             }
-        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+        } catch (Exception ex) {
             closeConnection();
         }
+        closeConnection();
     }
 
     /**
@@ -242,6 +242,13 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      * Closes connection between client and server
      */
     public void closeConnection() {
+        if (closed) {
+            return;
+        }
+
+        System.out.println("Client associated with '" + getPlayer().orElse(new Player("N/A")).getName() +
+                "' disconnected.");
+
         closed = true;
         try {
             if (objectInputStream != null) {

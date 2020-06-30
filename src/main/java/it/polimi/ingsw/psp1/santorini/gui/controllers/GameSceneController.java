@@ -40,10 +40,10 @@ public class GameSceneController extends GuiController {
     private static final ExecutorService undoThreadPool = Executors.newSingleThreadExecutor();
 
     private static GameSceneController instance;
-    private final List<Node> validMoves = new ArrayList<>();
+    private List<Node> validMoves;
 
-    private Map<Point, Group> map = new HashMap<>();
-    private Map<Group, Point> workers = new HashMap<>();
+    private Map<Point, Group> map;
+    private Map<Group, Point> workers;
 
     private Group board;
 
@@ -124,6 +124,9 @@ public class GameSceneController extends GuiController {
         instance.undoLabel = undoLabel;
         instance.playerIcons = playerIcons;
         instance.playerPanes = new HashMap<>();
+        instance.validMoves = new ArrayList<>();
+        instance.workers = new HashMap<>();
+        instance.map = new HashMap<>();
 
         instance.undoRotate = new RotateTransition(Duration.millis(1000), instance.undoButton);
         instance.undoRotate.setByAngle(180);
@@ -150,7 +153,7 @@ public class GameSceneController extends GuiController {
                 Point3D p3D = RenderUtils.convert2DTo3D(instance.board, p.x, p.y);
                 Cylinder box = new Cylinder(1.15, 0.1);
 
-                double y = -3.5 - (instance.map.get(p) == null ? 0 : instance.map.get(p).getLayoutBounds().getHeight());
+                double y = -3.5 - getHeight(p);
 
                 box.setTranslateX(p3D.getX());
                 box.setTranslateY(y);
@@ -170,8 +173,8 @@ public class GameSceneController extends GuiController {
                 Group move;
 
                 if (isBlocked) {
-                    Box block1 = new Box(1, 0.2, 0.5);
-                    Box block2 = new Box(1, 0.2, 0.5);
+                    Box block1 = new Box(2, 0.2, 0.5);
+                    Box block2 = new Box(2, 0.2, 0.5);
                     block1.setRotationAxis(Rotate.Y_AXIS);
                     block1.setRotate(45);
                     block2.setRotationAxis(Rotate.Y_AXIS);
@@ -202,6 +205,10 @@ public class GameSceneController extends GuiController {
 
                 if (!isBlocked) {
                     box.setOnMouseClicked(event -> {
+                        if (instance.workers.containsValue(p)) {
+                            instance.notifyObservers(o -> o.onWorkerSelected(p));
+                        }
+
                         instance.notifyObservers(o -> o.onMoveSelected(p));
 
                         instance.board.getChildren().removeAll(instance.validMoves);
@@ -215,6 +222,7 @@ public class GameSceneController extends GuiController {
             instance.board.getChildren().addAll(validMoves);
         }, Duration.millis(200));
     }
+
 
     /**
      * Adds a worker on the map
@@ -236,7 +244,7 @@ public class GameSceneController extends GuiController {
 
             Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);
 
-            Group worker = RenderUtils.loadModel("/mesh/MaleBuilder_Blue.obj",
+            Group worker = RenderUtils.loadModel("/mesh/builder.obj",
                     "/textures/MaleBuilder_Tan_v001.png",
                     color);
 
@@ -253,9 +261,7 @@ public class GameSceneController extends GuiController {
                 tt.setInterpolator(Interpolator.EASE_BOTH);
                 tt.setFromY(-20);
                 tt.setToY(worker.getLayoutY());
-                tt.setOnFinished(event -> {
-                    instance.workers.put(worker, p);
-                });
+                tt.setOnFinished(event -> instance.workers.put(worker, p));
                 tt.play();
             } else {
                 instance.workers.put(worker, p);
@@ -331,17 +337,24 @@ public class GameSceneController extends GuiController {
      * @throws NoSuchElementException if there is not worker at given position
      */
     public void moveWorker(Point from, Point to, boolean isOwn) {
+        Optional<Group> workerOnDestination = workers.keySet().stream()
+                .filter(g -> workers.get(g).equals(to)).findFirst();
+
         runMapChange(() -> {
-            Group worker = workers.keySet().stream().filter(g -> workers.get(g).equals(from)).findFirst().get();
+            Optional<Group> optWorker = workers.keySet().stream().filter(g -> workers.get(g).equals(from)).findFirst();
+
+            if (optWorker.isEmpty()) {
+                throw new NoSuchElementException("Worker not found at given position");
+            }
+
+            Group worker = optWorker.get();
 
             Point3D from3D = RenderUtils.convert2DTo3D(instance.board, from.x, from.y);
             Point3D to3D = RenderUtils.convert2DTo3D(instance.board, to.x, to.y);
 
             Point3D diff = to3D.subtract(from3D);
 
-            if (worker == null) {
-                throw new NoSuchElementException("Worker not found at given position");
-            }
+
 
             double heightFrom = instance.map.get(from) != null ? instance.map.get(from).getLayoutBounds().getHeight() : 0;
             double heightTo = instance.map.get(to) != null ? instance.map.get(to).getLayoutBounds().getHeight() : 0;
@@ -361,7 +374,7 @@ public class GameSceneController extends GuiController {
             pt.play();
 
             addWorkerClickAction(worker, to, isOwn);
-        }, Duration.millis(400));
+        }, workerOnDestination.isPresent() ? Duration.millis(50) : Duration.millis(400));
     }
 
     /**
@@ -371,7 +384,7 @@ public class GameSceneController extends GuiController {
      * @param show  true if the interaction button must be shown
      */
     public void showInteract(Power power, boolean show) {
-        if (instance.interactButton == null && power == null) {
+        if (instance.interactButton == null || power == null) {
             return;
         }
 
@@ -427,15 +440,12 @@ public class GameSceneController extends GuiController {
     }
 
     private void runMapChange(Runnable toRun, Duration duration) {
-        pool.execute(() -> {
-            Platform.runLater(toRun);
-        });
+        pool.execute(() -> Platform.runLater(toRun));
 
         pool.execute(() -> {
             try {
-                Thread.sleep((long) duration.toMillis());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                TimeUnit.MILLISECONDS.sleep((long) duration.toMillis());
+            } catch (InterruptedException ignored) {
             }
         });
     }
@@ -449,34 +459,32 @@ public class GameSceneController extends GuiController {
     public void showEndGame(String username, boolean hasWon) {
         instance.hasGameEnded = true;
 
-        pool.schedule(() -> {
-            Platform.runLater(() -> {
-                try {
-                    Parent winOrLose = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();
-                    BorderPane pane = new BorderPane(winOrLose);
-                    AnchorPane.setTopAnchor(pane, 0D);
-                    AnchorPane.setBottomAnchor(pane, 0D);
-                    AnchorPane.setLeftAnchor(pane, 0D);
-                    AnchorPane.setRightAnchor(pane, 0D);
+        pool.schedule(() -> Platform.runLater(() -> {
+            try {
+                Parent winOrLose = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();
+                BorderPane pane = new BorderPane(winOrLose);
+                AnchorPane.setTopAnchor(pane, 0D);
+                AnchorPane.setBottomAnchor(pane, 0D);
+                AnchorPane.setLeftAnchor(pane, 0D);
+                AnchorPane.setRightAnchor(pane, 0D);
 
-                    WinLoseController.getInstance().setPlayerName(username);
+                WinLoseController.getInstance().setPlayerName(username);
 
-                    instance.pane.setEffect(new GaussianBlur(22));
+                instance.pane.setEffect(new GaussianBlur(22));
 
-                    ScaleTransition st = new ScaleTransition(Duration.seconds(1), pane);
-                    st.setFromX(0D);
-                    st.setFromY(0D);
-                    st.setFromZ(0D);
-                    st.setToX(1D);
-                    st.setToY(1D);
-                    st.setToZ(1D);
-                    st.play();
-                    ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }, 300, TimeUnit.MILLISECONDS);
+                ScaleTransition st = new ScaleTransition(Duration.seconds(1), pane);
+                st.setFromX(0D);
+                st.setFromY(0D);
+                st.setFromZ(0D);
+                st.setToX(1D);
+                st.setToY(1D);
+                st.setToZ(1D);
+                st.play();
+                ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }), 300, TimeUnit.MILLISECONDS);
     }
 
     private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
@@ -502,17 +510,6 @@ public class GameSceneController extends GuiController {
     public void setInteractButtonTexture(Power power) {
         Platform.runLater(() -> {
             String texture = "/gui_assets/god_cards/interactions/" + power.getInteractButton() + ".png";
-//            String defaultMessage = power.getInteraction().get(0).replaceAll(" ", "\n");
-//            int index = power.getInteraction().size() > 1 && instance.interactButton.getText().equals(defaultMessage)
-//                    ? 1 : 0;
-//
-//            instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
-
-//            instance.interactButton.setOnMouseClicked(event -> {
-//                if (power.getInteraction().size() > 1) {
-//                    instance.interactButton.setText(power.getInteraction().get(index).replaceAll(" ", "\n"));
-//                }
-//            });
 
             instance.interactButton.setStyle("-fx-background-size: 100% 100%;" +
                     "-fx-background-color: transparent;" +
@@ -680,6 +677,10 @@ public class GameSceneController extends GuiController {
                 selected.playFromStart();
             }
         });
+    }
+
+    private double getHeight(Point p) {
+        return instance.map.get(p) == null ? 0 : instance.map.get(p).getLayoutBounds().getHeight();
     }
 
     @Override

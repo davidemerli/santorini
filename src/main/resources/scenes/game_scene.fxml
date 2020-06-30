@@ -83,7 +83,7 @@
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#clickResume" prefHeight="50.0" prefWidth="200.0" text="RESUME" />
-                  <Button fx:id="quitPressed" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="QUIT" />
+                  <Button mnemonicParsing="false" onAction="#quitPressed" prefHeight="50.0" prefWidth="200.0" text="QUIT" />
                </children>
             </VBox>
          </children>

@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -45,6 +46,9 @@ public class Gui extends Application {
 
             Gui.primaryStage = primaryStage;
             changeScene(EnumScene.IP_SELECT);
+
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/title_island.png")));
+
             primaryStage.setTitle("Santorini");
             primaryStage.show();
         } catch (Exception ex) {
