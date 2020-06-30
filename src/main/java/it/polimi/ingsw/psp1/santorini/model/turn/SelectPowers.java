@@ -15,6 +15,9 @@ public class SelectPowers extends TurnState {
 
     private final List<Power> selectedPowers = new ArrayList<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Game game) {
         super.init(game);
@@ -23,6 +26,16 @@ public class SelectPowers extends TurnState {
         game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), game.getPlayerNumber()));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param game   current game
+     * @param player current player
+     * @param power  selected power
+     * @throws UnsupportedOperationException if the god is already choosen
+     * @throws IllegalArgumentException if god is not available in this game
+     */
     @Override
     public void selectGod(Game game, Player player, Power power) {
         if (selectedPowers.contains(power)) {
@@ -45,6 +58,14 @@ public class SelectPowers extends TurnState {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param game   current game
+     * @param player current player
+     * @throws UnsupportedOperationException during power selection
+     */
     @Override
     public void undo(Game game, Player player) {
         throw new UnsupportedOperationException("Cannot undo in power selection");

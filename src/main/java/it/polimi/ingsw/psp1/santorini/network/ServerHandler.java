@@ -11,6 +11,9 @@ import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
 import java.util.*;
 
+/**
+ * Manages the communication between clients and server
+ */
 public abstract class ServerHandler implements NetHandler {
     protected final Client client;
 
@@ -28,6 +31,11 @@ public abstract class ServerHandler implements NetHandler {
     protected EnumRequestType lastRequest;
     protected EnumTurnState lastTurnState;
 
+    /**
+     * Generic constructor using client
+     *
+     * @param client current client
+     */
     public ServerHandler(Client client) {
         this.client = client;
 
@@ -217,5 +225,8 @@ public abstract class ServerHandler implements NetHandler {
         lastTurnState = null;
     }
 
+    /**
+     * Disconnect
+     */
     public abstract void onDisconnect();
 }

@@ -10,10 +10,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Manages all user commands
+ */
 public class CommandManager {
 
     private final List<Command> commandList;
 
+    /**
+     * Generic constructor
+     * Creates a command list and adds all commands
+     */
     public CommandManager() {
         this.commandList = new ArrayList<>();
         this.addCMDs();
@@ -53,7 +60,12 @@ public class CommandManager {
         return "Invalid command, type help for the list of commands";
     }
 
-
+    /**
+     * Gets a command in a Optional if present
+     *
+     * @param command to get
+     * @return a Optional with command if present
+     */
     public Optional<Command> getCommand(String command) {
         return commandList.stream()
                 .filter(c -> c.getName().equalsIgnoreCase(command) || c.getAliases().contains(command.toLowerCase()))

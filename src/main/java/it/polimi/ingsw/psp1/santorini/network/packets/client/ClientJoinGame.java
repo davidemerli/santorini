@@ -4,7 +4,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client joins to game
+ * Client packet containing the information to join the game
  */
 public class ClientJoinGame implements Packet<ClientHandler> {
 
@@ -21,6 +21,9 @@ public class ClientJoinGame implements Packet<ClientHandler> {
         this.gameRoom = gameRoom;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleJoinGame(this);
@@ -34,6 +37,9 @@ public class ClientJoinGame implements Packet<ClientHandler> {
         return this.gameRoom;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(gameRoom, playerNumber);

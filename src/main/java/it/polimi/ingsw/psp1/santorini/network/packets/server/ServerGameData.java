@@ -34,6 +34,9 @@ public class ServerGameData implements Packet<ServerHandler> {
         this.forced = forced;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ServerHandler netHandler) {
         netHandler.handleGameData(this);
@@ -55,6 +58,9 @@ public class ServerGameData implements Packet<ServerHandler> {
         return forced;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String workers = players.stream().map(PlayerData::toString).collect(Collectors.joining(","));

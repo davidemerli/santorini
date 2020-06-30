@@ -9,8 +9,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientChoosePower;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Used to select god from a given list
+ */
 public class CommandSelectPower extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSelectPower() {
         super("selectpower",
                 "Selects a power from a given list",

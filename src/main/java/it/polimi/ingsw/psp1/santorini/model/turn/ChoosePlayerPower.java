@@ -10,12 +10,24 @@ import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
  */
 public class ChoosePlayerPower extends TurnState {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Game game) {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_POWER);
         game.notifyObservers(o -> o.sendPowerList(game.getAvailablePowers(), 1));
     }
 
+    /**
+     * {@inheritDoc}
+     * </p>
+     *
+     * @param game   current game
+     * @param player current player
+     * @param power  selected power
+     * @throws IllegalArgumentException Invalid power selected
+     */
     @Override
     public void selectGod(Game game, Player player, Power power) {
         if (!game.getAvailablePowers().contains(power)) {

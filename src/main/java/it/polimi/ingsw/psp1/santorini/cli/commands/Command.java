@@ -5,6 +5,9 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 
 import java.util.List;
 
+/**
+ * Defines the structure of a generic command
+ */
 public abstract class Command {
 
     private final String cmdName;
@@ -14,6 +17,16 @@ public abstract class Command {
 
     private final List<String> aliases;
 
+    /**
+     * Generic constructor
+     * Defines the command name, the command description, the usage, the pattern and all aliases
+     *
+     * @param cmdName name of the command
+     * @param desc    description of the command
+     * @param usage   usage of the command
+     * @param pattern pattern argument of the command
+     * @param aliases all command aliases
+     */
     public Command(String cmdName, String desc, String usage, String pattern, List<String> aliases) {
         this.cmdName = cmdName;
         this.desc = desc;
@@ -30,7 +43,7 @@ public abstract class Command {
      * @param input         client input
      * @param arguments     input arguments
      * @return command response
-     * @throws Exception
+     * @throws Exception    exception
      */
     public abstract String onCommand(Client client, CLIServerHandler serverHandler,
                                      String input, String[] arguments) throws Exception;

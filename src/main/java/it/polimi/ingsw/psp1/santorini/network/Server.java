@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
+/*
  * Manages the game and the progress of the turns of the various clients
  */
 public class Server implements Runnable {

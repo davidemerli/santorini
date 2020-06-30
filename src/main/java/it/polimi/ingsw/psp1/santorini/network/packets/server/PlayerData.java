@@ -7,12 +7,22 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Manages the main information about players
+ */
 public class PlayerData implements Serializable {
 
     private final String name;
     private final Power power;
     private final List<Worker> workers;
 
+    /**
+     * Generic constructor
+     *
+     * @param name    player name
+     * @param power   player power
+     * @param workers workers list
+     */
     public PlayerData(String name, Power power, List<Worker> workers) {
         this.name = name;
         this.power = power;
@@ -31,6 +41,9 @@ public class PlayerData implements Serializable {
         return workers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String workerList = workers.stream()

@@ -12,10 +12,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * Manages all server packets
+ */
 public class CLIServerHandler extends ServerHandler implements Runnable {
 
     private final CommandManager commandManager;
 
+    /**
+     * Generic constructor using client
+     * Creates a new command manager
+     *
+     * @param client current client
+     */
     public CLIServerHandler(Client client) {
         super(client);
         this.commandManager = new CommandManager();

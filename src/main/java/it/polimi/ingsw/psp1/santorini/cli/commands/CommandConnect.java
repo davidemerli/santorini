@@ -6,11 +6,18 @@ import it.polimi.ingsw.psp1.santorini.network.Client;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Used to established a connection with the server
+ */
 public class CommandConnect extends Command {
 
     private String lastIp;
     private String lastPort;
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandConnect() {
         super("connect",
                 "Connects to server, parameters not specified are inferred or saved from previous command calls",

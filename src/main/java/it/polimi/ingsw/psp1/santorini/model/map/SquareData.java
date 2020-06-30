@@ -3,7 +3,7 @@ package it.polimi.ingsw.psp1.santorini.model.map;
 import java.io.Serializable;
 
 /**
- * Defines a standard block of the map containing
+ * Defines a standard block of the map, containing
  * the level of the block and the presence of a dome
  */
 public class SquareData implements Serializable {

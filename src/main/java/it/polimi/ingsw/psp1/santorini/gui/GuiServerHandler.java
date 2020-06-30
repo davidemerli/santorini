@@ -18,10 +18,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Manages server behaviour in GUI
+ */
 public class GuiServerHandler extends ServerHandler {
 
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
+    /**
+     * Generic constructor using client
+     *
+     * @param client current client
+     */
     public GuiServerHandler(Client client) {
         super(client);
 
@@ -37,6 +45,9 @@ public class GuiServerHandler extends ServerHandler {
         WaitGodSelectionController.getInstance().addObserver(guiObserver);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleGameData(ServerGameData packet) {
         String first = playerDataList.get(0).getName();

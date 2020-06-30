@@ -16,6 +16,10 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Objects;
 
+//TODO
+/**
+ * Defines the GUI of the game
+ */
 public class Gui extends Application {
 
     private static final Gui instance = new Gui();

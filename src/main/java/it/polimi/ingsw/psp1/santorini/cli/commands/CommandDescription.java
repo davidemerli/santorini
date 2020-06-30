@@ -11,8 +11,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Used to obtain the god description
+ */
 public class CommandDescription extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandDescription() {
         super("description",
                 "Shows the selected God's description",

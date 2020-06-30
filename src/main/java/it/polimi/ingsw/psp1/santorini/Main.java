@@ -9,8 +9,16 @@ import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 
 import java.util.List;
 
+/**
+ * Controls arguments and starts clients, server and gui or cli
+ */
 public class Main {
 
+    /**
+     * Main method
+     *
+     * @param args jar argument
+     */
     public static void main(String[] args) {
         List<String> arguments = List.of(args);
 

@@ -5,6 +5,11 @@ import it.polimi.ingsw.psp1.santorini.network.NetHandler;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * Defines a generic packet
+ *
+ * @param <T> //TODO
+ */
 public interface Packet<T extends NetHandler> extends Serializable {
 
     /**
@@ -14,6 +19,11 @@ public interface Packet<T extends NetHandler> extends Serializable {
      */
     void processPacket(T netHandler);
 
+    /**
+     * Pacchetto su stringa
+     * @param values
+     * @return
+     */
     default String toString(Object... values) {
         return getClass().getSimpleName() + Arrays.toString(values);
     }

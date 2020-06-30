@@ -19,6 +19,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+/**
+ * Turns client input into commands for the controller to apply changes to the model
+ */
 public class RemoteView extends View {
 
     private final ClientConnectionHandler connection;

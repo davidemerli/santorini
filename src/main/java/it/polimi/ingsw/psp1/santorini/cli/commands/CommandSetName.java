@@ -7,8 +7,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSetName;
 
 import java.util.List;
 
+/**
+ * Used to set a player username
+ */
 public class CommandSetName extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandSetName() {
         super("setname",
                 "Tries to set an username on the server",

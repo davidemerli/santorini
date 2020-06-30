@@ -9,7 +9,15 @@ import java.util.Objects;
  */
 public class Point implements Serializable {
 
-    public final int x, y;
+    /**
+     * x coordinate
+     */
+    public final int x;
+
+    /**
+     * y coordinate
+     */
+    public final int y;
 
     /**
      * Generic constructor using coordinates

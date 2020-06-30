@@ -5,7 +5,7 @@ import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
 
 /**
- * Client selects a square on the map
+ * Client packet containing a selected square
  */
 public class ClientSelectSquare implements Packet<ClientHandler> {
 
@@ -19,6 +19,9 @@ public class ClientSelectSquare implements Packet<ClientHandler> {
         this.selectedSquare = selectedSquare;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handleSquareSelect(this);
@@ -28,6 +31,9 @@ public class ClientSelectSquare implements Packet<ClientHandler> {
         return this.selectedSquare;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(selectedSquare);

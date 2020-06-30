@@ -9,16 +9,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Server packet containing all possible movements
+ */
 public class ServerMovePossibilities implements Packet<ServerHandler> {
 
     private final List<Point> validMoves;
     private final Map<Power, List<Point>> blockedMoves;
 
+    /**
+     * Generic constructor
+     *
+     * @param validMoves   valid moves list
+     * @param blockedMoves blocked moves list
+     */
     public ServerMovePossibilities(List<Point> validMoves, Map<Power, List<Point>> blockedMoves) {
         this.validMoves = validMoves;
         this.blockedMoves = blockedMoves;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ServerHandler netHandler) {
         netHandler.handleReceivedMoves(this);
@@ -32,6 +44,9 @@ public class ServerMovePossibilities implements Packet<ServerHandler> {
         return blockedMoves;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String invalid = blockedMoves.entrySet().stream()

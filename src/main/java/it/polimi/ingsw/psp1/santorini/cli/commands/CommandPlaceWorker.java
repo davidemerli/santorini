@@ -8,8 +8,15 @@ import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectSquare;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Used to place worker
+ */
 public class CommandPlaceWorker extends Command {
 
+    /**
+     * Generic constructor
+     * Defines the command name, the description, the types of argument and all alias
+     */
     public CommandPlaceWorker() {
         super("placeworker",
                 "Places your worker in the map",

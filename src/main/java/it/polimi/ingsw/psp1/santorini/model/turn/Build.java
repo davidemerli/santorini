@@ -14,6 +14,9 @@ import java.util.Optional;
  */
 public class Build extends TurnState {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Game game) {
         super.init(game);
@@ -21,6 +24,17 @@ public class Build extends TurnState {
         genericMoveOrBuildRequest(game);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param game     current game
+     * @param player   current player
+     * @param position of the selected square
+     * @throws UnsupportedOperationException if try to build with no selected worker
+     * @throws IllegalArgumentException if given position is forbidden build position by some power
+     * @throws IllegalArgumentException if the build position is invalid
+     */
     @Override
     public void selectSquare(Game game, Player player, Point position) {
         Optional<Worker> optWorker = player.getSelectedWorker();
@@ -42,6 +56,16 @@ public class Build extends TurnState {
         game.notifyObservers(o -> o.playerBuild(player, optWorker.get(), position, game.getMap().hasDome(position)));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     *
+     * @param game   current game
+     * @param player current player
+     * @param worker selected by the player
+     * @throws NoSuchElementException if player does not own this worker
+     * @throws UnsupportedOperationException if worker is locked from previous turn
+     */
     @Override
     public void selectWorker(Game game, Player player, Worker worker) {
         //TODO: make abstract state that Move & Build will inherit from (also with generic MoveOrBuildRequest)
@@ -62,11 +86,17 @@ public class Build extends TurnState {
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_SQUARE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void toggleInteraction(Game game, Player player) {
         player.getPower().onToggleInteraction(game);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldShowInteraction(Game game, Player player) {
         return player.getPower().shouldShowInteraction(game);

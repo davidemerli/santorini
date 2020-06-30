@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Defines a generic player
+ * Defines a generic player who can join or create a game
  */
 public class Player implements Cloneable {
 
@@ -166,6 +166,9 @@ public class Player implements Cloneable {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -177,6 +180,9 @@ public class Player implements Cloneable {
         return Objects.equals(name, player.name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name);
@@ -200,6 +206,9 @@ public class Player implements Cloneable {
         setSelectedWorker(optWorker.get());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String workers = workerList.stream()

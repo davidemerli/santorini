@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Client selects his god that will play
+ * Client packet containing
  */
 public class ClientChoosePower implements Packet<ClientHandler> {
 
@@ -34,6 +34,9 @@ public class ClientChoosePower implements Packet<ClientHandler> {
         this(Collections.singletonList(power));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processPacket(ClientHandler netHandler) {
         netHandler.handlePowerChoosing(this);
@@ -43,6 +46,9 @@ public class ClientChoosePower implements Packet<ClientHandler> {
         return this.powers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return toString(getPowers().stream().map(Power::getName).collect(Collectors.joining(",")));

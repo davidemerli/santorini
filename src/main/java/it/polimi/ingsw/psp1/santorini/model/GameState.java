@@ -8,6 +8,9 @@ import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the actual state of the game
+ */
 public class GameState {
     private final GameMap previousMap;
     private final TurnState previousTurnState;
