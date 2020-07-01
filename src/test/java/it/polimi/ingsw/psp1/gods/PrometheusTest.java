@@ -38,9 +38,12 @@ public class PrometheusTest {
     @Test
     public void onYourMove_toggleInteraction_shouldGoBuild() {
         Point position = new Point(1, 1);
+
         Worker w = new Worker(position);
+        Worker w2 = new Worker(new Point(4,4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
@@ -58,10 +61,14 @@ public class PrometheusTest {
         Point oldPosition = new Point(1, 1);
         Point newPosition = new Point(2, 2);
         Point blockedPosition = new Point(2, 1);
+
         Worker w = new Worker(oldPosition);
+        Worker w2 = new Worker(new Point(4,4));
+
         game.getMap().buildBlock(blockedPosition, false);
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 

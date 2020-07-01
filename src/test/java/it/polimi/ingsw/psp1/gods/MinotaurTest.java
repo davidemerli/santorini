@@ -71,10 +71,12 @@ public class MinotaurTest {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
         Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(1, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
         player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -90,9 +92,13 @@ public class MinotaurTest {
         Worker w1 = new Worker(new Point(2, 2));
         Point e = new Point(enemyPos);
         Worker w2 = new Worker(e);
+        Worker w3 = new Worker(new Point(4, 1));
+        Worker w4 = new Worker(new Point(1, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -108,10 +114,12 @@ public class MinotaurTest {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
         Worker w3 = new Worker(new Point(3, 3));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
         player2.addWorker(w3);
+        player1.addWorker(w4);
 
         game.startTurn();
 

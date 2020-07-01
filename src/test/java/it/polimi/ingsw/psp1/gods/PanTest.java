@@ -42,8 +42,11 @@ public class PanTest {
         game.getMap().buildBlock(oldPosition, false);
 
         Worker w = new Worker(oldPosition);
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
+
 
         game.startTurn();
 

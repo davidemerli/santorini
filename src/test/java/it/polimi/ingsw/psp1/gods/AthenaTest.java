@@ -50,12 +50,16 @@ public class AthenaTest {
         Point blockedPosition = new Point(2, 3);
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
+        Worker w3 = new Worker(new Point(3, 3));
+        Worker w4 = new Worker(new Point(4, 4));
 
         game.getMap().buildBlock(newPosition, false);
         game.getMap().buildBlock(blockedPosition, false);
 
         player1.addWorker(w1);
+        player1.addWorker(w3);
         player2.addWorker(w2);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -77,22 +81,28 @@ public class AthenaTest {
     public void onBeginTurn_normalBehaviour_shouldLose() {
         Worker w1 = new Worker(new Point(2, 2));
         Worker w2 = new Worker(new Point(0, 0));
+        Worker w3 = new Worker(new Point(4, 4));
+        Worker w4 = new Worker(new Point(0, 4));
         Point newPosition = (new Point(2, 3));
 
         game.getMap().buildBlock(new Point(1, 0), true);
         game.getMap().buildBlock(new Point(1, 1), true);
         game.getMap().buildBlock(new Point(0, 1), false);
+        game.getMap().buildBlock(new Point(3, 3), true);
+        game.getMap().buildBlock(new Point(4, 3), true);
+        game.getMap().buildBlock(new Point(3, 4), false);
         game.getMap().buildBlock(newPosition, false);
 
-
         player1.addWorker(w1);
+        player1.addWorker(w3);
         player2.addWorker(w2);
+        player2.addWorker(w4);
 
         game.startTurn();
 
         game.getTurnState().selectWorker(game, player1, w1);
         game.getTurnState().selectSquare(game, player1, newPosition);
-        game.getTurnState().selectSquare(game, player1, new Point (3,3));
+        game.getTurnState().selectSquare(game, player1, new Point (3,2));
 
         while (!game.getCurrentPlayer().equals(player2));
 

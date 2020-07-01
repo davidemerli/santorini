@@ -37,9 +37,13 @@ public class ZeusTest {
     @Test
     public void getValidMoves_normalBehaviour_shouldBuildBelow() {
         Point position = new Point(1, 1);
+
         Worker w = new Worker(position);
+        Worker w2 = new Worker(new Point(4,4));
+
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 

@@ -38,8 +38,14 @@ public class MortalTest {
     @Test
     public void onBeginTurn_normalBehaviour_shouldGoToMove() {
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(4, 4));
+        Worker w3 = new Worker(new Point(2, 2));
+        Worker w4 = new Worker(new Point(3, 2));
 
         player1.addWorker(w);
+        player1.addWorker(w2);
+        player2.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -51,12 +57,21 @@ public class MortalTest {
     @Test
     public void onBeginTurn_normalBehaviour_shouldLose() {
         Worker w = new Worker(new Point(0, 0));
+        Worker w2 = new Worker(new Point(4, 4));
+        Worker w3 = new Worker(new Point(2, 2));
+        Worker w4 = new Worker(new Point(3, 2));
         
         game.getMap().buildBlock(new Point (0, 1), true);
         game.getMap().buildBlock(new Point (1, 0), true);
         game.getMap().buildBlock(new Point (1, 1), true);
+        game.getMap().buildBlock(new Point (4, 3), true);
+        game.getMap().buildBlock(new Point (3, 3), true);
+        game.getMap().buildBlock(new Point (3, 4), true);
         
         player1.addWorker(w);
+        player1.addWorker(w2);
+        player2.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -72,11 +87,18 @@ public class MortalTest {
     @Test
     public void onYourBuild_normalBehaviour_shouldBuild() {
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(4, 4));
+        Worker w3 = new Worker(new Point(2, 3));
+        Worker w4 = new Worker(new Point(3, 2));
+
         Point newPosition = new Point(2, 2);
 
         int oldLevel = game.getMap().getLevel(newPosition);
 
         player1.addWorker(w);
+        player1.addWorker(w2);
+        player2.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -94,8 +116,14 @@ public class MortalTest {
         Point oldPosition = new Point(1, 1);
         Point newPosition = new Point(2, 2);
         Worker w = new Worker(oldPosition);
+        Worker w2 = new Worker(new Point(4, 4));
+        Worker w3 = new Worker(new Point(2, 3));
+        Worker w4 = new Worker(new Point(3, 2));
 
         player1.addWorker(w);
+        player1.addWorker(w2);
+        player2.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -111,11 +139,17 @@ public class MortalTest {
         Point oldPosition = new Point(1, 1);
         Point newPosition = new Point(2, 2);
         Worker w = new Worker(oldPosition);
+        Worker w2 = new Worker(new Point(4, 4));
+        Worker w3 = new Worker(new Point(2, 3));
+        Worker w4 = new Worker(new Point(3, 2));
 
         IntStream.range(0, 2).forEach(i -> game.getMap().buildBlock(oldPosition, false));
         IntStream.range(0, 3).forEach(i -> game.getMap().buildBlock(newPosition, false));
 
         player1.addWorker(w);
+        player1.addWorker(w2);
+        player2.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -130,10 +164,12 @@ public class MortalTest {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
         Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
         player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -147,10 +183,17 @@ public class MortalTest {
     @Test
     public void getValidMoves_normalBehaviourMove_shouldNotContainDome() {
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(2, 2));
+        Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(4, 4));
+
         Point position = new Point(2, 2);
         game.getMap().buildBlock(position, true);
 
         player1.addWorker(w);
+        player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -164,11 +207,19 @@ public class MortalTest {
     public void getValidMoves_normalBehaviourMove_shouldNotContainTooHighPlace() {
         Point oldPosition = new Point(2, 2);
         Point newPosition = new Point(2, 2);
+
         Worker w = new Worker(new Point(oldPosition));
+        Worker w2 = new Worker(new Point(3, 3));
+        Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(4, 4));
+
         IntStream.range(0, 0).forEach(i -> game.getMap().buildBlock(oldPosition, false));
         IntStream.range(0, 2).forEach(i -> game.getMap().buildBlock(newPosition, false));
 
         player1.addWorker(w);
+        player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -181,10 +232,17 @@ public class MortalTest {
     @Test
     public void getValidMoves_normalBehaviourBuild_shouldNotContainDome() {
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(3, 3));
+        Worker w3 = new Worker(new Point(3, 2));
+        Worker w4 = new Worker(new Point(4, 4));
+
         Point position = new Point(2, 2);
         game.getMap().buildBlock(position, true);
 
         player1.addWorker(w);
+        player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -200,10 +258,12 @@ public class MortalTest {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
         Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
         player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 

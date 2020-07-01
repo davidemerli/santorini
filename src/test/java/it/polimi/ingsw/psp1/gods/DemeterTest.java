@@ -40,8 +40,10 @@ public class DemeterTest {
         Point startPosition = new Point(1, 1);
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(startPosition);
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
@@ -62,8 +64,10 @@ public class DemeterTest {
         Point startPosition = new Point(1, 1);
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(startPosition);
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 

@@ -16,19 +16,19 @@ import static org.junit.Assert.*;
 public class HephaestusTest {
 
     private Game game;
-    private Player player;
+    private Player player, player2;
 
     @Before
     public void setup() {
         this.game = new Game("1",2);
         this.player = new Player("p1");
-        Player player2 = new Player("p2");
+//        Player player2 = new Player("p2");
 
         game.addPlayer(player);
-        game.addPlayer(player2);
+//        game.addPlayer(player2);
 
         player.setPower(new Hephaestus());
-        player2.setPower(new Mortal());
+//        player2.setPower(new Mortal());
     }
 
     @After
@@ -42,8 +42,10 @@ public class HephaestusTest {
     public void onYourBuild_normalBehaviour_shouldBuildOnPreviousPosition() {
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
@@ -65,8 +67,10 @@ public class HephaestusTest {
     public void onYourBuild_normalBehaviour_shouldNotRebuildIfDome() {
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
@@ -87,8 +91,10 @@ public class HephaestusTest {
         Point startPosition = new Point(1, 1);
         Point firstBuild = new Point(2, 2);
         Worker w = new Worker(startPosition);
+        Worker w2 = new Worker(new Point(4, 4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
