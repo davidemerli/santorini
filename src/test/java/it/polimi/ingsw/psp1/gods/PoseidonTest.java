@@ -22,13 +22,10 @@ public class PoseidonTest {
     public void setup() {
         this.game = new Game("1",2);
         this.player = new Player("p1");
-//        Player player2 = new Player("p2");
 
         game.addPlayer(player);
-//        game.addPlayer(player2);
 
         player.setPower(new Poseidon());
-//        player2.setPower(new Mortal());
     }
 
     @After

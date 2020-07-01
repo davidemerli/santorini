@@ -36,7 +36,7 @@ public class PrintUtils {
     /**
      * Prints map's background in console
      */
-    static void printMapBackground() {
+    public static void printMapBackground() {
         StringBuilder bgLine = new StringBuilder();
         IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))
                 .forEach(i -> bgLine.append(" "));
