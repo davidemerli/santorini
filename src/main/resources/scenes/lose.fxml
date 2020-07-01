@@ -43,7 +43,7 @@
                   <Image url="@../gui_assets/gameGodFrameName2.png" />
                </image>
             </ImageView>
-            <Label text="YOU LOST" textFill="#00000080">
+            <Label text="DEFEAT" textFill="#00000080">
                <padding>
                   <Insets top="-135.0" />
                </padding>
