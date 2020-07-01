@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -24,19 +24,20 @@ public class IpSelectionController extends GuiController {
 
     @FXML
     private TextField ipTextField;
-
     @FXML
     private TextField portTextField;
-
     @FXML
     private Button connectButton;
-
     @FXML
     private ImageView connectionIcon;
-
     @FXML
     private Text connectionText;
 
+    private boolean connecting;
+
+    /**
+     * @return Singleton instance for this controller
+     */
     public static IpSelectionController getInstance() {
         if (instance == null) {
             instance = new IpSelectionController();
@@ -45,20 +46,24 @@ public class IpSelectionController extends GuiController {
         return instance;
     }
 
+    /**
+     * Initializes the controller
+     */
     @FXML
     private void initialize() {
-        getInstance().ipTextField = ipTextField;
-        getInstance().portTextField = portTextField;
-        getInstance().connectButton = connectButton;
-        getInstance().connectionIcon = connectionIcon;
-        getInstance().connectionText = connectionText;
+        instance.ipTextField = ipTextField;
+        instance.portTextField = portTextField;
+        instance.connectButton = connectButton;
+        instance.connectionIcon = connectionIcon;
+        instance.connectionText = connectionText;
 
-
-
-        getInstance().ipTextField.setTextFormatter(getTextFormatter());
-        getInstance().portTextField.setTextFormatter(getTextFormatter());
+        instance.ipTextField.setTextFormatter(getTextFormatter());
+        instance.portTextField.setTextFormatter(getTextFormatter());
     }
 
+    /**
+     * @return a TextFormatter that allows only normal characters
+     */
     private TextFormatter<String> getTextFormatter() {
         return new TextFormatter<>(change -> {
             if (!change.isContentChange()) {
@@ -73,23 +78,36 @@ public class IpSelectionController extends GuiController {
         });
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void buttonClick(ActionEvent event) {
-        String ip = getInstance().ipTextField.getText();
-        int port = Integer.parseInt(getInstance().portTextField.getText());
+        if (instance.connecting) {
+            return;
+        }
 
-        getInstance().notifyObservers(o -> o.connectToServer(ip, port));
+        String ip = instance.ipTextField.getText();
+        int port = Integer.parseInt(instance.portTextField.getText());
+
+        instance.notifyObservers(o -> o.connectToServer(ip, port));
     }
 
     /**
      * Starts the connection animation
      */
     public void startConnectionAnimation() {
-        Platform.runLater(() -> {
-            getInstance().connectionIcon.setVisible(true);
-            getInstance().connectionText.setVisible(true);
+        instance.connecting = true;
 
-            RotateTransition rt = new RotateTransition(Duration.millis(400), getInstance().connectionIcon);
+        Platform.runLater(() -> {
+            instance.connectionText.setText("Connecting...");
+            instance.connectionText.setFill(Color.valueOf("#000000cc"));
+            instance.connectionIcon.setVisible(true);
+            instance.connectionText.setVisible(true);
+
+            RotateTransition rt = new RotateTransition(Duration.millis(400), instance.connectionIcon);
             rt.setByAngle(360);
             rt.setCycleCount(Animation.INDEFINITE);
             rt.play();
@@ -100,8 +118,20 @@ public class IpSelectionController extends GuiController {
      * Stops the connection animation
      */
     public void stopConnectionAnimation() {
-        getInstance().connectionIcon.setVisible(false);
-        getInstance().connectionText.setVisible(false);
+        instance.connectionIcon.setVisible(false);
+        instance.connectionText.setVisible(false);
+    }
+
+    /**
+     * Shows a connection error
+     */
+    public void showConnectionError() {
+        instance.connectionText.setVisible(true);
+        instance.connectionIcon.setVisible(false);
+        instance.connectionText.setText("Connection Failed!");
+        instance.connectionText.setFill(Color.valueOf("#ff0000cc"));
+
+        instance.connecting = false;
     }
 
     /**
@@ -109,10 +139,12 @@ public class IpSelectionController extends GuiController {
      */
     public void changeToNameSelection() {
         Gui.getInstance().changeSceneSync(EnumScene.NAME_SELECT);
+
+        instance.connecting = false;
     }
 
     @Override
     public void reset() {
-
+        //Not needed in this specific case
     }
 }

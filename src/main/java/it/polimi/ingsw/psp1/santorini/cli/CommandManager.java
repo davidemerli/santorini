@@ -1,19 +1,16 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
-import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
-import it.polimi.ingsw.psp1.santorini.cli.Color;
 import it.polimi.ingsw.psp1.santorini.cli.commands.*;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Manages all user commands
  */
 public class CommandManager {
+
+    private static CommandManager instance;
 
     private final List<Command> commandList;
 
@@ -21,9 +18,20 @@ public class CommandManager {
      * Generic constructor
      * Creates a command list and adds all commands
      */
-    public CommandManager() {
+    private CommandManager() {
         this.commandList = new ArrayList<>();
         this.addCMDs();
+    }
+
+    /**
+     * @return command manager instance
+     */
+    public static CommandManager getInstance() {
+        if (instance == null) {
+            instance = new CommandManager();
+        }
+
+        return instance;
     }
 
     /**
@@ -75,10 +83,10 @@ public class CommandManager {
     /**
      * Adds all type of commands
      */
-    public void addCMDs() {
+    private void addCMDs() {
         commandList.add(new CommandConnect());
         commandList.add(new CommandCreateGame());
-        commandList.add(new CommandSurrender());
+//        commandList.add(new CommandSurrender());
         commandList.add(new CommandHelp());
         commandList.add(new CommandInteract());
         commandList.add(new CommandJoinGame());
@@ -91,6 +99,13 @@ public class CommandManager {
         commandList.add(new CommandSetName());
         commandList.add(new CommandDescription());
         commandList.add(new CommandUndo());
+    }
+
+    /**
+     * @return the list of all commands
+     */
+    public List<Command> getCommandList() {
+        return Collections.unmodifiableList(commandList);
     }
 }
 

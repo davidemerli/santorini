@@ -12,8 +12,7 @@ import java.util.List;
 public class CommandReload extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandReload() {
         super("reload",

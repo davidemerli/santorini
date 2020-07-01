@@ -52,6 +52,9 @@ public class WinLoseController extends GuiController {
     @FXML
     private Label playerNameLose;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static WinLoseController getInstance() {
         if (instance == null) {
             instance = new WinLoseController();
@@ -60,20 +63,28 @@ public class WinLoseController extends GuiController {
         return instance;
     }
 
+    /**
+     * Initializes the controller
+     */
     @FXML
     private void initialize() {
         initComponents(rightTrumpetWin, leftTrumpetWin, rightCloudWin, leftCloudWin);
         initComponents(rightTrumpetLose, leftTrumpetLose, rightCloudLose, leftCloudLose);
 
-        if(playerNameWin != null) {
+        if (playerNameWin != null) {
             getInstance().playerNameWin = playerNameWin;
         }
 
-        if(playerNameLose != null) {
+        if (playerNameLose != null) {
             getInstance().playerNameLose = playerNameLose;
         }
     }
 
+    /**
+     * Sets the client player name on the final screen
+     *
+     * @param username client player name
+     */
     public void setPlayerName(String username) {
         Platform.runLater(() -> {
             if (getInstance().playerNameWin != null) {
@@ -85,6 +96,14 @@ public class WinLoseController extends GuiController {
         });
     }
 
+    /**
+     * Setups animations
+     *
+     * @param rightTrumpet gui image
+     * @param leftTrumpet  gui image
+     * @param rightCloud   gui image
+     * @param leftCloud    gui image
+     */
     private void initComponents(ImageView rightTrumpet, ImageView leftTrumpet, ImageView rightCloud, ImageView leftCloud) {
         RotateTransition rt1 = new RotateTransition(Duration.seconds(3), rightTrumpet);
         RotateTransition rt2 = new RotateTransition(Duration.seconds(3), leftTrumpet);
@@ -125,6 +144,11 @@ public class WinLoseController extends GuiController {
         });
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     void clickMainMenu(ActionEvent event) {
         Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);

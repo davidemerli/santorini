@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 public class CommandSelectWorker extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSelectWorker() {
         super("selectworker",
@@ -43,7 +42,7 @@ public class CommandSelectWorker extends Command {
 
         Optional<PlayerData> optPlayer = serverHandler.getPlayerData();
 
-        if(optPlayer.isEmpty()) {
+        if (optPlayer.isEmpty()) {
             return "You are not part of any game";
         }
 

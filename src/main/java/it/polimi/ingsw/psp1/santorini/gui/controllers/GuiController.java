@@ -7,8 +7,10 @@ import it.polimi.ingsw.psp1.santorini.observer.Observable;
  * Generic GUI controller
  */
 public abstract class GuiController extends Observable<GuiObserver> {
+
     /**
-     * Reset
+     * Resets the controller
+     * (Used to reset after a game finishes, or there is a disconnection)
      */
     public abstract void reset();
 }

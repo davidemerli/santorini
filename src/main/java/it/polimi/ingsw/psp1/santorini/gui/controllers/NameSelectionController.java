@@ -1,13 +1,10 @@
 package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
-import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
-import it.polimi.ingsw.psp1.santorini.gui.Gui;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -29,6 +26,20 @@ public class NameSelectionController extends GuiController {
     @FXML
     private Label message;
 
+    /**
+     * @return Singleton instance for this controller
+     */
+    public static NameSelectionController getInstance() {
+        if (instance == null) {
+            instance = new NameSelectionController();
+        }
+
+        return instance;
+    }
+
+    /**
+     * Initializes the controller
+     */
     @FXML
     private void initialize() {
         getInstance().whirlpool = whirlpool;
@@ -41,6 +52,11 @@ public class NameSelectionController extends GuiController {
         rt.play();
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void onButtonClick(ActionEvent event) {
         getInstance().notifyObservers(o -> o.onNameSelection(nameTextField.getText()));
@@ -49,14 +65,6 @@ public class NameSelectionController extends GuiController {
         getInstance().message.setVisible(true);
         getInstance().message.setTextFill(Color.valueOf("#000000cc"));
         getInstance().message.setText("Seeking username validation...");
-    }
-
-    public static NameSelectionController getInstance() {
-        if (instance == null) {
-            instance = new NameSelectionController();
-        }
-
-        return instance;
     }
 
     /**

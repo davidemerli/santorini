@@ -17,8 +17,6 @@ import java.util.Scanner;
  */
 public class CLIServerHandler extends ServerHandler implements Runnable {
 
-    private final CommandManager commandManager;
-
     /**
      * Generic constructor using client
      * Creates a new command manager
@@ -27,8 +25,6 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
      */
     public CLIServerHandler(Client client) {
         super(client);
-        this.commandManager = new CommandManager();
-
         new Thread(this).start();
     }
 
@@ -67,7 +63,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
             PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y + 3);
             PrintUtils.resetCursor();
 
-            String result = commandManager.runCommand(client, this, scanner.nextLine());
+            String result = CommandManager.getInstance().runCommand(client, this, scanner.nextLine());
             PrintUtils.printCommand();
             PrintUtils.printFromCommand("Last action: " + result, 0, 2, true);
         }
@@ -117,8 +113,9 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
                         Color.BLUE + "selectpower" + Color.RESET);
                 break;
             case CHOOSE_GAME:
-                toStamp = String.format("Create or join a game with 'creategame' or 'join'",
-                        Color.BLUE + "selectpower" + Color.RESET);
+                toStamp = String.format("Create or join a game with '%s' or '%s'",
+                        Color.BLUE + "creategame" + Color.RESET,
+                        Color.BLUE + "join" + Color.RESET);
                 break;
             case SELECT_POWER:
                 toStamp = String.format("Choose your God Power: use '%s' command",
@@ -291,5 +288,10 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     @Override
     public void onDisconnect() {
         PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect", 0, -1, true);
+    }
+
+    @Override
+    public void onConnectionFail() {
+        PrintUtils.printFromCommand(Color.RED + "Connection failed", 0, -1, true);
     }
 }

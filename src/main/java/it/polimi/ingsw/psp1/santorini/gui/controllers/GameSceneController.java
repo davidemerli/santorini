@@ -76,6 +76,9 @@ public class GameSceneController extends GuiController {
     private RotateTransition undoRotate;
     private Future<?> changeUndoLabel;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static GameSceneController getInstance() {
         if (instance == null) {
             instance = new GameSceneController();
@@ -89,7 +92,7 @@ public class GameSceneController extends GuiController {
      * Makes possible the rotation of the stage
      */
     @FXML
-    public void initialize() {
+    private void initialize() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
@@ -172,7 +175,7 @@ public class GameSceneController extends GuiController {
 
                 Group move;
 
-                if (isBlocked) {
+                if (isBlocked) { //draws red move and and X on it
                     Box block1 = new Box(2, 0.2, 0.5);
                     Box block2 = new Box(2, 0.2, 0.5);
                     block1.setRotationAxis(Rotate.Y_AXIS);
@@ -222,7 +225,6 @@ public class GameSceneController extends GuiController {
             instance.board.getChildren().addAll(validMoves);
         }, Duration.millis(200));
     }
-
 
     /**
      * Adds a worker on the map
@@ -355,7 +357,6 @@ public class GameSceneController extends GuiController {
             Point3D diff = to3D.subtract(from3D);
 
 
-
             double heightFrom = instance.map.get(from) != null ? instance.map.get(from).getLayoutBounds().getHeight() : 0;
             double heightTo = instance.map.get(to) != null ? instance.map.get(to).getLayoutBounds().getHeight() : 0;
             double heightDiff = heightFrom - heightTo;
@@ -439,6 +440,13 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Enqueues a map animation
+     * Used to keep animations one after another
+     *
+     * @param toRun the map change function
+     * @param duration how much the change takes
+     */
     private void runMapChange(Runnable toRun, Duration duration) {
         pool.execute(() -> Platform.runLater(toRun));
 
@@ -487,6 +495,13 @@ public class GameSceneController extends GuiController {
         }), 300, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Setup worker 3D model click handling
+     *
+     * @param worker the worker model
+     * @param positionToSend position of the worker
+     * @param isOwn if the worker is one of the current player's
+     */
     private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
         Duration duration = Duration.millis(100);
 
@@ -507,6 +522,11 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Changes interact button texture
+     *
+     * @param power that defines the interaction behaviour
+     */
     public void setInteractButtonTexture(Power power) {
         Platform.runLater(() -> {
             String texture = "/gui_assets/god_cards/interactions/" + power.getInteractButton() + ".png";
@@ -517,12 +537,22 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void clickMenu(ActionEvent event) {
         instance.pane.setEffect(new GaussianBlur(22));
         instance.menu.setVisible(true);
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void clickResume(ActionEvent event) {
         instance.pane.setEffect(null);
@@ -554,6 +584,11 @@ public class GameSceneController extends GuiController {
         });
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void interactPressed(ActionEvent event) {
         instance.notifyObservers(GuiObserver::interactPressed);
@@ -568,11 +603,21 @@ public class GameSceneController extends GuiController {
         }
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void quitPressed(ActionEvent event) {
         instance.notifyObservers(GuiObserver::disconnect);
     }
 
+    /**
+     * Hud button handling
+     *
+     * @param event gui event
+     */
     @FXML
     private void undoPressed(ActionEvent event) {
         instance.undoLabel.setText("");
@@ -679,8 +724,12 @@ public class GameSceneController extends GuiController {
         });
     }
 
-    private double getHeight(Point p) {
-        return instance.map.get(p) == null ? 0 : instance.map.get(p).getLayoutBounds().getHeight();
+    /**
+     * @param point on the map
+     * @return the sum of the heights of the 3D blocks at a given position
+     */
+    private double getHeight(Point point) {
+        return instance.map.get(point) == null ? 0 : instance.map.get(point).getLayoutBounds().getHeight();
     }
 
     @Override

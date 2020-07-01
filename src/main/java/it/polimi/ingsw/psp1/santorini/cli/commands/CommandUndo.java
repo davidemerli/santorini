@@ -2,7 +2,6 @@ package it.polimi.ingsw.psp1.santorini.cli.commands;
 
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.Client;
-import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientRequestGameData;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientUndo;
 
 import java.util.List;
@@ -13,8 +12,7 @@ import java.util.List;
 public class CommandUndo extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandUndo() {
         super("undo",
@@ -33,6 +31,10 @@ public class CommandUndo extends Command {
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
         if (!client.isConnected()) {
             return "You are not connected.";
+        }
+
+        if (!serverHandler.isYourTurn()) {
+            return "Not your turn.";
         }
 
         client.sendPacket(new ClientUndo());

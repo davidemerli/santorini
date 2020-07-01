@@ -20,7 +20,7 @@ public class GuiObserver {
     private final GuiServerHandler serverHandler;
 
     /**
-     * Generic constructor using client and server handler
+     * Creates a gui observer using client and server handler
      *
      * @param client        current client
      * @param serverHandler valid server handler
@@ -31,7 +31,7 @@ public class GuiObserver {
     }
 
     /**
-     * Manages the pressure of the undo button
+     * Manages a request of undo
      */
     public void undoPressed() {
         if (serverHandler.isYourTurn()) {
@@ -41,6 +41,7 @@ public class GuiObserver {
 
     /**
      * Manages the selection of a square
+     *
      * @param point on the map
      */
     public void onMoveSelected(Point point) {
@@ -51,6 +52,7 @@ public class GuiObserver {
 
     /**
      * Manages the selection of a worker
+     *
      * @param p on the map
      */
     public void onWorkerSelected(Point p) {
@@ -74,14 +76,16 @@ public class GuiObserver {
             Platform.runLater(() -> {
                 if (client.isConnected()) {
                     IpSelectionController.getInstance().changeToNameSelection();
+                    IpSelectionController.getInstance().stopConnectionAnimation();
+                } else {
+                    IpSelectionController.getInstance().showConnectionError();
                 }
-                IpSelectionController.getInstance().stopConnectionAnimation();
             });
         }, 1000, TimeUnit.MILLISECONDS);
     }
 
     /**
-     * Manages the set of the name
+     * Manages the name selection
      *
      * @param name to be set
      */

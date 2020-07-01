@@ -19,10 +19,12 @@ public class StartingPlayerController extends GuiController {
 
     private static StartingPlayerController instance;
 
-
     @FXML
     private HBox playerBox;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static StartingPlayerController getInstance() {
         if (instance == null) {
             instance = new StartingPlayerController();
@@ -31,6 +33,9 @@ public class StartingPlayerController extends GuiController {
         return instance;
     }
 
+    /**
+     * Initializes the controller
+     */
     @FXML
     private void initialize() {
         getInstance().playerBox = playerBox;

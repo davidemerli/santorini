@@ -102,7 +102,7 @@
                         </Text>
                      </children>
                   </AnchorPane>
-                  <Button fx:id="joinX" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" style="-fx-background-color: #d62d2d;" text="x" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                  <Button fx:id="joinX" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" styleClass="button-exit" text="x" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets right="15.0" top="2.0" />
                      </GridPane.margin>
@@ -166,9 +166,9 @@
                         </Text>
                      </children>
                   </AnchorPane>
-                  <Button fx:id="createX" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" style="-fx-background-color: #d62d2d;" text="x" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                  <Button fx:id="createX" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clickX" prefHeight="35.0" prefWidth="35.0" styleClass="button-exit" text="x" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                      <GridPane.margin>
-                        <Insets left="15.0" top="2.0" />
+                        <Insets left="20.0" top="2.0" />
                      </GridPane.margin>
                      <padding>
                         <Insets bottom="-20.0" top="-20.0" />

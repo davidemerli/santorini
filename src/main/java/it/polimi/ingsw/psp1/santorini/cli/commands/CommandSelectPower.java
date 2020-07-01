@@ -15,8 +15,7 @@ import java.util.Optional;
 public class CommandSelectPower extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSelectPower() {
         super("selectpower",
@@ -70,14 +69,5 @@ public class CommandSelectPower extends Command {
         PrintUtils.printPowerList(serverHandler.getPowerList());
 
         return String.format("Selected power: '%s'", power.getClass().getSimpleName());
-    }
-
-    /**
-     * Checks if the string is an integer value
-     * @param string to check
-     * @return true if the string is an integer value
-     */
-    private boolean isNumeric(String string) {
-        return string.matches("\\d+");
     }
 }

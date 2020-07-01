@@ -39,6 +39,11 @@ public enum EnumScene {
         this.resource = resource;
     }
 
+    /**
+     * Loads the scene
+     * @return loaded scene
+     * @throws IOException if file not found
+     */
     public Parent load() throws IOException {
         if (scene == null) {
             scene = FXMLLoader.load(getClass().getResource("/scenes/" + resource + ".fxml"));

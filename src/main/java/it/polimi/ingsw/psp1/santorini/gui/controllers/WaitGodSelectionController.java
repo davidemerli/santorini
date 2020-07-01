@@ -15,15 +15,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,6 +42,9 @@ public class WaitGodSelectionController extends GuiController {
 
     private Map<String, PlayerPane> playerPanes;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static WaitGodSelectionController getInstance() {
         if (instance == null) {
             instance = new WaitGodSelectionController();
@@ -53,6 +53,9 @@ public class WaitGodSelectionController extends GuiController {
         return instance;
     }
 
+    /**
+     * Initializes the controller
+     */
     @FXML
     private void initialize() {
         getInstance().imageBox = imageBox;
@@ -184,6 +187,7 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    @Override
     public void reset() {
         Platform.runLater(() -> {
             if (getInstance().imageBox != null) {
@@ -196,6 +200,7 @@ public class WaitGodSelectionController extends GuiController {
 
     /**
      * Shows room ID
+     *
      * @param ID room ID
      */
     public void showRoomID(String ID) {
@@ -205,6 +210,11 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    /**
+     * Changes the displayed message
+     *
+     * @param message to be displayed
+     */
     public void setStateMessage(String message) {
         Platform.runLater(() -> {
             getInstance().whirlpool.setVisible(true);
@@ -214,10 +224,16 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    /**
+     * @return how many players are connected
+     */
     public int getConnectedPlayersCount() {
         return playerPanes.size();
     }
 
+    /**
+     * Stores player visual
+     */
     private static class PlayerPane {
         private final Pane pane;
         private final ImageView powerImage;

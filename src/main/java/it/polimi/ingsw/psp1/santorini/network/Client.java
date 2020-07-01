@@ -47,7 +47,7 @@ public class Client implements Runnable {
 
             new Thread(this).start(); //TODO: maybe use pool
         } catch (IOException e) {
-            e.printStackTrace();
+            serverHandler.onConnectionFail();
         }
     }
 

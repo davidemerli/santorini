@@ -15,8 +15,7 @@ public class CommandConnect extends Command {
     private String lastPort;
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandConnect() {
         super("connect",
@@ -41,10 +40,11 @@ public class CommandConnect extends Command {
 
         String ip, port;
 
+        //if no arguments are given tries to connect with default ones
         if (arguments.length == 0) {
             ip = Optional.ofNullable(lastIp).orElse("localhost");
             port = Optional.ofNullable(lastPort).orElse("34567");
-        } else if(arguments.length == 1){
+        } else if (arguments.length == 1) {
             ip = arguments[0];
             port = Optional.ofNullable(lastPort).orElse("34567");
         } else {
@@ -55,6 +55,7 @@ public class CommandConnect extends Command {
         serverHandler.reset();
         client.connectToServer(ip, Integer.parseInt(port));
 
+        //parameters are stored so it is possible to connect again without retyping them
         lastIp = ip;
         lastPort = port;
 

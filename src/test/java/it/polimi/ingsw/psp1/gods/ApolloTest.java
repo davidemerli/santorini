@@ -6,13 +6,11 @@ import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.Apollo;
 import it.polimi.ingsw.psp1.santorini.model.powers.Mortal;
-import it.polimi.ingsw.psp1.santorini.model.powers.Power;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -49,10 +47,12 @@ public class ApolloTest {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
         Worker w3 = new Worker(new Point(1, 2));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
         player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -66,9 +66,13 @@ public class ApolloTest {
     public void onYourMove_normalBehaviour_shouldSwapWorkers() {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(2, 2));
+        Worker w3 = new Worker(new Point(4, 3));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -83,9 +87,13 @@ public class ApolloTest {
     public void getValidMoves_normalBehaviour_shouldNotContainOtherWorkerPosition() {
         Worker w1 = new Worker(new Point(1, 1));
         Worker w2 = new Worker(new Point(3, 3));
+        Worker w3 = new Worker(new Point(4, 3));
+        Worker w4 = new Worker(new Point(4, 4));
 
         player1.addWorker(w1);
         player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
@@ -98,14 +106,23 @@ public class ApolloTest {
     public void onBeginTurn_normalBehaviour_shouldLose() {
         Worker w1 = new Worker(new Point(0, 0));
         Worker w2 = new Worker(new Point(1, 0));
+        Worker w3 = new Worker(new Point(4, 4));
+        Worker w4 = new Worker(new Point(4, 3));
 
-        game.getMap().buildBlock(new Point (2, 0), true);
-        game.getMap().buildBlock(new Point (0, 1), true);
-        game.getMap().buildBlock(new Point (1, 1), true);
-        game.getMap().buildBlock(new Point (2, 1), true);
+        game.getMap().buildBlock(new Point(2, 0), true);
+        game.getMap().buildBlock(new Point(0, 1), true);
+        game.getMap().buildBlock(new Point(1, 1), true);
+        game.getMap().buildBlock(new Point(2, 1), true);
+
+
+        game.getMap().buildBlock(new Point(3, 3), true);
+        game.getMap().buildBlock(new Point(3, 4), true);
+        game.getMap().buildBlock(new Point(4, 3), true);
 
         player1.addWorker(w1);
         player2.addWorker(w2);
+        player1.addWorker(w3);
+        player2.addWorker(w4);
 
         game.startTurn();
 
