@@ -193,12 +193,7 @@ public class Server implements Runnable {
      * @throws IllegalStateException         if players has not set a name yet
      */
     public void createGame(ClientConnectionHandler connectionHandler, int playerNumber) {
-        boolean isInGame = games.values().stream()
-                .map(Map::keySet)
-                .flatMap(Collection::stream)
-                .anyMatch(connectionHandler::equals);
-
-        if (isInGame) {
+        if (isInGame(connectionHandler)) {
             throw new UnsupportedOperationException("Connection already assigned to game");
         }
 
@@ -254,6 +249,10 @@ public class Server implements Runnable {
                 .filter(game -> game.getGameID().equals(gameRoom))
                 .findFirst();
 
+        if (isInGame(connectionHandler)) {
+            throw new UnsupportedOperationException("Connection already assigned to game");
+        }
+
         if (toJoin.isEmpty()) {
             throw new IllegalArgumentException("No game found with given ID");
         }
@@ -294,6 +293,10 @@ public class Server implements Runnable {
      */
     public void joinQueue(ClientConnectionHandler connectionHandler, int playerNumber) {
         Optional<Player> optPlayer = connectionHandler.getPlayer();
+
+        if (isInGame(connectionHandler)) {
+            throw new UnsupportedOperationException("Connection already assigned to game");
+        }
 
         if (optPlayer.isEmpty()) {
             throw new IllegalStateException("You need to set a name first");
@@ -342,6 +345,13 @@ public class Server implements Runnable {
                 .forEach(cch -> assignedPlayerUsernames.add(cch.getPlayer().get().getName()));
 
         return !assignedPlayerUsernames.contains(username);
+    }
+
+    private boolean isInGame(ClientConnectionHandler connectionHandler) {
+        return games.values().stream()
+                .map(Map::keySet)
+                .flatMap(Collection::stream)
+                .anyMatch(connectionHandler::equals);
     }
 
     /**

@@ -36,6 +36,10 @@ public class CommandDescription extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         Power power;
 
         List<Power> powerList = serverHandler.getPowerList().isEmpty() ?

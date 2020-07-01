@@ -160,6 +160,11 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
 
+        if(packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
+            PrintUtils.printMapBackground();
+            PrintUtils.printMap(gameMap);
+        }
+
         if (shouldShowInteraction && isYourTurn()) {
             PrintUtils.printFromCommand(String.format("You can use command '%s' to '%s'",
                     Color.RED + "interact" + Color.RESET,

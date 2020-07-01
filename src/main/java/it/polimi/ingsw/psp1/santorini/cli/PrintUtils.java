@@ -24,7 +24,7 @@ public class PrintUtils {
     private static final int SIZE = 3;
     private static final int SPACING = 1;
 
-    private static final int MAP_X = 2;
+    private static final int MAP_X = 1;
     private static final int MAP_Y = 5;
 
     private PrintUtils() {
@@ -228,7 +228,7 @@ public class PrintUtils {
      * @param y       row number
      * @param toClean true if the row must be deleted before printing
      */
-    public static void print(String string, int x, int y, boolean toClean) {
+    public synchronized static void print(String string, int x, int y, boolean toClean) {
         if (toClean) {
             clearRow(x, y);
         }

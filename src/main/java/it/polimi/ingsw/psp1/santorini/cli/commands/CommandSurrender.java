@@ -30,6 +30,10 @@ public class CommandSurrender extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         client.sendPacket(new ClientForfeit());
         return "You have surrendered";
     }

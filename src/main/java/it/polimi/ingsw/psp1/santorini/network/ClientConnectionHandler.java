@@ -110,6 +110,11 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
      */
     @Override
     public void handlePlayerSetName(ClientSetName packet) {
+        if(getPlayer().isPresent()) {
+            sendPacket(new ServerInvalidPacket("Username already set"));
+            return;
+        }
+
         if (server.isUsernameValid(packet.getName()) && server.isUsernameUnique(packet.getName())) {
             player = new Player(packet.getName());
 
@@ -127,7 +132,6 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
         try {
             server.createGame(this, packet.getPlayerNumber());
         } catch (Exception e) {
-            e.printStackTrace();
             sendPacket(new ServerInvalidPacket(e.getMessage()));
         }
     }
@@ -145,7 +149,7 @@ public class ClientConnectionHandler extends Observable<ConnectionObserver> impl
             } else {
                 server.joinQueue(this, packet.getPlayerNumber());
             }
-        } catch (IllegalStateException | IllegalArgumentException ex) {
+        } catch (IllegalStateException | IllegalArgumentException | UnsupportedOperationException ex) {
             sendPacket(new ServerInvalidPacket(ex.getMessage()));
         }
     }

@@ -35,6 +35,10 @@ public class CommandSelect extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         Point move;
 
         List<Point> validMoves = serverHandler.getValidMoves();

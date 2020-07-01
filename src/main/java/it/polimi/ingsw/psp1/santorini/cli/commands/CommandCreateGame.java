@@ -30,6 +30,10 @@ public class CommandCreateGame extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         int number = Integer.parseInt(arguments[0]);
 
         client.sendPacket(new ClientCreateGame(number));

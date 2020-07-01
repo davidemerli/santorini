@@ -31,6 +31,10 @@ public class CommandInteract extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         if (serverHandler.getShowInteraction()) {
             serverHandler.setShouldShowInteraction(false);
             client.sendPacket(new ClientToggleInteraction());

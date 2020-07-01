@@ -32,6 +32,10 @@ public class CommandSelectStartingPlayer extends Command {
      */
     @Override
     public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+        if (!client.isConnected()) {
+            return "You are not connected.";
+        }
+
         if (isNumeric(arguments[0])) {
             int index = Integer.parseInt(arguments[0]) - 1;
 
