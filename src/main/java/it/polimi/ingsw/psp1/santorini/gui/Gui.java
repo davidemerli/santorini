@@ -1,15 +1,20 @@
 package it.polimi.ingsw.psp1.santorini.gui;
 
 import it.polimi.ingsw.psp1.santorini.gui.controllers.EnumTransition;
-import it.polimi.ingsw.psp1.santorini.gui.controllers.GameSceneController;
-import javafx.animation.*;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -18,6 +23,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 //TODO
+
 /**
  * Defines the GUI of the game
  */
@@ -42,6 +48,13 @@ public class Gui extends Application {
             Font.loadFont(getClass().getResourceAsStream("/fonts/Diogenes.ttf"), 20);
             Font.loadFont(getClass().getResourceAsStream("/fonts/Mount Olympus.otf"), 20);
 
+            //removes undesired behaviour from SPACE and ENTER
+            primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, k -> {
+                if (k.getCode() == KeyCode.SPACE || k.getCode() == KeyCode.ENTER) {
+                    k.consume();
+                }
+            });
+
             EnumScene.GAME.load();
 
             Gui.primaryStage = primaryStage;
@@ -65,7 +78,7 @@ public class Gui extends Application {
 
     public void changeSceneSync(EnumScene scene) {
         Platform.runLater(() -> {
-            if(scene.equals(currentScene)) {
+            if (scene.equals(currentScene)) {
                 return;
             }
 

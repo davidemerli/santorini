@@ -90,6 +90,7 @@ public class CommandManager {
         commandList.add(new CommandSelectWorker());
         commandList.add(new CommandSetName());
         commandList.add(new CommandDescription());
+        commandList.add(new CommandUndo());
     }
 }
 

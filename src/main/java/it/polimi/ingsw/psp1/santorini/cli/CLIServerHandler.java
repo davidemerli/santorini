@@ -116,6 +116,10 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
                 toStamp = String.format("Choose God Powers for this game: use '%s' command",
                         Color.BLUE + "selectpower" + Color.RESET);
                 break;
+            case CHOOSE_GAME:
+                toStamp = String.format("Create or join a game with 'creategame' or 'join'",
+                        Color.BLUE + "selectpower" + Color.RESET);
+                break;
             case SELECT_POWER:
                 toStamp = String.format("Choose your God Power: use '%s' command",
                         Color.BLUE + "selectpower" + Color.RESET);
