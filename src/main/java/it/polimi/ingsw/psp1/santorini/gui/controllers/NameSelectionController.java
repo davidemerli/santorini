@@ -79,6 +79,9 @@ public class NameSelectionController extends GuiController {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         Platform.runLater(() -> {

@@ -735,6 +735,9 @@ public class GameSceneController extends GuiController {
         return instance.map.get(point) == null ? 0 : instance.map.get(point).getLayoutBounds().getHeight();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         resetMap();

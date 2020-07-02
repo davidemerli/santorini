@@ -159,6 +159,9 @@ public class WinLoseController extends GuiController {
         WinLoseController.getInstance().reset();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         setPlayerName("");

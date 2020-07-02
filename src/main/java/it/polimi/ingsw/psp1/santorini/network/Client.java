@@ -130,6 +130,11 @@ public class Client implements Runnable {
         debug = true;
     }
 
+    /**
+     * Checks connection
+     *
+     * @return true if is connected
+     */
     public boolean isConnected() {
         return connected;
     }
