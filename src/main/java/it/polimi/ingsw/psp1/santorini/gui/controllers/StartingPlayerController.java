@@ -69,6 +69,9 @@ public class StartingPlayerController extends GuiController {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         Platform.runLater(() -> {

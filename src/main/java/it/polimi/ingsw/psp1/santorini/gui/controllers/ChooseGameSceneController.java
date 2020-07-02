@@ -170,6 +170,9 @@ public class ChooseGameSceneController extends GuiController {
         WaitGodSelectionController.getInstance().setStateMessage(message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         //Not needed in this specific case

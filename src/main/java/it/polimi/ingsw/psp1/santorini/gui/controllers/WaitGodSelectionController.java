@@ -187,6 +187,9 @@ public class WaitGodSelectionController extends GuiController {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         Platform.runLater(() -> {

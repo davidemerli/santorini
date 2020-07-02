@@ -292,6 +292,11 @@ public class RemoteView extends View {
             removeAllObservers();
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * Notifies all clients
+         */
         @Override
         public void processUndo() {
             notifyObservers(o -> o.undo(RemoteView.this, getPlayer()));

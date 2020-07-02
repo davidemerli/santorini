@@ -57,6 +57,9 @@ public class Prometheus extends Mortal {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onMove(Player player, Worker worker, Point where, Game game) {
         super.onMove(player, worker, where, game);

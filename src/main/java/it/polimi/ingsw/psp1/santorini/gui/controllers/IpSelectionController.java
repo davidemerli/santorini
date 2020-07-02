@@ -143,6 +143,9 @@ public class IpSelectionController extends GuiController {
         instance.connecting = false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void reset() {
         //Not needed in this specific case

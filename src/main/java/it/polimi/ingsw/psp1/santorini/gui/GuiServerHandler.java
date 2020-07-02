@@ -45,6 +45,13 @@ public class GuiServerHandler extends ServerHandler {
         WaitGodSelectionController.getInstance().addObserver(guiObserver);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages game data
+     *
+     * @param packet to send
+     */
     @Override
     public void handleGameData(ServerGameData packet) {
         String first = playerDataList.get(0).getName();
@@ -83,6 +90,12 @@ public class GuiServerHandler extends ServerHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages all request types
+     * @param packet to send
+     */
     @Override
     public void handleRequest(ServerAskRequest packet) {
         super.handleRequest(packet);
@@ -133,6 +146,13 @@ public class GuiServerHandler extends ServerHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages player update
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
@@ -198,6 +218,13 @@ public class GuiServerHandler extends ServerHandler {
         GameSceneController.getInstance().showUndo(isYourTurn());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages received moves
+     *
+     * @param packet to send
+     */
     @Override
     public void handleReceivedMoves(ServerMovePossibilities packet) {
         super.handleReceivedMoves(packet);
@@ -213,11 +240,25 @@ public class GuiServerHandler extends ServerHandler {
         Gui.getInstance().changeSceneSync(EnumScene.GAME);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages errors
+     *
+     * @param packet to send
+     */
     @Override
     public void handleError(ServerInvalidPacket packet) {
         //No need to handle errors since user input is limited in GUI
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages player moves
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePlayerMove(ServerPlayerMove packet) {
         boolean ownData = packet.getPlayerData().getName().equals(playerName);
@@ -246,6 +287,13 @@ public class GuiServerHandler extends ServerHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages power list
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePowerList(ServerPowerList packet) {
         super.handlePowerList(packet);
@@ -255,6 +303,13 @@ public class GuiServerHandler extends ServerHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages player connection
+     *
+     * @param packet to send
+     */
     @Override
     public void handlePlayerConnected(ServerConnectedToGame packet) {
         super.handlePlayerConnected(packet);
@@ -275,6 +330,11 @@ public class GuiServerHandler extends ServerHandler {
                 2500, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages payer disconnection
+     */
     @Override
     public void onDisconnect() {
         pool.schedule(() -> {
@@ -289,12 +349,22 @@ public class GuiServerHandler extends ServerHandler {
         System.out.println("Connection lost, please reconnect.");
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages connection fail
+     */
     @Override
     public void onConnectionFail() {
         IpSelectionController.getInstance().stopConnectionAnimation();
         IpSelectionController.getInstance().showConnectionError();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Manages reset
+     */
     @Override
     public void reset() {
         super.reset();

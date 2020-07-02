@@ -42,6 +42,13 @@ public class Gui extends Application {
         return instance;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Starts GUI
+     *
+     * @param primaryStage primary stage
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -69,6 +76,9 @@ public class Gui extends Application {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stop() throws Exception {
         super.stop();
@@ -119,6 +129,10 @@ public class Gui extends Application {
         });
     }
 
+    /**
+     * Changes scene
+     * @param scene valid scene
+     */
     public void changeScene(EnumScene scene) {
         if (Objects.equals(currentScene, scene)) {
             return;
@@ -137,11 +151,21 @@ public class Gui extends Application {
         }
     }
 
+    /**
+     * Changes scene
+     * @param scenePane valid scene pane
+     */
     public void changeScene(Pane scenePane) {
         Scene newScene = new Scene(scenePane, primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
         primaryStage.setScene(newScene);
     }
 
+    /**
+     * Changes scene
+     *
+     * @param scene      valid scene
+     * @param transition transition type
+     */
     public void changeSceneSync(EnumScene scene, EnumTransition transition) {
         Platform.runLater(() -> {
             if (Objects.equals(currentScene, scene)) {
