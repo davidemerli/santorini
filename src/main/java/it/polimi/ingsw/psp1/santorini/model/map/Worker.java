@@ -42,6 +42,9 @@ public class Worker implements Serializable, Cloneable {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -53,11 +56,17 @@ public class Worker implements Serializable, Cloneable {
         return position.equals(worker.position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Worker @ " + position.toString();

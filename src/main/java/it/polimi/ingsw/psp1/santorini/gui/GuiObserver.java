@@ -139,6 +139,9 @@ public class GuiObserver {
         client.sendPacket(new ClientSelectStartingPlayer(playerName));
     }
 
+    /**
+     * Disconnection
+     */
     public void disconnect() {
         client.disconnect();
     }

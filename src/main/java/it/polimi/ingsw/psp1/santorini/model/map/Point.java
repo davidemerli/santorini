@@ -70,6 +70,9 @@ public class Point implements Serializable {
         return new Point(this.x - toSubtract.x, this.y - toSubtract.y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -81,11 +84,17 @@ public class Point implements Serializable {
         return x == point.x && y == point.y;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return String.format("Point [x:%d, y:%d]", x, y);

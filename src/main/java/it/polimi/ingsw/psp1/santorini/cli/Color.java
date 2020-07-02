@@ -1,5 +1,8 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
+/**
+ * Colors
+ */
 public enum Color {
 
     BLACK("\033[30m"),

@@ -97,6 +97,11 @@ public class Player implements Cloneable {
         this.selectedWorker = selectedWorker;
     }
 
+    /**
+     * True if worker is locked after moved
+     *
+     * @return true if worker is locked
+     */
     public boolean isWorkerLocked() {
         return isWorkerLocked;
     }

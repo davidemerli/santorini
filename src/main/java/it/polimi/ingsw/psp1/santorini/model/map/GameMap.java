@@ -206,6 +206,9 @@ public class GameMap implements Serializable {
         return list;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\n");
