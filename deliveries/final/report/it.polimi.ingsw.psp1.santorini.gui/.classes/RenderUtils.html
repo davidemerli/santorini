@@ -1,0 +1,253 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RenderUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RenderUtils (it.polimi.ingsw.psp1.santorini.gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RenderUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 56)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>5</i>&nbsp;import javafx.beans.property.DoubleProperty;
+<i>6</i>&nbsp;import javafx.beans.property.SimpleDoubleProperty;
+<i>7</i>&nbsp;import javafx.geometry.Point3D;
+<i>8</i>&nbsp;import javafx.scene.Group;
+<i>9</i>&nbsp;import javafx.scene.SubScene;
+<i>10</i>&nbsp;import javafx.scene.image.Image;
+<i>11</i>&nbsp;import javafx.scene.paint.Color;
+<i>12</i>&nbsp;import javafx.scene.paint.PhongMaterial;
+<i>13</i>&nbsp;import javafx.scene.shape.MeshView;
+<i>14</i>&nbsp;import javafx.scene.transform.Rotate;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import java.util.concurrent.Executors;
+<i>17</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Utils for the 3D game scene
+<i>21</i>&nbsp; */
+<b class="nc"><i>22</i>&nbsp;public class RenderUtils {</b>
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    private static final DoubleProperty angleX = new SimpleDoubleProperty(40 * 4);</b>
+<b class="nc"><i>25</i>&nbsp;    private static final DoubleProperty angleY = new SimpleDoubleProperty(0);</b>
+<i>26</i>&nbsp;    private static double anchorX, anchorY;
+<b class="nc"><i>27</i>&nbsp;    private static double anchorAngleX = 0;</b>
+<b class="nc"><i>28</i>&nbsp;    private static double anchorAngleY = 0;</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Generates a color from rainbow spectrum
+<i>32</i>&nbsp;     *
+<i>33</i>&nbsp;     * @param value determines the color with freq
+<i>34</i>&nbsp;     * @param freq frequency
+<i>35</i>&nbsp;     * @param p1 phase1
+<i>36</i>&nbsp;     * @param p2 phase2
+<i>37</i>&nbsp;     * @param p3 phase3
+<i>38</i>&nbsp;     * @param center center of the spectrum
+<i>39</i>&nbsp;     * @param width width of the spectrum
+<i>40</i>&nbsp;     * @return a color from rainbow hue
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public static Color makeColorGradient(long value, double freq, double p1, double p2, double p3,
+<i>43</i>&nbsp;                                          int center, int width) {
+<b class="nc"><i>44</i>&nbsp;        if (center == -1)</b>
+<b class="nc"><i>45</i>&nbsp;            center = 128;</b>
+<b class="nc"><i>46</i>&nbsp;        if (width == -1)</b>
+<b class="nc"><i>47</i>&nbsp;            width = 127;</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        int r = (int) (Math.sin(freq * value + p1) * width) + center;</b>
+<b class="nc"><i>50</i>&nbsp;        int g = (int) (Math.sin(freq * value + p2) * width) + center;</b>
+<b class="nc"><i>51</i>&nbsp;        int b = (int) (Math.sin(freq * value + p3) * width) + center;</b>
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;        return Color.rgb(r, g, b);</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Setups the map click rotate behaviour
+<i>58</i>&nbsp;     *
+<i>59</i>&nbsp;     * @param group model
+<i>60</i>&nbsp;     * @param scene with the model
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public static void initMouseControl(Group group, SubScene scene) {
+<b class="nc"><i>63</i>&nbsp;        Rotate rotateX = new Rotate(40 * 4, Rotate.X_AXIS);</b>
+<b class="nc"><i>64</i>&nbsp;        Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        group.getTransforms().addAll(rotateX, rotateY);</b>
+<b class="nc"><i>67</i>&nbsp;        rotateX.angleProperty().bind(angleX.divide(4));</b>
+<b class="nc"><i>68</i>&nbsp;        rotateY.angleProperty().bind(angleY.divide(4));</b>
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;        scene.setOnMousePressed(event -&gt; {</b>
+<b class="nc"><i>71</i>&nbsp;            anchorX = event.getSceneX();</b>
+<b class="nc"><i>72</i>&nbsp;            anchorY = event.getSceneY();</b>
+<b class="nc"><i>73</i>&nbsp;            anchorAngleX = angleX.get();</b>
+<b class="nc"><i>74</i>&nbsp;            anchorAngleY = angleY.get();</b>
+<i>75</i>&nbsp;        });
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;        scene.setOnMouseDragged(event -&gt; {</b>
+<b class="nc"><i>78</i>&nbsp;            angleX.set(anchorAngleX - anchorY + event.getSceneY());</b>
+<b class="nc"><i>79</i>&nbsp;            angleY.set(anchorAngleY + anchorX - event.getSceneX());</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;            if (angleX.get() &gt; 90 * 4) {</b>
+<b class="nc"><i>82</i>&nbsp;                angleX.set(90 * 4);</b>
+<i>83</i>&nbsp;            }
+<i>84</i>&nbsp;
+<b class="nc"><i>85</i>&nbsp;            if (angleX.get() &lt; 40 * 4) {</b>
+<b class="nc"><i>86</i>&nbsp;                angleX.set(40 * 4);</b>
+<i>87</i>&nbsp;            }
+<i>88</i>&nbsp;        });
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    /**
+<i>92</i>&nbsp;     * Converts a 2D Point to a 3D one on the board
+<i>93</i>&nbsp;     *
+<i>94</i>&nbsp;     * @param board the 3D board model
+<i>95</i>&nbsp;     * @param x coordinate x
+<i>96</i>&nbsp;     * @param y coordinate y
+<i>97</i>&nbsp;     * @return a Point3D
+<i>98</i>&nbsp;     */
+<i>99</i>&nbsp;    public static Point3D convert2DTo3D(Group board, double x, double y) {
+<b class="nc"><i>100</i>&nbsp;        double sideLength = getSideLength(board) * 0.95;</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        return new Point3D(x * sideLength / 5, 0, (4 - y) * sideLength / 5)</b>
+<b class="nc"><i>103</i>&nbsp;                .subtract(sideLength / 2, 0, sideLength / 2)</b>
+<b class="nc"><i>104</i>&nbsp;                .add(sideLength / 10, 0, sideLength / 10);</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    /**
+<i>108</i>&nbsp;     * Gets board side length
+<i>109</i>&nbsp;     *
+<i>110</i>&nbsp;     * @param group the game board
+<i>111</i>&nbsp;     * @return board side length
+<i>112</i>&nbsp;     */
+<i>113</i>&nbsp;    private static double getSideLength(Group group) {
+<b class="nc"><i>114</i>&nbsp;        double width = group.layoutBoundsProperty().getValue().getWidth();</b>
+<b class="nc"><i>115</i>&nbsp;        double depth = group.layoutBoundsProperty().getValue().getDepth();</b>
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;        return (width + depth) / 2;</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    /**
+<i>121</i>&nbsp;     * Loads a 3D .obj model
+<i>122</i>&nbsp;     *
+<i>123</i>&nbsp;     * @param obj 3D model file
+<i>124</i>&nbsp;     * @param texture to apply to model
+<i>125</i>&nbsp;     * @return loaded model
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    public static Group loadModel(String obj, String texture) {
+<b class="nc"><i>128</i>&nbsp;        return loadModel(obj, texture, Color.BLACK);</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    /**
+<i>132</i>&nbsp;     * Loads a 3D .obj model
+<i>133</i>&nbsp;     *
+<i>134</i>&nbsp;     * @param obj 3D model file
+<i>135</i>&nbsp;     * @param texture to apply to model
+<i>136</i>&nbsp;     * @param color to apply to the texture
+<i>137</i>&nbsp;     * @return loaded model
+<i>138</i>&nbsp;     */
+<i>139</i>&nbsp;    public static Group loadModel(String obj, String texture, Color color) {
+<b class="nc"><i>140</i>&nbsp;        Group modelRoot = new Group();</b>
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        ObjModelImporter importer = new ObjModelImporter();</b>
+<b class="nc"><i>143</i>&nbsp;        importer.read(RenderUtils.class.getResource(obj));</b>
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;        for (MeshView view : importer.getImport()) {</b>
+<b class="nc"><i>146</i>&nbsp;            modelRoot.getChildren().add(view);</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;            Image im = new Image(RenderUtils.class.getResourceAsStream(texture));</b>
+<i>149</i>&nbsp;
+<b class="nc"><i>150</i>&nbsp;            PhongMaterial material = new PhongMaterial(color);</b>
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;            if (color == null) {</b>
+<b class="nc"><i>153</i>&nbsp;                Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -&gt; {</b>
+<i>154</i>&nbsp;                    try {
+<b class="nc"><i>155</i>&nbsp;                        long time = System.currentTimeMillis() / 50;</b>
+<b class="nc"><i>156</i>&nbsp;                        Color rainbowColor = RenderUtils.makeColorGradient(time, 0.3, 0, 2, 4, -1, -1).darker();</b>
+<b class="nc"><i>157</i>&nbsp;                        material.setDiffuseColor(rainbowColor);</b>
+<b class="nc"><i>158</i>&nbsp;                    } catch (Exception ex) {</b>
+<b class="nc"><i>159</i>&nbsp;                        ex.printStackTrace();</b>
+<b class="nc"><i>160</i>&nbsp;                    }</b>
+<i>161</i>&nbsp;                }, 0, 100, TimeUnit.MILLISECONDS);
+<i>162</i>&nbsp;            }
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;            material.setSelfIlluminationMap(im);</b>
+<b class="nc"><i>165</i>&nbsp;            view.setMaterial(material);</b>
+<i>166</i>&nbsp;        }
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        return modelRoot;</b>
+<i>169</i>&nbsp;    }
+<i>170</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

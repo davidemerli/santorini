@@ -26,7 +26,7 @@ public class Move extends TurnState {
 
     /**
      * {@inheritDoc}
-     * </p>
+     * <p>
      *
      * @param game     current game
      * @param player   current player

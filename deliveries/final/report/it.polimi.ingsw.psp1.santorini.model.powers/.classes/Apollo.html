@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Apollo</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.powers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Apollo (it.polimi.ingsw.psp1.santorini.model.powers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Apollo</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (36/ 38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.powers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.turn.Move;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.Collection;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;import java.util.function.Predicate;
+<i>13</i>&nbsp;import java.util.stream.Collectors;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/**
+<i>16</i>&nbsp; * Power: Apollo can move into an opponent worker&#39;s space by forcing their worker to the space your just vacated
+<i>17</i>&nbsp; */
+<b class="fc"><i>18</i>&nbsp;public class Apollo extends Mortal {</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * {@inheritDoc}
+<i>22</i>&nbsp;     * &lt;p&gt;
+<i>23</i>&nbsp;     * Blocks occupied by enemy worker are included in valid moves
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    @Override
+<i>26</i>&nbsp;    public List&lt;Point&gt; getValidMoves(Worker worker, Game game) {
+<b class="fc"><i>27</i>&nbsp;        if (game.getTurnState() instanceof Move &amp;&amp; worker != null) {</b>
+<b class="fc"><i>28</i>&nbsp;            Point wPos = worker.getPosition();</b>
+<b class="fc"><i>29</i>&nbsp;            List&lt;Point&gt; neighbors = game.getMap().getNeighbors(wPos);</b>
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;            return neighbors.stream()</b>
+<b class="fc"><i>32</i>&nbsp;                    .filter(getStandardDomeCheck(game))</b>
+<b class="fc"><i>33</i>&nbsp;                    .filter(getStandardMoveCheck(worker, game))</b>
+<b class="fc"><i>34</i>&nbsp;                    .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck(game)))</b>
+<b class="fc"><i>35</i>&nbsp;                    .collect(Collectors.toList());</b>
+<i>36</i>&nbsp;        } else {
+<b class="fc"><i>37</i>&nbsp;            return super.getValidMoves(worker, game);</b>
+<i>38</i>&nbsp;        }
+<i>39</i>&nbsp;    }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * {@inheritDoc}&lt;br&gt;
+<i>43</i>&nbsp;     * &lt;p&gt;
+<i>44</i>&nbsp;     * If worker moves on enemy worker, they are swapped.
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    @Override
+<i>47</i>&nbsp;    public void onMove(Player player, Worker worker, Point where, Game game) {
+<b class="fc"><i>48</i>&nbsp;        if (player.equals(this.player)) {</b>
+<b class="fc"><i>49</i>&nbsp;            Optional&lt;Worker&gt; optWorker = game.getWorkerOn(where);</b>
+<i>50</i>&nbsp;
+<b class="fc"><i>51</i>&nbsp;            if (optWorker.isPresent()) {</b>
+<b class="fc"><i>52</i>&nbsp;                Point oldPos = worker.getPosition();</b>
+<i>53</i>&nbsp;
+<b class="fc"><i>54</i>&nbsp;                Optional&lt;Player&gt; opponent = game.getPlayerOf(optWorker.get());</b>
+<i>55</i>&nbsp;
+<b class="fc"><i>56</i>&nbsp;                if(opponent.isPresent()) {</b>
+<b class="fc"><i>57</i>&nbsp;                    game.moveWorker(opponent.get(), optWorker.get(), oldPos);</b>
+<i>58</i>&nbsp;                } else {
+<b class="nc"><i>59</i>&nbsp;                    throw new IllegalStateException(&quot;Player of opponent worker not found&quot;);</b>
+<i>60</i>&nbsp;                }
+<i>61</i>&nbsp;            }
+<i>62</i>&nbsp;        }
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;        super.onMove(player, worker, where, game);//normal moving behaviour</b>
+<b class="fc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * {@inheritDoc}
+<i>69</i>&nbsp;     *
+<i>70</i>&nbsp;     * Checks if the only moves remaining are moves that swap workers, and the player then cannot build anywhere
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    @Override
+<i>73</i>&nbsp;    public boolean canCompleteValidTurn(Worker worker, Game game) {
+<b class="fc"><i>74</i>&nbsp;        List&lt;Point&gt; performableMoves = getPerformableMoves(game, worker);</b>
+<i>75</i>&nbsp;
+<b class="fc"><i>76</i>&nbsp;        if(performableMoves.size() == 0) {</b>
+<b class="fc"><i>77</i>&nbsp;            return false;</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;
+<b class="fc"><i>80</i>&nbsp;        if(performableMoves.size() &gt; 1) {</b>
+<b class="fc"><i>81</i>&nbsp;            return true;</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;
+<b class="fc"><i>84</i>&nbsp;        Optional&lt;Worker&gt; enemyWorker = game.getWorkerOn(performableMoves.get(0));</b>
+<i>85</i>&nbsp;
+<b class="fc"><i>86</i>&nbsp;        if(enemyWorker.isPresent()) {</b>
+<b class="fc"><i>87</i>&nbsp;            Point enemyPos = enemyWorker.get().getPosition();</b>
+<i>88</i>&nbsp;
+<b class="fc"><i>89</i>&nbsp;            long performableBuilds = game.getMap().getNeighbors(enemyPos).stream()</b>
+<b class="fc"><i>90</i>&nbsp;                    .filter(getStandardDomeCheck(game))</b>
+<b class="fc"><i>91</i>&nbsp;                    .filter(getStandardWorkerCheck(game))</b>
+<b class="fc"><i>92</i>&nbsp;                    .count();</b>
+<i>93</i>&nbsp;
+<b class="fc"><i>94</i>&nbsp;            return performableBuilds &gt; 0;</b>
+<i>95</i>&nbsp;        } else {
+<b class="nc"><i>96</i>&nbsp;            return true;</b>
+<i>97</i>&nbsp;        }
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    /**
+<i>101</i>&nbsp;     * Predicate that returns true if given position refers to a worker that&#39;s owned by an opponent
+<i>102</i>&nbsp;     *
+<i>103</i>&nbsp;     * @param game current game instance
+<i>104</i>&nbsp;     * @return enemyWorker predicate
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;    private Predicate&lt;Point&gt; enemyWorkerCheck(Game game) {
+<b class="fc"><i>107</i>&nbsp;        return p -&gt; {</b>
+<b class="fc"><i>108</i>&nbsp;            Optional&lt;Worker&gt; optWorker = game.getWorkerOn(p);</b>
+<b class="fc"><i>109</i>&nbsp;            Optional&lt;Player&gt; optPlayer = optWorker.isPresent() ? game.getPlayerOf(optWorker.get()) : Optional.empty();</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;            return optPlayer.isPresent() &amp;&amp; !optPlayer.get().equals(player);</b>
+<i>112</i>&nbsp;        };
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

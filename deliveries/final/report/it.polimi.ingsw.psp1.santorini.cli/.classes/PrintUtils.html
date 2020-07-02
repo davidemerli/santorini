@@ -1,0 +1,513 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrintUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrintUtils (it.polimi.ingsw.psp1.santorini.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrintUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 134)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.*;
+<i>11</i>&nbsp;import java.util.function.UnaryOperator;
+<i>12</i>&nbsp;import java.util.stream.Collectors;
+<i>13</i>&nbsp;import java.util.stream.IntStream;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;/**
+<i>18</i>&nbsp; * Support class for the CLI
+<i>19</i>&nbsp; * The functions allow console printing with colors and more ease of use
+<i>20</i>&nbsp; */
+<i>21</i>&nbsp;public class PrintUtils {
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private static final int MAX_LENGTH = 150;
+<i>24</i>&nbsp;    private static final int SIZE = 3;
+<i>25</i>&nbsp;    private static final int SPACING = 1;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private static final int MAP_X = 1;
+<i>28</i>&nbsp;    private static final int MAP_Y = 5;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Makes the class not instantiable
+<i>32</i>&nbsp;     */
+<b class="nc"><i>33</i>&nbsp;    private PrintUtils() {</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Prints map&#39;s background in console
+<i>38</i>&nbsp;     */
+<i>39</i>&nbsp;    public static void printMapBackground() {
+<b class="nc"><i>40</i>&nbsp;        StringBuilder bgLine = new StringBuilder();</b>
+<b class="nc"><i>41</i>&nbsp;        IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))</b>
+<b class="nc"><i>42</i>&nbsp;                .forEach(i -&gt; bgLine.append(&quot; &quot;));</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;        for (int i = 0; i &lt; GameMap.SIDE_LENGTH * (SIZE + SPACING) + 1; i++) {</b>
+<b class="nc"><i>45</i>&nbsp;            print(BG_GRASS2 + bgLine.toString(), MAP_X, MAP_Y + i, false);</b>
+<i>46</i>&nbsp;        }
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    /**
+<i>50</i>&nbsp;     * Prints workers in the correct position on map in console
+<i>51</i>&nbsp;     *
+<i>52</i>&nbsp;     * @param players  list of players from where to get workers for each player
+<i>53</i>&nbsp;     * @param colorMap worker&#39;s color
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    public static void printWorkers(List&lt;PlayerData&gt; players, Map&lt;String, Color&gt; colorMap) {
+<b class="nc"><i>56</i>&nbsp;        for (PlayerData player : players) {</b>
+<b class="nc"><i>57</i>&nbsp;            for (int i = 0; i &lt; player.getWorkers().size(); i++) {</b>
+<b class="nc"><i>58</i>&nbsp;                Worker w = player.getWorkers().get(i);</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;                int x = MAP_X + 2 + w.getPosition().x * (SIZE * 2 + SPACING * 2 - 1);</b>
+<b class="nc"><i>61</i>&nbsp;                int y = MAP_Y + 2 + w.getPosition().y * (SIZE + SPACING);</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;                String string = colorMap.get(player.getName()) + &quot;W&quot; + (i + 1);</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;                print(string, x, y, false);</b>
+<i>66</i>&nbsp;            }
+<b class="nc"><i>67</i>&nbsp;        }</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * When a worker moves into another place, prints an arrow to highlight his movement
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @param arrow type
+<i>74</i>&nbsp;     * @param where to print arrow
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public static void printArrow(EnumArrow arrow, Point where) {
+<b class="nc"><i>77</i>&nbsp;        int x = MAP_X + where.x * (SIZE * 2 + SPACING * 2 - 1);</b>
+<b class="nc"><i>78</i>&nbsp;        int y = MAP_Y + where.y * (SIZE + SPACING);</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;        //TODO: fix swap on UP (and/or other directions)
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;        //TODO: Redo entirely
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        if (arrow.getVector().x == 1) {</b>
+<b class="nc"><i>85</i>&nbsp;            x += SIZE * 2;</b>
+<b class="nc"><i>86</i>&nbsp;        } else if (arrow.getVector().x == 0) {</b>
+<b class="nc"><i>87</i>&nbsp;            x += SIZE;</b>
+<i>88</i>&nbsp;        }
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        if (arrow.getVector().y == 1) {</b>
+<b class="nc"><i>91</i>&nbsp;            y += SIZE + 1;</b>
+<b class="nc"><i>92</i>&nbsp;        } else if (arrow.getVector().y == 0) {</b>
+<b class="nc"><i>93</i>&nbsp;            y += Math.ceil(SIZE / 2D);</b>
+<i>94</i>&nbsp;        }
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        if(arrow == EnumArrow.UP) {</b>
+<b class="nc"><i>97</i>&nbsp;            x -= 1;</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        print(arrow.toUnicode(), x, y, false);</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * Prints the current map in console whenever it changes
+<i>105</i>&nbsp;     *
+<i>106</i>&nbsp;     * @param map that must be printed in console
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    public static void printMap(GameMap map) {
+<b class="nc"><i>109</i>&nbsp;        if (map == null) {</b>
+<i>110</i>&nbsp;            return;
+<i>111</i>&nbsp;        }
+<i>112</i>&nbsp;
+<b class="nc"><i>113</i>&nbsp;        String s = String.format(&quot;%&quot; + (SIZE * 2 - 1) + &quot;s&quot;, &quot;&quot;);</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        for (int i = 0; i &lt; GameMap.SIDE_LENGTH; i++) {</b>
+<b class="nc"><i>116</i>&nbsp;            for (int j = 0; j &lt; GameMap.SIDE_LENGTH; j++) {</b>
+<b class="nc"><i>117</i>&nbsp;                Point point = new Point(i, j);</b>
+<b class="nc"><i>118</i>&nbsp;                int level = map.getLevel(point) - (map.hasDome(point) ? 1 : 0);</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;                int x = MAP_X + i * (SIZE * 2) + i + SPACING;</b>
+<b class="nc"><i>121</i>&nbsp;                int y = MAP_Y + j * SIZE + j * SPACING + SPACING;</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;                for (int k = 0; k &lt; SIZE; k++) {</b>
+<b class="nc"><i>124</i>&nbsp;                    print(getColorFromLevel(level) + s, x, y + k, false);</b>
+<i>125</i>&nbsp;                }
+<i>126</i>&nbsp;
+<b class="nc"><i>127</i>&nbsp;                print(BG_GRASS2 + BLACK.toString() + &quot;L&quot; + level, x + SIZE * 2 - 3, y + SIZE - 1, false);</b>
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;                if (map.hasDome(point)) {</b>
+<b class="nc"><i>130</i>&nbsp;                    for (int k = 1; k &lt; SIZE - 1; k++) {</b>
+<b class="nc"><i>131</i>&nbsp;                        String string = BG_BRIGHT_BLUE + s.substring(4);</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;                        print(string, x + 2, y + k, false);</b>
+<i>134</i>&nbsp;                    }
+<i>135</i>&nbsp;                }
+<i>136</i>&nbsp;            }
+<i>137</i>&nbsp;        }
+<i>138</i>&nbsp;    }
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;    /**
+<i>141</i>&nbsp;     * Prints the winning result at the end of the game
+<i>142</i>&nbsp;     */
+<i>143</i>&nbsp;    public static void printWin() {
+<b class="nc"><i>144</i>&nbsp;        String c = BG_BRIGHT_BLUE.toString() + BLUE.toString();</b>
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;        print(c + &quot;                                                           &quot;, 6, 9, false);</b>
+<b class="nc"><i>147</i>&nbsp;        print(c + &quot;  ???   ?????? ???????????????? ??????? ??????? ???   ???  &quot;, 6, 10, false);</b>
+<b class="nc"><i>148</i>&nbsp;        print(c + &quot;  ???   ???????????????????????????????????????????? ????  &quot;, 6, 11, false);</b>
+<b class="nc"><i>149</i>&nbsp;        print(c + &quot;  ???   ?????????        ???   ???   ??????????? ???????   &quot;, 6, 12, false);</b>
+<b class="nc"><i>150</i>&nbsp;        print(c + &quot;  ???? ??????????        ???   ???   ???????????  ?????    &quot;, 6, 13, false);</b>
+<b class="nc"><i>151</i>&nbsp;        print(c + &quot;   ??????? ???????????   ???   ????????????  ???   ???     &quot;, 6, 14, false);</b>
+<b class="nc"><i>152</i>&nbsp;        print(c + &quot;    ?????  ??? ???????   ???    ??????? ???  ???   ???     &quot;, 6, 15, false);</b>
+<b class="nc"><i>153</i>&nbsp;        print(c + &quot;                                                           &quot;, 6, 16, false);</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /**
+<i>157</i>&nbsp;     * Prints the losing result at the end of the game
+<i>158</i>&nbsp;     */
+<i>159</i>&nbsp;    public static void printLoser() {
+<b class="nc"><i>160</i>&nbsp;        String c = BG_DARK_RED.toString() + RED.toString();</b>
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;        print(c + &quot;                                                          &quot;, 6, 9, false);</b>
+<b class="nc"><i>163</i>&nbsp;        print(c + &quot;     ??????? ???????????????????????? ?????? ?????????    &quot;, 6, 10, false);</b>
+<b class="nc"><i>164</i>&nbsp;        print(c + &quot;     ?????????????????????????????????????????????????    &quot;, 6, 11, false);</b>
+<b class="nc"><i>165</i>&nbsp;        print(c + &quot;     ???  ?????????  ??????  ??????  ????????   ???       &quot;, 6, 12, false);</b>
+<b class="nc"><i>166</i>&nbsp;        print(c + &quot;     ???  ?????????  ??????  ??????  ????????   ???       &quot;, 6, 13, false);</b>
+<b class="nc"><i>167</i>&nbsp;        print(c + &quot;     ???????????????????     ???????????  ???   ???       &quot;, 6, 14, false);</b>
+<b class="nc"><i>168</i>&nbsp;        print(c + &quot;     ??????? ???????????     ???????????  ???   ???       &quot;, 6, 15, false);</b>
+<b class="nc"><i>169</i>&nbsp;        print(c + &quot;                                                          &quot;, 6, 16, false);</b>
+<i>170</i>&nbsp;    }
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    /**
+<i>173</i>&nbsp;     * Prints an object (implicit toString call)
+<i>174</i>&nbsp;     *
+<i>175</i>&nbsp;     * @param o generic object
+<i>176</i>&nbsp;     */
+<i>177</i>&nbsp;    public static synchronized void print(Object o) {
+<b class="nc"><i>178</i>&nbsp;        System.out.print(o);</b>
+<b class="nc"><i>179</i>&nbsp;        System.out.flush();</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    /**
+<i>183</i>&nbsp;     * Used to clear console before using it
+<i>184</i>&nbsp;     */
+<i>185</i>&nbsp;    public static void firstClear() {
+<b class="nc"><i>186</i>&nbsp;        print(&quot;\033[H\033[3J\033[2J&quot;);</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    /**
+<i>190</i>&nbsp;     * Used to clear console while game is running
+<i>191</i>&nbsp;     */
+<i>192</i>&nbsp;    public static void clear() {
+<b class="nc"><i>193</i>&nbsp;        for (int i = 0; i &lt; 150; i++) {</b>
+<b class="nc"><i>194</i>&nbsp;            clearRow(0, i);</b>
+<i>195</i>&nbsp;        }
+<i>196</i>&nbsp;    }
+<i>197</i>&nbsp;
+<i>198</i>&nbsp;    /**
+<i>199</i>&nbsp;     * Used to set cursor in a generic position in console
+<i>200</i>&nbsp;     *
+<i>201</i>&nbsp;     * @param x Column number
+<i>202</i>&nbsp;     * @param y Row number
+<i>203</i>&nbsp;     */
+<i>204</i>&nbsp;    public static void setCursor(int x, int y) {
+<b class="nc"><i>205</i>&nbsp;        print(String.format(&quot;\033[%d;%dH&quot;, y, x));</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /**
+<i>209</i>&nbsp;     * Used to set cursor in a standard position in console
+<i>210</i>&nbsp;     */
+<i>211</i>&nbsp;    public static void resetCursor() {
+<b class="nc"><i>212</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>213</i>&nbsp;        setCursor(point.x + 3, point.y);</b>
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    /**
+<i>217</i>&nbsp;     * Used to clear a row in console
+<i>218</i>&nbsp;     *
+<i>219</i>&nbsp;     * @param x column number
+<i>220</i>&nbsp;     * @param y row number
+<i>221</i>&nbsp;     */
+<i>222</i>&nbsp;    public static void clearRow(int x, int y) {
+<b class="nc"><i>223</i>&nbsp;        setCursor(x, y);</b>
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;        print(&quot;\033[K&quot;);</b>
+<i>226</i>&nbsp;    }
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;    /**
+<i>229</i>&nbsp;     * Used to print a string in console
+<i>230</i>&nbsp;     *
+<i>231</i>&nbsp;     * @param string  string that must be printed in console
+<i>232</i>&nbsp;     * @param x       column number
+<i>233</i>&nbsp;     * @param y       row number
+<i>234</i>&nbsp;     * @param toClean true if the row must be deleted before printing
+<i>235</i>&nbsp;     */
+<i>236</i>&nbsp;    public synchronized static void print(String string, int x, int y, boolean toClean) {
+<b class="nc"><i>237</i>&nbsp;        if (toClean) {</b>
+<b class="nc"><i>238</i>&nbsp;            clearRow(x, y);</b>
+<i>239</i>&nbsp;        }
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;        print(RESET);</b>
+<i>242</i>&nbsp;
+<b class="nc"><i>243</i>&nbsp;        setCursor(x, y);</b>
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;        print(string + RESET);</b>
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;        resetCursor();</b>
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    /**
+<i>251</i>&nbsp;     * Prints a String given an offset from the line where the user types commands
+<i>252</i>&nbsp;     *
+<i>253</i>&nbsp;     * @param string  string to print
+<i>254</i>&nbsp;     * @param xOff    x offset
+<i>255</i>&nbsp;     * @param yOff    y offset
+<i>256</i>&nbsp;     * @param toClear true if the console needs to be cleaned
+<i>257</i>&nbsp;     */
+<i>258</i>&nbsp;    public static void printFromCommand(String string, int xOff, int yOff, boolean toClear) {
+<b class="nc"><i>259</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>260</i>&nbsp;        print(string, point.x + xOff, point.y + yOff, toClear);</b>
+<i>261</i>&nbsp;    }
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;    /**
+<i>264</i>&nbsp;     * Used to print command zone in console
+<i>265</i>&nbsp;     */
+<i>266</i>&nbsp;    public static void printCommand() {
+<b class="nc"><i>267</i>&nbsp;        Point point = getCommandCoords();</b>
+<b class="nc"><i>268</i>&nbsp;        print(&quot;&gt; &quot;, point.x, point.y, true);</b>
+<i>269</i>&nbsp;    }
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;    /**
+<i>272</i>&nbsp;     * @return command&#39;s coordinates
+<i>273</i>&nbsp;     */
+<i>274</i>&nbsp;    public static Point getCommandCoords() {
+<b class="nc"><i>275</i>&nbsp;        return new Point(0, 4 + MAP_Y + GameMap.SIDE_LENGTH * (SIZE + SPACING) - SPACING);</b>
+<i>276</i>&nbsp;    }
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    private static int getOffset() {
+<b class="nc"><i>279</i>&nbsp;        return GameMap.SIDE_LENGTH * ((SIZE + SPACING) * 2 - 1) + 10;</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;    /**
+<i>283</i>&nbsp;     * Used to print the list of gods in console
+<i>284</i>&nbsp;     *
+<i>285</i>&nbsp;     * @param list list that must be printed in console
+<i>286</i>&nbsp;     */
+<i>287</i>&nbsp;    public static void printPowerList(List&lt;Power&gt; list) {
+<b class="nc"><i>288</i>&nbsp;        int row = 5;</b>
+<i>289</i>&nbsp;
+<b class="nc"><i>290</i>&nbsp;        print(!list.isEmpty() ? &quot;Power list:&quot; : &quot;&quot;, getOffset(), 4, true);</b>
+<i>291</i>&nbsp;
+<b class="nc"><i>292</i>&nbsp;        for (int i = MAP_Y; i &lt; getCommandCoords().y - 3; i++) {</b>
+<b class="nc"><i>293</i>&nbsp;            clearRow(getOffset(), i);</b>
+<i>294</i>&nbsp;        }
+<i>295</i>&nbsp;
+<b class="nc"><i>296</i>&nbsp;        for (int i = 0; i &lt; list.size(); i++) {</b>
+<b class="nc"><i>297</i>&nbsp;            if (i % 3 == 0) {</b>
+<b class="nc"><i>298</i>&nbsp;                row++;</b>
+<i>299</i>&nbsp;            }
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;            print((i + 1) + &quot;) &quot; + BLUE + list.get(i).getClass().getSimpleName(),</b>
+<b class="nc"><i>302</i>&nbsp;                    (i % 3) * 20 + getOffset(), row, false);</b>
+<i>303</i>&nbsp;        }
+<i>304</i>&nbsp;
+<b class="nc"><i>305</i>&nbsp;        printCommand();</b>
+<b class="nc"><i>306</i>&nbsp;        resetCursor();</b>
+<i>307</i>&nbsp;    }
+<i>308</i>&nbsp;
+<i>309</i>&nbsp;    /**
+<i>310</i>&nbsp;     * Used to print players&#39; info while gaming is running
+<i>311</i>&nbsp;     *
+<i>312</i>&nbsp;     * @param clientPlayer player name
+<i>313</i>&nbsp;     * @param list         players list
+<i>314</i>&nbsp;     * @param state        current state
+<i>315</i>&nbsp;     * @param colorMap     map color
+<i>316</i>&nbsp;     * @param interact     true if player can use the power of his god
+<i>317</i>&nbsp;     */
+<i>318</i>&nbsp;    public static void printPlayerInfo(String clientPlayer, List&lt;PlayerData&gt; list, EnumTurnState state,
+<i>319</i>&nbsp;                                       Map&lt;String, Color&gt; colorMap, boolean interact) {
+<i>320</i>&nbsp;
+<b class="nc"><i>321</i>&nbsp;        UnaryOperator&lt;String&gt; name = s -&gt; colorMap.get(s) + s +</b>
+<b class="nc"><i>322</i>&nbsp;                (s.equals(clientPlayer) ? &quot;(YOU)&quot; : &quot;&quot;) + RESET;</b>
+<i>323</i>&nbsp;
+<b class="nc"><i>324</i>&nbsp;        clearRow(2, 1);</b>
+<b class="nc"><i>325</i>&nbsp;        clearRow(2, 2);</b>
+<b class="nc"><i>326</i>&nbsp;        clearRow(2, 3);</b>
+<i>327</i>&nbsp;
+<b class="nc"><i>328</i>&nbsp;        PrintUtils.print(&quot;\uD83E\uDC7E Current player&quot;, 1, 1, true);</b>
+<i>329</i>&nbsp;
+<b class="nc"><i>330</i>&nbsp;        for (int i = 0; i &lt; list.size(); i++) {</b>
+<b class="nc"><i>331</i>&nbsp;            PlayerData data = list.get(i);</b>
+<i>332</i>&nbsp;
+<b class="nc"><i>333</i>&nbsp;            print(name.apply(data.getName()), i * 20 + 2, 2, false);</b>
+<b class="nc"><i>334</i>&nbsp;            print(data.getPower() != null ? data.getPower().getClass().getSimpleName().toUpperCase() : &quot;N/A&quot;,</b>
+<i>335</i>&nbsp;                    i * 20 + 2, 3, false);
+<i>336</i>&nbsp;        }
+<i>337</i>&nbsp;
+<b class="nc"><i>338</i>&nbsp;        printCommand();</b>
+<i>339</i>&nbsp;    }
+<i>340</i>&nbsp;
+<i>341</i>&nbsp;    /**
+<i>342</i>&nbsp;     * Used to print the valid moves on the map
+<i>343</i>&nbsp;     *
+<i>344</i>&nbsp;     * @param valid   valid moves
+<i>345</i>&nbsp;     * @param blocked blocked moves
+<i>346</i>&nbsp;     */
+<i>347</i>&nbsp;    public static void printValidMoves(List&lt;Point&gt; valid, Map&lt;Power, List&lt;Point&gt;&gt; blocked) {
+<b class="nc"><i>348</i>&nbsp;        int counter = 1;</b>
+<i>349</i>&nbsp;
+<b class="nc"><i>350</i>&nbsp;        for (Point point : valid) {</b>
+<b class="nc"><i>351</i>&nbsp;            boolean isBlocked = blocked.values().stream()</b>
+<b class="nc"><i>352</i>&nbsp;                    .flatMap(Collection::stream).anyMatch(p -&gt; p.equals(point));</b>
+<i>353</i>&nbsp;
+<b class="nc"><i>354</i>&nbsp;            String s = String.valueOf(counter);</b>
+<b class="nc"><i>355</i>&nbsp;            print((isBlocked ? BG_DARK_RED : BG_BRIGHT_YELLOW) + &quot;&quot; + RED + s,</b>
+<i>356</i>&nbsp;                    MAP_X + point.x * (SIZE * 2 - 1 + SPACING * 2) + 1,
+<i>357</i>&nbsp;                    MAP_Y + point.y * (SIZE + SPACING) + 1,
+<i>358</i>&nbsp;                    false);
+<b class="nc"><i>359</i>&nbsp;            counter++;</b>
+<b class="nc"><i>360</i>&nbsp;        }</b>
+<i>361</i>&nbsp;    }
+<i>362</i>&nbsp;
+<i>363</i>&nbsp;    /**
+<i>364</i>&nbsp;     * Used to know which color must be used, because every level has different color
+<i>365</i>&nbsp;     *
+<i>366</i>&nbsp;     * @param level block&#39;s level
+<i>367</i>&nbsp;     * @return the color of the level
+<i>368</i>&nbsp;     */
+<i>369</i>&nbsp;    private static Color getColorFromLevel(int level) {
+<b class="nc"><i>370</i>&nbsp;        switch (level) {</b>
+<i>371</i>&nbsp;            case 1:
+<b class="nc"><i>372</i>&nbsp;                return BG_GRAY1;</b>
+<i>373</i>&nbsp;            case 2:
+<b class="nc"><i>374</i>&nbsp;                return BG_GRAY2;</b>
+<i>375</i>&nbsp;            case 3:
+<b class="nc"><i>376</i>&nbsp;                return BG_GRAY3;</b>
+<i>377</i>&nbsp;            default:
+<b class="nc"><i>378</i>&nbsp;                return BG_GRASS;</b>
+<i>379</i>&nbsp;        }
+<i>380</i>&nbsp;    }
+<i>381</i>&nbsp;
+<i>382</i>&nbsp;    /**
+<i>383</i>&nbsp;     * Used to print gods description
+<i>384</i>&nbsp;     *
+<i>385</i>&nbsp;     * @param power power to print
+<i>386</i>&nbsp;     */
+<i>387</i>&nbsp;    public static void printPowerInfo(Power power) {
+<b class="nc"><i>388</i>&nbsp;        List&lt;String&gt; desc = reduceInLines(power.getDescription(), 50);</b>
+<i>389</i>&nbsp;
+<b class="nc"><i>390</i>&nbsp;        int yOffset = 14;</b>
+<i>391</i>&nbsp;
+<b class="nc"><i>392</i>&nbsp;        for (int i = 0; i &lt; 10; i++) {</b>
+<b class="nc"><i>393</i>&nbsp;            clearRow(getOffset(), yOffset + i);</b>
+<i>394</i>&nbsp;        }
+<i>395</i>&nbsp;
+<b class="nc"><i>396</i>&nbsp;        print(RED + power.getName(), getOffset(), yOffset, true);</b>
+<b class="nc"><i>397</i>&nbsp;        print(BLUE + power.getAlias(), getOffset(), yOffset + 1, true);</b>
+<i>398</i>&nbsp;
+<b class="nc"><i>399</i>&nbsp;        for (int i = 0; i &lt; desc.size(); i++) {</b>
+<b class="nc"><i>400</i>&nbsp;            print(desc.get(i), getOffset(), i + yOffset + 2, true);</b>
+<i>401</i>&nbsp;        }
+<i>402</i>&nbsp;    }
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;    /**
+<i>405</i>&nbsp;     * Given a String and a maximum width, splits the String in a list of Strings
+<i>406</i>&nbsp;     * with every one of them within the given length
+<i>407</i>&nbsp;     *
+<i>408</i>&nbsp;     * @param longString string to split if needed
+<i>409</i>&nbsp;     * @param width      maximum length of every string
+<i>410</i>&nbsp;     * @return the list with the string in multiple lines
+<i>411</i>&nbsp;     */
+<i>412</i>&nbsp;    private static List&lt;String&gt; reduceInLines(String longString, int width) {
+<b class="nc"><i>413</i>&nbsp;        Deque&lt;StringBuilder&gt; list = new ArrayDeque&lt;&gt;();</b>
+<i>414</i>&nbsp;
+<b class="nc"><i>415</i>&nbsp;        for (String s : longString.split(&quot; &quot;)) {</b>
+<b class="nc"><i>416</i>&nbsp;            if (list.isEmpty() || list.peek().length() + s.length() + 1 &gt; width) {</b>
+<b class="nc"><i>417</i>&nbsp;                list.push(new StringBuilder());</b>
+<i>418</i>&nbsp;            }
+<i>419</i>&nbsp;
+<b class="nc"><i>420</i>&nbsp;            if (list.peek() != null) {</b>
+<b class="nc"><i>421</i>&nbsp;                list.peek().append(s).append(&quot; &quot;);</b>
+<i>422</i>&nbsp;            }
+<i>423</i>&nbsp;        }
+<i>424</i>&nbsp;
+<b class="nc"><i>425</i>&nbsp;        List&lt;String&gt; toReturn = list.stream().map(StringBuilder::toString).collect(Collectors.toList());</b>
+<b class="nc"><i>426</i>&nbsp;        Collections.reverse(toReturn);</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;        return toReturn;</b>
+<i>429</i>&nbsp;    }
+<i>430</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ServerInvalidPacket</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.network.packets.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ServerInvalidPacket (it.polimi.ingsw.psp1.santorini.network.packets.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerInvalidPacket</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.network.packets.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * Server packet containing an error message
+<i>8</i>&nbsp; */
+<i>9</i>&nbsp;public class ServerInvalidPacket implements Packet&lt;ServerHandler&gt; {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    private final String error;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * Generic constructor
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * @param error message
+<i>17</i>&nbsp;     */
+<b class="nc"><i>18</i>&nbsp;    public ServerInvalidPacket(String error) {</b>
+<b class="nc"><i>19</i>&nbsp;        this.error = error;</b>
+<i>20</i>&nbsp;    }
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * {@inheritDoc}
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    @Override
+<i>26</i>&nbsp;    public void processPacket(ServerHandler netHandler) {
+<b class="nc"><i>27</i>&nbsp;        netHandler.handleError(this);</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    public String getError() {
+<b class="nc"><i>31</i>&nbsp;        return error;</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * {@inheritDoc}
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public String toString() {
+<b class="nc"><i>39</i>&nbsp;        return toString(error);</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

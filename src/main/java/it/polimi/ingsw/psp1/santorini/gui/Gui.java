@@ -34,10 +34,17 @@ public class Gui extends Application {
 
     private EnumScene currentScene;
 
+    /**
+     * Launches the applications
+     * @param args java arguments (ignored)
+     */
     public static void launch(String[] args) {
         Application.launch("");
     }
 
+    /**
+     * @return Gui singleton instance
+     */
     public static Gui getInstance() {
         return instance;
     }
@@ -76,9 +83,6 @@ public class Gui extends Application {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void stop() throws Exception {
         super.stop();
@@ -86,6 +90,11 @@ public class Gui extends Application {
         System.exit(0);
     }
 
+    /**
+     * Changes a scene waiting for javafx thread
+     *
+     * @param scene new scene
+     */
     public void changeSceneSync(EnumScene scene) {
         Platform.runLater(() -> {
             if (scene.equals(currentScene)) {
@@ -131,6 +140,7 @@ public class Gui extends Application {
 
     /**
      * Changes scene
+     *
      * @param scene valid scene
      */
     public void changeScene(EnumScene scene) {
@@ -153,6 +163,7 @@ public class Gui extends Application {
 
     /**
      * Changes scene
+     *
      * @param scenePane valid scene pane
      */
     public void changeScene(Pane scenePane) {
@@ -200,6 +211,9 @@ public class Gui extends Application {
         });
     }
 
+    /**
+     * @return current displayed scene
+     */
     public EnumScene getCurrentScene() {
         return currentScene;
     }

@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EnumTransition</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.gui.controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EnumTransition (it.polimi.ingsw.psp1.santorini.gui.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EnumTransition</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.gui.controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.gui.Gui;
+<i>4</i>&nbsp;import javafx.animation.Interpolator;
+<i>5</i>&nbsp;import javafx.animation.TranslateTransition;
+<i>6</i>&nbsp;import javafx.scene.layout.Pane;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Defines all possible transitions
+<i>10</i>&nbsp; */
+<b class="nc"><i>11</i>&nbsp;public enum EnumTransition {</b>
+<b class="nc"><i>12</i>&nbsp;    UP(new int[]{0, 1}),</b>
+<b class="nc"><i>13</i>&nbsp;    DOWN(new int[]{0, -1}),</b>
+<b class="nc"><i>14</i>&nbsp;    LEFT(new int[]{1, 0}),</b>
+<b class="nc"><i>15</i>&nbsp;    RIGHT(new int[]{-1, 0}),</b>
+<b class="nc"><i>16</i>&nbsp;    FROM_TOP_LEFT(new int[]{-1, -1}),</b>
+<b class="nc"><i>17</i>&nbsp;    FROM_TOP_RIGHT(new int[]{1, -1}),</b>
+<b class="nc"><i>18</i>&nbsp;    FROM_BOTTOM_LEFT(new int[]{-1, 1}),</b>
+<b class="nc"><i>19</i>&nbsp;    FROM_BOTTOM_RIGHT(new int[]{1, 1});</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    int[] vector;
+<i>22</i>&nbsp;    TranslateTransition tt;
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    EnumTransition(int[] vector) {</b>
+<b class="nc"><i>25</i>&nbsp;        this.vector = vector;</b>
+<b class="nc"><i>26</i>&nbsp;        this.tt = new TranslateTransition();</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Given two panes creates puts them into one and creates a transition
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @param currentPane first pane
+<i>33</i>&nbsp;     * @param nextPane    second pane
+<i>34</i>&nbsp;     * @return animation transition
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    public TranslateTransition getTransition(Pane currentPane, Pane nextPane) {
+<b class="nc"><i>37</i>&nbsp;        tt.setNode(currentPane);</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;        tt.setByX(-currentPane.getWidth() * vector[0]);</b>
+<b class="nc"><i>40</i>&nbsp;        tt.setByY(-currentPane.getHeight() * vector[1]);</b>
+<b class="nc"><i>41</i>&nbsp;        tt.setInterpolator(Interpolator.EASE_BOTH);</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        nextPane.translateXProperty().set(currentPane.getWidth() * vector[0]);</b>
+<b class="nc"><i>44</i>&nbsp;        nextPane.translateYProperty().set(currentPane.getHeight() * vector[1]);</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;        currentPane.getChildren().add(nextPane);</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        tt.setOnFinished(event -&gt; {</b>
+<b class="nc"><i>49</i>&nbsp;            nextPane.translateXProperty().set(0);</b>
+<b class="nc"><i>50</i>&nbsp;            nextPane.translateYProperty().set(0);</b>
+<b class="nc"><i>51</i>&nbsp;            currentPane.getChildren().clear();</b>
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;            Gui.getInstance().changeScene(nextPane);</b>
+<i>54</i>&nbsp;        });
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;        return tt;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

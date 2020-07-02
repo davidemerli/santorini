@@ -447,7 +447,7 @@ public class GameSceneController extends GuiController {
      * Enqueues a map animation
      * Used to keep animations one after another
      *
-     * @param toRun the map change function
+     * @param toRun    the map change function
      * @param duration how much the change takes
      */
     private void runMapChange(Runnable toRun, Duration duration) {
@@ -501,9 +501,9 @@ public class GameSceneController extends GuiController {
     /**
      * Setup worker 3D model click handling
      *
-     * @param worker the worker model
+     * @param worker         the worker model
      * @param positionToSend position of the worker
-     * @param isOwn if the worker is one of the current player's
+     * @param isOwn          if the worker is one of the current player's
      */
     private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
         Duration duration = Duration.millis(100);
@@ -647,6 +647,7 @@ public class GameSceneController extends GuiController {
      * @param player to be added
      * @param color  player Color
      * @param power  player power
+     * @param isOwn  if the player is the one playing the game
      */
     public void addPlayer(String player, Color color, Power power, boolean isOwn) {
         Platform.runLater(() -> {

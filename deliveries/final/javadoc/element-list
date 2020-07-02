@@ -1,0 +1,17 @@
+it.polimi.ingsw.psp1.santorini
+it.polimi.ingsw.psp1.santorini.cli
+it.polimi.ingsw.psp1.santorini.cli.ansi
+it.polimi.ingsw.psp1.santorini.cli.commands
+it.polimi.ingsw.psp1.santorini.controller
+it.polimi.ingsw.psp1.santorini.gui
+it.polimi.ingsw.psp1.santorini.gui.controllers
+it.polimi.ingsw.psp1.santorini.model
+it.polimi.ingsw.psp1.santorini.model.map
+it.polimi.ingsw.psp1.santorini.model.powers
+it.polimi.ingsw.psp1.santorini.model.turn
+it.polimi.ingsw.psp1.santorini.network
+it.polimi.ingsw.psp1.santorini.network.packets
+it.polimi.ingsw.psp1.santorini.network.packets.client
+it.polimi.ingsw.psp1.santorini.network.packets.server
+it.polimi.ingsw.psp1.santorini.observer
+it.polimi.ingsw.psp1.santorini.view

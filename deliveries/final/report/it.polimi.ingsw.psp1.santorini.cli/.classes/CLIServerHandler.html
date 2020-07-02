@@ -1,0 +1,427 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CLIServerHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CLIServerHandler (it.polimi.ingsw.psp1.santorini.cli)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CLIServerHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 94)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CLIServerHandler$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 95)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;import java.util.Scanner;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * Manages all server packets
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class CLIServerHandler extends ServerHandler implements Runnable {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * Generic constructor using client
+<i>20</i>&nbsp;     * Creates a new command manager
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * @param client current client
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    public CLIServerHandler(Client client) {
+<b class="nc"><i>25</i>&nbsp;        super(client);</b>
+<b class="nc"><i>26</i>&nbsp;        new Thread(this).start();</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * {@inheritDoc}
+<i>31</i>&nbsp;     * &lt;p&gt;
+<i>32</i>&nbsp;     * Used to run CLI
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    public void run() {
+<b class="nc"><i>36</i>&nbsp;        PrintUtils.firstClear();</b>
+<b class="nc"><i>37</i>&nbsp;        PrintUtils.print(&quot;Welcome to&quot;);</b>
+<b class="nc"><i>38</i>&nbsp;        PrintUtils.print(&quot;\n\n&quot; +</b>
+<i>39</i>&nbsp;                &quot;???????? ?????? ????   ???????????? ??????? ??????? ???????   ??????\n&quot; +
+<i>40</i>&nbsp;                &quot;?????????????????????  ?????????????????????????????????????  ??????\n&quot; +
+<i>41</i>&nbsp;                &quot;?????????????????????? ???   ???   ???   ???????????????????? ??????\n&quot; +
+<i>42</i>&nbsp;                &quot;??????????????????????????   ???   ???   ???????????????????????????\n&quot; +
+<i>43</i>&nbsp;                &quot;???????????  ?????? ??????   ???   ????????????  ????????? ?????????\n&quot; +
+<i>44</i>&nbsp;                &quot;???????????  ??????  ?????   ???    ??????? ???  ?????????  ????????\n&quot; +
+<i>45</i>&nbsp;                &quot;                                                                    \n&quot;);
+<b class="nc"><i>46</i>&nbsp;        PrintUtils.print(String.format(&quot;use command &#39;%s %s %s&#39; to connect to a server\n&quot;,</b>
+<i>47</i>&nbsp;                Color.RED + &quot;connect&quot;, Color.GREEN + &quot;&lt;server-ip&gt;&quot;, &quot;&lt;server-port&gt;&quot; + Color.RESET));
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        PrintUtils.print(String.format(&quot;after connecting use command &#39;%s %s %s&#39; to create a new game, \n&quot; +</b>
+<i>50</i>&nbsp;                        &quot;or wait the server to assign you to a new game\n&quot;,
+<i>51</i>&nbsp;                Color.RED + &quot;create&quot;, Color.GREEN + &quot;&lt;game-name&gt;&quot;, &quot;&lt;player-number&gt;&quot; + Color.RESET));
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;        PrintUtils.print(String.format(&quot;use command &#39;%s&#39; to get a list of commands&quot;,</b>
+<i>54</i>&nbsp;                Color.RED + &quot;help&quot; + Color.RESET));
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;        PrintUtils.printCommand();</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        Scanner scanner = new Scanner(System.in);</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;        while (true) {
+<b class="nc"><i>61</i>&nbsp;            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y + 3);</b>
+<b class="nc"><i>62</i>&nbsp;            PrintUtils.resetCursor();</b>
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;            String result = CommandManager.getInstance().runCommand(client, this, scanner.nextLine());</b>
+<b class="nc"><i>65</i>&nbsp;            PrintUtils.printCommand();</b>
+<b class="nc"><i>66</i>&nbsp;            PrintUtils.printFromCommand(&quot;Last action: &quot; + result, 0, 2, true);</b>
+<b class="nc"><i>67</i>&nbsp;        }</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * {@inheritDoc}
+<i>72</i>&nbsp;     * &lt;p&gt;
+<i>73</i>&nbsp;     * Receives information about game, players and players&#39; state from server
+<i>74</i>&nbsp;     *
+<i>75</i>&nbsp;     * @param packet contains information about game
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    @Override
+<i>78</i>&nbsp;    public void handleGameData(ServerGameData packet) {
+<b class="nc"><i>79</i>&nbsp;        super.handleGameData(packet);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        reload(packet.isForced());</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    /**
+<i>85</i>&nbsp;     * {@inheritDoc}
+<i>86</i>&nbsp;     * &lt;p&gt;
+<i>87</i>&nbsp;     * Receives a request from the server to be processed
+<i>88</i>&nbsp;     *
+<i>89</i>&nbsp;     * @param packet contains a server request
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    @Override
+<i>92</i>&nbsp;    public void handleRequest(ServerAskRequest packet) {
+<b class="nc"><i>93</i>&nbsp;        super.handleRequest(packet);</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;        String toStamp;
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        switch (packet.getRequestType()) {</b>
+<i>98</i>&nbsp;            case SELECT_NAME:
+<b class="nc"><i>99</i>&nbsp;                PrintUtils.clear();</b>
+<b class="nc"><i>100</i>&nbsp;                toStamp = String.format(&quot;Choose a nickname: use &#39;%s&#39; command&quot;,</b>
+<i>101</i>&nbsp;                        Color.BLUE + &quot;setname&quot; + Color.RESET);
+<b class="nc"><i>102</i>&nbsp;                break;</b>
+<i>103</i>&nbsp;            case CHOOSE_POWERS:
+<b class="nc"><i>104</i>&nbsp;                toStamp = String.format(&quot;Choose God Powers for this game: use &#39;%s&#39; command&quot;,</b>
+<i>105</i>&nbsp;                        Color.BLUE + &quot;selectpower&quot; + Color.RESET);
+<b class="nc"><i>106</i>&nbsp;                break;</b>
+<i>107</i>&nbsp;            case CHOOSE_GAME:
+<b class="nc"><i>108</i>&nbsp;                toStamp = String.format(&quot;Create or join a game with &#39;%s&#39; or &#39;%s&#39;&quot;,</b>
+<i>109</i>&nbsp;                        Color.BLUE + &quot;creategame&quot; + Color.RESET,
+<i>110</i>&nbsp;                        Color.BLUE + &quot;join&quot; + Color.RESET);
+<b class="nc"><i>111</i>&nbsp;                break;</b>
+<i>112</i>&nbsp;            case SELECT_POWER:
+<b class="nc"><i>113</i>&nbsp;                toStamp = String.format(&quot;Choose your God Power: use &#39;%s&#39; command&quot;,</b>
+<i>114</i>&nbsp;                        Color.BLUE + &quot;selectpower&quot; + Color.RESET);
+<b class="nc"><i>115</i>&nbsp;                break;</b>
+<i>116</i>&nbsp;            case SELECT_STARTING_PLAYER:
+<b class="nc"><i>117</i>&nbsp;                toStamp = String.format(&quot;Choose the starting player: use &#39;%s&#39; command&quot;,</b>
+<i>118</i>&nbsp;                        Color.BLUE + &quot;start&quot; + Color.RESET);
+<b class="nc"><i>119</i>&nbsp;                break;</b>
+<i>120</i>&nbsp;            case PLACE_WORKER:
+<b class="nc"><i>121</i>&nbsp;                toStamp = String.format(&quot;Place a worker: use &#39;%s&#39; command&quot;,</b>
+<i>122</i>&nbsp;                        Color.BLUE + &quot;placeworker&quot; + Color.RESET);
+<b class="nc"><i>123</i>&nbsp;                break;</b>
+<i>124</i>&nbsp;            case SELECT_SQUARE:
+<b class="nc"><i>125</i>&nbsp;                toStamp = String.format(&quot;Select square to %s: use &#39;%s&#39; command&quot;,</b>
+<b class="nc"><i>126</i>&nbsp;                        Color.RED + lastTurnState.toString() + Color.RESET,</b>
+<i>127</i>&nbsp;                        Color.BLUE + &quot;select&quot; + Color.RESET);
+<b class="nc"><i>128</i>&nbsp;                break;</b>
+<i>129</i>&nbsp;            case SELECT_WORKER:
+<b class="nc"><i>130</i>&nbsp;                toStamp = String.format(&quot;Select worker: use &#39;%s&#39; command&quot;,</b>
+<i>131</i>&nbsp;                        Color.BLUE + &quot;selectworker&quot; + Color.RESET);
+<b class="nc"><i>132</i>&nbsp;                break;</b>
+<i>133</i>&nbsp;            case DISCONNECT:
+<b class="nc"><i>134</i>&nbsp;                toStamp = Color.RED + &quot;Unfortunately the game has forcefully ended, please disconnect&quot;;</b>
+<b class="nc"><i>135</i>&nbsp;                break;</b>
+<i>136</i>&nbsp;            default:
+<b class="nc"><i>137</i>&nbsp;                toStamp = packet.getRequestType().toString();</b>
+<i>138</i>&nbsp;                break;
+<i>139</i>&nbsp;        }
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;        PrintUtils.printFromCommand(&quot;Last request: &quot; + toStamp, 0, -2, true);</b>
+<b class="nc"><i>142</i>&nbsp;        PrintUtils.printCommand();</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    /**
+<i>146</i>&nbsp;     * {@inheritDoc}
+<i>147</i>&nbsp;     * &lt;p&gt;
+<i>148</i>&nbsp;     * Receives information about current player, players&#39;s state and power activation
+<i>149</i>&nbsp;     *
+<i>150</i>&nbsp;     * @param packet contains information about current player
+<i>151</i>&nbsp;     */
+<i>152</i>&nbsp;    @Override
+<i>153</i>&nbsp;    public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
+<b class="nc"><i>154</i>&nbsp;        super.handlePlayerUpdate(packet);</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        if (packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {</b>
+<b class="nc"><i>157</i>&nbsp;            PrintUtils.printMapBackground();</b>
+<b class="nc"><i>158</i>&nbsp;            PrintUtils.printMap(gameMap);</b>
+<i>159</i>&nbsp;        }
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;        if (shouldShowInteraction &amp;&amp; isYourTurn()) {</b>
+<b class="nc"><i>162</i>&nbsp;            PrintUtils.printFromCommand(String.format(&quot;You can use command &#39;%s&#39; to &#39;%s&#39;&quot;,</b>
+<i>163</i>&nbsp;                    Color.RED + &quot;interact&quot; + Color.RESET,
+<b class="nc"><i>164</i>&nbsp;                    Color.BLUE + packet.getPlayerData().getPower().getInteraction().get(0) + Color.RESET),</b>
+<i>165</i>&nbsp;                    0, -1, true);
+<i>166</i>&nbsp;        } else {
+<b class="nc"><i>167</i>&nbsp;            PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y - 1);</b>
+<i>168</i>&nbsp;        }
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, packet.getPlayerState(),</b>
+<i>171</i>&nbsp;                playerColorMap, shouldShowInteraction);
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;        if (packet.getPlayerData().getName().equals(getPlayerName())) {</b>
+<b class="nc"><i>174</i>&nbsp;            if (packet.getPlayerState() == EnumTurnState.WIN) {</b>
+<b class="nc"><i>175</i>&nbsp;                PrintUtils.printWin();</b>
+<i>176</i>&nbsp;            }
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;            if (packet.getPlayerState() == EnumTurnState.LOSE) {</b>
+<b class="nc"><i>179</i>&nbsp;                PrintUtils.printLoser();</b>
+<i>180</i>&nbsp;            }
+<i>181</i>&nbsp;        }
+<i>182</i>&nbsp;    }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    /**
+<i>185</i>&nbsp;     * {@inheritDoc}
+<i>186</i>&nbsp;     * &lt;p&gt;
+<i>187</i>&nbsp;     * Receives all valid moves of the current players
+<i>188</i>&nbsp;     *
+<i>189</i>&nbsp;     * @param packet contains valid moves and blocked moves
+<i>190</i>&nbsp;     */
+<i>191</i>&nbsp;    @Override
+<i>192</i>&nbsp;    public void handleReceivedMoves(ServerMovePossibilities packet) {
+<b class="nc"><i>193</i>&nbsp;        super.handleReceivedMoves(packet);</b>
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;        PrintUtils.printMap(gameMap);</b>
+<b class="nc"><i>196</i>&nbsp;        PrintUtils.printWorkers(playerDataList, playerColorMap);</b>
+<b class="nc"><i>197</i>&nbsp;        PrintUtils.printValidMoves(getValidMoves(), getBlockedMoves());</b>
+<i>198</i>&nbsp;    }
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    /**
+<i>201</i>&nbsp;     * {@inheritDoc}
+<i>202</i>&nbsp;     * &lt;p&gt;
+<i>203</i>&nbsp;     * Receives an error from the server
+<i>204</i>&nbsp;     *
+<i>205</i>&nbsp;     * @param packet contains an error
+<i>206</i>&nbsp;     */
+<i>207</i>&nbsp;    @Override
+<i>208</i>&nbsp;    public void handleError(ServerInvalidPacket packet) {
+<b class="nc"><i>209</i>&nbsp;        PrintUtils.printFromCommand(Color.RED + packet.getError(), 0, 3, true);</b>
+<i>210</i>&nbsp;    }
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    /**
+<i>213</i>&nbsp;     * {@inheritDoc}
+<i>214</i>&nbsp;     * &lt;p&gt;
+<i>215</i>&nbsp;     * Receives player move from the server
+<i>216</i>&nbsp;     *
+<i>217</i>&nbsp;     * @param serverPlayerMove contains player move
+<i>218</i>&nbsp;     */
+<i>219</i>&nbsp;    @Override
+<i>220</i>&nbsp;    public void handlePlayerMove(ServerPlayerMove serverPlayerMove) {
+<b class="nc"><i>221</i>&nbsp;        EnumActionType move = serverPlayerMove.getMoveType();</b>
+<i>222</i>&nbsp;
+<b class="nc"><i>223</i>&nbsp;        if (move == EnumActionType.MOVE) {</b>
+<b class="nc"><i>224</i>&nbsp;            ServerPlayerMove.PlayerMove playerMove = (ServerPlayerMove.PlayerMove) serverPlayerMove.getMove();</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;            Point vector = playerMove.getDest().subtract(playerMove.getSrc());</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;            PrintUtils.printArrow(EnumArrow.fromVector(vector), playerMove.getSrc());</b>
+<b class="nc"><i>229</i>&nbsp;        } else if (move == EnumActionType.BUILD) {</b>
+<b class="nc"><i>230</i>&nbsp;            reload(true);</b>
+<i>231</i>&nbsp;        }
+<i>232</i>&nbsp;    }
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    /**
+<i>235</i>&nbsp;     * {@inheritDoc}
+<i>236</i>&nbsp;     * &lt;p&gt;
+<i>237</i>&nbsp;     * Receives the list of available gods from the server
+<i>238</i>&nbsp;     *
+<i>239</i>&nbsp;     * @param serverPowerList contains all available gods
+<i>240</i>&nbsp;     */
+<i>241</i>&nbsp;    @Override
+<i>242</i>&nbsp;    public void handlePowerList(ServerPowerList serverPowerList) {
+<b class="nc"><i>243</i>&nbsp;        super.handlePowerList(serverPowerList);</b>
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;        PrintUtils.printPowerList(getPowerList());</b>
+<i>246</i>&nbsp;    }
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;    /**
+<i>249</i>&nbsp;     * {@inheritDoc}
+<i>250</i>&nbsp;     * &lt;p&gt;
+<i>251</i>&nbsp;     * Receives successful connection packet from the server
+<i>252</i>&nbsp;     *
+<i>253</i>&nbsp;     * @param packet contains an error
+<i>254</i>&nbsp;     */
+<i>255</i>&nbsp;    @Override
+<i>256</i>&nbsp;    public void handlePlayerConnected(ServerConnectedToGame packet) {
+<b class="nc"><i>257</i>&nbsp;        super.handlePlayerConnected(packet);</b>
+<i>258</i>&nbsp;
+<b class="nc"><i>259</i>&nbsp;        if (packet.getUsername().equals(getPlayerName())) {</b>
+<b class="nc"><i>260</i>&nbsp;            String string = String.format(&quot;You (&#39;%s&#39;) joined a game! (game ID &#39;%s&#39;)&quot;,</b>
+<b class="nc"><i>261</i>&nbsp;                    Color.BLUE + &quot;&quot; + packet.getUsername() + Color.RESET,</b>
+<b class="nc"><i>262</i>&nbsp;                    Color.RED + &quot;&quot; + packet.getGameID() + Color.RESET);</b>
+<i>263</i>&nbsp;
+<b class="nc"><i>264</i>&nbsp;            PrintUtils.printFromCommand(string, 0, -2, true);</b>
+<b class="nc"><i>265</i>&nbsp;        } else {</b>
+<b class="nc"><i>266</i>&nbsp;            String string = String.format(&quot;&#39;%s&#39; joined the game!&quot;,</b>
+<b class="nc"><i>267</i>&nbsp;                    Color.BLUE + &quot;&quot; + packet.getUsername() + Color.RESET);</b>
+<i>268</i>&nbsp;
+<b class="nc"><i>269</i>&nbsp;            Optional&lt;PlayerData&gt; optPlayer = getPlayerDataList().stream()</b>
+<b class="nc"><i>270</i>&nbsp;                    .filter(p -&gt; p.getName().equals(packet.getUsername())).findFirst();</b>
+<i>271</i>&nbsp;
+<b class="nc"><i>272</i>&nbsp;            if (optPlayer.isPresent()) {</b>
+<b class="nc"><i>273</i>&nbsp;                PrintUtils.printFromCommand(string, 0, -4 - getPlayerDataList().indexOf(optPlayer.get()), true);</b>
+<i>274</i>&nbsp;            } else {
+<b class="nc"><i>275</i>&nbsp;                throw new IllegalStateException(&quot;Invalid local username&quot;);</b>
+<i>276</i>&nbsp;            }
+<i>277</i>&nbsp;        }
+<i>278</i>&nbsp;    }
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;    /**
+<i>281</i>&nbsp;     * {@inheritDoc}
+<i>282</i>&nbsp;     * &lt;/p&gt;
+<i>283</i>&nbsp;     * Prints server error
+<i>284</i>&nbsp;     */
+<i>285</i>&nbsp;    @Override
+<i>286</i>&nbsp;    public void onDisconnect() {
+<b class="nc"><i>287</i>&nbsp;        PrintUtils.printFromCommand(Color.RED + &quot;Connection to server has crashed, please reconnect&quot;, 0, -1, true);</b>
+<i>288</i>&nbsp;    }
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;    /**
+<i>291</i>&nbsp;     * {@inheritDoc}
+<i>292</i>&nbsp;     * &lt;/p&gt;
+<i>293</i>&nbsp;     * Prints connection error
+<i>294</i>&nbsp;     */
+<i>295</i>&nbsp;    @Override
+<i>296</i>&nbsp;    public void onConnectionFail() {
+<b class="nc"><i>297</i>&nbsp;        PrintUtils.printFromCommand(Color.RED + &quot;Connection failed&quot;, 0, -1, true);</b>
+<i>298</i>&nbsp;    }
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;    /**
+<i>301</i>&nbsp;     * Reloads interface with saved state
+<i>302</i>&nbsp;     *
+<i>303</i>&nbsp;     * @param drawBackground if the map background is to be drawn
+<i>304</i>&nbsp;     */
+<i>305</i>&nbsp;    public void reload(boolean drawBackground) {
+<b class="nc"><i>306</i>&nbsp;        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, lastTurnState, playerColorMap, shouldShowInteraction);</b>
+<i>307</i>&nbsp;
+<b class="nc"><i>308</i>&nbsp;        if (drawBackground) {</b>
+<b class="nc"><i>309</i>&nbsp;            PrintUtils.printMapBackground();</b>
+<i>310</i>&nbsp;        }
+<i>311</i>&nbsp;
+<b class="nc"><i>312</i>&nbsp;        PrintUtils.printMap(gameMap);</b>
+<b class="nc"><i>313</i>&nbsp;        PrintUtils.printWorkers(playerDataList, playerColorMap);</b>
+<b class="nc"><i>314</i>&nbsp;        PrintUtils.printCommand();</b>
+<i>315</i>&nbsp;
+<b class="nc"><i>316</i>&nbsp;        PrintUtils.printValidMoves(validMoves, blockedMoves);</b>
+<i>317</i>&nbsp;    }
+<i>318</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

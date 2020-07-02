@@ -1,0 +1,155 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ServerGameData</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.network.packets.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ServerGameData (it.polimi.ingsw.psp1.santorini.network.packets.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerGameData</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.network.packets.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.stream.Collectors;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Stores as a packet all relevant information about a game
+<i>13</i>&nbsp; * &lt;p&gt;
+<i>14</i>&nbsp; * The first element in &#39;players&#39; is the CURRENT PLAYER playing its turn
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class ServerGameData implements Packet&lt;ServerHandler&gt; {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    private final GameMap gameMap;
+<i>19</i>&nbsp;    private final EnumTurnState gameState;
+<i>20</i>&nbsp;    private final List&lt;PlayerData&gt; players;
+<i>21</i>&nbsp;    private final boolean forced;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * Generic constructor using map, players and game state
+<i>25</i>&nbsp;     * @param gameMap   current gamemap
+<i>26</i>&nbsp;     * @param players   list of players
+<i>27</i>&nbsp;     * @param gameState current gamestate
+<i>28</i>&nbsp;     * @param forced    true if must be forced
+<i>29</i>&nbsp;     */
+<b class="nc"><i>30</i>&nbsp;    public ServerGameData(GameMap gameMap, List&lt;PlayerData&gt; players, EnumTurnState gameState, boolean forced) {</b>
+<b class="nc"><i>31</i>&nbsp;        this.gameMap = gameMap;</b>
+<b class="nc"><i>32</i>&nbsp;        this.players = players;</b>
+<b class="nc"><i>33</i>&nbsp;        this.gameState = gameState;</b>
+<b class="nc"><i>34</i>&nbsp;        this.forced = forced;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * {@inheritDoc}
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    public void processPacket(ServerHandler netHandler) {
+<b class="nc"><i>42</i>&nbsp;        netHandler.handleGameData(this);</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public GameMap getGameMap() {
+<b class="nc"><i>46</i>&nbsp;        return gameMap;</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    public EnumTurnState getTurnState() {
+<b class="nc"><i>50</i>&nbsp;        return gameState;</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public List&lt;PlayerData&gt; getPlayerData() {
+<b class="nc"><i>54</i>&nbsp;        return players;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public boolean isForced() {
+<b class="nc"><i>58</i>&nbsp;        return forced;</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * {@inheritDoc}
+<i>63</i>&nbsp;     */
+<i>64</i>&nbsp;    @Override
+<i>65</i>&nbsp;    public String toString() {
+<b class="nc"><i>66</i>&nbsp;        String workers = players.stream().map(PlayerData::toString).collect(Collectors.joining(&quot;,&quot;));</b>
+<i>67</i>&nbsp;
+<b class="nc"><i>68</i>&nbsp;        return toString(gameState, gameMap, workers);</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;}
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

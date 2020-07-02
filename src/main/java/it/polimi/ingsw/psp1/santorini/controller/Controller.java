@@ -34,9 +34,6 @@ public class Controller implements ViewObserver {
      * @param view     the view where the event is coming from
      * @param player   the player associated with the view
      * @param location of the square
-     * @throws UnsupportedOperationException  if operation is not valid
-     * @throws ArrayIndexOutOfBoundsException if point is out of map
-     * @throws IllegalArgumentException       if at least one argument is not valid
      */
     @Override
     public void selectSquare(View view, Player player, Point location) {
@@ -63,10 +60,6 @@ public class Controller implements ViewObserver {
      * @param view           the view where the event is coming from
      * @param player         the player associated with the view
      * @param workerPosition on the map
-     * @throws UnsupportedOperationException  if operation is not valid
-     * @throws ArrayIndexOutOfBoundsException if point is out of map
-     * @throws IllegalArgumentException       if at least one argument is not valid
-     * @throws NoSuchElementException         if there is no worker at given position
      */
     @Override
     public void selectWorker(View view, Player player, Point workerPosition) {
@@ -104,9 +97,6 @@ public class Controller implements ViewObserver {
      *
      * @param view   the view where the event is coming from
      * @param player the player associated with the view
-     * @throws UnsupportedOperationException  if operation is not valid
-     * @throws ArrayIndexOutOfBoundsException if point is out of map
-     * @throws IllegalArgumentException       if at least one argument is not valid
      */
     @Override
     public void toggleInteraction(View view, Player player) {
@@ -138,7 +128,6 @@ public class Controller implements ViewObserver {
      * @param view      the view where the event is coming from
      * @param player    the player associated with the view
      * @param powerList with the select powers (singletonList or 2 to 3 power list)
-     * @throws UnsupportedOperationException if operation is not valid
      */
     @Override
     public void selectPowers(View view, Player player, List<Power> powerList) {
@@ -164,7 +153,6 @@ public class Controller implements ViewObserver {
      * @param view             the view where the event is coming from
      * @param player           the player associated with the view
      * @param chosenPlayerName starting player name
-     * @throws UnsupportedOperationException
      */
     @Override
     public void selectStartingPlayer(View view, Player player, String chosenPlayerName) {
@@ -189,7 +177,6 @@ public class Controller implements ViewObserver {
      *
      * @param view   the view where the event is coming from
      * @param player the player associated with the view
-     * @throws UnsupportedOperationException
      */
     @Override
     public void undo(View view, Player player) {
@@ -231,7 +218,6 @@ public class Controller implements ViewObserver {
      *
      * @param view   the view where the even is coming from
      * @param player the player associated with the view
-     * @throws UnsupportedOperationException
      */
     @Override
     public void playerSurrender(View view, Player player) {

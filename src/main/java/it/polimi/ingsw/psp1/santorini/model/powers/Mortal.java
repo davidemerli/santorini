@@ -119,7 +119,7 @@ public class Mortal extends Power {
      * if on Move:
      * - positions with other workers
      * - positions with domes on them
-     * - positions with upward height difference > 2
+     * - positions with upward height difference less than 2
      * if on Build:
      * - positions with domes on them
      * - positions with workers on them

@@ -1,0 +1,847 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameSceneController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.gui.controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameSceneController (it.polimi.ingsw.psp1.santorini.gui.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameSceneController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 64)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 320)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.gui.controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.gui.GuiObserver;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.gui.RenderUtils;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
+<i>9</i>&nbsp;import javafx.animation.*;
+<i>10</i>&nbsp;import javafx.application.Platform;
+<i>11</i>&nbsp;import javafx.event.ActionEvent;
+<i>12</i>&nbsp;import javafx.fxml.FXML;
+<i>13</i>&nbsp;import javafx.geometry.Point3D;
+<i>14</i>&nbsp;import javafx.geometry.Pos;
+<i>15</i>&nbsp;import javafx.scene.*;
+<i>16</i>&nbsp;import javafx.scene.control.Button;
+<i>17</i>&nbsp;import javafx.scene.control.Label;
+<i>18</i>&nbsp;import javafx.scene.effect.GaussianBlur;
+<i>19</i>&nbsp;import javafx.scene.effect.Glow;
+<i>20</i>&nbsp;import javafx.scene.image.ImageView;
+<i>21</i>&nbsp;import javafx.scene.layout.*;
+<i>22</i>&nbsp;import javafx.scene.paint.Color;
+<i>23</i>&nbsp;import javafx.scene.paint.PhongMaterial;
+<i>24</i>&nbsp;import javafx.scene.shape.Box;
+<i>25</i>&nbsp;import javafx.scene.shape.Cylinder;
+<i>26</i>&nbsp;import javafx.scene.transform.Rotate;
+<i>27</i>&nbsp;import javafx.scene.transform.Translate;
+<i>28</i>&nbsp;import javafx.util.Duration;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;import java.io.IOException;
+<i>31</i>&nbsp;import java.util.*;
+<i>32</i>&nbsp;import java.util.concurrent.*;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/**
+<i>35</i>&nbsp; * Manages the game 3D scene
+<i>36</i>&nbsp; */
+<b class="nc"><i>37</i>&nbsp;public class GameSceneController extends GuiController {</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private static final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();</b>
+<b class="nc"><i>40</i>&nbsp;    private static final ExecutorService undoThreadPool = Executors.newSingleThreadExecutor();</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    private static GameSceneController instance;
+<i>43</i>&nbsp;    private List&lt;Node&gt; validMoves;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private Map&lt;Point, Group&gt; map;
+<i>46</i>&nbsp;    private Map&lt;Group, Point&gt; workers;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private Group board;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @FXML
+<i>51</i>&nbsp;    private SubScene mainScene;
+<i>52</i>&nbsp;    @FXML
+<i>53</i>&nbsp;    private AnchorPane pane;
+<i>54</i>&nbsp;    @FXML
+<i>55</i>&nbsp;    private Button menuButton;
+<i>56</i>&nbsp;    @FXML
+<i>57</i>&nbsp;    private Button interactButton;
+<i>58</i>&nbsp;    @FXML
+<i>59</i>&nbsp;    private Button undoButton;
+<i>60</i>&nbsp;    @FXML
+<i>61</i>&nbsp;    private ImageView requestBackground;
+<i>62</i>&nbsp;    @FXML
+<i>63</i>&nbsp;    private Label requestText;
+<i>64</i>&nbsp;    @FXML
+<i>65</i>&nbsp;    private Label undoLabel;
+<i>66</i>&nbsp;    @FXML
+<i>67</i>&nbsp;    private GridPane menu;
+<i>68</i>&nbsp;    @FXML
+<i>69</i>&nbsp;    private VBox playerIcons;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    private String oldInteractLabel;
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    private Map&lt;String, TranslateTransition&gt; playerPanes;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    private boolean hasGameEnded;
+<i>76</i>&nbsp;    private RotateTransition undoRotate;
+<i>77</i>&nbsp;    private Future&lt;?&gt; changeUndoLabel;
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * @return Singleton instance for this controller
+<i>81</i>&nbsp;     */
+<i>82</i>&nbsp;    public static GameSceneController getInstance() {
+<b class="nc"><i>83</i>&nbsp;        if (instance == null) {</b>
+<b class="nc"><i>84</i>&nbsp;            instance = new GameSceneController();</b>
+<i>85</i>&nbsp;        }
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        return instance;</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    /**
+<i>91</i>&nbsp;     * Loads the board and all textures
+<i>92</i>&nbsp;     * Makes possible the rotation of the stage
+<i>93</i>&nbsp;     */
+<i>94</i>&nbsp;    @FXML
+<i>95</i>&nbsp;    public void initialize() {
+<b class="nc"><i>96</i>&nbsp;        PerspectiveCamera camera = new PerspectiveCamera(true);</b>
+<b class="nc"><i>97</i>&nbsp;        camera.setTranslateZ(-45.5);</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        board = RenderUtils.loadModel(&quot;/mesh/board.obj&quot;, &quot;/textures/Cliff_v007.png&quot;);</b>
+<b class="nc"><i>100</i>&nbsp;        Group cliff = RenderUtils.loadModel(&quot;/mesh/cliff.obj&quot;, &quot;/textures/Cliff_v007.png&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;        Group sea = RenderUtils.loadModel(&quot;/mesh/sea.obj&quot;, &quot;/textures/Sea_v006.png&quot;);</b>
+<b class="nc"><i>102</i>&nbsp;        Group islands = RenderUtils.loadModel(&quot;/mesh/islands.obj&quot;, &quot;/textures/Islands_v002.png&quot;);</b>
+<b class="nc"><i>103</i>&nbsp;        sea.setTranslateY(2);</b>
+<b class="nc"><i>104</i>&nbsp;        islands.setTranslateY(2);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;        Group root = new Group(board, cliff, sea, islands);</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        mainScene = new SubScene(root, -1, -1, true, SceneAntialiasing.BALANCED);</b>
+<b class="nc"><i>109</i>&nbsp;        mainScene.setRoot(root);</b>
+<b class="nc"><i>110</i>&nbsp;        mainScene.setCamera(camera);</b>
+<b class="nc"><i>111</i>&nbsp;        mainScene.setFill(Color.valueOf(&quot;#33B7F0&quot;));</b>
+<b class="nc"><i>112</i>&nbsp;        mainScene.widthProperty().bind(pane.widthProperty());</b>
+<b class="nc"><i>113</i>&nbsp;        mainScene.heightProperty().bind(pane.heightProperty());</b>
+<b class="nc"><i>114</i>&nbsp;        pane.getChildren().add(0, mainScene);</b>
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;        RenderUtils.initMouseControl(root, mainScene);</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        instance.requestBackground = requestBackground;</b>
+<b class="nc"><i>119</i>&nbsp;        instance.requestText = requestText;</b>
+<b class="nc"><i>120</i>&nbsp;        instance.interactButton = interactButton;</b>
+<b class="nc"><i>121</i>&nbsp;        instance.undoButton = undoButton;</b>
+<b class="nc"><i>122</i>&nbsp;        instance.menu = menu;</b>
+<b class="nc"><i>123</i>&nbsp;        instance.menuButton = menuButton;</b>
+<b class="nc"><i>124</i>&nbsp;        instance.mainScene = mainScene;</b>
+<b class="nc"><i>125</i>&nbsp;        instance.pane = pane;</b>
+<b class="nc"><i>126</i>&nbsp;        instance.board = board;</b>
+<b class="nc"><i>127</i>&nbsp;        instance.undoLabel = undoLabel;</b>
+<b class="nc"><i>128</i>&nbsp;        instance.playerIcons = playerIcons;</b>
+<b class="nc"><i>129</i>&nbsp;        instance.playerPanes = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>130</i>&nbsp;        instance.validMoves = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>131</i>&nbsp;        instance.workers = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>132</i>&nbsp;        instance.map = new HashMap&lt;&gt;();</b>
+<i>133</i>&nbsp;
+<b class="nc"><i>134</i>&nbsp;        instance.undoRotate = new RotateTransition(Duration.millis(1000), instance.undoButton);</b>
+<b class="nc"><i>135</i>&nbsp;        instance.undoRotate.setByAngle(180);</b>
+<b class="nc"><i>136</i>&nbsp;        instance.undoRotate.setInterpolator(Interpolator.EASE_BOTH);</b>
+<b class="nc"><i>137</i>&nbsp;        instance.undoRotate.setAutoReverse(true);</b>
+<b class="nc"><i>138</i>&nbsp;        instance.undoRotate.setCycleCount(5);</b>
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    /**
+<i>142</i>&nbsp;     * Converts all 2D points in 3D points and shows all valid moves for the selected worker
+<i>143</i>&nbsp;     *
+<i>144</i>&nbsp;     * @param moves        valid moves list
+<i>145</i>&nbsp;     * @param blockedMoves blocked moves list
+<i>146</i>&nbsp;     * @param state        current state
+<i>147</i>&nbsp;     */
+<i>148</i>&nbsp;    public void showValidMoves(List&lt;Point&gt; moves, List&lt;Point&gt; blockedMoves, EnumTurnState state) {
+<b class="nc"><i>149</i>&nbsp;        runMapChange(() -&gt; {</b>
+<b class="nc"><i>150</i>&nbsp;            instance.board.getChildren().removeAll(instance.validMoves);</b>
+<b class="nc"><i>151</i>&nbsp;            instance.validMoves.clear();</b>
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;            for (Point p : moves) {</b>
+<b class="nc"><i>154</i>&nbsp;                boolean isBlocked = blockedMoves.contains(p);</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;                Point3D p3D = RenderUtils.convert2DTo3D(instance.board, p.x, p.y);</b>
+<b class="nc"><i>157</i>&nbsp;                Cylinder box = new Cylinder(1.15, 0.1);</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;                double y = -3.5 - getHeight(p);</b>
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;                box.setTranslateX(p3D.getX());</b>
+<b class="nc"><i>162</i>&nbsp;                box.setTranslateY(y);</b>
+<b class="nc"><i>163</i>&nbsp;                box.setTranslateZ(p3D.getZ());</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;                Color color;
+<b class="nc"><i>166</i>&nbsp;                if (state == EnumTurnState.BUILD) {</b>
+<b class="nc"><i>167</i>&nbsp;                    color = Color.valueOf(&quot;#ffe10099&quot;);</b>
+<i>168</i>&nbsp;                } else {
+<b class="nc"><i>169</i>&nbsp;                    color = Color.valueOf(&quot;#00bbff99&quot;);</b>
+<i>170</i>&nbsp;                }
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;                PhongMaterial m = new PhongMaterial(isBlocked ? Color.valueOf(&quot;#57171799&quot;) : color,</b>
+<i>173</i>&nbsp;                        null, null, null, null);
+<b class="nc"><i>174</i>&nbsp;                box.setMaterial(m);</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;                Group move;
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;                if (isBlocked) { //draws red move and and X on it</b>
+<b class="nc"><i>179</i>&nbsp;                    Box block1 = new Box(2, 0.2, 0.5);</b>
+<b class="nc"><i>180</i>&nbsp;                    Box block2 = new Box(2, 0.2, 0.5);</b>
+<b class="nc"><i>181</i>&nbsp;                    block1.setRotationAxis(Rotate.Y_AXIS);</b>
+<b class="nc"><i>182</i>&nbsp;                    block1.setRotate(45);</b>
+<b class="nc"><i>183</i>&nbsp;                    block2.setRotationAxis(Rotate.Y_AXIS);</b>
+<b class="nc"><i>184</i>&nbsp;                    block2.setRotate(135);</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;                    block1.setTranslateX(p3D.getX());</b>
+<b class="nc"><i>187</i>&nbsp;                    block1.setTranslateY(y - 0.2);</b>
+<b class="nc"><i>188</i>&nbsp;                    block1.setTranslateZ(p3D.getZ());</b>
+<b class="nc"><i>189</i>&nbsp;                    block2.setTranslateX(p3D.getX());</b>
+<b class="nc"><i>190</i>&nbsp;                    block2.setTranslateY(y - 0.2);</b>
+<b class="nc"><i>191</i>&nbsp;                    block2.setTranslateZ(p3D.getZ());</b>
+<i>192</i>&nbsp;
+<b class="nc"><i>193</i>&nbsp;                    block1.setMaterial(m);</b>
+<b class="nc"><i>194</i>&nbsp;                    block2.setMaterial(m);</b>
+<b class="nc"><i>195</i>&nbsp;                    move = new Group(box, block1, block2);</b>
+<b class="nc"><i>196</i>&nbsp;                } else {</b>
+<b class="nc"><i>197</i>&nbsp;                    move = new Group(box);</b>
+<i>198</i>&nbsp;                }
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;                ScaleTransition st = new ScaleTransition(Duration.millis(500), move);</b>
+<b class="nc"><i>201</i>&nbsp;                st.setCycleCount(Animation.INDEFINITE);</b>
+<b class="nc"><i>202</i>&nbsp;                st.setAutoReverse(true);</b>
+<b class="nc"><i>203</i>&nbsp;                st.setFromX(0.8);</b>
+<b class="nc"><i>204</i>&nbsp;                st.setFromZ(0.8);</b>
+<b class="nc"><i>205</i>&nbsp;                st.setToX(1);</b>
+<b class="nc"><i>206</i>&nbsp;                st.setToZ(1);</b>
+<b class="nc"><i>207</i>&nbsp;                st.play();</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;                if (!isBlocked) {</b>
+<b class="nc"><i>210</i>&nbsp;                    box.setOnMouseClicked(event -&gt; {</b>
+<b class="nc"><i>211</i>&nbsp;                        if (instance.workers.containsValue(p)) {</b>
+<b class="nc"><i>212</i>&nbsp;                            instance.notifyObservers(o -&gt; o.onWorkerSelected(p));</b>
+<i>213</i>&nbsp;                        }
+<i>214</i>&nbsp;
+<b class="nc"><i>215</i>&nbsp;                        instance.notifyObservers(o -&gt; o.onMoveSelected(p));</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;                        instance.board.getChildren().removeAll(instance.validMoves);</b>
+<b class="nc"><i>218</i>&nbsp;                        instance.validMoves.clear();</b>
+<i>219</i>&nbsp;                    });
+<i>220</i>&nbsp;                }
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;                instance.validMoves.add(move);</b>
+<b class="nc"><i>223</i>&nbsp;            }</b>
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;            instance.board.getChildren().addAll(instance.validMoves);</b>
+<i>226</i>&nbsp;        }, Duration.millis(200));
+<i>227</i>&nbsp;    }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    /**
+<i>230</i>&nbsp;     * Adds a worker on the map
+<i>231</i>&nbsp;     *
+<i>232</i>&nbsp;     * @param x       x coordinate
+<i>233</i>&nbsp;     * @param y       y coordinate
+<i>234</i>&nbsp;     * @param color   worker color
+<i>235</i>&nbsp;     * @param isOwn   true if is one of my worker
+<i>236</i>&nbsp;     * @param animate true if must use the animation
+<i>237</i>&nbsp;     */
+<i>238</i>&nbsp;    public void addWorker(int x, int y, Color color, boolean isOwn, boolean animate) {
+<b class="nc"><i>239</i>&nbsp;        Duration duration = Duration.millis(200);</b>
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;        runMapChange(() -&gt; {</b>
+<b class="nc"><i>242</i>&nbsp;            Point p = new Point(x, y);</b>
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;            if (instance.workers.containsValue(p))</b>
+<i>245</i>&nbsp;                return;
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;            Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;            Group worker = RenderUtils.loadModel(&quot;/mesh/builder.obj&quot;,</b>
+<i>250</i>&nbsp;                    &quot;/textures/MaleBuilder_Tan_v001.png&quot;,
+<i>251</i>&nbsp;                    color);
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;            Group blocks = instance.map.get(p);</b>
+<b class="nc"><i>254</i>&nbsp;            double height = blocks != null &amp;&amp; blocks.getChildren().size() &gt; 0 ? -blocks.getLayoutBounds().getHeight() : 0;</b>
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;            worker.getTransforms().add(new Translate(p3D.getX(), height, p3D.getZ()));</b>
+<b class="nc"><i>257</i>&nbsp;            worker.getTransforms().add(new Rotate(new Random().nextInt(360), Rotate.Y_AXIS));</b>
+<b class="nc"><i>258</i>&nbsp;            addWorkerClickAction(worker, p, isOwn);</b>
+<b class="nc"><i>259</i>&nbsp;            instance.board.getChildren().add(worker);</b>
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;            if (animate) {</b>
+<b class="nc"><i>262</i>&nbsp;                TranslateTransition tt = new TranslateTransition(duration, worker);</b>
+<b class="nc"><i>263</i>&nbsp;                tt.setInterpolator(Interpolator.EASE_BOTH);</b>
+<b class="nc"><i>264</i>&nbsp;                tt.setFromY(-20);</b>
+<b class="nc"><i>265</i>&nbsp;                tt.setToY(worker.getLayoutY());</b>
+<b class="nc"><i>266</i>&nbsp;                tt.setOnFinished(event -&gt; instance.workers.put(worker, p));</b>
+<b class="nc"><i>267</i>&nbsp;                tt.play();</b>
+<b class="nc"><i>268</i>&nbsp;            } else {</b>
+<b class="nc"><i>269</i>&nbsp;                instance.workers.put(worker, p);</b>
+<i>270</i>&nbsp;            }
+<i>271</i>&nbsp;        }, animate ? duration : Duration.millis(10));
+<i>272</i>&nbsp;    }
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;    /**
+<i>275</i>&nbsp;     * @param x         x coordinate
+<i>276</i>&nbsp;     * @param y         y coordinate
+<i>277</i>&nbsp;     * @param forceDome true if a dome must be built
+<i>278</i>&nbsp;     * @param animate   true if must use the animation
+<i>279</i>&nbsp;     */
+<i>280</i>&nbsp;    public void addBlockAt(int x, int y, boolean forceDome, boolean animate) {
+<b class="nc"><i>281</i>&nbsp;        runMapChange(() -&gt; {</b>
+<b class="nc"><i>282</i>&nbsp;            Point p = new Point(x, y);</b>
+<b class="nc"><i>283</i>&nbsp;            Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);</b>
+<i>284</i>&nbsp;
+<b class="nc"><i>285</i>&nbsp;            if (!instance.map.containsKey(p)) {</b>
+<b class="nc"><i>286</i>&nbsp;                Group g = new Group();</b>
+<b class="nc"><i>287</i>&nbsp;                instance.map.put(p, g);</b>
+<b class="nc"><i>288</i>&nbsp;                instance.board.getChildren().add(g);</b>
+<i>289</i>&nbsp;            }
+<i>290</i>&nbsp;
+<b class="nc"><i>291</i>&nbsp;            Group group = instance.map.get(p);</b>
+<b class="nc"><i>292</i>&nbsp;            int level = forceDome ? 4 : (group.getChildren().size() + 1);</b>
+<i>293</i>&nbsp;
+<b class="nc"><i>294</i>&nbsp;            Group block = RenderUtils.loadModel(&quot;/mesh/level&quot; + level + &quot;.obj&quot;,</b>
+<i>295</i>&nbsp;                    &quot;/textures/BuildingBlock0&quot; + level + &quot;_v001.png&quot;);
+<b class="nc"><i>296</i>&nbsp;            double height = group.getChildren().size() &gt; 0 ? -group.getLayoutBounds().getHeight() : 0;</b>
+<i>297</i>&nbsp;
+<b class="nc"><i>298</i>&nbsp;            block.getTransforms().add(new Translate(p3D.getX(), height, p3D.getZ()));</b>
+<i>299</i>&nbsp;
+<b class="nc"><i>300</i>&nbsp;            instance.map.get(p).getChildren().add(block);</b>
+<i>301</i>&nbsp;
+<b class="nc"><i>302</i>&nbsp;            if (instance.workers.containsValue(p)) {</b>
+<b class="nc"><i>303</i>&nbsp;                Group w = instance.workers.keySet().stream()</b>
+<b class="nc"><i>304</i>&nbsp;                        .filter(g -&gt; instance.workers.get(g).equals(p)).findFirst().get();</b>
+<i>305</i>&nbsp;
+<b class="nc"><i>306</i>&nbsp;                if (animate) {</b>
+<b class="nc"><i>307</i>&nbsp;                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), w);</b>
+<b class="nc"><i>308</i>&nbsp;                    tt.setByY(-block.getLayoutBounds().getHeight());</b>
+<b class="nc"><i>309</i>&nbsp;                    tt.setInterpolator(Interpolator.EASE_OUT);</b>
+<i>310</i>&nbsp;
+<b class="nc"><i>311</i>&nbsp;                    FadeTransition ft = new FadeTransition(Duration.millis(400), block);</b>
+<b class="nc"><i>312</i>&nbsp;                    ft.setFromValue(0);</b>
+<b class="nc"><i>313</i>&nbsp;                    ft.setToValue(1);</b>
+<i>314</i>&nbsp;
+<b class="nc"><i>315</i>&nbsp;                    new SequentialTransition(tt, ft).play();</b>
+<i>316</i>&nbsp;                }
+<b class="nc"><i>317</i>&nbsp;            } else {</b>
+<b class="nc"><i>318</i>&nbsp;                if (animate) {</b>
+<b class="nc"><i>319</i>&nbsp;                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), block);</b>
+<b class="nc"><i>320</i>&nbsp;                    tt.setInterpolator(Interpolator.EASE_IN);</b>
+<b class="nc"><i>321</i>&nbsp;                    tt.setFromY(-10);</b>
+<b class="nc"><i>322</i>&nbsp;                    tt.setToY(block.getLayoutY());</b>
+<i>323</i>&nbsp;
+<b class="nc"><i>324</i>&nbsp;                    FadeTransition ft = new FadeTransition(Duration.millis(200), block);</b>
+<b class="nc"><i>325</i>&nbsp;                    ft.setFromValue(0);</b>
+<b class="nc"><i>326</i>&nbsp;                    ft.setToValue(1);</b>
+<i>327</i>&nbsp;
+<b class="nc"><i>328</i>&nbsp;                    new ParallelTransition(tt, ft).play();</b>
+<i>329</i>&nbsp;                }
+<i>330</i>&nbsp;            }
+<i>331</i>&nbsp;        }, animate ? Duration.millis(400) : Duration.millis(50));
+<i>332</i>&nbsp;    }
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    /**
+<i>335</i>&nbsp;     * Moves a worker on the map
+<i>336</i>&nbsp;     *
+<i>337</i>&nbsp;     * @param from  initial position
+<i>338</i>&nbsp;     * @param to    final position
+<i>339</i>&nbsp;     * @param isOwn true if is one of my worker
+<i>340</i>&nbsp;     * @throws NoSuchElementException if there is not worker at given position
+<i>341</i>&nbsp;     */
+<i>342</i>&nbsp;    public void moveWorker(Point from, Point to, boolean isOwn) {
+<b class="nc"><i>343</i>&nbsp;        Optional&lt;Group&gt; workerOnDestination = instance.workers.keySet().stream()</b>
+<b class="nc"><i>344</i>&nbsp;                .filter(g -&gt; instance.workers.get(g).equals(to)).findFirst();</b>
+<i>345</i>&nbsp;
+<b class="nc"><i>346</i>&nbsp;        runMapChange(() -&gt; {</b>
+<b class="nc"><i>347</i>&nbsp;            Optional&lt;Group&gt; optWorker = instance.workers.keySet().stream()</b>
+<b class="nc"><i>348</i>&nbsp;                    .filter(g -&gt; instance.workers.get(g).equals(from)).findFirst();</b>
+<i>349</i>&nbsp;
+<b class="nc"><i>350</i>&nbsp;            if (optWorker.isEmpty()) {</b>
+<b class="nc"><i>351</i>&nbsp;                throw new NoSuchElementException(&quot;Worker not found at given position&quot;);</b>
+<i>352</i>&nbsp;            }
+<i>353</i>&nbsp;
+<b class="nc"><i>354</i>&nbsp;            Group worker = optWorker.get();</b>
+<i>355</i>&nbsp;
+<b class="nc"><i>356</i>&nbsp;            Point3D from3D = RenderUtils.convert2DTo3D(instance.board, from.x, from.y);</b>
+<b class="nc"><i>357</i>&nbsp;            Point3D to3D = RenderUtils.convert2DTo3D(instance.board, to.x, to.y);</b>
+<i>358</i>&nbsp;
+<b class="nc"><i>359</i>&nbsp;            Point3D diff = to3D.subtract(from3D);</b>
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;
+<b class="nc"><i>362</i>&nbsp;            double heightFrom = instance.map.get(from) != null ? instance.map.get(from).getLayoutBounds().getHeight() : 0;</b>
+<b class="nc"><i>363</i>&nbsp;            double heightTo = instance.map.get(to) != null ? instance.map.get(to).getLayoutBounds().getHeight() : 0;</b>
+<b class="nc"><i>364</i>&nbsp;            double heightDiff = heightFrom - heightTo;</b>
+<i>365</i>&nbsp;
+<b class="nc"><i>366</i>&nbsp;            TranslateTransition tt = new TranslateTransition(Duration.millis(heightDiff &lt; 0 ? 400 : 250), worker);</b>
+<b class="nc"><i>367</i>&nbsp;            tt.setByX(diff.getX());</b>
+<b class="nc"><i>368</i>&nbsp;            tt.setByZ(diff.getZ());</b>
+<b class="nc"><i>369</i>&nbsp;            tt.setInterpolator(Interpolator.EASE_BOTH);</b>
+<i>370</i>&nbsp;
+<b class="nc"><i>371</i>&nbsp;            double duration = Math.abs(heightDiff) * (heightDiff &lt; 0 ? 150 : 300);</b>
+<b class="nc"><i>372</i>&nbsp;            TranslateTransition ttY = new TranslateTransition(Duration.millis(duration), worker);</b>
+<b class="nc"><i>373</i>&nbsp;            ttY.setByY(heightDiff);</b>
+<b class="nc"><i>374</i>&nbsp;            ttY.setInterpolator(Interpolator.EASE_BOTH);</b>
+<i>375</i>&nbsp;
+<b class="nc"><i>376</i>&nbsp;            ParallelTransition pt = new ParallelTransition(tt, ttY);</b>
+<b class="nc"><i>377</i>&nbsp;            pt.setOnFinished(event -&gt; instance.workers.replace(worker, to));</b>
+<b class="nc"><i>378</i>&nbsp;            pt.play();</b>
+<i>379</i>&nbsp;
+<b class="nc"><i>380</i>&nbsp;            addWorkerClickAction(worker, to, isOwn);</b>
+<i>381</i>&nbsp;        }, workerOnDestination.isPresent() ? Duration.millis(50) : Duration.millis(400));
+<i>382</i>&nbsp;    }
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    /**
+<i>385</i>&nbsp;     * Manages the interaction button
+<i>386</i>&nbsp;     *
+<i>387</i>&nbsp;     * @param power player power
+<i>388</i>&nbsp;     * @param show  true if the interaction button must be shown
+<i>389</i>&nbsp;     */
+<i>390</i>&nbsp;    public void showInteract(Power power, boolean show) {
+<b class="nc"><i>391</i>&nbsp;        if (instance.interactButton == null || power == null) {</b>
+<i>392</i>&nbsp;            return;
+<i>393</i>&nbsp;        }
+<i>394</i>&nbsp;
+<b class="nc"><i>395</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>396</i>&nbsp;            instance.interactButton.setText(power.getInteraction().get(0));</b>
+<b class="nc"><i>397</i>&nbsp;            instance.interactButton.setVisible(show);</b>
+<b class="nc"><i>398</i>&nbsp;            instance.interactButton.setEffect(null);</b>
+<i>399</i>&nbsp;        });
+<i>400</i>&nbsp;    }
+<i>401</i>&nbsp;
+<i>402</i>&nbsp;    /**
+<i>403</i>&nbsp;     * Manages the undo button
+<i>404</i>&nbsp;     *
+<i>405</i>&nbsp;     * @param show true if the undo button must be shown
+<i>406</i>&nbsp;     */
+<i>407</i>&nbsp;    public void showUndo(boolean show) {
+<b class="nc"><i>408</i>&nbsp;        if (instance.undoButton == null) {</b>
+<i>409</i>&nbsp;            return;
+<i>410</i>&nbsp;        }
+<i>411</i>&nbsp;
+<b class="nc"><i>412</i>&nbsp;        Platform.runLater(() -&gt; instance.undoButton.setDisable(!show));</b>
+<i>413</i>&nbsp;    }
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;    /**
+<i>416</i>&nbsp;     * Manages the requests on screen
+<i>417</i>&nbsp;     *
+<i>418</i>&nbsp;     * @param request to be shown
+<i>419</i>&nbsp;     */
+<i>420</i>&nbsp;    public void showRequest(String request) {
+<b class="nc"><i>421</i>&nbsp;        if (instance.requestBackground == null || instance.requestText == null) {</b>
+<i>422</i>&nbsp;            return;
+<i>423</i>&nbsp;        }
+<i>424</i>&nbsp;
+<b class="nc"><i>425</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>426</i>&nbsp;            instance.requestBackground.setVisible(true);</b>
+<b class="nc"><i>427</i>&nbsp;            instance.requestText.setVisible(true);</b>
+<b class="nc"><i>428</i>&nbsp;            instance.requestText.setText(request);</b>
+<i>429</i>&nbsp;        });
+<i>430</i>&nbsp;    }
+<i>431</i>&nbsp;
+<i>432</i>&nbsp;    /**
+<i>433</i>&nbsp;     * Hides the request banner
+<i>434</i>&nbsp;     */
+<i>435</i>&nbsp;    public void hideRequest() {
+<b class="nc"><i>436</i>&nbsp;        if (instance.requestBackground == null || instance.requestText == null) {</b>
+<i>437</i>&nbsp;            return;
+<i>438</i>&nbsp;        }
+<i>439</i>&nbsp;
+<b class="nc"><i>440</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>441</i>&nbsp;            instance.requestBackground.setVisible(false);</b>
+<b class="nc"><i>442</i>&nbsp;            instance.requestText.setVisible(false);</b>
+<i>443</i>&nbsp;        });
+<i>444</i>&nbsp;    }
+<i>445</i>&nbsp;
+<i>446</i>&nbsp;    /**
+<i>447</i>&nbsp;     * Enqueues a map animation
+<i>448</i>&nbsp;     * Used to keep animations one after another
+<i>449</i>&nbsp;     *
+<i>450</i>&nbsp;     * @param toRun    the map change function
+<i>451</i>&nbsp;     * @param duration how much the change takes
+<i>452</i>&nbsp;     */
+<i>453</i>&nbsp;    private void runMapChange(Runnable toRun, Duration duration) {
+<b class="nc"><i>454</i>&nbsp;        pool.execute(() -&gt; Platform.runLater(toRun));</b>
+<i>455</i>&nbsp;
+<b class="nc"><i>456</i>&nbsp;        pool.execute(() -&gt; {</b>
+<i>457</i>&nbsp;            try {
+<b class="nc"><i>458</i>&nbsp;                TimeUnit.MILLISECONDS.sleep((long) duration.toMillis());</b>
+<b class="nc"><i>459</i>&nbsp;            } catch (InterruptedException ignored) {</b>
+<b class="nc"><i>460</i>&nbsp;            }</b>
+<i>461</i>&nbsp;        });
+<i>462</i>&nbsp;    }
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;    /**
+<i>465</i>&nbsp;     * If the game has ended, shows the end game screen
+<i>466</i>&nbsp;     *
+<i>467</i>&nbsp;     * @param username player username
+<i>468</i>&nbsp;     * @param hasWon   true if the player has won
+<i>469</i>&nbsp;     */
+<i>470</i>&nbsp;    public void showEndGame(String username, boolean hasWon) {
+<b class="nc"><i>471</i>&nbsp;        instance.hasGameEnded = true;</b>
+<i>472</i>&nbsp;
+<b class="nc"><i>473</i>&nbsp;        pool.schedule(() -&gt; Platform.runLater(() -&gt; {</b>
+<i>474</i>&nbsp;            try {
+<b class="nc"><i>475</i>&nbsp;                Parent winOrLose = hasWon ? EnumScene.WIN.load() : EnumScene.LOSE.load();</b>
+<b class="nc"><i>476</i>&nbsp;                BorderPane pane = new BorderPane(winOrLose);</b>
+<b class="nc"><i>477</i>&nbsp;                AnchorPane.setTopAnchor(pane, 0D);</b>
+<b class="nc"><i>478</i>&nbsp;                AnchorPane.setBottomAnchor(pane, 0D);</b>
+<b class="nc"><i>479</i>&nbsp;                AnchorPane.setLeftAnchor(pane, 0D);</b>
+<b class="nc"><i>480</i>&nbsp;                AnchorPane.setRightAnchor(pane, 0D);</b>
+<i>481</i>&nbsp;
+<b class="nc"><i>482</i>&nbsp;                WinLoseController.getInstance().setPlayerName(username);</b>
+<i>483</i>&nbsp;
+<b class="nc"><i>484</i>&nbsp;                instance.pane.setEffect(new GaussianBlur(22));</b>
+<i>485</i>&nbsp;
+<b class="nc"><i>486</i>&nbsp;                ScaleTransition st = new ScaleTransition(Duration.seconds(1), pane);</b>
+<b class="nc"><i>487</i>&nbsp;                st.setFromX(0D);</b>
+<b class="nc"><i>488</i>&nbsp;                st.setFromY(0D);</b>
+<b class="nc"><i>489</i>&nbsp;                st.setFromZ(0D);</b>
+<b class="nc"><i>490</i>&nbsp;                st.setToX(1D);</b>
+<b class="nc"><i>491</i>&nbsp;                st.setToY(1D);</b>
+<b class="nc"><i>492</i>&nbsp;                st.setToZ(1D);</b>
+<b class="nc"><i>493</i>&nbsp;                st.play();</b>
+<b class="nc"><i>494</i>&nbsp;                ((AnchorPane) instance.pane.getParent()).getChildren().add(pane);</b>
+<b class="nc"><i>495</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>496</i>&nbsp;                e.printStackTrace();</b>
+<b class="nc"><i>497</i>&nbsp;            }</b>
+<i>498</i>&nbsp;        }), 300, TimeUnit.MILLISECONDS);
+<i>499</i>&nbsp;    }
+<i>500</i>&nbsp;
+<i>501</i>&nbsp;    /**
+<i>502</i>&nbsp;     * Setup worker 3D model click handling
+<i>503</i>&nbsp;     *
+<i>504</i>&nbsp;     * @param worker         the worker model
+<i>505</i>&nbsp;     * @param positionToSend position of the worker
+<i>506</i>&nbsp;     * @param isOwn          if the worker is one of the current player&#39;s
+<i>507</i>&nbsp;     */
+<i>508</i>&nbsp;    private void addWorkerClickAction(Group worker, Point positionToSend, boolean isOwn) {
+<b class="nc"><i>509</i>&nbsp;        Duration duration = Duration.millis(100);</b>
+<i>510</i>&nbsp;
+<b class="nc"><i>511</i>&nbsp;        worker.setOnMouseClicked(event -&gt; {</b>
+<b class="nc"><i>512</i>&nbsp;            runMapChange(() -&gt; {</b>
+<b class="nc"><i>513</i>&nbsp;                if (isOwn) {</b>
+<b class="nc"><i>514</i>&nbsp;                    TranslateTransition selectAnimation = new TranslateTransition(duration, worker);</b>
+<b class="nc"><i>515</i>&nbsp;                    selectAnimation.setInterpolator(Interpolator.EASE_BOTH);</b>
+<b class="nc"><i>516</i>&nbsp;                    selectAnimation.setByY(-0.15);</b>
+<b class="nc"><i>517</i>&nbsp;                    selectAnimation.setCycleCount(4);</b>
+<b class="nc"><i>518</i>&nbsp;                    selectAnimation.setAutoReverse(true);</b>
+<i>519</i>&nbsp;
+<b class="nc"><i>520</i>&nbsp;                    instance.notifyObservers(o -&gt; o.onWorkerSelected(positionToSend));</b>
+<b class="nc"><i>521</i>&nbsp;                } else {</b>
+<b class="nc"><i>522</i>&nbsp;                    instance.notifyObservers(o -&gt; o.onMoveSelected(positionToSend));</b>
+<i>523</i>&nbsp;                }
+<i>524</i>&nbsp;            }, duration);
+<i>525</i>&nbsp;        });
+<i>526</i>&nbsp;    }
+<i>527</i>&nbsp;
+<i>528</i>&nbsp;    /**
+<i>529</i>&nbsp;     * Changes interact button texture
+<i>530</i>&nbsp;     *
+<i>531</i>&nbsp;     * @param power that defines the interaction behaviour
+<i>532</i>&nbsp;     */
+<i>533</i>&nbsp;    public void setInteractButtonTexture(Power power) {
+<b class="nc"><i>534</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>535</i>&nbsp;            String texture = &quot;/gui_assets/god_cards/interactions/&quot; + power.getInteractButton() + &quot;.png&quot;;</b>
+<i>536</i>&nbsp;
+<b class="nc"><i>537</i>&nbsp;            instance.interactButton.setStyle(&quot;-fx-background-size: 100% 100%;&quot; +</b>
+<i>538</i>&nbsp;                    &quot;-fx-background-color: transparent;&quot; +
+<b class="nc"><i>539</i>&nbsp;                    String.format(&quot;-fx-background-image: url(%s);&quot;, texture));</b>
+<i>540</i>&nbsp;        });
+<i>541</i>&nbsp;    }
+<i>542</i>&nbsp;
+<i>543</i>&nbsp;    /**
+<i>544</i>&nbsp;     * Hud button handling
+<i>545</i>&nbsp;     *
+<i>546</i>&nbsp;     * @param event gui event
+<i>547</i>&nbsp;     */
+<i>548</i>&nbsp;    @FXML
+<i>549</i>&nbsp;    private void clickMenu(ActionEvent event) {
+<b class="nc"><i>550</i>&nbsp;        instance.pane.setEffect(new GaussianBlur(22));</b>
+<b class="nc"><i>551</i>&nbsp;        instance.menu.setVisible(true);</b>
+<i>552</i>&nbsp;    }
+<i>553</i>&nbsp;
+<i>554</i>&nbsp;    /**
+<i>555</i>&nbsp;     * Hud button handling
+<i>556</i>&nbsp;     *
+<i>557</i>&nbsp;     * @param event gui event
+<i>558</i>&nbsp;     */
+<i>559</i>&nbsp;    @FXML
+<i>560</i>&nbsp;    private void clickResume(ActionEvent event) {
+<b class="nc"><i>561</i>&nbsp;        instance.pane.setEffect(null);</b>
+<b class="nc"><i>562</i>&nbsp;        instance.menu.setVisible(false);</b>
+<i>563</i>&nbsp;    }
+<i>564</i>&nbsp;
+<i>565</i>&nbsp;    /**
+<i>566</i>&nbsp;     * Manages the undo time
+<i>567</i>&nbsp;     * Player can use the undo function within 5 seconds
+<i>568</i>&nbsp;     */
+<i>569</i>&nbsp;    public void setupUndoTimer() {
+<b class="nc"><i>570</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>571</i>&nbsp;            instance.undoRotate.playFromStart();</b>
+<i>572</i>&nbsp;        });
+<i>573</i>&nbsp;
+<b class="nc"><i>574</i>&nbsp;        instance.changeUndoLabel = undoThreadPool.submit(() -&gt; {</b>
+<i>575</i>&nbsp;            try {
+<b class="nc"><i>576</i>&nbsp;                for (int i = 0; i &lt; 5; i++) {</b>
+<b class="nc"><i>577</i>&nbsp;                    int value = 5 - i;</b>
+<b class="nc"><i>578</i>&nbsp;                    Platform.runLater(() -&gt; instance.undoLabel.setText(&quot;&quot; + value));</b>
+<b class="nc"><i>579</i>&nbsp;                    TimeUnit.SECONDS.sleep(1);</b>
+<i>580</i>&nbsp;                }
+<b class="nc"><i>581</i>&nbsp;                Platform.runLater(() -&gt; instance.undoLabel.setText(&quot;0&quot;));</b>
+<b class="nc"><i>582</i>&nbsp;                TimeUnit.MILLISECONDS.sleep(200);</b>
+<i>583</i>&nbsp;
+<b class="nc"><i>584</i>&nbsp;                Platform.runLater(() -&gt; instance.undoLabel.setText(&quot;&quot;));</b>
+<b class="nc"><i>585</i>&nbsp;            } catch (InterruptedException ignored) {</b>
+<b class="nc"><i>586</i>&nbsp;            }</b>
+<i>587</i>&nbsp;        });
+<i>588</i>&nbsp;    }
+<i>589</i>&nbsp;
+<i>590</i>&nbsp;    /**
+<i>591</i>&nbsp;     * Hud button handling
+<i>592</i>&nbsp;     *
+<i>593</i>&nbsp;     * @param event gui event
+<i>594</i>&nbsp;     */
+<i>595</i>&nbsp;    @FXML
+<i>596</i>&nbsp;    private void interactPressed(ActionEvent event) {
+<b class="nc"><i>597</i>&nbsp;        instance.notifyObservers(GuiObserver::interactPressed);</b>
+<i>598</i>&nbsp;
+<b class="nc"><i>599</i>&nbsp;        if (!instance.interactButton.getText().equals(&quot;Cancel&quot;)) {</b>
+<b class="nc"><i>600</i>&nbsp;            instance.oldInteractLabel = instance.interactButton.getText();</b>
+<b class="nc"><i>601</i>&nbsp;            instance.interactButton.setText(&quot;Cancel&quot;);</b>
+<b class="nc"><i>602</i>&nbsp;            instance.interactButton.setEffect(new Glow());</b>
+<i>603</i>&nbsp;        } else {
+<b class="nc"><i>604</i>&nbsp;            instance.interactButton.setText(instance.oldInteractLabel);</b>
+<b class="nc"><i>605</i>&nbsp;            instance.interactButton.setEffect(null);</b>
+<i>606</i>&nbsp;        }
+<i>607</i>&nbsp;    }
+<i>608</i>&nbsp;
+<i>609</i>&nbsp;    /**
+<i>610</i>&nbsp;     * Hud button handling
+<i>611</i>&nbsp;     *
+<i>612</i>&nbsp;     * @param event gui event
+<i>613</i>&nbsp;     */
+<i>614</i>&nbsp;    @FXML
+<i>615</i>&nbsp;    private void quitPressed(ActionEvent event) {
+<b class="nc"><i>616</i>&nbsp;        instance.notifyObservers(GuiObserver::disconnect);</b>
+<i>617</i>&nbsp;    }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;    /**
+<i>620</i>&nbsp;     * Hud button handling
+<i>621</i>&nbsp;     *
+<i>622</i>&nbsp;     * @param event gui event
+<i>623</i>&nbsp;     */
+<i>624</i>&nbsp;    @FXML
+<i>625</i>&nbsp;    private void undoPressed(ActionEvent event) {
+<b class="nc"><i>626</i>&nbsp;        instance.undoLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i>627</i>&nbsp;        instance.notifyObservers(GuiObserver::undoPressed);</b>
+<i>628</i>&nbsp;
+<b class="nc"><i>629</i>&nbsp;        if (instance.changeUndoLabel != null) {</b>
+<b class="nc"><i>630</i>&nbsp;            instance.changeUndoLabel.cancel(true);</b>
+<b class="nc"><i>631</i>&nbsp;            instance.undoRotate.jumpTo(Duration.seconds(5));</b>
+<i>632</i>&nbsp;        }
+<i>633</i>&nbsp;    }
+<i>634</i>&nbsp;
+<i>635</i>&nbsp;    /**
+<i>636</i>&nbsp;     * Manages the end of the game
+<i>637</i>&nbsp;     *
+<i>638</i>&nbsp;     * @return true if the game has ended
+<i>639</i>&nbsp;     */
+<i>640</i>&nbsp;    public boolean hasGameEnded() {
+<b class="nc"><i>641</i>&nbsp;        return instance.hasGameEnded;</b>
+<i>642</i>&nbsp;    }
+<i>643</i>&nbsp;
+<i>644</i>&nbsp;    /**
+<i>645</i>&nbsp;     * Adds player on screen
+<i>646</i>&nbsp;     *
+<i>647</i>&nbsp;     * @param player to be added
+<i>648</i>&nbsp;     * @param color  player Color
+<i>649</i>&nbsp;     * @param power  player power
+<i>650</i>&nbsp;     * @param isOwn  if the player is the one playing the game
+<i>651</i>&nbsp;     */
+<i>652</i>&nbsp;    public void addPlayer(String player, Color color, Power power, boolean isOwn) {
+<b class="nc"><i>653</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>654</i>&nbsp;            if (instance.playerPanes.containsKey(player)) {</b>
+<i>655</i>&nbsp;                return;
+<i>656</i>&nbsp;            }
+<i>657</i>&nbsp;
+<b class="nc"><i>658</i>&nbsp;            String powerIcon = getClass().getResource(&quot;/gui_assets/god_cards/with_background/&quot;</b>
+<b class="nc"><i>659</i>&nbsp;                    + power.getName() + &quot;.png&quot;).toString();</b>
+<b class="nc"><i>660</i>&nbsp;            String frameIcon = getClass().getResource(&quot;/gui_assets/ingame_frame.png&quot;).toString();</b>
+<i>661</i>&nbsp;
+<b class="nc"><i>662</i>&nbsp;            AnchorPane pane = new AnchorPane();</b>
+<b class="nc"><i>663</i>&nbsp;            ImageView icon = new ImageView(powerIcon);</b>
+<b class="nc"><i>664</i>&nbsp;            ImageView frame = new ImageView(frameIcon);</b>
+<i>665</i>&nbsp;
+<b class="nc"><i>666</i>&nbsp;            Label name = new Label(player);</b>
+<i>667</i>&nbsp;
+<b class="nc"><i>668</i>&nbsp;            name.setStyle(&quot;-fx-font-family: &#39;Mount Olympus&#39;; -fx-font-size: 25;&quot;);</b>
+<b class="nc"><i>669</i>&nbsp;            name.setTextFill(color);</b>
+<i>670</i>&nbsp;
+<b class="nc"><i>671</i>&nbsp;            HBox nameBox = new HBox(name);</b>
+<b class="nc"><i>672</i>&nbsp;            nameBox.setAlignment(Pos.CENTER);</b>
+<i>673</i>&nbsp;
+<b class="nc"><i>674</i>&nbsp;            frame.setTranslateX(-20);</b>
+<b class="nc"><i>675</i>&nbsp;            frame.setPreserveRatio(true);</b>
+<b class="nc"><i>676</i>&nbsp;            frame.setFitWidth(isOwn ? 130 : 120);</b>
+<b class="nc"><i>677</i>&nbsp;            icon.setPreserveRatio(true);</b>
+<b class="nc"><i>678</i>&nbsp;            nameBox.minWidthProperty().bind(frame.fitWidthProperty().subtract(20));</b>
+<b class="nc"><i>679</i>&nbsp;            icon.fitWidthProperty().bind(frame.fitWidthProperty().subtract(20).multiply(0.9));</b>
+<i>680</i>&nbsp;
+<b class="nc"><i>681</i>&nbsp;            AnchorPane.setTopAnchor(nameBox, 2.5D);</b>
+<b class="nc"><i>682</i>&nbsp;            AnchorPane.setTopAnchor(icon, 6D);</b>
+<b class="nc"><i>683</i>&nbsp;            AnchorPane.setLeftAnchor(icon, 3D);</b>
+<i>684</i>&nbsp;
+<b class="nc"><i>685</i>&nbsp;            pane.getChildren().addAll(icon, frame, nameBox);</b>
+<i>686</i>&nbsp;
+<b class="nc"><i>687</i>&nbsp;            instance.playerIcons.getChildren().add(pane);</b>
+<i>688</i>&nbsp;
+<b class="nc"><i>689</i>&nbsp;            TranslateTransition st = new TranslateTransition(Duration.millis(400), pane);</b>
+<b class="nc"><i>690</i>&nbsp;            st.setToX(20);</b>
+<i>691</i>&nbsp;
+<b class="nc"><i>692</i>&nbsp;            instance.playerPanes.put(player, st);</b>
+<i>693</i>&nbsp;        });
+<i>694</i>&nbsp;    }
+<i>695</i>&nbsp;
+<i>696</i>&nbsp;    /**
+<i>697</i>&nbsp;     * Used to reset map
+<i>698</i>&nbsp;     */
+<i>699</i>&nbsp;    public void resetMap() {
+<b class="nc"><i>700</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>701</i>&nbsp;            instance.workers.forEach((g, p) -&gt; instance.board.getChildren().remove(g));</b>
+<b class="nc"><i>702</i>&nbsp;            instance.workers.clear();</b>
+<i>703</i>&nbsp;
+<b class="nc"><i>704</i>&nbsp;            instance.map.forEach((point, group) -&gt; instance.board.getChildren().remove(group));</b>
+<b class="nc"><i>705</i>&nbsp;            instance.map.clear();</b>
+<i>706</i>&nbsp;        });
+<i>707</i>&nbsp;    }
+<i>708</i>&nbsp;
+<i>709</i>&nbsp;    /**
+<i>710</i>&nbsp;     * Shows the current player with an animation
+<i>711</i>&nbsp;     *
+<i>712</i>&nbsp;     * @param name of the player
+<i>713</i>&nbsp;     */
+<i>714</i>&nbsp;    public void highlightCurrentPlayer(String name) {
+<b class="nc"><i>715</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>716</i>&nbsp;            if (instance.playerPanes.containsKey(name)) {</b>
+<b class="nc"><i>717</i>&nbsp;                for (TranslateTransition value : instance.playerPanes.values()) {</b>
+<b class="nc"><i>718</i>&nbsp;                    value.getNode().setViewOrder(-1);</b>
+<b class="nc"><i>719</i>&nbsp;                    value.setToX(0);</b>
+<b class="nc"><i>720</i>&nbsp;                    value.playFromStart();</b>
+<b class="nc"><i>721</i>&nbsp;                }</b>
+<i>722</i>&nbsp;
+<b class="nc"><i>723</i>&nbsp;                TranslateTransition selected = instance.playerPanes.get(name);</b>
+<b class="nc"><i>724</i>&nbsp;                selected.setToX(20);</b>
+<b class="nc"><i>725</i>&nbsp;                selected.getNode().setViewOrder(0);</b>
+<b class="nc"><i>726</i>&nbsp;                selected.playFromStart();</b>
+<i>727</i>&nbsp;            }
+<i>728</i>&nbsp;        });
+<i>729</i>&nbsp;    }
+<i>730</i>&nbsp;
+<i>731</i>&nbsp;    /**
+<i>732</i>&nbsp;     * @param point on the map
+<i>733</i>&nbsp;     * @return the sum of the heights of the 3D blocks at a given position
+<i>734</i>&nbsp;     */
+<i>735</i>&nbsp;    private double getHeight(Point point) {
+<b class="nc"><i>736</i>&nbsp;        return instance.map.get(point) == null ? 0 : instance.map.get(point).getLayoutBounds().getHeight();</b>
+<i>737</i>&nbsp;    }
+<i>738</i>&nbsp;
+<i>739</i>&nbsp;    /**
+<i>740</i>&nbsp;     * {@inheritDoc}
+<i>741</i>&nbsp;     */
+<i>742</i>&nbsp;    @Override
+<i>743</i>&nbsp;    public void reset() {
+<b class="nc"><i>744</i>&nbsp;        resetMap();</b>
+<i>745</i>&nbsp;
+<b class="nc"><i>746</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>747</i>&nbsp;            instance.playerPanes.clear();</b>
+<b class="nc"><i>748</i>&nbsp;            instance.playerIcons.getChildren().clear();</b>
+<i>749</i>&nbsp;
+<b class="nc"><i>750</i>&nbsp;            if (instance.hasGameEnded) {</b>
+<b class="nc"><i>751</i>&nbsp;                instance.pane.toFront();</b>
+<b class="nc"><i>752</i>&nbsp;                instance.menu.toFront();</b>
+<b class="nc"><i>753</i>&nbsp;                instance.playerIcons.toFront();</b>
+<i>754</i>&nbsp;//                Pane rootPane = ((AnchorPane) instance.pane.getParent());
+<i>755</i>&nbsp;//                rootPane.getChildren().remove(rootPane.getChildren().size() - 1);
+<b class="nc"><i>756</i>&nbsp;                instance.pane.setEffect(null);</b>
+<i>757</i>&nbsp;            }
+<i>758</i>&nbsp;
+<b class="nc"><i>759</i>&nbsp;            showValidMoves(List.of(), List.of(), EnumTurnState.END_GAME);</b>
+<i>760</i>&nbsp;
+<b class="nc"><i>761</i>&nbsp;            instance.hasGameEnded = false;</b>
+<i>762</i>&nbsp;        });
+<i>763</i>&nbsp;    }
+<i>764</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

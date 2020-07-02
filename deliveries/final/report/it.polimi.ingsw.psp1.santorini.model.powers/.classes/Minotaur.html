@@ -1,0 +1,177 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Minotaur</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.powers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Minotaur (it.polimi.ingsw.psp1.santorini.model.powers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Minotaur</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.1%
+  </span>
+  <span class="absValue">
+    (27/ 29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.powers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.turn.Move;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;import java.util.function.Predicate;
+<i>12</i>&nbsp;import java.util.stream.Collectors;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Power: Minotaur can move into an opponent worker&#39;s space, if their worker can be
+<i>16</i>&nbsp; *        forced one space straight backwards to an unoccupied space at any level
+<i>17</i>&nbsp; */
+<b class="fc"><i>18</i>&nbsp;public class Minotaur extends Mortal {</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * {@inheritDoc}
+<i>22</i>&nbsp;     * &lt;p&gt;
+<i>23</i>&nbsp;     * Adds worker&#39;s opponent position as valid moves
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    @Override
+<i>26</i>&nbsp;    public List&lt;Point&gt; getValidMoves(Worker worker, Game game) {
+<b class="fc"><i>27</i>&nbsp;        if (!(game.getTurnState() instanceof Move) || worker == null) {</b>
+<b class="fc"><i>28</i>&nbsp;            return super.getValidMoves(worker, game);</b>
+<i>29</i>&nbsp;        }
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;        List&lt;Point&gt; neighbors = game.getMap().getNeighbors(worker.getPosition());</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;        Predicate&lt;Point&gt; enemyWorkerCheck = p -&gt; {</b>
+<b class="fc"><i>34</i>&nbsp;            Optional&lt;Player&gt; optionalPlayer = game.getPlayerOf(game.getWorkerOn(p).get());</b>
+<b class="fc"><i>35</i>&nbsp;            return optionalPlayer.isPresent() &amp;&amp; !optionalPlayer.get().equals(player);</b>
+<i>36</i>&nbsp;        };
+<i>37</i>&nbsp;
+<b class="fc"><i>38</i>&nbsp;        Predicate&lt;Point&gt; isValidPosition = p -&gt; {</b>
+<b class="fc"><i>39</i>&nbsp;            Point pushPos = getPushLocation(worker.getPosition(), p);</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;            if (game.getMap().isPositionOutOfMap(p) || game.getMap().isPositionOutOfMap(pushPos)) {</b>
+<b class="nc"><i>42</i>&nbsp;                return false;</b>
+<i>43</i>&nbsp;            }
+<i>44</i>&nbsp;
+<b class="fc"><i>45</i>&nbsp;            return !game.getMap().hasDome(pushPos) &amp;&amp; game.getWorkerOn(pushPos).isEmpty();</b>
+<i>46</i>&nbsp;        };
+<i>47</i>&nbsp;
+<b class="fc"><i>48</i>&nbsp;        return neighbors.stream()</b>
+<b class="fc"><i>49</i>&nbsp;                .filter(getStandardDomeCheck(game))</b>
+<b class="fc"><i>50</i>&nbsp;                .filter(getStandardMoveCheck(worker, game))</b>
+<b class="fc"><i>51</i>&nbsp;                .filter(getStandardWorkerCheck(game).or(enemyWorkerCheck.and(isValidPosition)))</b>
+<b class="fc"><i>52</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * {@inheritDoc}
+<i>57</i>&nbsp;     * &lt;p&gt;
+<i>58</i>&nbsp;     * The worker can move into an opponent worker&#39;s space, if this one can be forced
+<i>59</i>&nbsp;     * one space straight backwards to an unoccupied space, at any level
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    @Override
+<i>62</i>&nbsp;    public void onMove(Player player, Worker worker, Point where, Game game) {
+<b class="fc"><i>63</i>&nbsp;        if (player.equals(this.player)) {</b>
+<b class="fc"><i>64</i>&nbsp;            Optional&lt;Worker&gt; optWorker = game.getWorkerOn(where);</b>
+<i>65</i>&nbsp;
+<b class="fc"><i>66</i>&nbsp;            if (optWorker.isPresent()) {</b>
+<b class="fc"><i>67</i>&nbsp;                Point pushPos = getPushLocation(worker.getPosition(), where);</b>
+<i>68</i>&nbsp;
+<b class="fc"><i>69</i>&nbsp;                Optional&lt;Player&gt; opponent = game.getPlayerOf(optWorker.get());</b>
+<i>70</i>&nbsp;
+<b class="fc"><i>71</i>&nbsp;                if (opponent.isPresent()) {</b>
+<b class="fc"><i>72</i>&nbsp;                    game.moveWorker(opponent.get(), optWorker.get(), pushPos);</b>
+<i>73</i>&nbsp;                } else {
+<b class="nc"><i>74</i>&nbsp;                    throw new IllegalStateException(&quot;Player of opponent worker not found&quot;);</b>
+<i>75</i>&nbsp;                }
+<i>76</i>&nbsp;            }
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;
+<b class="fc"><i>79</i>&nbsp;        super.onMove(player, worker, where, game);</b>
+<b class="fc"><i>80</i>&nbsp;    }</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /**
+<i>83</i>&nbsp;     * Calculates the new position of the worker&#39;s opponent
+<i>84</i>&nbsp;     *
+<i>85</i>&nbsp;     * @param position current position
+<i>86</i>&nbsp;     * @param opponent worker&#39;s opponent position
+<i>87</i>&nbsp;     * @return new position of the worker&#39;s opponent
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    private Point getPushLocation(Point position, Point opponent) {
+<b class="fc"><i>90</i>&nbsp;        int[] diff = new int[]{position.x - opponent.x, position.y - opponent.y};</b>
+<i>91</i>&nbsp;
+<b class="fc"><i>92</i>&nbsp;        return new Point(opponent.x - diff[0], opponent.y - diff[1]);</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

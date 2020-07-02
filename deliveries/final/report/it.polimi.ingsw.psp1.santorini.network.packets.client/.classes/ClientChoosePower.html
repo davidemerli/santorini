@@ -1,0 +1,139 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClientChoosePower</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.network.packets.client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClientChoosePower (it.polimi.ingsw.psp1.santorini.network.packets.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientChoosePower</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.network.packets.client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.ClientHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.Packet;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;import java.util.Collections;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.stream.Collectors;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * Client packet containing
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;public class ClientChoosePower implements Packet&lt;ClientHandler&gt; {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private final List&lt;Power&gt; powers;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * Generic constructor giving a list of powers
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * @param chosenPowers list with all chosen gods
+<i>23</i>&nbsp;     */
+<b class="nc"><i>24</i>&nbsp;    public ClientChoosePower(List&lt;Power&gt; chosenPowers) {</b>
+<b class="nc"><i>25</i>&nbsp;        this.powers = new ArrayList&lt;&gt;(chosenPowers);</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * Generic constructor using a single god
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param power chosen god
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    public ClientChoosePower(Power power) {
+<b class="nc"><i>34</i>&nbsp;        this(Collections.singletonList(power));</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * {@inheritDoc}
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    public void processPacket(ClientHandler netHandler) {
+<b class="nc"><i>42</i>&nbsp;        netHandler.handlePowerChoosing(this);</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public List&lt;Power&gt; getPowers() {
+<b class="nc"><i>46</i>&nbsp;        return this.powers;</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    /**
+<i>50</i>&nbsp;     * {@inheritDoc}
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    @Override
+<i>53</i>&nbsp;    public String toString() {
+<b class="nc"><i>54</i>&nbsp;        return toString(getPowers().stream().map(Power::getName).collect(Collectors.joining(&quot;,&quot;)));</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GuiObserver</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GuiObserver (it.polimi.ingsw.psp1.santorini.gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GuiObserver</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.gui.controllers.IpSelectionController;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.client.*;
+<i>8</i>&nbsp;import javafx.application.Platform;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.concurrent.Executors;
+<i>12</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Turns gui information into packets
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;public class GuiObserver {
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private final Client client;
+<i>20</i>&nbsp;    private final GuiServerHandler serverHandler;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * Creates a gui observer using client and server handler
+<i>24</i>&nbsp;     *
+<i>25</i>&nbsp;     * @param client        current client
+<i>26</i>&nbsp;     * @param serverHandler valid server handler
+<i>27</i>&nbsp;     */
+<b class="nc"><i>28</i>&nbsp;    public GuiObserver(Client client, GuiServerHandler serverHandler) {</b>
+<b class="nc"><i>29</i>&nbsp;        this.client = client;</b>
+<b class="nc"><i>30</i>&nbsp;        this.serverHandler = serverHandler;</b>
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Manages a request of undo
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    public void undoPressed() {
+<b class="nc"><i>37</i>&nbsp;        if (serverHandler.isYourTurn()) {</b>
+<b class="nc"><i>38</i>&nbsp;            client.sendPacket(new ClientUndo());</b>
+<i>39</i>&nbsp;        }
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * Manages the selection of a square
+<i>44</i>&nbsp;     *
+<i>45</i>&nbsp;     * @param point on the map
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    public void onMoveSelected(Point point) {
+<b class="nc"><i>48</i>&nbsp;        if (serverHandler.isYourTurn()) {</b>
+<b class="nc"><i>49</i>&nbsp;            client.sendPacket(new ClientSelectSquare(point));</b>
+<i>50</i>&nbsp;        }
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * Manages the selection of a worker
+<i>55</i>&nbsp;     *
+<i>56</i>&nbsp;     * @param p on the map
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    public void onWorkerSelected(Point p) {
+<b class="nc"><i>59</i>&nbsp;        if (serverHandler.isYourTurn()) {</b>
+<b class="nc"><i>60</i>&nbsp;            client.sendPacket(new ClientSelectWorker(p));</b>
+<i>61</i>&nbsp;        }
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Manages the connection to the server
+<i>66</i>&nbsp;     *
+<i>67</i>&nbsp;     * @param ip   server ip
+<i>68</i>&nbsp;     * @param port socket port
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    public void connectToServer(String ip, int port) {
+<b class="nc"><i>71</i>&nbsp;        IpSelectionController.getInstance().startConnectionAnimation();</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        Executors.newSingleThreadScheduledExecutor().schedule(() -&gt; {</b>
+<b class="nc"><i>74</i>&nbsp;            client.connectToServer(ip, port);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;            Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>77</i>&nbsp;                if (client.isConnected()) {</b>
+<b class="nc"><i>78</i>&nbsp;                    IpSelectionController.getInstance().changeToNameSelection();</b>
+<b class="nc"><i>79</i>&nbsp;                    IpSelectionController.getInstance().stopConnectionAnimation();</b>
+<i>80</i>&nbsp;                } else {
+<b class="nc"><i>81</i>&nbsp;                    IpSelectionController.getInstance().showConnectionError();</b>
+<i>82</i>&nbsp;                }
+<i>83</i>&nbsp;            });
+<i>84</i>&nbsp;        }, 1000, TimeUnit.MILLISECONDS);
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Manages the name selection
+<i>89</i>&nbsp;     *
+<i>90</i>&nbsp;     * @param name to be set
+<i>91</i>&nbsp;     */
+<i>92</i>&nbsp;    public void onNameSelection(String name) {
+<b class="nc"><i>93</i>&nbsp;        client.sendPacket(new ClientSetName(name));</b>
+<b class="nc"><i>94</i>&nbsp;        serverHandler.setPlayerName(name);</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /**
+<i>98</i>&nbsp;     * Manages the creation of the game
+<i>99</i>&nbsp;     *
+<i>100</i>&nbsp;     * @param players number of players
+<i>101</i>&nbsp;     */
+<i>102</i>&nbsp;    public void createGame(int players) {
+<b class="nc"><i>103</i>&nbsp;        client.sendPacket(new ClientCreateGame(players));</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    /**
+<i>107</i>&nbsp;     * Manages the join into the game
+<i>108</i>&nbsp;     *
+<i>109</i>&nbsp;     * @param players number of players
+<i>110</i>&nbsp;     */
+<i>111</i>&nbsp;    public void joinGame(int players) {
+<b class="nc"><i>112</i>&nbsp;        client.sendPacket(new ClientJoinGame(players, null));</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /**
+<i>116</i>&nbsp;     * Manages the gods selection
+<i>117</i>&nbsp;     *
+<i>118</i>&nbsp;     * @param selectedPowers list of the selected gods
+<i>119</i>&nbsp;     */
+<i>120</i>&nbsp;    public void selectPowers(List&lt;Power&gt; selectedPowers) {
+<b class="nc"><i>121</i>&nbsp;        selectedPowers.forEach(p -&gt; client.sendPacket(new ClientChoosePower(p)));</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    /**
+<i>125</i>&nbsp;     * Manages the pressure of the interaction button
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    public void interactPressed() {
+<b class="nc"><i>128</i>&nbsp;        if (serverHandler.isYourTurn()) {</b>
+<b class="nc"><i>129</i>&nbsp;            client.sendPacket(new ClientToggleInteraction());</b>
+<i>130</i>&nbsp;        }
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    /**
+<i>134</i>&nbsp;     * Manages the selection of the starting player
+<i>135</i>&nbsp;     *
+<i>136</i>&nbsp;     * @param playerName starting player
+<i>137</i>&nbsp;     */
+<i>138</i>&nbsp;    public void selectStartingPlayer(String playerName) {
+<b class="nc"><i>139</i>&nbsp;        client.sendPacket(new ClientSelectStartingPlayer(playerName));</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    /**
+<i>143</i>&nbsp;     * Disconnection
+<i>144</i>&nbsp;     */
+<i>145</i>&nbsp;    public void disconnect() {
+<b class="nc"><i>146</i>&nbsp;        client.disconnect();</b>
+<i>147</i>&nbsp;    }
+<i>148</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

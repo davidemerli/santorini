@@ -279,7 +279,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
     /**
      * {@inheritDoc}
-     * </p>
+     * <p>
      * Prints server error
      */
     @Override
@@ -289,7 +289,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
     /**
      * {@inheritDoc}
-     * </p>
+     * <p>
      * Prints connection error
      */
     @Override
@@ -297,6 +297,11 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
         PrintUtils.printFromCommand(Color.RED + "Connection failed", 0, -1, true);
     }
 
+    /**
+     * Reloads interface with saved state
+     *
+     * @param drawBackground if the map background is to be drawn
+     */
     public void reload(boolean drawBackground) {
         PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, lastTurnState, playerColorMap, shouldShowInteraction);
 

@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandConnect</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli.commands</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandConnect (it.polimi.ingsw.psp1.santorini.cli.commands)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandConnect</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli.commands;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Used to established a connection with the server
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public class CommandConnect extends Command {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    private String lastIp;
+<i>15</i>&nbsp;    private String lastPort;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Defines the command name, the description, the types of argument and all aliases
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    public CommandConnect() {
+<b class="nc"><i>21</i>&nbsp;        super(&quot;connect&quot;,</b>
+<i>22</i>&nbsp;                &quot;Connects to server, parameters not specified are inferred or saved from previous command calls&quot;,
+<i>23</i>&nbsp;                &quot;&lt;server-ip&gt; &lt;port&gt;/&lt;server-ip&gt;/&lt;server-port&gt;&quot;,
+<i>24</i>&nbsp;                &quot;([\\w\\\\.\\d]+ \\d+)|([\\d\\\\.\\w]+)|(^$)&quot;,
+<b class="nc"><i>25</i>&nbsp;                List.of(&quot;cn&quot;));</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * {@inheritDoc}
+<i>30</i>&nbsp;     * &lt;p&gt;
+<i>31</i>&nbsp;     * The first argument is the ip
+<i>32</i>&nbsp;     * The second argument is the port
+<i>33</i>&nbsp;     * If an argument is missing it will be assigned automatically in order to allow the connection
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+<b class="nc"><i>37</i>&nbsp;        if (client.isConnected()) {</b>
+<b class="nc"><i>38</i>&nbsp;            return &quot;Connection already established.&quot;;</b>
+<i>39</i>&nbsp;        }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;        String ip, port;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;        //if no arguments are given tries to connect with default ones
+<b class="nc"><i>44</i>&nbsp;        if (arguments.length == 0) {</b>
+<b class="nc"><i>45</i>&nbsp;            ip = Optional.ofNullable(lastIp).orElse(&quot;localhost&quot;);</b>
+<b class="nc"><i>46</i>&nbsp;            port = Optional.ofNullable(lastPort).orElse(&quot;34567&quot;);</b>
+<b class="nc"><i>47</i>&nbsp;        } else if (arguments.length == 1) {</b>
+<b class="nc"><i>48</i>&nbsp;            ip = arguments[0];</b>
+<b class="nc"><i>49</i>&nbsp;            port = Optional.ofNullable(lastPort).orElse(&quot;34567&quot;);</b>
+<i>50</i>&nbsp;        } else {
+<b class="nc"><i>51</i>&nbsp;            ip = arguments[0];</b>
+<b class="nc"><i>52</i>&nbsp;            port = arguments[1];</b>
+<i>53</i>&nbsp;        }
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        serverHandler.reset();</b>
+<b class="nc"><i>56</i>&nbsp;        client.connectToServer(ip, Integer.parseInt(port));</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        //parameters are stored so it is possible to connect again without retyping them
+<b class="nc"><i>59</i>&nbsp;        lastIp = ip;</b>
+<b class="nc"><i>60</i>&nbsp;        lastPort = port;</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        return String.format(&quot;Trying connection to &#39;%s&#39;:&#39;%s&#39;&quot;, ip, port);</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

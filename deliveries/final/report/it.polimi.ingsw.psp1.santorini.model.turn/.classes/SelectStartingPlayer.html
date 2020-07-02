@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SelectStartingPlayer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.model.turn</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SelectStartingPlayer (it.polimi.ingsw.psp1.santorini.model.turn)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SelectStartingPlayer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.7%
+  </span>
+  <span class="absValue">
+    (13/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.model.turn;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.NoSuchElementException;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * Defines the state where a player must choose the first player
+<i>15</i>&nbsp; */
+<b class="fc"><i>16</i>&nbsp;public class SelectStartingPlayer extends TurnState {</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * {@inheritDoc}
+<i>20</i>&nbsp;     */
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public void init(Game game) {
+<b class="fc"><i>23</i>&nbsp;        super.init(game);</b>
+<i>24</i>&nbsp;
+<b class="fc"><i>25</i>&nbsp;        game.askRequest(game.getCurrentPlayer(), EnumRequestType.SELECT_STARTING_PLAYER);</b>
+<b class="fc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * {@inheritDoc}
+<i>30</i>&nbsp;     * &lt;p&gt;
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @param game             current game
+<i>33</i>&nbsp;     * @param player           current player
+<i>34</i>&nbsp;     * @param chosenPlayerName player chosen to start the game
+<i>35</i>&nbsp;     * @throws NoSuchElementException if given player is not in the game
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public void selectStartingPlayer(Game game, Player player, String chosenPlayerName) {
+<b class="fc"><i>39</i>&nbsp;        Optional&lt;Player&gt; chosenPlayer = game.getPlayerList().stream()</b>
+<b class="fc"><i>40</i>&nbsp;                .filter(p -&gt; p.getName().equalsIgnoreCase(chosenPlayerName))</b>
+<b class="fc"><i>41</i>&nbsp;                .findFirst();</b>
+<i>42</i>&nbsp;
+<b class="fc"><i>43</i>&nbsp;        if (chosenPlayer.isEmpty()) {</b>
+<b class="nc"><i>44</i>&nbsp;            throw new NoSuchElementException(&quot;Given player is not in the game&quot;);</b>
+<i>45</i>&nbsp;        }
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;        int playerIndex = game.getPlayerList().indexOf(chosenPlayer.get());</b>
+<i>48</i>&nbsp;
+<b class="fc"><i>49</i>&nbsp;        game.shiftPlayers(-playerIndex);</b>
+<b class="fc"><i>50</i>&nbsp;        game.setTurnState(new WorkerPlacing());</b>
+<b class="fc"><i>51</i>&nbsp;        game.saveState();</b>
+<b class="fc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * {@inheritDoc}
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    @Override
+<i>58</i>&nbsp;    public boolean shouldShowInteraction(Game game, Player player) {
+<b class="nc"><i>59</i>&nbsp;        return false;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

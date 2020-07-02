@@ -23,6 +23,12 @@ public enum EnumArrow {
         this.vector = vector;
     }
 
+    /**
+     * Gets the arrow associated with a movement vector
+     *
+     * @param vector the move
+     * @return the corresponding arrow
+     */
     public static EnumArrow fromVector(Point vector) {
         return Arrays.stream(values())
                 .filter(arrow -> arrow.getVector().equals(vector))
@@ -30,10 +36,16 @@ public enum EnumArrow {
                 .orElseThrow();
     }
 
+    /**
+     * @return unicode arrow character value
+     */
     public String toUnicode() {
         return normal;
     }
 
+    /**
+     * @return the arrow vector as a vector Point
+     */
     public Point getVector() {
         return vector;
     }

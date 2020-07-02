@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandSelectStartingPlayer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli.commands</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandSelectStartingPlayer (it.polimi.ingsw.psp1.santorini.cli.commands)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandSelectStartingPlayer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli.commands;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.Client;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientSelectStartingPlayer;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.PlayerData;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Used to select the starting player
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public class CommandSelectStartingPlayer extends Command {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * Defines the command name, the description, the types of argument and all aliases
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    public CommandSelectStartingPlayer() {
+<b class="nc"><i>20</i>&nbsp;        super(&quot;startingplayer&quot;,</b>
+<i>21</i>&nbsp;                &quot;Selects the starting player&quot;,
+<i>22</i>&nbsp;                &quot;&lt;player-name&gt;/&lt;player-index&gt;&quot;,
+<i>23</i>&nbsp;                &quot;(\\w+)|(\\d+)&quot;,
+<b class="nc"><i>24</i>&nbsp;                List.of(&quot;start&quot;, &quot;begin&quot;));</b>
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * {@inheritDoc}
+<i>29</i>&nbsp;     * &lt;p&gt;
+<i>30</i>&nbsp;     * Argument is the name of the player who will start the game
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public String onCommand(Client client, CLIServerHandler serverHandler, String input, String[] arguments) {
+<b class="nc"><i>34</i>&nbsp;        if (!client.isConnected()) {</b>
+<b class="nc"><i>35</i>&nbsp;            return &quot;You are not connected.&quot;;</b>
+<i>36</i>&nbsp;        }
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;        if (isNumeric(arguments[0])) {</b>
+<b class="nc"><i>39</i>&nbsp;            int index = Integer.parseInt(arguments[0]) - 1;</b>
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;            if (index &lt; 0 || index &gt;= serverHandler.getPlayerDataList().size()) {</b>
+<b class="nc"><i>42</i>&nbsp;                return &quot;Invalid index&quot;;</b>
+<i>43</i>&nbsp;            }
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;            PlayerData player = serverHandler.getPlayerDataList().get(index);</b>
+<b class="nc"><i>46</i>&nbsp;            client.sendPacket(new ClientSelectStartingPlayer(player.getName()));</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;            return String.format(&quot;Selected starting player: &#39;%s&#39;&quot;, player.getName());</b>
+<i>49</i>&nbsp;        }
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;        Optional&lt;PlayerData&gt; player = serverHandler.getPlayerDataList().stream()</b>
+<b class="nc"><i>52</i>&nbsp;                .filter(p -&gt; p.getName().equalsIgnoreCase(arguments[0]))</b>
+<b class="nc"><i>53</i>&nbsp;                .findFirst();</b>
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        if (player.isEmpty()) {</b>
+<b class="nc"><i>56</i>&nbsp;            return &quot;Invalid name&quot;;</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        client.sendPacket(new ClientSelectStartingPlayer(player.get().getName()));</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        return String.format(&quot;Selected starting player: &#39;%s&#39;&quot;, player.get().getName());</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

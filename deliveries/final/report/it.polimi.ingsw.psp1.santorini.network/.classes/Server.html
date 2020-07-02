@@ -1,0 +1,461 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Server</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.network</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Server (it.polimi.ingsw.psp1.santorini.network)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Server</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 145)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.network;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.controller.Controller;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerConnectedToGame;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.server.ServerKeepAlive;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.view.RemoteView;
+<i>9</i>&nbsp;import it.polimi.ingsw.psp1.santorini.view.View;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.net.ServerSocket;
+<i>13</i>&nbsp;import java.net.Socket;
+<i>14</i>&nbsp;import java.util.*;
+<i>15</i>&nbsp;import java.util.concurrent.ConcurrentHashMap;
+<i>16</i>&nbsp;import java.util.concurrent.Executors;
+<i>17</i>&nbsp;import java.util.concurrent.ScheduledExecutorService;
+<i>18</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>19</i>&nbsp;import java.util.stream.Collectors;
+<i>20</i>&nbsp;import java.util.stream.IntStream;
+<i>21</i>&nbsp;import java.util.stream.Stream;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;/**
+<i>24</i>&nbsp; * Manages the game and the progress of the turns of the various clients
+<i>25</i>&nbsp; */
+<i>26</i>&nbsp;public class Server implements Runnable {
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;    private final int GAME_ID_DIGITS = 4;</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    private final Random rnd;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    private final int socketPort;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    private final List&lt;ClientConnectionHandler&gt; clientsToRelocate;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    private final Map&lt;ClientConnectionHandler, Player&gt; twoPlayerGameQueue;
+<i>37</i>&nbsp;    private final Map&lt;ClientConnectionHandler, Player&gt; threePlayerGameQueue;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private final Map&lt;Game, Map&lt;ClientConnectionHandler, Player&gt;&gt; games;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    private final ScheduledExecutorService pool;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Generic constructor using socket port
+<i>45</i>&nbsp;     * Creates queues for the players
+<i>46</i>&nbsp;     * Creates list with all clients who needs to be relocate
+<i>47</i>&nbsp;     * Creates a thread pool and starts it
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @param socketPort used port
+<i>50</i>&nbsp;     */
+<b class="nc"><i>51</i>&nbsp;    public Server(int socketPort) {</b>
+<b class="nc"><i>52</i>&nbsp;        this.socketPort = socketPort;</b>
+<b class="nc"><i>53</i>&nbsp;        this.clientsToRelocate = Collections.synchronizedList(new ArrayList&lt;&gt;());</b>
+<b class="nc"><i>54</i>&nbsp;        this.twoPlayerGameQueue = new ConcurrentHashMap&lt;&gt;();</b>
+<b class="nc"><i>55</i>&nbsp;        this.threePlayerGameQueue = new ConcurrentHashMap&lt;&gt;();</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;        this.games = Collections.synchronizedMap(new ConcurrentHashMap&lt;&gt;());</b>
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        this.pool = Executors.newScheduledThreadPool(128);</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        ScheduledExecutorService gameStarterPool = Executors.newSingleThreadScheduledExecutor();</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        gameStarterPool.scheduleAtFixedRate(this::gameStarter,</b>
+<i>64</i>&nbsp;                0, //delay
+<i>65</i>&nbsp;                500, TimeUnit.MILLISECONDS);//run every 500ms
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        //TODO: terminate gameStarterPool
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;        this.rnd = new Random();</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * {@inheritDoc}
+<i>74</i>&nbsp;     * &lt;p&gt;
+<i>75</i>&nbsp;     * Accepts new client connecting to the server and puts them in the relocation list
+<i>76</i>&nbsp;     * When a client has its player name set, it will be moved in the waitingForGame list
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    @Override
+<i>79</i>&nbsp;    public void run() {
+<b class="nc"><i>80</i>&nbsp;        System.out.println(&quot;Server ready to receive clients.&quot;);</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        try (ServerSocket serverSocket = new ServerSocket(socketPort)) {</b>
+<b class="nc"><i>83</i>&nbsp;            while (!serverSocket.isClosed()) {</b>
+<b class="nc"><i>84</i>&nbsp;                Socket client = serverSocket.accept();</b>
+<b class="nc"><i>85</i>&nbsp;                client.setSoTimeout(20000);</b>
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;                System.out.println(&quot;Accepted client: &quot; + client.getInetAddress());</b>
+<i>88</i>&nbsp;                //when a client connects it is put into a list of connected sockets and a ClientHandler is created
+<b class="nc"><i>89</i>&nbsp;                ClientConnectionHandler clientHandler = new ClientConnectionHandler(this, client);</b>
+<i>90</i>&nbsp;                //sending a first keep alive packet so the client can send another backwards
+<b class="nc"><i>91</i>&nbsp;                clientHandler.sendPacket(new ServerKeepAlive());</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;                pool.execute(clientHandler);</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;                clientsToRelocate.add(clientHandler);</b>
+<b class="nc"><i>96</i>&nbsp;            }</b>
+<b class="nc"><i>97</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>98</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>99</i>&nbsp;        }</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * If the new game has been filled, it starts
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    private void gameStarter() {
+<i>106</i>&nbsp;        try {
+<b class="nc"><i>107</i>&nbsp;            synchronized (games) {</b>
+<b class="nc"><i>108</i>&nbsp;                games.entrySet().stream()</b>
+<b class="nc"><i>109</i>&nbsp;                        .filter(e -&gt; e.getKey().hasEnded() || e.getValue().isEmpty())</b>
+<b class="nc"><i>110</i>&nbsp;                        .peek(e -&gt; e.getValue().keySet().forEach(ClientConnectionHandler::closeConnection))</b>
+<b class="nc"><i>111</i>&nbsp;                        .map(Map.Entry::getKey)</b>
+<b class="nc"><i>112</i>&nbsp;                        .forEach(games::remove);</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;                games.keySet().stream()</b>
+<b class="nc"><i>115</i>&nbsp;                        .filter(g -&gt; !g.hasStarted())</b>
+<b class="nc"><i>116</i>&nbsp;                        .forEach(game -&gt; {</b>
+<b class="nc"><i>117</i>&nbsp;                            Map&lt;ClientConnectionHandler, Player&gt; gamePlayers = games.get(game);</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;                            boolean full = fillGame(game);</b>
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;                            if (full) {</b>
+<b class="nc"><i>122</i>&nbsp;                                Controller controller = new Controller(game);</b>
+<b class="nc"><i>123</i>&nbsp;                                List&lt;View&gt; views = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>124</i>&nbsp;                                gamePlayers.forEach((cch, p) -&gt; views.add(new RemoteView(p, cch)));</b>
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;                                //views observe model
+<b class="nc"><i>127</i>&nbsp;                                views.forEach(game::addObserver);</b>
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;                                //controller observes views
+<b class="nc"><i>130</i>&nbsp;                                views.forEach(v -&gt; v.addObserver(controller));</b>
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;                                //add players to the game
+<b class="nc"><i>133</i>&nbsp;                                views.forEach(v -&gt; game.addPlayer(v.getPlayer()));</b>
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;                                game.startGame();</b>
+<i>136</i>&nbsp;                            }
+<i>137</i>&nbsp;                        });
+<b class="nc"><i>138</i>&nbsp;            }</b>
+<b class="nc"><i>139</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>140</i>&nbsp;            ex.printStackTrace();</b>
+<b class="nc"><i>141</i>&nbsp;        }</b>
+<i>142</i>&nbsp;    }
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;    /**
+<i>145</i>&nbsp;     * Checks if the game has been filled with the players (two or three)
+<i>146</i>&nbsp;     *
+<i>147</i>&nbsp;     * @param game New created game
+<i>148</i>&nbsp;     * @return true if game contains all players needed (two or three)
+<i>149</i>&nbsp;     */
+<i>150</i>&nbsp;    private boolean fillGame(Game game) {
+<b class="nc"><i>151</i>&nbsp;        Map&lt;ClientConnectionHandler, Player&gt; gamePlayers = games.get(game);</b>
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        if (gamePlayers.size() &lt; game.getPlayerNumber()) {</b>
+<i>154</i>&nbsp;            Optional&lt;Map.Entry&lt;ClientConnectionHandler, Player&gt;&gt; waitingClient;
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;            if (game.getPlayerNumber() == 2) {</b>
+<b class="nc"><i>157</i>&nbsp;                waitingClient = twoPlayerGameQueue.entrySet().stream().findFirst();</b>
+<i>158</i>&nbsp;            } else {
+<b class="nc"><i>159</i>&nbsp;                waitingClient = threePlayerGameQueue.entrySet().stream().findFirst();</b>
+<i>160</i>&nbsp;            }
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;            if (waitingClient.isPresent()) {</b>
+<b class="nc"><i>163</i>&nbsp;                gamePlayers.put(waitingClient.get().getKey(), waitingClient.get().getValue());</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;                if (game.getPlayerNumber() == 2) {</b>
+<b class="nc"><i>166</i>&nbsp;                    twoPlayerGameQueue.remove(waitingClient.get().getKey());</b>
+<i>167</i>&nbsp;                } else {
+<b class="nc"><i>168</i>&nbsp;                    threePlayerGameQueue.remove(waitingClient.get().getKey());</b>
+<i>169</i>&nbsp;                }
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;                for (ClientConnectionHandler ch : gamePlayers.keySet()) {</b>
+<i>172</i>&nbsp;                    //TODO: recheck
+<b class="nc"><i>173</i>&nbsp;                    if (gamePlayers.get(ch).equals(waitingClient.get().getValue())) {</b>
+<b class="nc"><i>174</i>&nbsp;                        gamePlayers.values().forEach(p -&gt; ch.sendPacket(new ServerConnectedToGame(</b>
+<b class="nc"><i>175</i>&nbsp;                                p.getName(), game.getGameID(), game.getPlayerNumber())));</b>
+<i>176</i>&nbsp;                    } else {
+<b class="nc"><i>177</i>&nbsp;                        ch.sendPacket(new ServerConnectedToGame(</b>
+<b class="nc"><i>178</i>&nbsp;                                waitingClient.get().getValue().getName(), game.getGameID(), game.getPlayerNumber()));</b>
+<i>179</i>&nbsp;                    }
+<b class="nc"><i>180</i>&nbsp;                }</b>
+<i>181</i>&nbsp;            }
+<i>182</i>&nbsp;        }
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        return gamePlayers.size() == game.getPlayerNumber();</b>
+<i>185</i>&nbsp;    }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /**
+<i>188</i>&nbsp;     * Creates a new game instance with the player that created it as the first player
+<i>189</i>&nbsp;     *
+<i>190</i>&nbsp;     * @param connectionHandler with the player that created the game
+<i>191</i>&nbsp;     * @param playerNumber      number of players
+<i>192</i>&nbsp;     * @throws UnsupportedOperationException if connection between player and server is already assigned
+<i>193</i>&nbsp;     * @throws IllegalStateException         if players has not set a name yet
+<i>194</i>&nbsp;     */
+<i>195</i>&nbsp;    public void createGame(ClientConnectionHandler connectionHandler, int playerNumber) {
+<b class="nc"><i>196</i>&nbsp;        if (isInGame(connectionHandler)) {</b>
+<b class="nc"><i>197</i>&nbsp;            throw new UnsupportedOperationException(&quot;Connection already assigned to game&quot;);</b>
+<i>198</i>&nbsp;        }
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;        Optional&lt;Player&gt; optPlayer = connectionHandler.getPlayer();</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;        if (optPlayer.isEmpty()) {</b>
+<b class="nc"><i>203</i>&nbsp;            throw new IllegalStateException(&quot;You need to set a name first&quot;);</b>
+<i>204</i>&nbsp;        }
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;        synchronized (games) {</b>
+<i>207</i>&nbsp;            //create a new game
+<b class="nc"><i>208</i>&nbsp;            Game newGame = new Game(generateGameID(), playerNumber);</b>
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;            //add a new game to the list of games
+<b class="nc"><i>211</i>&nbsp;            games.put(newGame, new LinkedHashMap&lt;&gt;(Map.of(connectionHandler, optPlayer.get())));</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;            connectionHandler.sendPacket(new ServerConnectedToGame(optPlayer.get().getName(),</b>
+<b class="nc"><i>214</i>&nbsp;                    newGame.getGameID(), playerNumber));</b>
+<b class="nc"><i>215</i>&nbsp;        }</b>
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    /**
+<i>219</i>&nbsp;     * Disconnects player from the game
+<i>220</i>&nbsp;     *
+<i>221</i>&nbsp;     * @param connectionHandler with the players that joins the game
+<i>222</i>&nbsp;     */
+<i>223</i>&nbsp;    public void disconnectClient(ClientConnectionHandler connectionHandler) {
+<b class="nc"><i>224</i>&nbsp;        twoPlayerGameQueue.remove(connectionHandler);</b>
+<b class="nc"><i>225</i>&nbsp;        threePlayerGameQueue.remove(connectionHandler);</b>
+<b class="nc"><i>226</i>&nbsp;        clientsToRelocate.remove(connectionHandler);</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;        Optional&lt;Game&gt; optGame = games.entrySet().stream()</b>
+<b class="nc"><i>229</i>&nbsp;                .filter(e -&gt; e.getValue().containsKey(connectionHandler))</b>
+<b class="nc"><i>230</i>&nbsp;                .map(Map.Entry::getKey).findFirst();</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        if (optGame.isPresent() &amp;&amp; !optGame.get().hasStarted()) {</b>
+<b class="nc"><i>233</i>&nbsp;            games.get(optGame.get()).keySet().forEach(ClientConnectionHandler::closeConnection);</b>
+<b class="nc"><i>234</i>&nbsp;            games.remove(optGame.get());</b>
+<i>235</i>&nbsp;        }
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    /**
+<i>239</i>&nbsp;     * Connects players with the game and they joins it
+<i>240</i>&nbsp;     *
+<i>241</i>&nbsp;     * @param connectionHandler with the available players
+<i>242</i>&nbsp;     * @param gameRoom          room&#39;s name
+<i>243</i>&nbsp;     * @throws IllegalArgumentException if room&#39;s name does not exists
+<i>244</i>&nbsp;     * @throws IllegalStateException    if game is already full
+<i>245</i>&nbsp;     * @throws IllegalStateException    if players has not set a name yet
+<i>246</i>&nbsp;     */
+<i>247</i>&nbsp;    public void joinGame(ClientConnectionHandler connectionHandler, String gameRoom) {
+<b class="nc"><i>248</i>&nbsp;        Optional&lt;Game&gt; toJoin = games.keySet().stream()</b>
+<b class="nc"><i>249</i>&nbsp;                .filter(game -&gt; game.getGameID().equals(gameRoom))</b>
+<b class="nc"><i>250</i>&nbsp;                .findFirst();</b>
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;        if (isInGame(connectionHandler)) {</b>
+<b class="nc"><i>253</i>&nbsp;            throw new UnsupportedOperationException(&quot;Connection already assigned to game&quot;);</b>
+<i>254</i>&nbsp;        }
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;        if (toJoin.isEmpty()) {</b>
+<b class="nc"><i>257</i>&nbsp;            throw new IllegalArgumentException(&quot;No game found with given ID&quot;);</b>
+<i>258</i>&nbsp;        }
+<i>259</i>&nbsp;
+<b class="nc"><i>260</i>&nbsp;        if (games.get(toJoin.get()).size() == toJoin.get().getPlayerNumber()) {</b>
+<b class="nc"><i>261</i>&nbsp;            throw new IllegalStateException(&quot;Game is already full&quot;);</b>
+<i>262</i>&nbsp;        }
+<i>263</i>&nbsp;
+<b class="nc"><i>264</i>&nbsp;        Optional&lt;Player&gt; optPlayer = connectionHandler.getPlayer();</b>
+<i>265</i>&nbsp;
+<b class="nc"><i>266</i>&nbsp;        if (optPlayer.isEmpty()) {</b>
+<b class="nc"><i>267</i>&nbsp;            throw new IllegalStateException(&quot;You need to set a name first&quot;);</b>
+<i>268</i>&nbsp;        }
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;        Map&lt;ClientConnectionHandler, Player&gt; game = games.get(toJoin.get());</b>
+<b class="nc"><i>271</i>&nbsp;        game.put(connectionHandler, optPlayer.get());</b>
+<i>272</i>&nbsp;
+<b class="nc"><i>273</i>&nbsp;        for (Player p : game.values()) {</b>
+<b class="nc"><i>274</i>&nbsp;            if (p.equals(connectionHandler.getPlayer().orElse(null))) {</b>
+<b class="nc"><i>275</i>&nbsp;                game.values().forEach(pp -&gt; connectionHandler.sendPacket(new ServerConnectedToGame(</b>
+<b class="nc"><i>276</i>&nbsp;                        pp.getName(), toJoin.get().getGameID(), toJoin.get().getPlayerNumber())));</b>
+<i>277</i>&nbsp;            } else {
+<b class="nc"><i>278</i>&nbsp;                connectionHandler.sendPacket(new ServerConnectedToGame(p.getName(),</b>
+<b class="nc"><i>279</i>&nbsp;                        toJoin.get().getGameID(), toJoin.get().getPlayerNumber()));</b>
+<i>280</i>&nbsp;            }
+<b class="nc"><i>281</i>&nbsp;        }</b>
+<i>282</i>&nbsp;
+<b class="nc"><i>283</i>&nbsp;        clientsToRelocate.remove(connectionHandler);</b>
+<i>284</i>&nbsp;    }
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;    /**
+<i>287</i>&nbsp;     * Puts available players in a queue, used to insert players into the game
+<i>288</i>&nbsp;     *
+<i>289</i>&nbsp;     * @param connectionHandler with the available players
+<i>290</i>&nbsp;     * @param playerNumber      number of players in a game
+<i>291</i>&nbsp;     * @throws IllegalStateException    if players has not set a name yet
+<i>292</i>&nbsp;     * @throws IllegalArgumentException if number of players is not two or three
+<i>293</i>&nbsp;     */
+<i>294</i>&nbsp;    public void joinQueue(ClientConnectionHandler connectionHandler, int playerNumber) {
+<b class="nc"><i>295</i>&nbsp;        Optional&lt;Player&gt; optPlayer = connectionHandler.getPlayer();</b>
+<i>296</i>&nbsp;
+<b class="nc"><i>297</i>&nbsp;        if (isInGame(connectionHandler)) {</b>
+<b class="nc"><i>298</i>&nbsp;            throw new UnsupportedOperationException(&quot;Connection already assigned to game&quot;);</b>
+<i>299</i>&nbsp;        }
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;        if (optPlayer.isEmpty()) {</b>
+<b class="nc"><i>302</i>&nbsp;            throw new IllegalStateException(&quot;You need to set a name first&quot;);</b>
+<i>303</i>&nbsp;        }
+<i>304</i>&nbsp;
+<b class="nc"><i>305</i>&nbsp;        if (playerNumber == 2) {</b>
+<b class="nc"><i>306</i>&nbsp;            twoPlayerGameQueue.put(connectionHandler, optPlayer.get());</b>
+<b class="nc"><i>307</i>&nbsp;        } else if (playerNumber == 3) {</b>
+<b class="nc"><i>308</i>&nbsp;            threePlayerGameQueue.put(connectionHandler, optPlayer.get());</b>
+<i>309</i>&nbsp;        } else {
+<b class="nc"><i>310</i>&nbsp;            throw new IllegalArgumentException(&quot;Invalid player number&quot;);</b>
+<i>311</i>&nbsp;        }
+<i>312</i>&nbsp;
+<b class="nc"><i>313</i>&nbsp;        clientsToRelocate.remove(connectionHandler);</b>
+<i>314</i>&nbsp;    }
+<i>315</i>&nbsp;
+<i>316</i>&nbsp;    /**
+<i>317</i>&nbsp;     * Checks the uniqueness of the username
+<i>318</i>&nbsp;     *
+<i>319</i>&nbsp;     * @param username player&#39;s name
+<i>320</i>&nbsp;     * @return true if username is unique
+<i>321</i>&nbsp;     */
+<i>322</i>&nbsp;    public boolean isUsernameValid(String username) {
+<b class="nc"><i>323</i>&nbsp;        return username.trim().matches(&quot;(.)+&quot;);</b>
+<i>324</i>&nbsp;    }
+<i>325</i>&nbsp;
+<i>326</i>&nbsp;    /**
+<i>327</i>&nbsp;     * Checks if an username is unique
+<i>328</i>&nbsp;     *
+<i>329</i>&nbsp;     * @param username to check
+<i>330</i>&nbsp;     * @return true if the username is unique
+<i>331</i>&nbsp;     */
+<i>332</i>&nbsp;    public boolean isUsernameUnique(String username) {
+<b class="nc"><i>333</i>&nbsp;        Set&lt;String&gt; assignedPlayerUsernames = games.values().stream()</b>
+<b class="nc"><i>334</i>&nbsp;                .map(Map::values)</b>
+<b class="nc"><i>335</i>&nbsp;                .flatMap(Collection::stream)</b>
+<b class="nc"><i>336</i>&nbsp;                .map(Player::getName)</b>
+<b class="nc"><i>337</i>&nbsp;                .collect(Collectors.toSet());</b>
+<i>338</i>&nbsp;
+<b class="nc"><i>339</i>&nbsp;        Stream.concat(twoPlayerGameQueue.values().stream(),</b>
+<b class="nc"><i>340</i>&nbsp;                threePlayerGameQueue.values().stream())</b>
+<b class="nc"><i>341</i>&nbsp;                .map(Player::getName).forEach(assignedPlayerUsernames::add);</b>
+<i>342</i>&nbsp;
+<b class="nc"><i>343</i>&nbsp;        clientsToRelocate.stream()</b>
+<b class="nc"><i>344</i>&nbsp;                .filter(cch -&gt; cch.getPlayer().isPresent())</b>
+<b class="nc"><i>345</i>&nbsp;                .forEach(cch -&gt; assignedPlayerUsernames.add(cch.getPlayer().get().getName()));</b>
+<i>346</i>&nbsp;
+<b class="nc"><i>347</i>&nbsp;        return !assignedPlayerUsernames.contains(username);</b>
+<i>348</i>&nbsp;    }
+<i>349</i>&nbsp;
+<i>350</i>&nbsp;    private boolean isInGame(ClientConnectionHandler connectionHandler) {
+<b class="nc"><i>351</i>&nbsp;        return games.values().stream()</b>
+<b class="nc"><i>352</i>&nbsp;                .map(Map::keySet)</b>
+<b class="nc"><i>353</i>&nbsp;                .flatMap(Collection::stream)</b>
+<b class="nc"><i>354</i>&nbsp;                .anyMatch(connectionHandler::equals);</b>
+<i>355</i>&nbsp;    }
+<i>356</i>&nbsp;
+<i>357</i>&nbsp;    /**
+<i>358</i>&nbsp;     * Generates an unique game ID
+<i>359</i>&nbsp;     *
+<i>360</i>&nbsp;     * @return a new unique game ID
+<i>361</i>&nbsp;     */
+<i>362</i>&nbsp;    private String generateGameID() {
+<b class="nc"><i>363</i>&nbsp;        Set&lt;String&gt; assignedGameIDs = games.keySet().stream()</b>
+<b class="nc"><i>364</i>&nbsp;                .map(Game::getGameID)</b>
+<b class="nc"><i>365</i>&nbsp;                .collect(Collectors.toSet());</b>
+<i>366</i>&nbsp;
+<i>367</i>&nbsp;        String gameID;
+<b class="nc"><i>368</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;        do {
+<b class="nc"><i>371</i>&nbsp;            IntStream.range(0, GAME_ID_DIGITS).forEach(i -&gt; sb.append(rnd.nextInt(10)));</b>
+<b class="nc"><i>372</i>&nbsp;            gameID = sb.toString();</b>
+<b class="nc"><i>373</i>&nbsp;            sb.setLength(0);</b>
+<b class="nc"><i>374</i>&nbsp;        } while (assignedGameIDs.contains(gameID));</b>
+<i>375</i>&nbsp;
+<b class="nc"><i>376</i>&nbsp;        return gameID;</b>
+<i>377</i>&nbsp;    }
+<i>378</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

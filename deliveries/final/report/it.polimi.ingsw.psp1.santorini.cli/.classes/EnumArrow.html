@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EnumArrow</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EnumArrow (it.polimi.ingsw.psp1.santorini.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EnumArrow</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.Arrays;
+<i>6</i>&nbsp;
+<b class="nc"><i>7</i>&nbsp;public enum EnumArrow {</b>
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;    LEFT(&quot;\u2190&quot;, new Point(-1, 0)),</b>
+<b class="nc"><i>10</i>&nbsp;    LEFT_UP(&quot;\u2196&quot;, new Point(-1, -1)),</b>
+<b class="nc"><i>11</i>&nbsp;    UP(&quot;\u2191&quot;, new Point(0, -1)),</b>
+<b class="nc"><i>12</i>&nbsp;    RIGHT_UP(&quot;\u2197&quot;, new Point(1, -1)),</b>
+<b class="nc"><i>13</i>&nbsp;    RIGHT(&quot;\u2192&quot;, new Point(1, 0)),</b>
+<b class="nc"><i>14</i>&nbsp;    RIGHT_DOWN(&quot;\u2198&quot;, new Point(1, 1)),</b>
+<b class="nc"><i>15</i>&nbsp;    DOWN(&quot;\u2193&quot;, new Point(0, 1)),</b>
+<b class="nc"><i>16</i>&nbsp;    LEFT_DOWN(&quot;\u2199&quot;, new Point(-1, 1));</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    private final String normal;
+<i>19</i>&nbsp;    private final Point vector;
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;    EnumArrow(String normal, Point vector) {</b>
+<b class="nc"><i>22</i>&nbsp;        this.normal = normal;</b>
+<b class="nc"><i>23</i>&nbsp;        this.vector = vector;</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Gets the arrow associated with a movement vector
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * @param vector the move
+<i>30</i>&nbsp;     * @return the corresponding arrow
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public static EnumArrow fromVector(Point vector) {
+<b class="nc"><i>33</i>&nbsp;        return Arrays.stream(values())</b>
+<b class="nc"><i>34</i>&nbsp;                .filter(arrow -&gt; arrow.getVector().equals(vector))</b>
+<b class="nc"><i>35</i>&nbsp;                .findFirst()</b>
+<b class="nc"><i>36</i>&nbsp;                .orElseThrow();</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /**
+<i>40</i>&nbsp;     * @return unicode arrow character value
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public String toUnicode() {
+<b class="nc"><i>43</i>&nbsp;        return normal;</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * @return the arrow vector as a vector Point
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public Point getVector() {
+<b class="nc"><i>50</i>&nbsp;        return vector;</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ModelObserver</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.psp1.santorini.observer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ModelObserver (it.polimi.ingsw.psp1.santorini.observer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ModelObserver</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.psp1.santorini.observer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.Player;
+<i>5</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Point;
+<i>6</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.map.Worker;
+<i>7</i>&nbsp;import it.polimi.ingsw.psp1.santorini.model.powers.Power;
+<i>8</i>&nbsp;import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Map;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * Manages all model changes
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public interface ModelObserver {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * Called when a player places a worker on the map
+<i>20</i>&nbsp;     *
+<i>21</i>&nbsp;     * @param player the player making the move
+<i>22</i>&nbsp;     * @param worker the worker that has been placed
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    void playerPlaceWorker(Player player, Worker worker);
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Called when a player moves a worker in the game
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * @param player the player making the move
+<i>30</i>&nbsp;     * @param worker the worker that actually does move
+<i>31</i>&nbsp;     * @param from   old position
+<i>32</i>&nbsp;     * @param where  new position
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    void playerMove(Player player, Worker worker, Point from, Point where);
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Called when a player builds with a worker in the game
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @param player    the player making the build
+<i>40</i>&nbsp;     * @param worker    the worker that actually does build
+<i>41</i>&nbsp;     * @param where     the position where the block is positioned
+<i>42</i>&nbsp;     * @param forceDome if player has forced dome build
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    void playerBuild(Player player, Worker worker, Point where, boolean forceDome);
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Called on a generic player update
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @param game   current game object
+<i>50</i>&nbsp;     * @param player that has his status updated
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    void playerUpdate(Game game, Player player);
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Called on a player turn end
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @param game   current game object
+<i>58</i>&nbsp;     * @param player that ended his turn
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    void playerEndTurn(Game game, Player player);
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * Called on a generic game update
+<i>64</i>&nbsp;     *
+<i>65</i>&nbsp;     * @param game current game object
+<i>66</i>&nbsp;     * @param forced if the updated is to be shown forcefully instead of relying on move packets
+<i>67</i>&nbsp;     */
+<i>68</i>&nbsp;    void gameUpdate(Game game, boolean forced);
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * Called when new moves are available to the current player in his turn
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @param player       current turn player
+<i>74</i>&nbsp;     * @param validMoves   list of the valid selectable squares
+<i>75</i>&nbsp;     * @param blockedMoves map with blocked squares associated with the power that is blocking them
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    void availableMovesUpdate(Player player, List&lt;Point&gt; validMoves, Map&lt;Power, List&lt;Point&gt;&gt; blockedMoves);
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * Called when the games requests input from the player
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * @param player      that needs to be prompted a request
+<i>83</i>&nbsp;     * @param requestType type of request
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    void requestToPlayer(Player player, EnumRequestType requestType);
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Called when a player needs to be given a list of god powers to choose from
+<i>89</i>&nbsp;     * (used both for selecting all powers for the game or own personal power)
+<i>90</i>&nbsp;     *
+<i>91</i>&nbsp;     * @param availablePowers list with the god powers to show to the player
+<i>92</i>&nbsp;     * @param toSelect how many powers to select
+<i>93</i>&nbsp;     */
+<i>94</i>&nbsp;    void sendPowerList(List&lt;Power&gt; availablePowers, int toSelect);
+<i>95</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 01:42</div>
+</div>
+</body>
+</html>
