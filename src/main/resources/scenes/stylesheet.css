@@ -45,7 +45,6 @@
     -fx-border-color: transparent;
     -fx-hbar-policy: never;
     -fx-border-style: none;
-    -fx-border-color: transparent;
 }
 
 .flow-pane {
@@ -139,5 +138,11 @@
 }
 
 .button-exit {
+    -fx-background-color: #ff000099;
+    -fx-background-image: none;
+}
+
+.button-exit:pressed {
+    -fx-background-color: #ff000066;
     -fx-background-image: none;
 }

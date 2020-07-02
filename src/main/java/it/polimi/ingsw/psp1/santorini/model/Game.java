@@ -6,6 +6,7 @@ import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.powers.*;
 import it.polimi.ingsw.psp1.santorini.model.turn.SelectPowers;
 import it.polimi.ingsw.psp1.santorini.model.turn.TurnState;
+import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumRequestType;
 import it.polimi.ingsw.psp1.santorini.observer.ModelObserver;
 import it.polimi.ingsw.psp1.santorini.observer.Observable;
@@ -249,9 +250,15 @@ public class Game extends Observable<ModelObserver> {
             throw new UnsupportedOperationException("Player list is empty");
         }
 
-        notifyObservers(o -> o.gameUpdate(this, false));
-        getPlayerList().forEach(p -> p.getPower().onBeginTurn(getCurrentPlayer(), this));
-        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+        boolean allDone = playerList.stream().allMatch(p -> p.getWorkers().size() == 2);
+
+        if(allDone) {
+            notifyObservers(o -> o.gameUpdate(this, false));
+            getPlayerList().forEach(p -> p.getPower().onBeginTurn(getCurrentPlayer(), this));
+            notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+        } else {
+            setTurnState(new WorkerPlacing());
+        }
 
         if (getCurrentPlayer().hasLost() && playerNumber == 3) {
             removeLoser();

@@ -13,8 +13,7 @@ import java.util.List;
 public class CommandSetName extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSetName() {
         super("setname",

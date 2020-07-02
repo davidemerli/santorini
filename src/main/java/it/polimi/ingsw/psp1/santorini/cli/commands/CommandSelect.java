@@ -16,8 +16,7 @@ import java.util.Map;
 public class CommandSelect extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSelect() {
         super("select",

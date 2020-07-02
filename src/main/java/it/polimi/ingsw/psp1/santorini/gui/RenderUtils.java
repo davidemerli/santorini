@@ -16,8 +16,9 @@ import javafx.scene.transform.Rotate;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-//TODO
-
+/**
+ * Utils for the 3D game scene
+ */
 public class RenderUtils {
 
     private static final DoubleProperty angleX = new SimpleDoubleProperty(40 * 4);
@@ -26,6 +27,18 @@ public class RenderUtils {
     private static double anchorAngleX = 0;
     private static double anchorAngleY = 0;
 
+    /**
+     * Generates a color from rainbow spectrum
+     *
+     * @param value determines the color with freq
+     * @param freq frequency
+     * @param p1 phase1
+     * @param p2 phase2
+     * @param p3 phase3
+     * @param center center of the spectrum
+     * @param width width of the spectrum
+     * @return a color from rainbow hue
+     */
     public static Color makeColorGradient(long value, double freq, double p1, double p2, double p3,
                                           int center, int width) {
         if (center == -1)
@@ -40,6 +53,12 @@ public class RenderUtils {
         return Color.rgb(r, g, b);
     }
 
+    /**
+     * Setups the map click rotate behaviour
+     *
+     * @param group model
+     * @param scene with the model
+     */
     public static void initMouseControl(Group group, SubScene scene) {
         Rotate rotateX = new Rotate(40 * 4, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
@@ -69,6 +88,14 @@ public class RenderUtils {
         });
     }
 
+    /**
+     * Converts a 2D Point to a 3D one on the board
+     *
+     * @param board the 3D board model
+     * @param x coordinate x
+     * @param y coordinate y
+     * @return a Point3D
+     */
     public static Point3D convert2DTo3D(Group board, double x, double y) {
         double sideLength = getSideLength(board) * 0.95;
 
@@ -77,6 +104,12 @@ public class RenderUtils {
                 .add(sideLength / 10, 0, sideLength / 10);
     }
 
+    /**
+     * Gets board side length
+     *
+     * @param group the game board
+     * @return board side length
+     */
     private static double getSideLength(Group group) {
         double width = group.layoutBoundsProperty().getValue().getWidth();
         double depth = group.layoutBoundsProperty().getValue().getDepth();
@@ -84,10 +117,25 @@ public class RenderUtils {
         return (width + depth) / 2;
     }
 
+    /**
+     * Loads a 3D .obj model
+     *
+     * @param obj 3D model file
+     * @param texture to apply to model
+     * @return loaded model
+     */
     public static Group loadModel(String obj, String texture) {
         return loadModel(obj, texture, Color.BLACK);
     }
 
+    /**
+     * Loads a 3D .obj model
+     *
+     * @param obj 3D model file
+     * @param texture to apply to model
+     * @param color to apply to the texture
+     * @return loaded model
+     */
     public static Group loadModel(String obj, String texture, Color color) {
         Group modelRoot = new Group();
 

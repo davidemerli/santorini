@@ -1,14 +1,12 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
 import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
-import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -16,8 +14,6 @@ import java.util.Scanner;
  * Manages all server packets
  */
 public class CLIServerHandler extends ServerHandler implements Runnable {
-
-    private final CommandManager commandManager;
 
     /**
      * Generic constructor using client
@@ -27,8 +23,6 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
      */
     public CLIServerHandler(Client client) {
         super(client);
-        this.commandManager = new CommandManager();
-
         new Thread(this).start();
     }
 
@@ -67,7 +61,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
             PrintUtils.clearRow(0, PrintUtils.getCommandCoords().y + 3);
             PrintUtils.resetCursor();
 
-            String result = commandManager.runCommand(client, this, scanner.nextLine());
+            String result = CommandManager.getInstance().runCommand(client, this, scanner.nextLine());
             PrintUtils.printCommand();
             PrintUtils.printFromCommand("Last action: " + result, 0, 2, true);
         }
@@ -84,13 +78,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handleGameData(ServerGameData packet) {
         super.handleGameData(packet);
 
-        GameMap map = packet.getGameMap();
-        List<PlayerData> playerList = packet.getPlayerData();
-
-        PrintUtils.printPlayerInfo(getPlayerName(), playerList, lastTurnState, playerColorMap, shouldShowInteraction);
-        PrintUtils.printMap(map);
-        PrintUtils.printWorkers(playerList, playerColorMap);
-        PrintUtils.printCommand();
+        reload(packet.isForced());
     }
 
     /**
@@ -117,8 +105,9 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
                         Color.BLUE + "selectpower" + Color.RESET);
                 break;
             case CHOOSE_GAME:
-                toStamp = String.format("Create or join a game with 'creategame' or 'join'",
-                        Color.BLUE + "selectpower" + Color.RESET);
+                toStamp = String.format("Create or join a game with '%s' or '%s'",
+                        Color.BLUE + "creategame" + Color.RESET,
+                        Color.BLUE + "join" + Color.RESET);
                 break;
             case SELECT_POWER:
                 toStamp = String.format("Choose your God Power: use '%s' command",
@@ -164,7 +153,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
 
-        if(packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
+        if (packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
             PrintUtils.printMapBackground();
             PrintUtils.printMap(gameMap);
         }
@@ -238,7 +227,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
             PrintUtils.printArrow(EnumArrow.fromVector(vector), playerMove.getSrc());
         } else if (move == EnumActionType.BUILD) {
-            PrintUtils.printMapBackground();
+            reload(true);
         }
     }
 
@@ -291,5 +280,24 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     @Override
     public void onDisconnect() {
         PrintUtils.printFromCommand(Color.RED + "Connection to server has crashed, please reconnect", 0, -1, true);
+    }
+
+    @Override
+    public void onConnectionFail() {
+        PrintUtils.printFromCommand(Color.RED + "Connection failed", 0, -1, true);
+    }
+
+    public void reload(boolean drawBackground) {
+        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, lastTurnState, playerColorMap, shouldShowInteraction);
+
+        if (drawBackground) {
+            PrintUtils.printMapBackground();
+        }
+
+        PrintUtils.printMap(gameMap);
+        PrintUtils.printWorkers(playerDataList, playerColorMap);
+        PrintUtils.printCommand();
+
+        PrintUtils.printValidMoves(validMoves, blockedMoves);
     }
 }

@@ -11,7 +11,6 @@ import it.polimi.ingsw.psp1.santorini.model.turn.WorkerPlacing;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -196,20 +195,6 @@ public class Mortal extends Power {
 
     protected Predicate<Point> getStandardWorkerCheck(Game game) {
         return p -> game.getWorkerOn(p).isEmpty();
-    }
-
-    protected Predicate<Worker> noValidMoves(Game game) {
-        Predicate<Worker> noValidMoves = w -> game.getTurnState().getValidMoves(game, player, w).size() == 0;
-
-        Predicate<Worker> allBlocked = w -> {
-            Map<Power, List<Point>> blockedMoves = game.getTurnState().getBlockedMoves(game, player, w);
-            List<Point> notAvailable = blockedMoves.values().stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
-            return notAvailable.containsAll(game.getTurnState().getValidMoves(game, player, w));
-        };
-
-        return allBlocked.or(noValidMoves);
     }
 
     protected List<Point> getPerformableMoves(Game game, Worker worker) {

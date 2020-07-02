@@ -26,6 +26,13 @@ public enum EnumTransition {
         this.tt = new TranslateTransition();
     }
 
+    /**
+     * Given two panes creates puts them into one and creates a transition
+     *
+     * @param currentPane first pane
+     * @param nextPane    second pane
+     * @return animation transition
+     */
     public TranslateTransition getTransition(Pane currentPane, Pane nextPane) {
         tt.setNode(currentPane);
 

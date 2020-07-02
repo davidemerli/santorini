@@ -1,6 +1,7 @@
 package it.polimi.ingsw.psp1.santorini.cli.commands;
 
 import it.polimi.ingsw.psp1.santorini.cli.CLIServerHandler;
+import it.polimi.ingsw.psp1.santorini.cli.PrintUtils;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.packets.client.ClientRequestGameData;
 
@@ -12,8 +13,7 @@ import java.util.List;
 public class CommandReload extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandReload() {
         super("reload",
@@ -34,7 +34,9 @@ public class CommandReload extends Command {
             return "You are not connected.";
         }
 
+        serverHandler.reload(true);
+
         client.sendPacket(new ClientRequestGameData());
-        return "";
+        return "Reloaded";
     }
 }

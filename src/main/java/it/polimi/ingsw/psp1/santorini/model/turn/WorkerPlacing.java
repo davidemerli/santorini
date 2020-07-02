@@ -22,8 +22,6 @@ public class WorkerPlacing extends TurnState {
                 getBlockedMoves(game, game.getCurrentPlayer(), null)));
 
         game.askRequest(game.getCurrentPlayer(), EnumRequestType.PLACE_WORKER);
-
-        game.saveState();
     }
 
     /**
@@ -51,19 +49,12 @@ public class WorkerPlacing extends TurnState {
 
         game.addWorker(player, position);
 
-        boolean allDone = game.getPlayerList().stream().allMatch(p -> p.getWorkers().size() == 2);
-
-        //if everyone has put down 2 workers, the game can begin with normal turns
-        if (allDone) {
-            game.nextTurn();
+        if (player.getWorkers().size() == 2) {
+            game.endTurn();
             return;
         }
 
-        if (player.getWorkers().size() == 2) {
-            game.shiftPlayers(-1);
-        }
-
-        game.setTurnState(new WorkerPlacing());
+        init(game);
     }
 
     /**
@@ -80,7 +71,5 @@ public class WorkerPlacing extends TurnState {
     @Override
     public void undo(Game game, Player player) {
         game.restoreSavedState();
-
-        this.init(game);
     }
 }

@@ -40,9 +40,12 @@ public class TritonTest {
     public void onYourMove_normalBehaviour_shouldMoveAgain() {
         Point startPosition = new Point(1, 1);
         Point firstMove = new Point(0, 0);
+
         Worker w = new Worker(startPosition);
+        Worker w2 = new Worker(new Point(4,4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 
@@ -61,9 +64,12 @@ public class TritonTest {
     public void onYourMove_normalBehaviour_shouldEndMove() {
         Point startPosition = new Point(1, 1);
         Point firstMove = new Point(0, 0);
+
         Worker w = new Worker(startPosition);
+        Worker w2 = new Worker(new Point(4,4));
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 

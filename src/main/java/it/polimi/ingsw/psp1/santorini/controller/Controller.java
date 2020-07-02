@@ -20,9 +20,7 @@ public class Controller implements ViewObserver {
     private final Game model;
 
     /**
-     * Generic constructor using model
-     *
-     * @param model current model
+     * @param model the game associated with this controller
      */
     public Controller(Game model) {
         this.model = model;
@@ -33,7 +31,7 @@ public class Controller implements ViewObserver {
      * <p>
      * Used to select a square on the map
      *
-     * @param view     the view where the even is coming from
+     * @param view     the view where the event is coming from
      * @param player   the player associated with the view
      * @param location of the square
      * @throws UnsupportedOperationException  if operation is not valid
@@ -62,13 +60,13 @@ public class Controller implements ViewObserver {
      * <p>
      * Used to select worker on the map
      *
-     * @param view           the view where the even is coming from
+     * @param view           the view where the event is coming from
      * @param player         the player associated with the view
      * @param workerPosition on the map
-     * @throws UnsupportedOperationException
-     * @throws ArrayIndexOutOfBoundsException
-     * @throws IllegalArgumentException
-     * @throws NoSuchElementException
+     * @throws UnsupportedOperationException  if operation is not valid
+     * @throws ArrayIndexOutOfBoundsException if point is out of map
+     * @throws IllegalArgumentException       if at least one argument is not valid
+     * @throws NoSuchElementException         if there is no worker at given position
      */
     @Override
     public void selectWorker(View view, Player player, Point workerPosition) {
@@ -104,11 +102,11 @@ public class Controller implements ViewObserver {
      * <p>
      * Used to set the power activation button correctly
      *
-     * @param view   the view where the even is coming from
+     * @param view   the view where the event is coming from
      * @param player the player associated with the view
-     * @throws UnsupportedOperationException
-     * @throws ArrayIndexOutOfBoundsException
-     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException  if operation is not valid
+     * @throws ArrayIndexOutOfBoundsException if point is out of map
+     * @throws IllegalArgumentException       if at least one argument is not valid
      */
     @Override
     public void toggleInteraction(View view, Player player) {
@@ -137,10 +135,10 @@ public class Controller implements ViewObserver {
      * <p>
      * Used to select the gods
      *
-     * @param view      the view where the even is coming from
+     * @param view      the view where the event is coming from
      * @param player    the player associated with the view
      * @param powerList with the select powers (singletonList or 2 to 3 power list)
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException if operation is not valid
      */
     @Override
     public void selectPowers(View view, Player player, List<Power> powerList) {
@@ -163,7 +161,7 @@ public class Controller implements ViewObserver {
      * <p>
      * Used to select the starting player
      *
-     * @param view             the view where the even is coming from
+     * @param view             the view where the event is coming from
      * @param player           the player associated with the view
      * @param chosenPlayerName starting player name
      * @throws UnsupportedOperationException
@@ -189,7 +187,7 @@ public class Controller implements ViewObserver {
      * <p>
      * Used if a player wants to cancel the move
      *
-     * @param view   the view where the even is coming from
+     * @param view   the view where the event is coming from
      * @param player the player associated with the view
      * @throws UnsupportedOperationException
      */
@@ -252,11 +250,18 @@ public class Controller implements ViewObserver {
         }
     }
 
+    /**
+     * Since player instances are swappable by undo requests,
+     * this prevents calling game changes on the wrong instances
+     * 
+     * @param player a player instance
+     * @return correct player instance from the game
+     */
     private Player getGamePlayerInstance(Player player) {
         Optional<Player> optPlayer = model.getPlayerList().stream()
                 .filter(p -> p.equals(player)).findFirst();
 
-        if(optPlayer.isEmpty()) {
+        if (optPlayer.isEmpty()) {
             throw new IllegalStateException("Given player not found in game");
         }
 

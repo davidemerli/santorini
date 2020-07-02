@@ -14,8 +14,7 @@ import java.util.Optional;
 public class CommandSelectStartingPlayer extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSelectStartingPlayer() {
         super("startingplayer",
@@ -60,14 +59,5 @@ public class CommandSelectStartingPlayer extends Command {
         client.sendPacket(new ClientSelectStartingPlayer(player.get().getName()));
 
         return String.format("Selected starting player: '%s'", player.get().getName());
-    }
-
-    /**
-     * Checks if the string is an integer value
-     * @param string to check
-     * @return true if the string is an integer value
-     */
-    private boolean isNumeric(String string) {
-        return string.matches("\\d+");
     }
 }

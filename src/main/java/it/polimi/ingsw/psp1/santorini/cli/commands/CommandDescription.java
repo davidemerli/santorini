@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 public class CommandDescription extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandDescription() {
         super("description",
@@ -42,9 +41,15 @@ public class CommandDescription extends Command {
 
         Power power;
 
+        //if the serverHandler.powerList is empty it means that powers have been chosen for the game
+        //and the commands tries to get the powers that have been chosen from the player list
         List<Power> powerList = serverHandler.getPowerList().isEmpty() ?
                 serverHandler.getPlayerDataList().stream().map(PlayerData::getPower).collect(Collectors.toList()) :
                 serverHandler.getPowerList();
+
+        if (powerList.size() <= 0) {
+            return "You're not in a game";
+        }
 
         if (isNumeric(arguments[0])) {
             int i = Integer.parseInt(arguments[0]) - 1;
@@ -69,14 +74,5 @@ public class CommandDescription extends Command {
         PrintUtils.printPowerInfo(power);
 
         return String.format("Requested info about '%s'", Color.RED + power.getName() + Color.RESET);
-    }
-
-    /**
-     * Checks if the string is an integer value
-     * @param string to check
-     * @return true if the string is an integer value
-     */
-    private boolean isNumeric(String string) {
-        return string.matches("\\d+");
     }
 }

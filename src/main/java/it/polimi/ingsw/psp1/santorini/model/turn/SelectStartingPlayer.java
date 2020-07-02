@@ -48,6 +48,7 @@ public class SelectStartingPlayer extends TurnState {
 
         game.shiftPlayers(-playerIndex);
         game.setTurnState(new WorkerPlacing());
+        game.saveState();
     }
 
     /**

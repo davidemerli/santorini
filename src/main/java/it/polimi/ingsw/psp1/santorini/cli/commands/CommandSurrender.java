@@ -12,8 +12,7 @@ import java.util.List;
 public class CommandSurrender extends Command {
 
     /**
-     * Generic constructor
-     * Defines the command name, the description, the types of argument and all alias
+     * Defines the command name, the description, the types of argument and all aliases
      */
     public CommandSurrender() {
         super("surrender",

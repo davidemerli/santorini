@@ -52,6 +52,9 @@ public class ChoosePowersController extends GuiController {
 
     private int selectSize;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static ChoosePowersController getInstance() {
         if (instance == null) {
             instance = new ChoosePowersController();
@@ -61,7 +64,7 @@ public class ChoosePowersController extends GuiController {
     }
 
     /**
-     * Generic instance
+     * Initializes the controller
      */
     @FXML
     private void initialize() {
@@ -167,6 +170,11 @@ public class ChoosePowersController extends GuiController {
         });
     }
 
+    /**
+     * Confirms power choosing
+     *
+     * @param event gui click event
+     */
     @FXML
     void clickConfirm(ActionEvent event) {
         getInstance().notifyObservers(o -> o.selectPowers(getInstance().selectedPowers));
@@ -174,8 +182,14 @@ public class ChoosePowersController extends GuiController {
         Gui.getInstance().changeSceneSync(EnumScene.WAIT_GOD_SELECTION);
     }
 
+
+    /**
+     * Selects a power
+     *
+     * @param event gui click event
+     */
     @FXML
-    void clickSelect(ActionEvent event) {
+    private void clickSelect(ActionEvent event) {
         if (getInstance().hovered != null && getInstance().selectSize != -1) {
             if (!getInstance().selectedPowers.contains(getInstance().hovered)) {
                 getInstance().selectedPowers.add(getInstance().hovered);
@@ -197,6 +211,7 @@ public class ChoosePowersController extends GuiController {
         }
     }
 
+
     @Override
     public void reset() {
         Platform.runLater(() -> {
@@ -210,6 +225,9 @@ public class ChoosePowersController extends GuiController {
         });
     }
 
+    /**
+     * @return if the number of powers chosen is enough to start the game
+     */
     private boolean canStartGame() {
         return getInstance().selectedPowers.size() >= getInstance().selectSize;
     }

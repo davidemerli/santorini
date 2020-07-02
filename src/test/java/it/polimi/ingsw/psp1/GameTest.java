@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -134,10 +135,19 @@ public class GameTest {
 
         assertTrue(game.getTurnState() instanceof WorkerPlacing);
 
-        int[][] ints = {{0, 0}, {0, 1}, {1, 0}, {0, 2}, {2, 0}, {3, 3}};
+        int[][] positions = {{0, 0}, {0, 1}, {1, 0}, {0, 2}, {2, 0}, {3, 3}};
 
         for (int i = 0; i < 6; i++) {
-            game.getTurnState().selectSquare(game, game.getPlayerList().get(0), new Point(ints[i][0], ints[i][1]));
+            game.getTurnState().selectSquare(game, game.getPlayerList().get(0),
+                    new Point(positions[i][0], positions[i][1]));
+
+            if(i % 2 == 1) {
+                try {
+                    TimeUnit.SECONDS.sleep(6);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         assertTrue(game.getTurnState() instanceof Move);

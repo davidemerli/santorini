@@ -45,9 +45,6 @@ public class GuiServerHandler extends ServerHandler {
         WaitGodSelectionController.getInstance().addObserver(guiObserver);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void handleGameData(ServerGameData packet) {
         String first = playerDataList.get(0).getName();
@@ -58,7 +55,7 @@ public class GuiServerHandler extends ServerHandler {
             GameSceneController.getInstance().highlightCurrentPlayer(packet.getPlayerData().get(0).getName());
         }
 
-        if (packet.isForced()) {
+        if (packet.isForced()) { //resets the map with the data from the packet
             pool.execute(() -> {
                 GameSceneController.getInstance().resetMap();
 
@@ -218,7 +215,7 @@ public class GuiServerHandler extends ServerHandler {
 
     @Override
     public void handleError(ServerInvalidPacket packet) {
-
+        //No need to handle errors since user input is limited in GUI
     }
 
     @Override
@@ -243,7 +240,7 @@ public class GuiServerHandler extends ServerHandler {
                 Color color = getPlayerColorMap().get(packet.getPlayerData().getName()).getColor().darker();
 
                 GameSceneController.getInstance().addWorker(worker.getDest().x, worker.getDest().y,
-                        packet.getPlayerData().getName().equals("masterrace") ? null : color,
+                        packet.getPlayerData().getName().equals("PRIDE") ? null : color,
                         isYourTurn(), true);
                 break;
         }
@@ -290,6 +287,12 @@ public class GuiServerHandler extends ServerHandler {
         }, 1, TimeUnit.SECONDS);
 
         System.out.println("Connection lost, please reconnect.");
+    }
+
+    @Override
+    public void onConnectionFail() {
+        IpSelectionController.getInstance().stopConnectionAnimation();
+        IpSelectionController.getInstance().showConnectionError();
     }
 
     @Override

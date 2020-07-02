@@ -226,7 +226,12 @@ public abstract class ServerHandler implements NetHandler {
     }
 
     /**
-     * Disconnect
+     * Called on disconnection
      */
     public abstract void onDisconnect();
+
+    /**
+     * Called on connection failed
+     */
+    public abstract void onConnectionFail();
 }

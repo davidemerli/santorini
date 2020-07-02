@@ -37,9 +37,11 @@ public class AtlasTest {
     @Test
     public void onYourBuild_normalBehaviourBuild_shouldBuildDome() {
         Worker w = new Worker(new Point(1, 1));
+        Worker w2 = new Worker(new Point(4, 4));
         Point position = new Point(2, 2);
 
         player.addWorker(w);
+        player.addWorker(w2);
 
         game.startTurn();
 

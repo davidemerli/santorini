@@ -42,6 +42,9 @@ public class ChooseGameSceneController extends GuiController {
     @FXML
     private Button createX;
 
+    /**
+     * @return Singleton instance for this controller
+     */
     public static ChooseGameSceneController getInstance() {
         if (instance == null) {
             instance = new ChooseGameSceneController();
@@ -51,14 +54,10 @@ public class ChooseGameSceneController extends GuiController {
     }
 
     /**
-     * Generic initialize
+     * Shows/hides create panel
+     *
+     * @param event gui click event
      */
-    @FXML
-    public void initialize() {
-//        leftPane.setTranslateX(-leftPane.getBoundsInParent().getWidth());
-//        rightPane.setTranslateX(rightPane.getBoundsInParent().getWidth());
-    }
-
     @FXML
     private void clickCreate(ActionEvent event) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(toggleLeft ? 200 : 300), leftPane);
@@ -76,6 +75,11 @@ public class ChooseGameSceneController extends GuiController {
         }
     }
 
+    /**
+     * Shows/hides join panel
+     *
+     * @param event gui click event
+     */
     @FXML
     private void clickJoin(ActionEvent event) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(toggleRight ? 200 : 300), rightPane);
@@ -93,6 +97,11 @@ public class ChooseGameSceneController extends GuiController {
         }
     }
 
+    /**
+     * Handles checkboxes
+     *
+     * @param event gui click event
+     */
     @FXML
     private void click(ActionEvent event) {
         if (event.getSource().equals(createCheckBox2)) {
@@ -112,6 +121,11 @@ public class ChooseGameSceneController extends GuiController {
         confirmJoin.setDisable(!joinCheckBox2.isSelected() && !joinCheckBox3.isSelected());
     }
 
+    /**
+     * Handles panel closing
+     *
+     * @param event gui click event
+     */
     @FXML
     private void clickX(ActionEvent event) {
         if (event.getSource().equals(createX)) {
@@ -122,6 +136,11 @@ public class ChooseGameSceneController extends GuiController {
         }
     }
 
+    /**
+     * Creates a game
+     *
+     * @param event gui click event
+     */
     @FXML
     private void createGame(ActionEvent event) {
         int number = createCheckBox2.isSelected() ? 2 : 3;
@@ -134,6 +153,11 @@ public class ChooseGameSceneController extends GuiController {
         WaitGodSelectionController.getInstance().setStateMessage(message);
     }
 
+    /**
+     * Joins a queue
+     *
+     * @param event gui click event
+     */
     @FXML
     private void joinGame(ActionEvent event) {
         int number = joinCheckBox2.isSelected() ? 2 : 3;
@@ -148,6 +172,6 @@ public class ChooseGameSceneController extends GuiController {
 
     @Override
     public void reset() {
-
+        //Not needed in this specific case
     }
 }

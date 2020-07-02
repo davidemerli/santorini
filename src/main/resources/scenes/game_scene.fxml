@@ -16,7 +16,7 @@
   <children>
       <AnchorPane fx:id="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" style="-fx-background-color: #ff000099;" styleClass="button-exit" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+          <Button fx:id="menuButton" layoutX="852.0" layoutY="10.0" maxHeight="50.0" maxWidth="50.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#clickMenu" prefHeight="37.0" prefWidth="38.0" styleClass="button-exit" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <padding>
                   <Insets right="2.0" top="10.0" />
                </padding>

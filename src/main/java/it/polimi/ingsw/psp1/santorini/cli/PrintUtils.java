@@ -16,7 +16,7 @@ import static it.polimi.ingsw.psp1.santorini.cli.Color.*;
 
 /**
  * Support class for the CLI
- * The functions allow to stamp all correctly
+ * The functions allow console printing with colors and more ease of use
  */
 public class PrintUtils {
 
@@ -27,13 +27,16 @@ public class PrintUtils {
     private static final int MAP_X = 1;
     private static final int MAP_Y = 5;
 
+    /**
+     * Makes the class not instantiable
+     */
     private PrintUtils() {
     }
 
     /**
-     * Prints map's background in console as soon as the game starts
+     * Prints map's background in console
      */
-    static void printMapBackground() {
+    public static void printMapBackground() {
         StringBuilder bgLine = new StringBuilder();
         IntStream.range(0, GameMap.SIDE_LENGTH * ((SIZE * 2) + (SPACING * 2 - 1)))
                 .forEach(i -> bgLine.append(" "));
@@ -65,7 +68,7 @@ public class PrintUtils {
     }
 
     /**
-     * When a worker moves into another place, prints a valid arrow to underline his movement
+     * When a worker moves into another place, prints an arrow to highlight his movement
      *
      * @param arrow type
      * @param where to print arrow
@@ -96,14 +99,12 @@ public class PrintUtils {
     /**
      * Prints the current map in console whenever it changes
      *
-     * @param map map that must be printed in console
+     * @param map that must be printed in console
      */
     public static void printMap(GameMap map) {
         if (map == null) {
             return;
         }
-
-//        printMapBackground();
 
         String s = String.format("%" + (SIZE * 2 - 1) + "s", "");
 
@@ -165,7 +166,7 @@ public class PrintUtils {
     }
 
     /**
-     * Prints an object
+     * Prints an object (implicit toString call)
      *
      * @param o generic object
      */
@@ -243,6 +244,8 @@ public class PrintUtils {
     }
 
     /**
+     * Prints a String given an offset from the line where the user types commands
+     *
      * @param string  string to print
      * @param xOff    x offset
      * @param yOff    y offset
@@ -394,6 +397,14 @@ public class PrintUtils {
         }
     }
 
+    /**
+     * Given a String and a maximum width, splits the String in a list of Strings
+     * with every one of them within the given length
+     *
+     * @param longString string to split if needed
+     * @param width      maximum length of every string
+     * @return the list with the string in multiple lines
+     */
     private static List<String> reduceInLines(String longString, int width) {
         Deque<StringBuilder> list = new ArrayDeque<>();
 
@@ -407,6 +418,9 @@ public class PrintUtils {
             }
         }
 
-        return list.stream().map(StringBuilder::toString).collect(Collectors.toList());
+        List<String> toReturn = list.stream().map(StringBuilder::toString).collect(Collectors.toList());
+        Collections.reverse(toReturn);
+
+        return toReturn;
     }
 }
