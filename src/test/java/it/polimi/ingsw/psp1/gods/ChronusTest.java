@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.assertTrue;
 
 public class ChronusTest {
@@ -76,6 +78,12 @@ public class ChronusTest {
 
         game.getTurnState().selectSquare(game, player1, new Point(0, 4));
 
+        try {
+            TimeUnit.SECONDS.sleep(6);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         assertTrue(player1.hasWon());
     }
 
@@ -113,6 +121,12 @@ public class ChronusTest {
         assertTrue(game.getTurnState() instanceof Build);
 
         game.getTurnState().selectSquare(game, player2, new Point(0, 4));
+
+        try {
+            TimeUnit.SECONDS.sleep(6);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         assertTrue(player1.hasWon());
     }

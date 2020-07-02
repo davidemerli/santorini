@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -68,8 +69,11 @@ public class AthenaTest {
 
         game.getTurnState().selectSquare(game, player1, new Point(0, 1));
 
-        while (!game.getCurrentPlayer().equals(player2)) ;
-
+        try {
+            TimeUnit.SECONDS.sleep(6);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         game.getTurnState().selectWorker(game, player2, w2);
 
         assertTrue(game.getTurnState().isPositionBlocked(game,
@@ -104,7 +108,11 @@ public class AthenaTest {
         game.getTurnState().selectSquare(game, player1, newPosition);
         game.getTurnState().selectSquare(game, player1, new Point (3,2));
 
-        while (!game.getCurrentPlayer().equals(player2));
+        try {
+            TimeUnit.SECONDS.sleep(6);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         game.getTurnState().selectWorker(game, player2, w2);
 

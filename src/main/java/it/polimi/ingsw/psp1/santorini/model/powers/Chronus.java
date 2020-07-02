@@ -17,12 +17,13 @@ public class Chronus extends Mortal {
      * Checks if the winning condition is true
      */
     @Override
-    public void onBuild(Player player, Worker worker, Point where, Game game) {
-        super.onBuild(player, worker, where, game);
-
+    public void onBeginTurn(Player player, Game game) {
         if (customWinCondition(game)) {
             this.player.setWinner(true);
+            game.notifyObservers(o -> o.playerUpdate(game, this.player));
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**
