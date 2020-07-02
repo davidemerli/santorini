@@ -36,19 +36,21 @@ public class CommandHelp extends Command {
             String commands = CommandManager.getInstance().getCommandList().stream()
                     .map(Command::getName).collect(Collectors.joining(", "));
 
-            PrintUtils.printFromCommand(commands, 0, 4, true);
             PrintUtils.printFromCommand("", 0, 5, true);
             PrintUtils.printFromCommand("", 0, 6, true);
+            PrintUtils.printFromCommand(commands, 0, 4, true);
             return "Requested all commands";
         }
 
         Optional<Command> command = CommandManager.getInstance().getCommand(arguments[0]);
 
-        if(command.isEmpty()) {
+        if (command.isEmpty()) {
             return "Command not found";
         }
 
-        PrintUtils.printFromCommand(command.get().getName(), 0, 4, true);
+        String aliases = " (" + String.join(", ", command.get().getAliases()) + ")";
+
+        PrintUtils.printFromCommand(command.get().getName() + aliases, 0, 4, true);
         PrintUtils.printFromCommand(command.get().getDesc(), 0, 5, true);
         PrintUtils.printFromCommand(command.get().getUsage(), 0, 6, true);
 

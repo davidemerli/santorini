@@ -92,7 +92,7 @@ public class GameSceneController extends GuiController {
      * Makes possible the rotation of the stage
      */
     @FXML
-    private void initialize() {
+    public void initialize() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-45.5);
 
@@ -222,7 +222,7 @@ public class GameSceneController extends GuiController {
                 instance.validMoves.add(move);
             }
 
-            instance.board.getChildren().addAll(validMoves);
+            instance.board.getChildren().addAll(instance.validMoves);
         }, Duration.millis(200));
     }
 
@@ -241,7 +241,7 @@ public class GameSceneController extends GuiController {
         runMapChange(() -> {
             Point p = new Point(x, y);
 
-            if (workers.containsValue(p))
+            if (instance.workers.containsValue(p))
                 return;
 
             Point3D p3D = RenderUtils.convert2DTo3D(instance.board, x, y);
@@ -250,7 +250,7 @@ public class GameSceneController extends GuiController {
                     "/textures/MaleBuilder_Tan_v001.png",
                     color);
 
-            Group blocks = map.get(p);
+            Group blocks = instance.map.get(p);
             double height = blocks != null && blocks.getChildren().size() > 0 ? -blocks.getLayoutBounds().getHeight() : 0;
 
             worker.getTransforms().add(new Translate(p3D.getX(), height, p3D.getZ()));
@@ -299,8 +299,9 @@ public class GameSceneController extends GuiController {
 
             instance.map.get(p).getChildren().add(block);
 
-            if (workers.containsValue(p)) {
-                Group w = workers.keySet().stream().filter(g -> workers.get(g).equals(p)).findFirst().get();
+            if (instance.workers.containsValue(p)) {
+                Group w = instance.workers.keySet().stream()
+                        .filter(g -> instance.workers.get(g).equals(p)).findFirst().get();
 
                 if (animate) {
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), w);
@@ -339,11 +340,12 @@ public class GameSceneController extends GuiController {
      * @throws NoSuchElementException if there is not worker at given position
      */
     public void moveWorker(Point from, Point to, boolean isOwn) {
-        Optional<Group> workerOnDestination = workers.keySet().stream()
-                .filter(g -> workers.get(g).equals(to)).findFirst();
+        Optional<Group> workerOnDestination = instance.workers.keySet().stream()
+                .filter(g -> instance.workers.get(g).equals(to)).findFirst();
 
         runMapChange(() -> {
-            Optional<Group> optWorker = workers.keySet().stream().filter(g -> workers.get(g).equals(from)).findFirst();
+            Optional<Group> optWorker = instance.workers.keySet().stream()
+                    .filter(g -> instance.workers.get(g).equals(from)).findFirst();
 
             if (optWorker.isEmpty()) {
                 throw new NoSuchElementException("Worker not found at given position");
@@ -366,12 +368,13 @@ public class GameSceneController extends GuiController {
             tt.setByZ(diff.getZ());
             tt.setInterpolator(Interpolator.EASE_BOTH);
 
-            TranslateTransition ttY = new TranslateTransition(Duration.millis(Math.abs(heightDiff) * (heightDiff < 0 ? 150 : 300)), worker);
+            double duration = Math.abs(heightDiff) * (heightDiff < 0 ? 150 : 300);
+            TranslateTransition ttY = new TranslateTransition(Duration.millis(duration), worker);
             ttY.setByY(heightDiff);
             ttY.setInterpolator(Interpolator.EASE_BOTH);
 
             ParallelTransition pt = new ParallelTransition(tt, ttY);
-            pt.setOnFinished(event -> workers.replace(worker, to));
+            pt.setOnFinished(event -> instance.workers.replace(worker, to));
             pt.play();
 
             addWorkerClickAction(worker, to, isOwn);
@@ -645,7 +648,7 @@ public class GameSceneController extends GuiController {
      * @param color  player Color
      * @param power  player power
      */
-    public void addPlayer(String player, Color color, Power power) {
+    public void addPlayer(String player, Color color, Power power, boolean isOwn) {
         Platform.runLater(() -> {
             if (instance.playerPanes.containsKey(player)) {
                 return;
@@ -669,7 +672,7 @@ public class GameSceneController extends GuiController {
 
             frame.setTranslateX(-20);
             frame.setPreserveRatio(true);
-            frame.setFitWidth(120);
+            frame.setFitWidth(isOwn ? 130 : 120);
             icon.setPreserveRatio(true);
             nameBox.minWidthProperty().bind(frame.fitWidthProperty().subtract(20));
             icon.fitWidthProperty().bind(frame.fitWidthProperty().subtract(20).multiply(0.9));
@@ -740,15 +743,18 @@ public class GameSceneController extends GuiController {
             instance.playerPanes.clear();
             instance.playerIcons.getChildren().clear();
 
-            if (hasGameEnded) {
-                Pane rootPane = ((AnchorPane) instance.pane.getParent());
-                rootPane.getChildren().remove(rootPane.getChildren().size() - 1);
-                pane.setEffect(null);
+            if (instance.hasGameEnded) {
+                instance.pane.toFront();
+                instance.menu.toFront();
+                instance.playerIcons.toFront();
+//                Pane rootPane = ((AnchorPane) instance.pane.getParent());
+//                rootPane.getChildren().remove(rootPane.getChildren().size() - 1);
+                instance.pane.setEffect(null);
             }
 
             showValidMoves(List.of(), List.of(), EnumTurnState.END_GAME);
 
-            hasGameEnded = false;
+            instance.hasGameEnded = false;
         });
     }
 }

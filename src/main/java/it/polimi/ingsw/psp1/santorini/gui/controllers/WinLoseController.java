@@ -2,6 +2,7 @@ package it.polimi.ingsw.psp1.santorini.gui.controllers;
 
 import it.polimi.ingsw.psp1.santorini.gui.EnumScene;
 import it.polimi.ingsw.psp1.santorini.gui.Gui;
+import it.polimi.ingsw.psp1.santorini.gui.GuiObserver;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
@@ -151,6 +152,8 @@ public class WinLoseController extends GuiController {
      */
     @FXML
     void clickMainMenu(ActionEvent event) {
+        notifyObservers(GuiObserver::disconnect);
+
         Gui.getInstance().changeSceneSync(EnumScene.IP_SELECT);
         GameSceneController.getInstance().reset();
         WinLoseController.getInstance().reset();

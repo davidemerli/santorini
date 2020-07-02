@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -73,12 +74,18 @@ public class GuiServerHandler extends ServerHandler {
 
                 for (PlayerData player : packet.getPlayerData()) {
                     boolean isOwn = player.getName().equals(playerName);
-                    Color color = getPlayerColorMap().get(player.getName()).getColor();
+                    Color color = playerColorMap.get(player.getName()).getColor();
 
                     player.getWorkers().stream()
                             .map(Worker::getPosition)
                             .forEach(p -> GameSceneController.getInstance().addWorker(p.x, p.y, color, isOwn, false));
                 }
+
+                List<Point> valid = isYourTurn() ? validMoves : List.of();
+                List<Point> blocked = isYourTurn() ?
+                        blockedMoves.values().stream().flatMap(Collection::stream).collect(Collectors.toList()) :
+                        List.of();
+                GameSceneController.getInstance().showValidMoves(valid, blocked, lastTurnState);
             });
         }
     }
@@ -126,6 +133,9 @@ public class GuiServerHandler extends ServerHandler {
             case SELECT_SQUARE:
                 request = lastTurnState == EnumTurnState.MOVE ? "Move a Worker!" : "Build a block!";
                 break;
+            case DISCONNECT:
+                client.disconnect();
+                break;
         }
 
         if (request != null) {
@@ -139,10 +149,6 @@ public class GuiServerHandler extends ServerHandler {
 
         boolean yourUpdate = packet.getPlayerData().getName().equals(playerName);
 
-        if (!yourUpdate) {
-            GameSceneController.getInstance().hideRequest();
-        }
-
         if (packet.getPlayerData().getPower() != null) {
             WaitGodSelectionController.getInstance().setPlayerPower(packet.getPlayerData().getName(),
                     packet.getPlayerData().getPower());
@@ -150,7 +156,7 @@ public class GuiServerHandler extends ServerHandler {
             Color color = getPlayerColorMap().get(packet.getPlayerData().getName()).getColor();
 
             GameSceneController.getInstance().addPlayer(packet.getPlayerData().getName(), color,
-                    packet.getPlayerData().getPower());
+                    packet.getPlayerData().getPower(), yourUpdate);
         }
 
         if (packet.getPlayerState() == EnumTurnState.WORKER_PLACING) {
@@ -193,6 +199,11 @@ public class GuiServerHandler extends ServerHandler {
 
         if(yourUpdate && packet.getPlayerState() == EnumTurnState.END_TURN) {
             GameSceneController.getInstance().setupUndoTimer();
+        }
+
+        if (!yourUpdate) {
+            GameSceneController.getInstance().hideRequest();
+            GameSceneController.getInstance().showValidMoves(List.of(), List.of(), EnumTurnState.END_TURN);
         }
 
         GameSceneController.getInstance().showUndo(isYourTurn());

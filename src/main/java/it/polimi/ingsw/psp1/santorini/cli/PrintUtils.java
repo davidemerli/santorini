@@ -93,6 +93,10 @@ public class PrintUtils {
             y += Math.ceil(SIZE / 2D);
         }
 
+        if(arrow == EnumArrow.UP) {
+            x -= 1;
+        }
+
         print(arrow.toUnicode(), x, y, false);
     }
 

@@ -70,7 +70,7 @@ public abstract class ServerHandler implements NetHandler {
         playerDataList.clear();
         playerDataList.addAll(playerList);
 
-        if (playerColorMap.size() != playerList.size()) {
+        if (playerColorMap.size() < playerList.size()) {
             List<PlayerData> copy = new ArrayList<>(playerDataList);
             copy.sort(Comparator.comparing(PlayerData::getName));
 
@@ -93,6 +93,10 @@ public abstract class ServerHandler implements NetHandler {
      */
     public void handleRequest(ServerAskRequest packet) {
         this.lastRequest = packet.getRequestType();
+
+        if(packet.getRequestType() == EnumRequestType.DISCONNECT) {
+            client.disconnect();
+        }
     }
 
     /**

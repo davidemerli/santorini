@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * //TODO
- * @param <T>
+ * Defines a generic observable class
+ * calling notifyObservers updates all added Observers
+ *
+ * @param <T> Observer type (each component in MVC Pattern has a different one)
  */
 public abstract class Observable<T> {
 

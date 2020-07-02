@@ -127,9 +127,12 @@ public class Game extends Observable<ModelObserver> {
      */
     private void removeLoser() {
         getCurrentPlayer().removeAllWorkers();
-        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+        askRequest(getCurrentPlayer(), EnumRequestType.DISCONNECT);
 
         playerList.remove(getCurrentPlayer());
+
+        notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
+        notifyObservers(o -> o.gameUpdate(this, true));
         nextTurn();
     }
 
@@ -149,7 +152,7 @@ public class Game extends Observable<ModelObserver> {
 
     /**
      * Adds worker on the map
-     * Notifies alla clients
+     * Notifies all clients
      *
      * @param player   the owner of the worker to be added
      * @param position the new worker position on the map
@@ -252,7 +255,7 @@ public class Game extends Observable<ModelObserver> {
 
         boolean allDone = playerList.stream().allMatch(p -> p.getWorkers().size() == 2);
 
-        if(allDone) {
+        if (allDone) {
             notifyObservers(o -> o.gameUpdate(this, false));
             getPlayerList().forEach(p -> p.getPower().onBeginTurn(getCurrentPlayer(), this));
             notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
@@ -260,8 +263,15 @@ public class Game extends Observable<ModelObserver> {
             setTurnState(new WorkerPlacing());
         }
 
-        if (getCurrentPlayer().hasLost() && playerNumber == 3) {
+        Player next = null;
+        boolean hasRemovedLoser = false;
+
+        if (getCurrentPlayer().hasLost() && playerList.size() == 3) {
+            int nextIndex = playerList.indexOf(getCurrentPlayer()) + 1 % playerNumber;
+            next = playerList.get(nextIndex);
+
             removeLoser();
+            hasRemovedLoser = true;
         }
 
         Optional<Player> optWinner = getWinner();
@@ -272,6 +282,14 @@ public class Game extends Observable<ModelObserver> {
         }
 
         saveState();
+
+        if(hasRemovedLoser && next != null) {
+            while(!getCurrentPlayer().equals(next)) {
+                shiftPlayers(-1);
+            }
+
+            startTurn();
+        }
     }
 
     /**
@@ -400,8 +418,9 @@ public class Game extends Observable<ModelObserver> {
 
         notifyObservers(o -> o.playerUpdate(this, getCurrentPlayer()));
 
-        if (getCurrentPlayer().hasLost() && playerNumber == 3) {
+        if (getCurrentPlayer().hasLost() && playerList.size() == 3) {
             removeLoser();
+//            shiftPlayers(-1);
         }
 
         Optional<Player> optWinner = getWinner();
@@ -426,6 +445,7 @@ public class Game extends Observable<ModelObserver> {
 
     /**
      * Used to know if the game has started
+     *
      * @return true if the game has started
      */
     public boolean hasStarted() {
@@ -434,6 +454,7 @@ public class Game extends Observable<ModelObserver> {
 
     /**
      * Used to know if the game has ended
+     *
      * @return true if the game has ended
      */
     public synchronized boolean hasEnded() {

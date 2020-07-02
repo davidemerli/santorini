@@ -8,21 +8,22 @@ import java.util.Arrays;
 /**
  * Defines a generic packet
  *
- * @param <T> //TODO
+ * @param <T> NetHandler type to distinguish if a packet needs to be handled by Server or Client
  */
 public interface Packet<T extends NetHandler> extends Serializable {
 
     /**
      * Process packets
      *
-     * @param netHandler valid netHandler
+     * @param netHandler client or server netHandler
      */
     void processPacket(T netHandler);
 
     /**
-     * Pacchetto su stringa
-     * @param values
-     * @return
+     * Returns a string representation of the packet values
+     *
+     * @param values that needs to be shown
+     * @return packet string representation
      */
     default String toString(Object... values) {
         return getClass().getSimpleName() + Arrays.toString(values);

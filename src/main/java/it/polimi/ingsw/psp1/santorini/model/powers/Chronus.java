@@ -2,6 +2,8 @@ package it.polimi.ingsw.psp1.santorini.model.powers;
 
 import it.polimi.ingsw.psp1.santorini.model.Game;
 import it.polimi.ingsw.psp1.santorini.model.Player;
+import it.polimi.ingsw.psp1.santorini.model.map.Point;
+import it.polimi.ingsw.psp1.santorini.model.map.Worker;
 import it.polimi.ingsw.psp1.santorini.model.turn.Move;
 
 /**
@@ -15,12 +17,11 @@ public class Chronus extends Mortal {
      * Checks if the winning condition is true
      */
     @Override
-    public void onBeginTurn(Player player, Game game) {
-        if (player.equals(this.player) && customWinCondition(game)) {
-            player.setWinner(true);
-            game.setTurnState(new Move());
-        } else {
-            super.onBeginTurn(player, game);
+    public void onBuild(Player player, Worker worker, Point where, Game game) {
+        super.onBuild(player, worker, where, game);
+
+        if (customWinCondition(game)) {
+            this.player.setWinner(true);
         }
     }
 
