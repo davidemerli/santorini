@@ -22,13 +22,10 @@ public class HephaestusTest {
     public void setup() {
         this.game = new Game("1",2);
         this.player = new Player("p1");
-//        Player player2 = new Player("p2");
 
         game.addPlayer(player);
-//        game.addPlayer(player2);
 
         player.setPower(new Hephaestus());
-//        player2.setPower(new Mortal());
     }
 
     @After
@@ -82,8 +79,6 @@ public class HephaestusTest {
 
         game.getTurnState().selectSquare(game, player, new Point(1, 2));
         game.getTurnState().selectSquare(game, player, firstBuild);
-
-//        assertNotSame(game.getCurrentPlayer(), player);
     }
 
     @Test
@@ -108,7 +103,5 @@ public class HephaestusTest {
         assertTrue(game.getTurnState().getValidMoves(game, player, w).contains(firstBuild));
 
         game.getTurnState().toggleInteraction(game, player);
-
-//        assertTrue(game.getTurnState() instanceof EndTurn);
     }
 }

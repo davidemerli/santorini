@@ -90,13 +90,13 @@ public class AthenaTest {
         game.getMap().buildBlock(new Point(0, 1), false);
         game.getMap().buildBlock(new Point(3, 3), true);
         game.getMap().buildBlock(new Point(4, 3), true);
-        game.getMap().buildBlock(new Point(3, 4), false);
+        game.getMap().buildBlock(new Point(3, 4), true);
         game.getMap().buildBlock(newPosition, false);
 
         player1.addWorker(w1);
-        player1.addWorker(w3);
+        player1.addWorker(w4);
         player2.addWorker(w2);
-        player2.addWorker(w4);
+        player2.addWorker(w3);
 
         game.startTurn();
 

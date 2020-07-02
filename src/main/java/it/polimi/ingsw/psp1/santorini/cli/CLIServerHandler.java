@@ -1,14 +1,12 @@
 package it.polimi.ingsw.psp1.santorini.cli;
 
 import it.polimi.ingsw.psp1.santorini.model.EnumActionType;
-import it.polimi.ingsw.psp1.santorini.model.map.GameMap;
 import it.polimi.ingsw.psp1.santorini.model.map.Point;
 import it.polimi.ingsw.psp1.santorini.network.Client;
 import it.polimi.ingsw.psp1.santorini.network.ServerHandler;
 import it.polimi.ingsw.psp1.santorini.network.packets.EnumTurnState;
 import it.polimi.ingsw.psp1.santorini.network.packets.server.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -80,13 +78,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handleGameData(ServerGameData packet) {
         super.handleGameData(packet);
 
-        GameMap map = packet.getGameMap();
-        List<PlayerData> playerList = packet.getPlayerData();
-
-        PrintUtils.printPlayerInfo(getPlayerName(), playerList, lastTurnState, playerColorMap, shouldShowInteraction);
-        PrintUtils.printMap(map);
-        PrintUtils.printWorkers(playerList, playerColorMap);
-        PrintUtils.printCommand();
+        reload(packet.isForced());
     }
 
     /**
@@ -161,7 +153,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     public void handlePlayerUpdate(ServerSendPlayerUpdate packet) {
         super.handlePlayerUpdate(packet);
 
-        if(packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
+        if (packet.getPlayerState() == EnumTurnState.SELECT_POWERS) {
             PrintUtils.printMapBackground();
             PrintUtils.printMap(gameMap);
         }
@@ -235,7 +227,7 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
 
             PrintUtils.printArrow(EnumArrow.fromVector(vector), playerMove.getSrc());
         } else if (move == EnumActionType.BUILD) {
-            PrintUtils.printMapBackground();
+            reload(true);
         }
     }
 
@@ -303,5 +295,19 @@ public class CLIServerHandler extends ServerHandler implements Runnable {
     @Override
     public void onConnectionFail() {
         PrintUtils.printFromCommand(Color.RED + "Connection failed", 0, -1, true);
+    }
+
+    public void reload(boolean drawBackground) {
+        PrintUtils.printPlayerInfo(getPlayerName(), playerDataList, lastTurnState, playerColorMap, shouldShowInteraction);
+
+        if (drawBackground) {
+            PrintUtils.printMapBackground();
+        }
+
+        PrintUtils.printMap(gameMap);
+        PrintUtils.printWorkers(playerDataList, playerColorMap);
+        PrintUtils.printCommand();
+
+        PrintUtils.printValidMoves(validMoves, blockedMoves);
     }
 }
