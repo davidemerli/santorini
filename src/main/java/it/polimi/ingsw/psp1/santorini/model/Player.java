@@ -161,8 +161,11 @@ public class Player implements Cloneable {
                     .map(Worker::copy)
                     .collect(Collectors.toList());
 
-            clone.power = power.copy();
-            clone.power.setPlayer(clone);
+            clone.power = power == null ? null : power.copy();
+
+            if(clone.power != null) {
+                clone.power.setPlayer(clone);
+            }
             return clone;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();

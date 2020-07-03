@@ -24,12 +24,12 @@ public class Hephaestus extends Mortal {
      */
     @Override
     public void onBeginTurn(Player player, Game game) {
-        super.onBeginTurn(player, game);
-
         if (player.equals(this.player)) {
             oldBuild = null;
             hasBuilt = false;
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**

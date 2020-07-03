@@ -21,11 +21,11 @@ public class Triton extends Mortal {
      */
     @Override
     public void onBeginTurn(Player player, Game game) {
-        super.onBeginTurn(player, game);
-
         if (player.equals(this.player)) {
             hasMoved = false;
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**

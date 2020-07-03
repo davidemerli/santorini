@@ -22,11 +22,11 @@ public class Demeter extends Mortal {
      */
     @Override
     public void onBeginTurn(Player player, Game game) {
-        super.onBeginTurn(player, game);
-
         if (player.equals(this.player)) {
             hasBuilt = false;
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**

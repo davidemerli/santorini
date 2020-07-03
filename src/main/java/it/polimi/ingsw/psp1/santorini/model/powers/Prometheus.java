@@ -26,12 +26,12 @@ public class Prometheus extends Mortal {
      */
     @Override
     public void onBeginTurn(Player player, Game game) {
-        super.onBeginTurn(player, game);
-
         if (player.equals(this.player)) {
             hasMoved = false;
             hasBuiltBeforeMoving = false;
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**

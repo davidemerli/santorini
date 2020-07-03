@@ -22,11 +22,11 @@ public class Poseidon extends Mortal {
      */
     @Override
     public void onBeginTurn(Player player, Game game) {
-        super.onBeginTurn(player, game);
-
         if (player.equals(this.player)) {
             counter = 0;
         }
+
+        super.onBeginTurn(player, game);
     }
 
     /**
