@@ -43,6 +43,7 @@ public class Client implements Runnable {
 
         try {
             server = new Socket(ip, port);
+            server.setSoTimeout(20000);
             connected = true;
 
             new Thread(this).start(); //TODO: maybe use pool
