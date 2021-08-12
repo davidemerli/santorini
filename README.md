@@ -2,8 +2,13 @@
 <!-- markdownlint-disable MD034 -->
 # Santorini
 
-<center><img src="assets/irl_game.png" width=70%></center>
-<center>Physical Game with blocks and pawns</center>
+<p align="center">
+  <img width=70% src="assets/irl_game.png" style="border-radius: 5%;">
+</p>
+
+<p align="center">
+Physical Game with blocks and pawns
+</p>
 
 <br><br>
 
