@@ -10,9 +10,7 @@
 Physical Game with blocks and pawns
 </p>
 
-<br>
-
-## Description 
+## Description
 
 (from [boardgamegeek.com](https://boardgamegeek.com/boardgame/194655/santorini))
 
