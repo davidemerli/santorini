@@ -1,5 +1,11 @@
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD034 -->
 # Santorini
+
+<center><img src="assets/irl_game.png" width=70%></center>
+<center>Physical Game with blocks and pawns</center>
+
+<br><br>
 
 > Santorini is an **accessible strategy game**, **simple** enough for an elementary school classroom **while aiming to provide gameplay depth** and content for hardcore gamers to explore, The rules are simple. <u>Each turn consists of 2 steps</u>:
 >
@@ -13,4 +19,36 @@
 
 https://user-images.githubusercontent.com/53702616/129211826-644cc233-c0f4-4108-8463-6d328967cc3f.mp4
 
+## Dependencies
 
+The project has been developed under Java 13 and JavaFX 11.
+Any Java version > 13 should be able to run the game (tested up to Java 15).
+
+## How to run
+
+An already compiled jar is available at ```/deliveries/final/jar```
+
+The jar is unique and can start the **CLI**, the **GUI** and the **SERVER** with the correct arguments.
+
+The default run configuration for the jar is set on the GUI.
+
+Double clicking the jar from a Window Manager will launch directly the GUI.
+
+Executing the jar on the command line from bash or cmd with ```--help``` parameter displays the following:
+
+```shell
+Usage: java -jar santorini.jar [OPTION]...
+Launching without options will load the Graphical User Interface (GUI)
+
+-S, --server        starts a server on localhost, if no port is specified it will be 34567
+-P, --port          specifies the server port (checked only if --server option is called)
+-C, --cli           starts a new client with Command Line Interface (CLI)
+```
+
+### How to run under linux
+
+Linux support for JavaFX 3D is still in beta, to run the game with a GUI under linux you need to execute the jar with the following parameters:
+
+```shell script
+java -Dprism.forceGPU=true -jar santorini.jar
+```
