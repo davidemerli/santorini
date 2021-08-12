@@ -10,7 +10,7 @@
 Physical Game with blocks and pawns
 </p>
 
-<br><br>
+<br>
 
 > Santorini is an **accessible strategy game**, **simple** enough for an elementary school classroom **while aiming to provide gameplay depth** and content for hardcore gamers to explore, The rules are simple. <u>Each turn consists of 2 steps</u>:
 >
