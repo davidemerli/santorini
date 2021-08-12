@@ -11,6 +11,5 @@
 >
 > **Variable player powers** - Santorini features variable player powers layered over an otherwise abstract game, with 40 thematic god and hero powers that fundamentally change the way the game is played.
 
-<p align="center">
+<figure class="video_container">
   <iframe src="assets/santorini1.mp4" frameborder="0" allowfullscreen="true"></iframe>
-<p>
