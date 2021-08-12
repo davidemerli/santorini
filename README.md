@@ -12,6 +12,10 @@ Physical Game with blocks and pawns
 
 <br>
 
+## Description 
+
+(from [boardgamegeek.com](https://boardgamegeek.com/boardgame/194655/santorini))
+
 > Santorini is an **accessible strategy game**, **simple** enough for an elementary school classroom **while aiming to provide gameplay depth** and content for hardcore gamers to explore, The rules are simple. <u>Each turn consists of 2 steps</u>:
 >
 > **1. Move** - move one of your builders into a neighboring space. You may move your Builder Pawn on the same level, step-up one level, or step down any number of levels.
