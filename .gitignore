@@ -4,3 +4,4 @@ target/*
 .directory
 launch.sh
 out/*
+templates/*
