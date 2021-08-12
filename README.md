@@ -1,5 +1,6 @@
 <!-- markdownlint-disable MD033 -->
 <!-- markdownlint-disable MD034 -->
+<!-- markdownlint-disable MD040 -->
 # Santorini
 
 <p align="center">
@@ -43,7 +44,7 @@ Double clicking the jar from a Window Manager will launch directly the GUI.
 
 Executing the jar on the command line from bash or cmd with ```--help``` parameter displays the following:
 
-```shell
+```
 Usage: java -jar santorini.jar [OPTION]...
 Launching without options will load the Graphical User Interface (GUI)
 
