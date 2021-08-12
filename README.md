@@ -3,7 +3,7 @@
 # Santorini
 
 <p align="center">
-  <img width=70% src="assets/irl_game.png" style="border-radius: 5%;">
+  <img width=400 height=auto src="assets/irl_game.png">
 </p>
 
 <p align="center">
